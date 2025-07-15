@@ -72,7 +72,7 @@ $event->send();
 
 if ($event->getResults()) {
     foreach ($event->getResults() as $eventResult) {
-        if ($eventResult->getResultType() == \Bitrix\Main\EventResult::SUCCESS) {
+        if ($eventResult->getType() == \Bitrix\Main\EventResult::SUCCESS) {
             $arMacros["PRODUCTS"] = $eventResult->getParameters();
         }
     }
