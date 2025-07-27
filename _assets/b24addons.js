@@ -1,4 +1,4 @@
-const GITHUB_REPO_BASE_URL = "https://github.com/bitrix24/framework-docs";
+const GITHUB_REPO_BASE_URL = "https://github.com/bitrix-tools/framework-docs";
 var dynamicObserver = null;
 
 // functions to add buttons to the right panel
@@ -59,7 +59,7 @@ function convertToGitHubProjectLink() {
     const origin = window.location.origin;
     let path = currentUrl.replace(origin, "");
 
-    const githubBaseUrl = `${GITHUB_REPO_BASE_URL}blob/main/`;
+    const githubBaseUrl = `${GITHUB_REPO_BASE_URL}/blob/main`;
 
     if (path.endsWith(".html")) {
         path = path.replace(/\.html$/, ".md");
@@ -93,7 +93,7 @@ function addB24Buttons () {
             const TITLE = document.title;
             const currentUrl = window.location.href;
 
-            const issue_url = `${GITHUB_REPO_BASE_URL}issues/new` +
+            const issue_url = `${GITHUB_REPO_BASE_URL}/issues/new` +
                 `?title=${encodeURIComponent(`Page ${TITLE}`)}` +
                 `&body=${encodeURIComponent(`Page link: ${currentUrl}`)}`;
 
