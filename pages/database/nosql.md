@@ -126,7 +126,7 @@ return [
 			],
 		],
 	],
-];з
+];
 ```
 
 ### Как получить и использовать соединение с Redis
@@ -179,7 +179,7 @@ $resource->setnx('foo', 'bar');
 		],
 	],
 	'readonly' => true,
-]з
+]
 ```
 
 ### Особенности Memcached cluster
@@ -210,7 +210,7 @@ $resource->setnx('foo', 'bar');
 		],
 	],
 	'readonly' => true,
-]з
+]
 ```
 
 ### Как получить и использовать соединение с Memcached
