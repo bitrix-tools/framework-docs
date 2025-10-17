@@ -41,7 +41,7 @@ var_dump($localStorage->get('productIds'));
 
 {% note info "" %}
 
-`SessionLocalStorage` работает на кеше, описанном в настройках файла `.settings.php`. Описание конфигурации смотрите ниже[.](#settings)
+`SessionLocalStorage` работает на кеше, описанном в настройках файла `.settings.php`. Описание конфигурации смотрите [ниже](#konfiguraciya-hraneniya-dannyh).
 
 {% endnote %}
 
@@ -258,6 +258,29 @@ return [
                 'general' => [
                     'type' => 'database',
                 ],
+            ],
+        ]
+    ]
+];
+```
+
+## Разделенный режим сессии
+
+Для включения разделенного режима сессии необходимо указать режим `separated`, а так же добавить параметр `lifetime` (время жизни сессии в секундах) и параметр `kernel` со значением `encrypted_cookies` для хранения hot-данных в зашифрованных cookies.  
+
+```php
+// bitrix/.settings.php
+return [
+    //...
+    'session' => [
+        'value' => [
+            'mode' => 'separated',
+            'lifetime' = 1440, 
+            'handlers' => [
+                'kernel' => 'encrypted_cookies',
+                'general' => [
+                    'type' => 'file',
+                ]
             ],
         ]
     ]
