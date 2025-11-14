@@ -10,7 +10,7 @@ XSS (Cross-Site Scripting) -- уязвимость, которая позвол�
 
 Чтобы заменить спецсимволы на HTML-сущности используйте:
 
--  `htmlspecialcharsbx` -- функция преобразует спецсимволы `<`, `>`, `»`, `'`, `&` в HTML-сущности,
+-  `htmlspecialcharsbx` -- функция преобразует спецсимволы `<`, `>`, `"`, `'`, `&` в HTML-сущности,
 
 -  [`\Bitrix\Main\Text\HtmlFilter::encode`](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Text-HtmlFilter.html#method_encode) -- работает аналогично, но поддерживает Unicode.
 
@@ -25,7 +25,7 @@ XSS (Cross-Site Scripting) -- уязвимость, которая позвол�
 <div><?= \Bitrix\Main\Text\HtmlFilter::encode($foo) ?></div>
 <textarea><?= \Bitrix\Main\Text\HtmlFilter::encode($foo) ?></textarea>
 
-<!-- Неправильно: если $foo содержит <sc ript>, он выполнится -->
+<!-- Неправильно: если $foo содержит <script>, он выполнится -->
 <div><?= $foo ?></div>
 <textarea><?= $foo ?></textarea>
 ```
@@ -97,8 +97,8 @@ $someData = htmlspecialcharsbx($someData);
 $foo = ['key' => $userInput]; 
 ?>
 <script>
-  // Безопасный вывод: </script> и другие спецсимволы экранированы
-	  var foo = <?= Bitrix\Main\Web\Json::encode($foo) ?>;
+  // Безопасный вывод: <script> и другие спецсимволы экранированы
+  var foo = <?= Bitrix\Main\Web\Json::encode($foo) ?>;
 </script>
 ```
 
