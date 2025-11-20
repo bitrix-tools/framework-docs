@@ -1,0 +1,9 @@
+{
+	"$schema": "https://context7.com/schema/context7.json",
+	"projectTitle": "Bitrix Framework",
+	"description": "Фреймворк для работы с Битрикс24 и 1С‑Битрикс: Управление сайтом",
+	"folders": ["pages"],
+	"excludeFolders": ["_images", "_assets", "extensions"],
+	"excludeFiles": ["README.md", "favicon.ico", "index.yaml", "LICENSE", "poll-bar.md", "prompt.md", "toc.yaml"],
+	"rules": []
+  }
