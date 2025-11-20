@@ -64,7 +64,7 @@ export const App = {
 
 ### 2. Component (Компонент)
 
-Переиспользуемые UI элементы. Принимают данные через `props` и сообщают о действиях через `emit`. Не должны напрямую обращаться к API или Store (желательно).
+Переиспользуемые UI элементы. Принимают данные через `props` и сообщают о действиях через `emit`.
 
 **Пример:** `component/ui-date-picker/src/ui-date-picker.js`
 
@@ -104,6 +104,7 @@ export const UiDatePicker = {
 - Выполняет Ajax запросы.
 - Преобразует DTO (от сервера) в Model (для фронтенда).
 - Сохраняет данные в Vuex Store.
+- Содержит логику обработки pull-событий.
 - Реализован как Singleton.
 
 **Пример:** `provider/service/campaign/src/campaign.js`
@@ -204,9 +205,9 @@ $containerId = 'my-app-container-' . $arResult['ID'];
 </script>
 ```
 
-### 2. Точка входа JS (bundle.js)
+### 2. Точка входа JS
 
-В JavaScript файле расширения (обычно в корне `src/` или `bundle`) создается метод для монтирования приложения.
+В JavaScript файле расширения (обычно в корне `src/`) создается метод для монтирования приложения.
 
 ```javascript
 import { BitrixVue } from 'ui.vue3';
@@ -241,4 +242,4 @@ export class MyApp
 1.  **Не используйте прямые мутации DOM.** Всегда используйте реактивность Vue.
 2.  **Разделяйте логику.** API запросы — в `Provider`, состояние — в `Model` (Store), верстка — в `Component`.
 3.  **Импорты.** Используйте алиасы модулей Bitrix (напр. `import { ... } from 'module.namespace'`).
-4.  **Типизация.** Если доступен TypeScript, используйте интерфейсы для DTO и Моделей.
+4.  **Типизация.** Если доступен FlowJs или TypeScript, используйте интерфейсы для DTO и Моделей.
