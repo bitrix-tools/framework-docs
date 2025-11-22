@@ -435,14 +435,6 @@ class BookTable extends Entity\DataManager
 
 Рекомендуем использовать стандартные валидаторы:
 
--  **DateValidato** -- проверяет, является ли значение корректной датой.
-
-```php
-(new DateField('CREATED_AT', [
-    'required' => true,
-]))->addValidator(new DateValidator());
-```
-
 -  **BooleanValidator** -- проверяет, является ли значение допустимым для поля типа boolean.
 
 ```php
