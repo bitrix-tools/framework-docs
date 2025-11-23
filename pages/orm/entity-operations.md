@@ -91,7 +91,7 @@ $em = \Bitrix\Main\ORM\EventManager::getInstance();
 $em->addEventHandler(
     BookTable::class, // Класс сущности, для которого регистрируется обработчик
     \Bitrix\Main\ORM\Data\DataManager::EVENT_ON_BEFORE_ADD, // Код события, которое будет обрабатываться
-    function () { // Ваш callback-функция
+    function () { // Ваша callback-функция
         var_dump('handle entity event'); // Действие, выполняемое при срабатывании события
     }
 );
