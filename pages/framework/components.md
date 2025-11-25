@@ -353,7 +353,7 @@ $arComponentParameters = array(
 
 -  `CHECKBOX` -- переключатель да/нет,
 
--  `CUSTOM` -- кастомные элементы управления,
+-  `CUSTOM` -- [кастомные элементы управления](./components#тип-параметров-custom),
 
 -  `FILE` -- выбор файла,
 
@@ -410,6 +410,109 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
        "VARIABLES" => "массив внутренних названий переменных, которые могут использоваться в шаблоне"
    );
    ```
+
+#### Тип параметров CUSTOM
+
+В параметре `TYPE` используйте значение `CUSTOM`, когда стандартных настроек компонента недостаточно. Например, в форму настроек нужно добавить интерактивный элемент: кнопку, карту или ползунок.
+
+Для `TYPE=CUSTOM` укажите три параметра:
+
+-  `JS_FILE` -- путь к JS-файлу с кодом отрисовки интерфейса,
+
+-  `JS_EVENT` -- имя функции, которую система вызывает после загрузки файла.
+
+-  `JS_DATA` -- дополнительные данные для функции, которая указана в `JS_EVENT`.
+
+Функция `JS_EVENT` получает объект с данными.
+
+```php
+{
+	data:JS_DATA,                     // JS_DATA из .parameters.php
+	oCont: td,                        // контейнер для отрисовки интерфейса
+	oInput: input,                    // input, в котором передается значение параметра на сервер при сохранении
+	propertyID:"MAP_DATA",            // название параметра
+	propertyParams: { /*...*/ },      // полное описание параметра из .parameters.php
+	fChange:function(){ /*...*/ },    // callback для вызова при изменении параметра
+	getElements:function(){ /*...*/ } // возвращает объект со всеми параметрами компонента
+}
+```
+
+Пример массива `$arComponentParameters` с `TYPE=CUSTOM` можно посмотреть в системном компоненте `map.google.view`.
+
+Файл `.parameters.php` содержит параметр `MAP_DATA`.
+
+```php
+$arComponentParameters = array(
+//...
+'MAP_DATA' => array(
+	'NAME' => GetMessage('MYMS_PARAM_DATA'),
+	'TYPE' => 'CUSTOM',
+	'JS_FILE' => '/bitrix/components/bitrix/map.google.view/settings/settings.js',
+	'JS_EVENT' => 'OnGoogleMapSettingsEdit',
+	'JS_DATA' => LANGUAGE_ID.'||'.GetMessage('MYMS_PARAM_DATA_SET'),
+	'DEFAULT' => serialize(array(
+		'google_lat' => GetMessage('MYMS_PARAM_DATA_DEFAULT_LAT'),
+		'google_lon' => GetMessage('MYMS_PARAM_DATA_DEFAULT_LON'),
+		'google_scale' => 13
+	)),
+	'PARENT' => 'BASE',
+	)
+//...
+);
+```
+
+Файл с кодом интерфейса -- `/bitrix/components/bitrix/map.google.view/settings/settings.js`. Функция `JCEditorOpener` создает кнопку, которая открывает модальное окно с настройками карты.
+
+```javascript
+function JCEditorOpener(arParams)
+{
+	this.jsOptions = arParams.data.split('||');
+	this.arParams = arParams;
+	var obButton = document.createElement('BUTTON');     //создать кнопку
+	this.arParams.oCont.appendChild(obButton);           // добавить в контейнер
+   
+	obButton.innerHTML = this.jsOptions[1];              //текст из JS_DATA
+   
+	obButton.onclick = BX.delegate(this.btnClick, this); // callback
+	this.saveData = BX.delegate(this.__saveData, this);
+}
+```
+
+Код файла `/bitrix/components/bitrix/map.google.view/settings/settings.php` определяет внешний вид окна.
+
+```html
+<!-- Заголовок и описание -->
+<?
+$obJSPopup->ShowTitlebar();
+$obJSPopup->StartDescription('bx-edit-menu');
+?>
+	<p><b><?echo GetMessage('MYMV_SET_POPUP_WINDOW_TITLE')?></b></p>             
+	<p class="note"><?echo GetMessage('MYMV_SET_POPUP_WINDOW_DESCRIPTION')?></p> 
+
+<!-- Блок контента  -->
+<?
+$obJSPopup->StartContent();
+?>
+...
+
+<!-- Блок кнопок  -->
+<?
+$obJSPopup->StartButtons();
+?>
+
+<!-- Кнопка сохранения настроек  -->
+<input type="submit" value="<?echo GetMessage('MYMV_SET_SUBMIT')?>" onclick="return jsGoogleCE.__saveChanges();" class="adm-btn-save"/>
+
+<!-- Кнопка отмены  -->
+<?
+$obJSPopup->ShowStandardButtons(array('cancel'));
+$obJSPopup->EndButtons();
+?>
+```
+
+Функция `__saveChanges()` собирает, сериализует данные в строку и записывает в `oInput`. Код сериализации можно посмотреть в файле `settings_load.js`. Десериализация происходит  из `$arParams['~MAP_DATA']`.
+
+Все надписи для типа `CUSTOM` выводите через `GetMessage` и размещайте в папке компонента в файле `lang/ru/.parameters.php`.
 
 ## Папки локализаций
 

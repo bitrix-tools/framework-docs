@@ -176,8 +176,9 @@ class my_module extends CModule
 		ModuleManager::unRegisterModule($this->MODULE_ID);
 	}
 
-	public function InstallDB()
-	{
+	public function InstallDB() 
+	{ 
+        // метод приведен для примера 
 		// зарегистрировать зависимости на события модулей
 		$eventManager = \Bitrix\Main\EventManager::getInstance();
 		$eventManager->registerEventHandler('...');
@@ -192,6 +193,7 @@ class my_module extends CModule
 
 	public function UnInstallDB()
 	{
+        // метод приведен для примера 
 		// удалить все зависимости на событиях
 		$eventManager = \Bitrix\Main\EventManager::getInstance();
 		$eventManager->unRegisterEventHandler('...');
@@ -232,7 +234,7 @@ class my_module extends CModule
 ```php
 <?php
 $arModuleVersion = [
-	'VERSION' => '1.0.1',
+	'VERSION' => '1.0.0',
 	'VERSION_DATE' => '2025-03-04 16:10:25'
 ];
 ?>
@@ -276,4 +278,18 @@ $MESS ['MY_MODULE_MODULE_DESCRIPTION'] = "Модуль устанавливае�
 
 ## Архив с примером модуля
 
-Все файлы модуля с контроллером можно [скачать в архиве](https://dev.1c-bitrix.ru//docs/chm_files/my.module.zip). Для работы распакуйте архив в папку `/local/modules/`.
+Файлы модуля можно [скачать в архиве](https://dev.1c-bitrix.ru/docs/chm_files/my.module.v1.zip).
+
+1. Распакуйте архив в папку `/local/modules/`.
+
+   ![](./create-module.png){width=700px height=404px}
+
+2. Откройте страницу *Marketplace > Установленные решения*.
+
+3. В блоке Доступные решения для модуля нажмите Установить.
+
+   ![](./create-module-4.png){width=700px height=291px}
+
+В результате модуль установит компонент `my:user.card`.
+
+![](./create-module-5.png){width=700px height=408px}

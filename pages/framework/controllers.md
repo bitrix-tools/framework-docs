@@ -464,7 +464,13 @@ class EntityController extends Controller
 
 ### Рендеринг компонентов
 
-Если страница содержит только один компонент, вы можете сразу вывести его с помощью `renderComponent()` и не создавать отдельное представление.
+Если страница содержит только один компонент, вы можете сразу вывести его с помощью `renderComponent()` и не создавать отдельное представление. Параметры метода:
+
+-  `$name` -- символьное имя компонента, обязательный параметр.
+
+-  `$template` -- название шаблона компонента.
+
+-  `$params` -- ассоциативный массив параметров для передачи в компонент.
 
 ```php
 class EntityController extends Controller
@@ -474,32 +480,6 @@ class EntityController extends Controller
         return $this->renderComponent('bitrix:component.name', 'template-name', [
             'param' => 'value',
         ]);
-    }
-}
-```
-
-Метод можно использовать без шаблона компонента.
-
-```php
-class EntityController extends Controller
-{
-    public function indexAction(): Component
-    {
-        return $this->renderComponent('bitrix:component.name', params: [
-            'param' => 'value',
-        ]);
-    }
-}
-```
-
-Можно вызвать без параметров.
-
-```php
-class EntityController extends FrontController
-{
-    public function indexAction(): Component
-    {
-        return $this->renderComponent('bitrix:component.name');
     }
 }
 ```
@@ -520,17 +500,7 @@ class EntityController extends Controller
 }
 ```
 
-Можно использовать метод без параметров.
-
-```php
-class EntityController extends FrontController
-{
-    public function indexAction(): Extension
-    {
-        return $this->renderExtension('mymodule.vue.widget');
-    }
-}
-```
+В метод можно передать только название расширения, без параметров.
 
 #### Настроить расширение
 
@@ -612,7 +582,7 @@ return [
 
 {% endnote %}
 
-### **Отключить шаблон сайта**
+### Отключить шаблон сайта
 
 Все методы рендеринга по умолчанию используют основной шаблон сайта. Чтобы отключить шаблон сайта передайте параметр `withSiteTemplate` со значением `false`.
 

@@ -43,7 +43,6 @@ var_dump($localStorage->get('productIds'));
 
 `SessionLocalStorage` работает на кеше, описанном в настройках файла `.settings.php`. Описание конфигурации смотрите [ниже](./sessions#конфигурация-хранения-данных)[.](#settings)
 
-
 {% endnote %}
 
 Если кеш файловый, `SessionLocalStorage` использует для хранения `$_SESSION` . Это помогает избежать проблем с контролем и удалением устаревших файлов.

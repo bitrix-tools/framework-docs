@@ -301,6 +301,12 @@ BX.ready(() => {
 $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 ```
 
+## Архив с примером компонента
+
+Все файлы компонента `user.card` можно [скачать в архиве](https://dev.1c-bitrix.ru/docs/chm_files/user.card.zip). Для работы распакуйте архив в папку `/local/components/my/`.
+
+![](./create-component.png){width=700px height=435px}
+
 ## Как добавить компонент на страницу
 
 Сначала создайте страницу, например, `/my-page/index.php`. Подробности читайте в статье [Создание страницы](./create-page).
@@ -329,7 +335,7 @@ $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 
 ![](./create-component-6.png){width=261px height=401px}
 
-### Исходный код
+### Исходный код страницы
 
 Страница `/my-page/index.php` с размещенным на ней компонентом имеет следующий код:
 
@@ -348,3 +354,5 @@ $APPLICATION->SetTitle("");
 );?>
 <?php require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php'); ?>
 ```
+
+

@@ -330,12 +330,12 @@ title: Конфигурация ядра
 Секция `routing` определяет, какие файлы конфигурации маршрутов подключать из `/bitrix/routes/` и `/local/routes/`.
 
 ```php
-'routing' => ['value' => [
-       'config' => ['web.php', 'api.php']
-]],
-// Файлы подключатся при наличии:
-// /bitrix/routes/web.php, /local/routes/web.php, 
-// /bitrix/routes/api.php, /local/routes/api.php
+'routing' => [
+    'value' => [
+        'config' => ['web.php'], // Можно добавить другие файлы: 'api.php', 'admin.php'
+    ],
+        'readonly' => true, // Защищает настройки от изменений
+],
 ```
 
 Подробнее в статье [Роутинг](./routing#%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D1%8F).
@@ -441,22 +441,23 @@ title: Конфигурация ядра
 
 ```php
 'messenger' => [
-		'value' => [
-			'run_mode' => 'web', // Режим обработки сообщений: web или cli
-			'brokers' => [
-				'default' => [
-					'type' => DbBroker::TYPE_CODE, // Тип брокера
-					'params' => [ // Набор параметров, который зависит от типа брокера
-						'table' => MessengerMessageTable::class,
-					]
-				],
-			],
-			'queues' => [ // Список очередей
-				'first_queue' => [
-					'handler' => MyReceiver::class, // Обработчик очереди
-				],
-			],
-		],
+    'value' => [
+        'run_mode' => 'web', // Режим обработки сообщений: web или cli
+        'brokers' => [
+            'default' => [
+                'type' => DbBroker::TYPE_CODE, // Тип брокера
+                'params' => [ // Набор параметров, который зависит от типа брокера
+                    'table' => MessengerMessageTable::class,
+                ]
+            ],
+        ],
+        'queues' => [ // Список очередей
+            'first_queue' => [
+                'handler' => MyReceiver::class, // Обработчик очереди
+            ],
+        ],
+    ],
+]
 ```
 
 Подробнее в статье [Очереди сообщений](./messenger#%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%BE%D1%87%D0%B5%D1%80%D0%B5%D0%B4%D0%B5%D0%B9).

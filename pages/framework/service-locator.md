@@ -7,18 +7,21 @@ Service Locator -- это шаблон проектирования для уп�
 Класс [\\Bitrix\\Main\\DI\\ServiceLocator](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-DI-ServiceLocator.html) реализует интерфейс PSR-11. Доступен с версии main 20.5.400.
 
 Пример использования:
+
 ```php
 $serviceLocator = \Bitrix\Main\DI\ServiceLocator::getInstance();
 if ($serviceLocator->has('someService'))
-{
+{ 
     $someService = $serviceLocator->get('someService');
 }
 ```
 
-## Autowire
+## Режим Autowire
 
-По умолчанию сервис-локатор работает в режиме автоваринга, т.е. он автоматически разрешает все зависимости у сервисов.
-Помимо этого, контейнер может автоматически создавать объекты указанных классов, даже если их нет в самом контейнере:
+По умолчанию Service Locator работает в режиме Autowire -- автоматически разрешает все зависимости у сервисов.
+
+Также контейнер может автоматически создавать объекты указанных классов, даже если их нет внутри контейнера.
+
 ```php
 $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorName\SomeModule\Services\SomeService::class);
 ```
@@ -54,13 +57,14 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
    ]
    ```
 
-В качестве ключа можно использовать либо строку, либо имя класса или интерфейса, который будет реализовывать сервис:
+В качестве ключа, который реализует сервис, можно использовать строку, имя класса или интерфейса.
+
 ```php
 'someModule.someServiceName' => [
-   'className' => \VendorName\SomeModule\Services\SomeService::class,
+    'className' => \VendorName\SomeModule\Services\SomeService::class,
 ],
 \VendorName\SomeModule\Contracts\SomeInterface::class => [
-   'className' => \VendorName\SomeModule\Services\SomeService::class,
+    'className' => \VendorName\SomeModule\Services\SomeService::class,
 ],
 ```
 
@@ -112,12 +116,12 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
                'someModule.someServiceName' => [
                    'className' => \VendorName\SomeModule\Services\SomeService::class,
                ],
-               \VendorName\SomeModule\Contracts\SecondInterface::class => [
+               'someModule.someAnotherServiceName' => [
                    'constructor' => static function () {
                        return new \VendorName\SomeModule\Services\SecondService('foo', 'bar');
                    },
                ],
-               'someModule.someGoodServiceName' => [
+               \VendorName\SomeModule\Contracts\SecondInterface::class => [
                    'className' => \VendorName\SomeModule\Services\SecondService::class,
                    'constructorParams' => static function () {
                        return ['foo', 'bar'];
@@ -139,7 +143,7 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
 
    -  `addInstance(string $code, $service)` -- зарегистрировать экземпляр сервиса.
 
-   -  `addInstanceLazy(string $code, $configuration)` -- выполнить ленивую регистрацию с конфигурацией, при которой сервис будет создан, только в случае обращения к нему.
+   -  `addInstanceLazy(string $code, $configuration)` -- выполнить ленивую регистрацию с конфигурацией, при которой система создаст сервис только при обращении к нему.
 
    -  `has(string $code)` -- проверить наличие сервиса.
 
