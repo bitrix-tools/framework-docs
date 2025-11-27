@@ -22,21 +22,21 @@ title: Что нового
 
 #### 27 ноября, 2025
 
--  Добавили новый раздел [Основы CMS](./cms-basics/sites).
+-  Добавили новый раздел [Основы CMS](./pages/cms-basics/sites.html).
 
 #### **25 ноября, 2025**
 
--  Добавили описание типа параметров `CUSTOM` в статью [Компоненты](./framework/components#%D1%82%D0%B8%D0%BF-%D0%BF%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D0%BE%D0%B2-custom).
+-  Добавили описание типа параметров `CUSTOM` в статью [Компоненты](./pages/framework/components.html#tip-parametrov-custom).
 
--  Добавили новую статью [Консольные команды](./framework/console-commands). Спасибо [bxmaximum](https://github.com/bxmaximum) за [вклад](https://github.com/bitrix-tools/framework-docs/pull/24) в документацию.
+-  Добавили новую статью [Консольные команды](./pages/framework/console-commands.html). Спасибо [bxmaximum](https://github.com/bxmaximum) за [вклад](https://github.com/bitrix-tools/framework-docs/pull/24) в документацию.
 
--  Полностью обновили статью [Роутинг](./framework/routing).
+-  Полностью обновили статью [Роутинг](./pages/framework/routing.html).
 
--  Добавили описание режима `Autowire` в статью [Service Locator](./framework/service-locator#%D1%80%D0%B5%D0%B6%D0%B8%D0%BC-autowire).
+-  Добавили описание режима `Autowire` в статью [Service Locator](./pages/framework/service-locator.html#rezhim-autowire).
 
--  Добавили архив с примером компонента в статью [Создание компонента](./get-started/create-component#%D0%B0%D1%80%D1%85%D0%B8%D0%B2-%D1%81-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%BE%D0%BC-%D0%BA%D0%BE%D0%BC%D0%BF%D0%BE%D0%BD%D0%B5%D0%BD%D1%82%D0%B0).
+-  Добавили архив с примером компонента в статью [Создание компонента](./pages/get-started/create-component.html#arhiv-s-primerom-komponenta).
 
--  Добавили архив с примером модуля в статью [Создание модуля](./get-started/create-module#%D0%B0%D1%80%D1%85%D0%B8%D0%B2-%D1%81-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%BE%D0%BC-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D1%8F).
+-  Добавили архив с примером модуля в статью [Создание модуля](./pages/get-started/create-module.html#arhiv-s-primerom-modulya).
 
 Партнеры и разработчики, которые внесли вклад в развитие нашей документации:
 
