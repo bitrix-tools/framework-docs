@@ -27,7 +27,7 @@ navigation:
         type: 'link'
         url: '/pages/get-started/install-env.html#docker-obrazy'
 
-      - text: 'Чего нового'
+      - text: 'Что нового'
         type: 'link'
         url: '/whats-new.html'
 
@@ -165,34 +165,32 @@ items:
 
   - name: Основы CMS
     items:
-      - name: Панель администрирования
-        href: /pages/cms-basics/admin-panel.md
-      - name: Хлебные крошки
-        href: /pages/cms-basics/breadcrumbs.md
-      - name: Хлебные крошки
-        href: /pages/cms-basics/breadcrumbs.md
-      - name: Включаемые области
-        href: /pages/cms-basics/includes.md
+      - name: Сайты
+        href: /pages/cms-basics/sites.md
+      - name: Шаблоны сайтов
+        href: /pages/cms-basics/site-templates.md
+      - name: Шаблоны страницы
+        href: /pages/cms-basics/page-templates.md
       - name: Работа с почтой
         href: /pages/cms-basics/mail.md
+      - name: Работа с СМС
+        href: /pages/cms-basics/sms.md
+      - name: Пользователи
+        href: /pages/cms-basics/users.md
+      - name: Группы пользователей
+        href: /pages/cms-basics/user-groups.md
+      - name: Хлебные крошки
+        href: /pages/cms-basics/breadcrumbs.md
       - name: Меню
         href: /pages/cms-basics/menu.md
       - name: Постраничная навигация
         href: /pages/cms-basics/page-navigation.md
-      - name: Шаблоны страницы
-        href: /pages/cms-basics/page-templates.md
-      - name: Шаблоны сайтов
-        href: /pages/cms-basics/site-templates.md
-      - name: Сайты
-        href: /pages/cms-basics/sites.md
-      - name: Работа с СМС
-        href: /pages/cms-basics/sms.md
-      - name: Группы пользователей
-        href: /pages/cms-basics/user-groups.md
+      - name: Включаемые области
+        href: /pages/cms-basics/includes.md
       - name: Пользовательские поля
         href: /pages/cms-basics/userfields.md
-      - name: Пользователи
-        href: /pages/cms-basics/users.md
+      - name: Панель администрирования
+        href: /pages/cms-basics/admin-panel.md
 
   - name: Безопасность
     items:
