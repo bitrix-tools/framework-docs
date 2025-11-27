@@ -158,7 +158,7 @@ return static function (RoutingConfigurator $routes) {
 
    {% note warning "" %}
 
-   Используйте `PublicPageController` только для миграции со старого движка маршрутизации [urlrewrite.php](./routing#%D1%81%D1%82%D0%B0%D1%80%D1%8B%D0%B9-%D0%B4%D0%B2%D0%B8%D0%B6%D0%BE%D0%BA-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8-%D1%81-%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E-urlrewrite.php). В остальных случаях применяйте контроллеры.
+   Используйте `PublicPageController` только для миграции со старого движка маршрутизации [urlrewrite.php](./routing#миграция-с-устаревшего-urlrewrite.php). В остальных случаях применяйте контроллеры.
 
    {% endnote %}
 

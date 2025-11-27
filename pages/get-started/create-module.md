@@ -132,89 +132,89 @@ class my_module extends CModule
     public $MODULE_NAME;
     public $MODULE_DESCRIPTION;
 
-	public function __construct()
-	{
-		include __DIR__ . '/version.php';
+    public function __construct()
+    {
+        include __DIR__ . '/version.php';
 
-		if (isset($arModuleVersion['VERSION'], $arModuleVersion['VERSION_DATE']))
-		{
-			$this->MODULE_VERSION = $arModuleVersion['VERSION'];
-			$this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
-		}
+        if (isset($arModuleVersion['VERSION'], $arModuleVersion['VERSION_DATE']))
+        {
+            $this->MODULE_VERSION = $arModuleVersion['VERSION'];
+            $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
+        }
 
-		$this->MODULE_NAME = Loc::getMessage('MY_MODULE_MODULE_NAME');
-		$this->MODULE_DESCRIPTION = Loc::getMessage('MY_MODULE_MODULE_DESCRIPTION');
-	}
-	
-	public function DoInstall()
-	{
-		global $USER;
-		
-		if (!$USER->IsAdmin())
-		{
-			return;
-		}
-		
-		ModuleManager::registerModule($this->MODULE_ID);
+        $this->MODULE_NAME = Loc::getMessage('MY_MODULE_MODULE_NAME');
+        $this->MODULE_DESCRIPTION = Loc::getMessage('MY_MODULE_MODULE_DESCRIPTION');
+    }
+    
+    public function DoInstall()
+    {
+        global $USER;
+        
+        if (!$USER->IsAdmin())
+        {
+            return;
+        }
+        
+        ModuleManager::registerModule($this->MODULE_ID);
 
-		$this->InstallDB();
-		$this->InstallFiles();
-	}
+        $this->InstallDB();
+        $this->InstallFiles();
+    }
 
-	public function DoUninstall()
-	{
-		global $USER;
-		
-		if (!$USER->IsAdmin())
-		{
-			return;
-		}
-		
-		$this->UnInstallFiles();
-		$this->UnInstallDB();
-		
-		ModuleManager::unRegisterModule($this->MODULE_ID);
-	}
+    public function DoUninstall()
+    {
+        global $USER;
+        
+        if (!$USER->IsAdmin())
+        {
+            return;
+        }
+        
+        $this->UnInstallFiles();
+        $this->UnInstallDB();
+        
+        ModuleManager::unRegisterModule($this->MODULE_ID);
+    }
 
-	public function InstallDB() 
-	{ 
+    public function InstallDB() 
+    { 
         // метод приведен для примера 
-		// зарегистрировать зависимости на события модулей
-		$eventManager = \Bitrix\Main\EventManager::getInstance();
-		$eventManager->registerEventHandler('...');
-		
-		// добавить агенты
-		\CAgent::AddAgent(...);
-		
-		// добавить пользовательские поля
-		$userType = new \CUserTypeEntity();
-		$userType->Add(...);
-	}
+        // зарегистрировать зависимости на события модулей
+        $eventManager = \Bitrix\Main\EventManager::getInstance();
+        $eventManager->registerEventHandler('...');
+        
+        // добавить агенты
+        \CAgent::AddAgent(...);
+        
+        // добавить пользовательские поля
+        $userType = new \CUserTypeEntity();
+        $userType->Add(...);
+    }
 
-	public function UnInstallDB()
-	{
+    public function UnInstallDB()
+    {
         // метод приведен для примера 
-		// удалить все зависимости на событиях
-		$eventManager = \Bitrix\Main\EventManager::getInstance();
-		$eventManager->unRegisterEventHandler('...');
-		
-		// агенты можно не удалять, они будут удалены автоматически
-		
-		// удалить пользовательские поля
-		$userType = new \CUserTypeEntity();
-		$userType->Delete(...);
-	}
+        // удалить все зависимости на событиях
+        $eventManager = \Bitrix\Main\EventManager::getInstance();
+        $eventManager->unRegisterEventHandler('...');
+        
+        // агенты можно не удалять, они будут удалены автоматически
+        
+        // удалить пользовательские поля
+        $userType = new \CUserTypeEntity();
+        $userType->Delete(...);
+    }
 
-	public function InstallFiles()
-	{
-		CopyDirFiles($_SERVER['DOCUMENT_ROOT'] . '/local/modules/my.module/install/components', $_SERVER['DOCUMENT_ROOT'] . '/local/components', true, true);
-	}
+    public function InstallFiles()
+    {
+        CopyDirFiles($_SERVER['DOCUMENT_ROOT'] . '/local/modules/my.module/install/components', $_SERVER['DOCUMENT_ROOT'] . '/local/components', true, true);
+    }
 
-	public function UnInstallFiles()
-	{
-		DeleteDirFilesEx('/local/components/my');
-		return true;
-	}
+    public function UnInstallFiles()
+    {
+        DeleteDirFilesEx('/local/components/my');
+        return true;
+    }
 }
 ?>
 ```
@@ -234,8 +234,8 @@ class my_module extends CModule
 ```php
 <?php
 $arModuleVersion = [
-	'VERSION' => '1.0.0',
-	'VERSION_DATE' => '2025-03-04 16:10:25'
+    'VERSION' => '1.0.0',
+    'VERSION_DATE' => '2025-03-04 16:10:25'
 ];
 ?>
 ```
