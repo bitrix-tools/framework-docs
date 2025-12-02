@@ -87,7 +87,7 @@ echo $bookObjects[0]->getId();
 Если нужно получить не сами объекты, а их данные в виде массива, следует использовать метод `collectValues`. Метод преобразует коллекцию в ассоциативный массив, где ключами являются первичные ключи объектов, а значениями -- массивы данных, полученные из каждого объекта. Если элементы коллекции имеют составной первичный ключ, он будет преобразован в строку с использованием правил `\Bitrix\Main\ORM\Objectify\Collection::sysGetPrimaryKey`.
 
 ```php
-$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList() ->fetchCollection(); 
+$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList()->fetchCollection(); 
 $books = $bookCollection->collectValues();
 ```
 
@@ -186,9 +186,11 @@ use \Bitrix\Main\Test\Typography\Book;
 $books = new Books;
 $books[] = (new Book)->setTitle('Title 112');
 $books[] = (new Book)->setTitle('Title 113');
-$books[] = (new Book)->setTitle('Title 114');
+$books[] = (new Book)
+    ->setTitle('Title 114')
+    ->setIsbn('114-000');
 $books->save(true);
-// INS ERT INTO ... (`TITLE`, `ISBN`) VALUES
+// INSERT INTO ... (`TITLE`, `ISBN`) VALUES
 // ('Title 112', DEFAULT),
 // ('Title 113', DEFAULT),
 // ('Title 114', '114-000')
@@ -210,7 +212,7 @@ foreach ($books as $book) {
 }
 $books->save();
 // UPDATE ... SET `PUBLISHER_ID` = '254'
-    WHERE `ID` IN ('1', '2')
+// WHERE `ID` IN ('1', '2')
 ```
 
 Групповое обновление работает, если измененные данные одинаковы для всех объектов. Если данные различаются для каждого объекта, записи сохраняются по отдельности, что может привести к множественным запросам в базу данных.
@@ -273,8 +275,7 @@ $titles = $books->getTitleList();
 ```php
 $authors = \Bitrix\Main\Test\Typography\AuthorTable::getList([
     'select' => ['BOOKS']
-])
-->fetchCollection();
+])->fetchCollection();
 
 // Получаем уникальную коллекцию книг всех авторов
 $books = $authors->getBooksCollection();
@@ -309,11 +310,11 @@ $books = \Bitrix\Main\Test\Typography\Books::wakeUp([
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
     ->whereIn('ID', [1, 2])
-	->fetchCollection();
+    ->fetchCollection();
 
 $anotherBooks = \Bitrix\Main\Test\Typography\BookTable::getList()
     ->whereIn('ID', [3, 4])
-	->fetchCollection();
+    ->fetchCollection();
 
 $books = $books->merge($anotherBooks);
 ```
