@@ -60,6 +60,9 @@ items:
       - name: Опрос по документации
         href: poll-bar.md
         hidden: true
+      - name: Страница 404
+        href: 404.yaml
+        hidden: true
 
   - name: С чего начать
     items:
