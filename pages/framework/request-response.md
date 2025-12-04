@@ -1,5 +1,6 @@
 ---
 title: Request и Response
+description: 'Request и Response. Документация по Bitrix Framework: принципы работы, архитектура и примеры использования.'
 ---
 
 ## Запрос (Request)
