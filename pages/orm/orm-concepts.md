@@ -439,6 +439,8 @@ class BookTable extends Entity\DataManager
 -  **BooleanValidator** -- проверяет, является ли значение допустимым для поля типа boolean.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\BooleanValidator;
+
 (new BooleanField('IS_ACTIVE', [
     'required' => true,
 ]))->addValidator(new BooleanValidator());
@@ -447,6 +449,8 @@ class BookTable extends Entity\DataManager
 -  **DateValidator** -- проверяет, является ли значение корректной датой.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\DateValidator;
+
 (new DateField('CREATED_AT', [
     'required' => true,
 ]))->addValidator(new DateValidator());
@@ -455,6 +459,8 @@ class BookTable extends Entity\DataManager
 -  **EnumValidator** -- проверяет, находится ли значение в списке допустимых значений для перечисления.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\EnumValidator;
+
 (new EnumField('STATUS', [
     'required' => true,
     'values' => ['NEW', 'IN_PROGRESS', 'COMPLETED'],
@@ -464,41 +470,51 @@ class BookTable extends Entity\DataManager
 -  **ForeignValidator** -- проверяет, существует ли значение в связанной таблице (внешний ключ).
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\ForeignValidator;
+
 (new IntegerField('GROUP_ID', [
     'required' => true,
-]))->addValidator(new Foreign(GroupTable::getEntity()->getField('ID')));
+]))->addValidator(new ForeignValidator(GroupTable::getEntity()->getField('ID')));
 ```
 
 -  **LengthValidator** -- проверяет длину строкового значения.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+
 (new StringField('NAME', [
     'required' => true,
-]))->addValidator(new Length(null, 255));
+]))->addValidator(new LengthValidator(null, 255));
 ```
 
 -  **RangeValidator** -- проверяет, находится ли числовое значение в заданном диапазоне.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\RangeValidator;
+
 (new IntegerField('AGE', [
     'required' => true,
-]))->addValidator(new Range(18, 100));
+]))->addValidator(new RangeValidator(18, 100));
 ```
 
 -  **RegExpValidator** -- проверяет, соответствует ли значение регулярному выражению.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\RegExpValidator;
+
 (new StringField('EMAIL', [
     'required' => true,
-]))->addValidator(new RegExp('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'));
+]))->addValidator(new RegExpValidator('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'));
 ```
 
 -  **UniqueValidator** -- проверяет, является ли значение уникальным.
 
 ```php
+use Bitrix\Main\ORM\Fields\Validators\UniqueValidator;
+
 (new StringField('UNIQUE_CODE', [
     'required' => true,
-]))->addValidator(new Unique());
+]))->addValidator(new UniqueValidator());
 ```
 
 Эти валидаторы нельзя применять к пользовательским полям -- проверка значений пользовательских полей настраивается через административный интерфейс.
