@@ -1,0 +1,29 @@
+blocks:
+  - type: 'header-block'
+    width: 's'
+    offset: 'default'
+    title: 'Такой страницы не существует'
+    resetPaddings: false
+    verticalOffset: 'l'
+    description: 'Проверьте адрес или воспользуйтесь поиском по сайту'
+    image:
+      mobile: '_images/404.svg'
+      desktop: '_images/404.svg'
+      disableCompress: true
+    color: '#FFFFFF'
+    mediaView: 'fit'
+    imageSize: 'm'
+
+  - type: 'extended-features-block'
+    title:
+      text: 'Если вы не нашли нужную информацию:'
+    items:
+      - links:
+          - url: 'https://github.com/bitrix-tools/framework-docs/issues/new'
+            text: 'Создайте issue — расскажите, что нужно добавить'
+            theme: 'normal'
+            arrow: true
+          - url: 'https://github.com/bitrix-tools/framework-docs'
+            text: 'Следите за обновлениями — подпишитесь на репозиторий framework-docs'
+            theme: 'normal'
+            arrow: true

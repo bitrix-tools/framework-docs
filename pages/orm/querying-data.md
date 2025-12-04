@@ -1,5 +1,6 @@
 ---
 title: Выборка данных
+description: 'Выборка данных. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
 ---
 
 Для выборки данных с фильтрацией, группировкой и сортировкой в Bitrix Framework используются метод `getList` и объект [`Entity\Query`](./query-builder).

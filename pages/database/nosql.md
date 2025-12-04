@@ -1,5 +1,6 @@
 ---
 title: NoSQL
+description: 'NoSQL. Работа с базой данных в Bitrix: лучшие практики, инструкция и примеры запросов.'
 ---
 
 В рамках NoSQL-подхода Bitrix Framework поддерживает работу с key-value хранилищами:

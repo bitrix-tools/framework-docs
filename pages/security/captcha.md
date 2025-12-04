@@ -1,5 +1,6 @@
 ---
 title: CAPTCHA
+description: 'CAPTCHA. Руководство по безопасности Bitrix: защита, рекомендации и правильные настройки.'
 ---
 
 CAPTCHA (Completely Automated Public Turing test to tell Computers and Humans Apart) защищает сайт от действий роботов, например от автоматической регистрации или отправки формы.
