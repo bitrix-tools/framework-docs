@@ -57,9 +57,6 @@ items:
       - name: Чего нового
         href: whats-new.md
         hidden: true
-      - name: Опрос по документации
-        href: poll-bar.md
-        hidden: true
       - name: Страница 404
         href: 404.yaml
         hidden: true
