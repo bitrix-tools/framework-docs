@@ -489,7 +489,7 @@ $url = \Bitrix\Main\Application::getInstance()->getRouter()->route('blog.post.vi
 
 ## Миграция с устаревшего urlrewrite.php
 
-До появления роутинга в Bitrix Franework использовался файл `urlrewrite.php` для маршрутизации запросов до исполняемых файлов.
+До появления роутинга в Bitrix Framework использовался файл `urlrewrite.php` для маршрутизации запросов до исполняемых файлов.
 
 {% note warning "В новых проектах используйте роутинг" %}
 

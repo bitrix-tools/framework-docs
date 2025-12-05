@@ -5,7 +5,7 @@ description: 'Request и Response. Документация по Bitrix Framewor
 
 ## Запрос (Request)
 
-Request -- это абстрактный класс, который предоставляет информацию о текущем запросе. Он позволяет узнать метод и протокол, запрошенный URL, переданные параметры и другие данные. Класс расширяет [\\Bitrix\\Main\\Type\\ParameterDictionary](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Type-ParameterDictionary.html).
+[comment:TLdNH]Request[/comment] -- это абстрактный класс, который предоставляет информацию о текущем запросе. Он позволяет узнать метод и протокол, запрошенный URL, переданные параметры и другие данные. Класс расширяет [\\Bitrix\\Main\\Type\\ParameterDictionary](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Type-ParameterDictionary.html).
 
 Класс обращается к пространствам имен:
 

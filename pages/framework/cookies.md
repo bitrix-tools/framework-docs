@@ -204,46 +204,12 @@ function setCityCookie(city) {
 
 ## Шифрованные cookie
 
-Шифрованные cookie `\Bitrix\Main\Web\CryptoCookie` позволяют передавать данные пользователю без раскрытия их содержимого и без изменения. Доступно с версии Главного модуля 20.5.400.
+Шифрованные cookie `\Bitrix\Main\Web\CryptoCookie` позволяют передавать данные пользователю без раскрытия их содержимого и без изменения. 
 
-### Конфигурация
+Для шифрования данных ядром необходимо указать `crypto_key` в файле настроек `/bitrix/.settings.php`. 
 
-Для шифрования данных ядром необходимо указать `crypto_key` в файле настроек `/bitrix/.settings.php`. В новых дистрибутивах он генерируется автоматически.
+{% note tip "" %}
 
-Если ключ отсутствует, добавьте его вручную:
+Подробнее о шифрованных cookie читайте в статье [Защищенные cookie](./../security/secure-cookies).
 
-```php
-<?php
-return [
-    //...
-    'crypto' => [
-        'value' => [
-            'crypto_key' => 'mysupersecretphrase',
-            // рекомендуется использовать 32-символьную строку из a-z0-9
-        ],
-        'readonly' => true,
-    ]
-    //...
-];
-```
-
-### Примеры
-
-1. **Установка cookie**. Чтобы установить шифрованные cookie, создайте объект и добавьте его в нужный `Response`:
-
-   ```php
-   $cookie = new \Bitrix\Main\Web\CryptoCookie('someName', 'secret value');
-   \Bitrix\Main\Context::getCurrent()->getResponse()->addCookie($cookie);
-   ```
-
-   Если значение cookie превышает допустимую длину, ядро создаст несколько cookie для хранения зашифрованного значения.
-
-2. **Чтение сookie**. Для получения расшифрованного значения используйте стандартное API ядра:
-
-   ```php
-   $httpRequest = \Bitrix\Main\Context::getCurrent()->getRequest();
-   echo $httpRequest->getCookie('someName');
-   // secret value
-   ```
-
-   Ядро автоматически определяет, зашифрованы ли cookie, и дешифрует их. Если расшифровка не удалась, возвращается пустое значение.
+{% endnote %}

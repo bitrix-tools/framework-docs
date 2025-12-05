@@ -34,6 +34,12 @@ HandlerSocket ускоряет только SELECT-запросы. Для зап
 
 -  **Используйте MariaDB.** Это форк MySQL, в котором HandlerSocket включен по умолчанию. Способ подходит для новых проектов, где можно выбрать СУБД с нуля.
 
+{% note info "" %}
+
+Подробную инструкцию по настройке HandlerSocket в MariaDB читайте в официальной документации [HandlerSocket Plugin for MariaDB ](https://mariadb.com/docs/server/reference/sql-structure/nosql/handlersocket/).
+
+{% endnote %}
+
 После установки добавьте параметры HandlerSocket в конфигурационный файл MySQL.
 
 {% note warning "" %}

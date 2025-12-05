@@ -705,3 +705,5 @@ echo $author['FULL_NAME'];
 $author['FULL_NAME'] = 'New name';
 // Вызовет исключение
 ```
+
+

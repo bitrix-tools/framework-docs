@@ -5,190 +5,345 @@ description: 'События. Документация по Bitrix Framework: п
 
 Событие -- это действие или изменение состояния системы, например, нажатие кнопки пользователем или завершение загрузки данных. События уведомляют части приложения об изменениях, что позволяет системе реагировать на них.
 
-В ядре D7 упрощены требования к данным для кода, который создает событие. Пример отправки события:
+## Базовое использование
+
+Чтобы создать и отправить событие, используйте класс `Bitrix\Main\Event` и его метод `send`.
+
+Пример отправки события:
 
 ```php
-$event = new Bitrix\Main\Event("main", "OnPageStart");
+$event = new \Bitrix\Main\Event('my.helpdesk', 'TicketClosed');
 $event->send();
 ```
 
-## Обработка результатов события
-
-Чтобы получить результаты обработки события, используйте следующий код:
+Пример обработчика для этого события:
 
 ```php
-foreach ($event->getResults() as $eventResult) {
-    switch($eventResult->getType()) {
-        case \Bitrix\Main\EventResult::ERROR:
-            // Обработка ошибки
-            break;
-        case \Bitrix\Main\EventResult::SUCCESS:
-            // Успешно
-            $handlerRes = $eventResult->getParameters(); // Результат от обработчика
-            break;
-        case \Bitrix\Main\EventResult::UNDEFINED:
-            // Неизвестный объект, результат доступен через getParameters
-            break;
+class TicketClosedEventHandler
+{
+    public static function handle(\Bitrix\Main\Event $event)
+    {
+        // Код для обработки события
     }
 }
 ```
 
-Этот код проверяет каждый результат события и выполняет действия в зависимости от типа результата: ошибка, успех или неопределенность. Например, при успешном результате можно получить параметры обработчика и использовать их.
-
-## Создание наследников класса Event
-
-Для уменьшения объема кода можно создать наследников класса `Bitrix\Main\Event` для специфических событий. Например, `Bitrix\Main\Entity\Event` упрощает отправку событий, связанных с изменением сущностей.
-
-## Класс EventManager
-
-`EventManager` -- это класс для регистрации обработчиков событий. Он реализует паттерн Singleton, то есть у класса есть только один экземпляр, к которому можно обратиться через `getInstance()`.
-
-Обработчики, зарегистрированные через `\Bitrix\Main\EventManager::AddEventHandler`, получают объект события `Bitrix\Main\Event` в качестве аргумента. Чтобы передавались старые аргументы, используйте `\Bitrix\Main\EventManager::addEventHandlerCompatible`. Это же касается `\Bitrix\Main\EventManager::registerEventHandler` и `\Bitrix\Main\EventManager::registerEventHandlerCompatible`.
-
-### Примеры использования EventManager
-
-Регистрация обработчика:
+Если нужно передать дополнительные параметры, укажите их третьим аргументом:
 
 ```php
-$eventManager = \Bitrix\Main\EventManager::getInstance();
-$eventManager->registerEventHandlerCompatible("module", "event", "module2", "class", "function");
-```
-
-Для событий в DataManager:
-
-```php
-$eventManager = \Bitrix\Main\EventManager::getInstance();
-$eventManager->registerEventHandler("module", "event", "module2", "class", "function");
-```
-
-Собственные обработчики в модулях:
-
-Пример 1. Код создает событие, отправляет его, обрабатывает результаты и регистрирует обработчик для дальнейшего использования.
-
-```php
-$arMacros["PRODUCTS"] = "";
-$basketId = "10";
-$event = new \Bitrix\Main\Event("mymodule", "OnMacrosProductCreate", array($basketId));
+$event = new \Bitrix\Main\Event('my.helpdesk', 'TicketClosed', [
+    'ticketId' => 123,
+    'closeReason' => '...',
+]);
 $event->send();
+```
 
-if ($event->getResults()) {
-    foreach ($event->getResults() as $eventResult) {
-        if ($eventResult->getResultType() == \Bitrix\Main\EventResult::SUCCESS) {
-            $arMacros["PRODUCTS"] = $eventResult->getParameters();
-        }
+Чтобы обработчик получил данные, используйте методы `getParameter` и `getParameters`:
+
+```php
+class TicketClosedEventHandler
+{
+    public static function handle(\Bitrix\Main\Event $event)
+    {
+        // Получить один параметр
+        $ticketId = $event->getParameter('ticketId');
+        // Получить все параметры
+        $params = $event->getParameters();
+        $ticketId = $params['ticketId'];
+
+        // Обработка события
     }
 }
-
-$eventManager = \Bitrix\Main\EventManager::getInstance();
-$eventManager->addEventHandler("mymodule", "OnMacrosProductCreate", "OnMacrosProductCreate");
-
-function OnMacrosProductCreate(\Bitrix\Main\Event $event) {
-    $arParam = $event->getParameters();
-    $basketId = $arParam[0];
-    $result = new \Bitrix\Main\EventResult(1, $basketId);
-    return $result;
-}
 ```
 
-Пример 2. Код показывает, как добавлять, удалять, регистрировать и отменять регистрацию обработчиков событий, а также как искать зарегистрированные обработчики для конкретного события.
+## Консольные команды
+
+Bitrix Framework предоставляет CLI-команды для удобной работы с событиями.
+
+### Создание события
+
+Чтобы создать событие, используйте команду `make:event`.
+
+Пример создания события:
+
+```bash
+php bitrix.php make:event TicketClosed -m my.helpdesk --no-interaction
+```
+
+Эта команда создаст файл `/local/modules/my.helpdesk/lib/Public/Event/TicketClosedEvent.php`:
 
 ```php
-use Bitrix\Main\EventManager;
+namespace My\Helpdesk\Public\Event;
 
-$handler = EventManager::getInstance()->addEventHandler(
-    "main",
-    "OnUserLoginExternal",
-    array(
-        "Intervolga\\Test\\EventHandlers\\Main",
-        "onUserLoginExternal"
+use Bitrix\Main\Event;
+
+final class TicketClosedEvent extends Event
+{
+    public function __construct( 
+        public readonly int $ticketId,
+        public readonly ?string $closeReason,
     )
-);
-
-EventManager::getInstance()->removeEventHandler(
-    "main",
-    "OnUserLoginExternal",
-    $handler
-);
-
-EventManager::getInstance()->registerEventHandler(
-    "main",
-    "OnProlog",
-    $this->MODULE_ID,
-    "Intervolga\\Test\\EventHandlers",
-    "onProlog"
-);
-
-EventManager::getInstance()->unRegisterEventHandler(
-    "main",
-    "OnProlog",
-    $this->MODULE_ID,
-    "Intervolga\\Test\\EventHandlers",
-    "onProlog"
-);
-
-$handlers = EventManager::getInstance()->findEventHandlers("main", "OnProlog"); 
-```
-
-Добавление обработчика события `addEventHandler` используется, чтобы подключить обработчик к событию во время выполнения временно или в зависимости от определенных условий.
-
-Регистрация обработчика события `registerEventHandler` применяется для постоянного подключения обработчика к событию, пока обработчик не будет отменен с помощью `unRegisterEventHandler`.
-
-## Взаимодействие модулей через события
-
-Событие -- это действие, при котором выполняются все обработчики этого события. Это позволяет модулям взаимодействовать через интерфейс событий, оставаясь независимыми.
-
-### Схема работы с событиями
-
-**Модуль, инициирующий событие**
-
-1. Собирает все зарегистрированные обработчики с помощью [`GetModuleEvents`](http://dev.1c-bitrix.ru/api_help/main/functions/module/getmoduleevents.php).
-
-2. Выполняет их по одному с помощью [`ExecuteModuleEvent`](http://dev.1c-bitrix.ru/api_help/main/functions/module/executemoduleevent.php), обрабатывая возвращаемые значения.
-
-**Модуль, реагирующий на событие**
-
-1. Регистрирует свой обработчик при инсталляции с помощью [`RegisterModuleDependences`](http://dev.1c-bitrix.ru/api_help/main/functions/module/registermoduledependences.php).
-
-2. Имеет функцию-обработчик. Убедитесь, что функция-обработчик подключается в файле `/bitrix/modules/ID модуля/include.php`.
-
-### Пример взаимодействия
-
-Примером такого взаимодействия является работа модулей с модулем Поиска. Модуль Поиска не знает о данных других модулей, но предоставляет интерфейс для индексации. Модули регистрируют обработчик на событие [`OnReindex`](http://dev.1c-bitrix.ru/api_help/search/events/onreindex.php), возвращая данные для индексации.
-
-### Примеры кода
-
-Регистрация обработчика:
-
-```php
-RegisterModuleDependences(
-    "init_module", "OnSomeEvent",
-    "handler_module", "CMyModuleClass", "Handler"
-);
-```
-
-Функция, генерирующая событие:
-
-```php
-function MyFunction() {
-    $rsHandlers = GetModuleEvents("init_module", "OnSomeEvent");
-    while ($arHandler = $rsHandlers->Fetch()) {
-        if (!ExecuteModuleEvent($arHandler, $param1, $param2)) {
-            return "I can't do it...";
-        }
+    {
+        parent::__construct(
+            'my.helpdesk',
+            'TicketClosed',
+        );
     }
-    return "I have done it!";
 }
 ```
 
-Обработчик:
+Теперь для отправки события можно использовать созданный класс, а не базовый:
 
 ```php
-class CMyModuleClass {
-    function Handler($param1, $param2) {
-        if ($param1 == "delete all") {
-            return false;
+$event = new TicketClosedEvent(
+    ticketId: 123,
+    closeReason: '...',
+);
+$event->send();
+```
+
+{% note info "" %}
+
+Данные передаются как свойства события, а не через массив параметров. Это облегчает работу с данными.
+
+{% endnote %}
+
+### Создание обработчика
+
+Чтобы создать обработчик, используйте команду `make:eventhandler`.
+
+Пример создания обработчика:
+
+```bash
+php bitrix.php make:eventhandler TicketClosed --event-module my.helpdesk --handler-module my.helpdesk --no-interaction
+```
+
+Эта команда создаст файл `local/modules/my.helpdesk/lib/Internals/Integration/My/Helpdesk/EventHandler/TicketClosedEventHandler.php`:
+
+```php
+namespace My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler;
+
+use Bitrix\Main\EventResult;
+
+final class TicketClosedEventHandler
+{
+    public static function handle(TicketClosedEvent $event): EventResult
+    {
+        # process
+
+        return new EventResult(EventResult::SUCCESS);
+    }
+}
+```
+
+{% note info "" %}
+
+В сгенерированном коде нет полного пути к классу события. Нужно указать его в аргументах метода `handle` или использовать конструкцию `use`.
+
+{% endnote %}
+
+Теперь свойства события можно использовать внутри обработчика:
+
+```php
+namespace My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler;
+
+use Bitrix\Main\EventResult;
+use My\Helpdesk\Public\Event\TicketClosedEvent;
+
+final class TicketClosedEventHandler
+{
+    public static function handle(TicketClosedEvent $event): EventResult
+    {
+        $ticketId = $event->ticketId;
+        $closeReason = $event->closeReason;
+
+        // Обработка события
+
+        return new EventResult(EventResult::SUCCESS);
+    }
+}
+```
+
+## Результаты событий
+
+Обработчик события может возвращать результат. Это необязательно -- можно вернуть `null` или ничего для методов с типом `void`. Если обработчик должен повлиять на дальнейшую логику выполнения, например, запретить операцию или передать дополнительные параметры, используйте `Bitrix\Main\EventResult`.
+
+В качестве примера рассмотрим событие `BeforeTicketCloseEvent`. Оно вызывается перед закрытием тикета и позволяет обработчикам проверить, можно ли выполнить операцию. Если любой из обработчиков вернет ошибку, процесс закрытия прервется.
+
+```php
+final class BeforeTicketCloseEvent extends Event
+{
+    public function __construct(
+        public readonly int $ticketId,
+        public readonly ?string $closeReason,
+    )
+    {
+        parent::__construct(
+            'my.helpdesk',
+            'BeforeTicketClose',
+        );
+    }
+}
+```
+
+Проверка перед закрытием тикета:
+
+```php
+use Bitrix\Main\Error;
+use Bitrix\Main\EventResult;
+use Bitrix\Main\Result;
+
+final class TicketService
+{
+    public function close(int $ticketId, string $closeReason): Result
+    {
+        $result = new Result();
+
+        $error = $this->canClose($ticketId, $closeReason);
+        if ($error)
+        {
+            return $result->addError($error);
         }
+
+        // Код для закрытия тикета
+
+        return $result;
+    }
+
+    private function canClose(int $ticketId, string $closeReason): Error
+    {
+        $event = new BeforeTicketCloseEvent($ticketId, $closeReason);
+        $event->send();
+
+        foreach ($event->getResults() as $result)
+        {
+            if ($result->getType() === EventResult::ERROR)
+            {
+                return new Error(
+                    (string)($result->getParameters()['message'] ?? 'Unknown'),
+                );
+            }
+            elseif ($result->getType() === EventResult::SUCCESS)
+            {
+                // Обработка успешного результата
+            }
+            elseif ($result->getType() === EventResult::UNDEFINED)
+            {
+                // Обработка неопределенного результата
+            }
+        }
+
+        return null;
+    }
+}
+```
+
+Пример обработчика, который возвращает ошибку:
+
+```php
+final class BeforeTicketCloseEventHandler
+{
+    public static function handle(BeforeTicketCloseEvent $event): EventResult
+    {
+        if (self::hasOpenTasks($event->ticketId))
+        {
+            return new EventResult(
+                EventResult::ERROR,
+                parameters: [
+                    'message' => \Bitrix\Main\Localization\Loc::getMessage('TICKET_HAS_OPEN_TASKS'),
+                ],
+                moduleId: 'my.taskTracker',
+            );
+        }
+
+        return new EventResult(EventResult::SUCCESS);
+    }
+}
+```
+
+## Регистрация обработчиков
+
+Чтобы обработчики `BeforeTicketCloseEventHandler` и `TicketClosedEventHandler` начали работать, их нужно зарегистрировать. Используйте для этого объект `Bitrix\Main\EventManager` и его метод `registerEventHandler`:
+
+```php
+\Bitrix\Main\EventManager::getInstance()->registerEventHandler(
+    fromModule: 'my.helpdesk',
+    eventType: 'BeforeTicketClose',
+    toModuleId: 'my.helpdesk',
+    toClass: My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\TicketClosedEventHandler::class,
+    toMethod: 'handle',
+);
+```
+
+Регистрируйте обработчики один раз при установке модуля. Они хранятся в базе данных.
+
+При удалении модуля удаляйте обработчики с помощью метода `unRegisterEventHandler`:
+
+```php
+\Bitrix\Main\EventManager::getInstance()->unRegisterEventHandler(
+    fromModule: 'my.helpdesk',
+    eventType: 'BeforeTicketClose',
+    toModuleId: 'my.helpdesk',
+    toClass: My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\TicketClosedEventHandler::class,
+    toMethod: 'handle',
+);
+```
+
+Есть также способ добавить обработчик динамически через метод `addEventHandler`:
+
+```php
+\Bitrix\Main\EventManager::getInstance()->addEventHandler(
+    fromModule: 'my.helpdesk',
+    eventType: 'BeforeTicketClose',
+    callback: '\My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\TicketClosedEventHandler::handle',
+);
+```
+
+{% note warning "" %}
+
+Не рекомендуется использовать динамическую регистрацию. Она усложняет отладку и анализ системы. Постоянная регистрация в одном месте позволяет легко найти все обработчики событий.
+
+{% endnote %}
+
+## Старые события и режим совместимости
+
+В продукте есть события в старом формате, например `OnBeforeUserAdd`. У них нет объекта `Bitrix\Main\Event`, и в обработчик передается произвольный набор аргументов.
+
+Пример обработчика для старого события:
+
+```php
+class OnBeforeUserAddEventHandler
+{
+    public static function handle(array &$fields): mixed
+    {
+        // Обработка события
+
+        // Результат зависит от конкретного события
         return true;
     }
 }
 ```
+
+Для регистрации используйте метод `registerEventHandlerCompatible`:
+
+```php
+\Bitrix\Main\EventManager::getInstance()->registerEventHandlerCompatible(
+    fromModule: 'main',
+    eventType: 'OnBeforeUserAdd',
+    toModuleId: 'my.testing',
+    toClass: My\Testing\Internals\Integration\Main\EventHandler\OnBeforeUserAddEventHandler::class,
+    toMethod: 'handle',
+);
+```
+
+Для работы со старыми событиями используются функции:
+
+-  `GetModuleEvents`
+
+-  `AddEventHandler`
+
+-  `ExecuteModuleEvent`
+
+-  `ExecuteModuleEventEx`
+
+Если вы видите эти функции в коде, обрабатывайте события в режиме совместимости.

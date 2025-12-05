@@ -219,10 +219,18 @@ $app->addBackgroundJob(function() {
 
    ```bash
    # Выполнять каждые 10 минут от имени пользователя
-   */10 * * * * bitrix /usr/bin/php -f /home/bitrix/www/bitrix/modules/main/tools/cron_events.php
+   */10 * * * * bitrix /usr/bin/php -f /home/bitrix/www/bitrix/php_interface/cron_events.php
    ```
 
    Часть пути `/home/bitrix/www/`  замените на путь к вашему сайту.
+
+   {% note tip "" %}
+
+   Отключите задание cron со стандартным скриптом 
+
+   `/home/bitrix/www/bitrix/modules/main/tools/cron_events.php`, чтобы избежать дублирования запусков.
+
+   {% endnote %}
 
 #### Вернуть запуск агентов на хитах
 
