@@ -48,9 +48,8 @@ $result = BookTable::getList([
 ```php
 // Получение данных построчно
 $rows = [];
-$result = BookTable::getList([$parameters]);
-while ($row = $result->fetch()) 
-{
+$result = BookTable::getList($parameters);
+while ($row = $result->fetch()) {
     $rows[] = $row;
 }
 
@@ -60,7 +59,7 @@ $rows = BookTable::getList($parameters)->fetchAll();
 
 #### Форматирование данных
 
-Для изменения формата данных после выборки можно использовать метод `fetch_data_modification`. Например, изменить формат даты:
+Для изменения формата данных после выборки можно использовать метод `fetchDataModification()`. Например, изменить формат даты:
 
 ```php
 class BookTable extends \Bitrix\Main\Entity\DataManager
@@ -68,10 +67,8 @@ class BookTable extends \Bitrix\Main\Entity\DataManager
     public static function fetchDataModification(): array
     {
         return [
-            function ($data) 
-			{
-                if (isset($data['PUBLISH_DATE'])) 
-				{
+            function ($data) {
+                if (isset($data['PUBLISH_DATE'])) {
                     $data['PUBLISH_DATE'] = date('d.m.Y', strtotime($data['PUBLISH_DATE']));
                 }
                 return $data;
@@ -202,7 +199,7 @@ BookTable::getList([
 
 -  `'%=NAME' => '%тест%'` -- содержит подстроку «тест»
 
-Последний вариант отличается от `%NAME => тест` итоговым SQL-запросом.
+Последний вариант отличается от `'%NAME' => 'тест'` итоговым SQL-запросом.
 
 -  `==` -- булево выражение для `ExpressionField`, например, `EXISTS()` или `NOT EXISTS()`
 
@@ -520,8 +517,8 @@ class Element5Table extends \Bitrix\Iblock\ElementTable
 ```php
 class UserTable
 {
-	// Метод withActive добавляет условие фильтрации по полю ACTIVE   
-	public static function withActive(Query $query)
+    // Метод withActive добавляет условие фильтрации по полю ACTIVE   
+    public static function withActive(Query $query)
     {
         $query->where('ACTIVE', true); // Фильтр ACTIVE = true
     }
@@ -543,7 +540,7 @@ $activeUsers = UserTable::query()
 ```php
 class UserTable
 {
-	// Метод withActive принимает значение для фильтрации и добавляет поле LOGIN в выборку
+    // Метод withActive принимает значение для фильтрации и добавляет поле LOGIN в выборку
     public static function withActive(Query $query, $value)
     {
         $query
@@ -787,7 +784,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    // WHERE `main_user`.`NAME` = `main_user`.`LOGIN`
    ```
 
-   `whereColumn` позволяет гибко использовать колонки в фильтре::
+   `whereIn` позволяет гибко использовать колонки в фильтре::
 
    ```php
    \Bitrix\Main\UserTable::query()
