@@ -12,6 +12,18 @@ search: true
 
 extensions:
   - './extensions/feedback-control'
+  - './extensions/page-footer-text'
 
 feedbackControl:
   endpoint: https://util.1c-bitrix.ru/rest-doc/feedback-control.php
+
+pageFooterText:
+  html: |
+    <div>
+    Мы еще работаем над документацией. Если вы не нашли нужную информацию:
+    <br>
+      - создайте <a href="https://github.com/bitrix-tools/framework-docs/issues/new" target="_blank" rel="noopener" style="color: var(--g-color-text-link);">issue</a> — расскажите, что нужно добавить
+      <br>
+      - следите за обновлениями — подпишитесь на репозиторий <a href="https://github.com/bitrix-tools/framework-docs" target="_blank" rel="noopener" style="color: var(--g-color-text-link);">framework-docs</a>
+    </div>
+  className: 'dc-page-footer-text'
