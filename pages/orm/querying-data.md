@@ -852,6 +852,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 Вы можете использовать вложенные фильтры для более сложных условий:
 
 ```php
+use \Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where(Query::filter()->where([
         ["ID", '>', 1],
@@ -864,6 +865,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 Для объединения условий с логикой `OR`:
 
 ```php
+use \Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where('ACTIVE', true)
     ->where(Query::filter()
@@ -880,6 +882,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 Вы также можете использовать цепочку вызовов для создания условий с `OR`:
 
 ```php
+use \Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where('ACTIVE', true)
     ->where(Query::filter()
@@ -943,6 +946,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 При использовании `getList`, фильтр можно вставить вместо массива:
 
 ```php
+use \Bitrix\Main\ORM\Query\Query;
+
 \Bitrix\Main\UserTable::getList([
     'filter' => ['=ID' => 1]
 ]);
