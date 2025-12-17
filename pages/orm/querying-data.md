@@ -784,7 +784,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    // WHERE `main_user`.`NAME` = `main_user`.`LOGIN`
    ```
 
-   `whereIn` позволяет гибко использовать колонки в фильтре::
+   `whereIn` позволяет гибко использовать колонки в фильтре:
 
    ```php
    \Bitrix\Main\UserTable::query()
