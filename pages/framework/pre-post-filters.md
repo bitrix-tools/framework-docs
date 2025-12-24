@@ -485,7 +485,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 Для гибкой работы с фильтрами можно точечно включать и отключать различные фильтры, сделать это можно с помощью префиксов `+` и `-` при использовании метода `configureActions`:
 
-```phpp
+```php
 use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\ActionFilter\CloseSession;
 use Bitrix\Main\Engine\ActionFilter\Csrf;
