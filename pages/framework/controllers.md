@@ -3,411 +3,830 @@ title: Контроллеры
 description: 'Контроллеры. Документация по Bitrix Framework: принципы работы, архитектура и примеры использования.'
 ---
 
-В MVC-архитектуре контроллеры -- это связующее звено между моделью и представлением. Контроллер:
+В архитектуре MVC контроллер связывает модель и представление:
 
--  обрабатывает входящие запросы от пользователя, например, нажатие кнопки или ввод данных,
+-  принимает запрос от пользователя: AJAX-вызов, GET- или POST-запрос,
 
--  взаимодействует с моделью для получения или изменения данных
+-  обращается к модели: получает или изменяет данные,
 
--  передает результаты представлению для отображения.
+-  формирует ответ и отдает его представлению.
 
-Контроллеры состоят из методов, называемых действиями, которые выполняют основную логику и возвращают данные. Например, метод `greetAction` может возвращать приветственное сообщение.
+Основную логику реализуют действия -- публичные методы с суффиксом `Action`, например, `listAction`, `getAction`, `addAction`.
 
-## Именование контроллеров и действий
+## Создать контроллер через консоль
 
-{% note info "" %}
+Создайте контроллер с помощью консольной команды `make:controller`. Укажите модуль и действия:
 
-PSR-4 в AJAX-контроллерах поддерживается с версии 20.600.87 главного модуля.
+-  `-m my.blog` -- модуль, в котором создается контроллер,
+
+-  `--actions=index,view` -- список действий.
+
+```bash
+php bitrix.php make:controller post -m my.blog --actions=index,view
+```
+
+Чтобы создать типовой CRUD-контроллер, используйте `--actions=crud`. Команда добавит пять действий: `list`, `get`, `add`, `update`, `delete`.
+
+```bash
+php bitrix.php make:controller post -m my.blog --actions=crud
+```
+
+Чтобы создать пустой контроллер, не указывайте опцию `--actions`.
+
+{% note tip "" %}
+
+О том, как получить справку по опциям команды `make:controller`, читайте в статье [Консольные команды](./console-commands).
 
 {% endnote %}
 
-Контроллеры и их действия именуются по определенному шаблону. Имена параметров и контроллеров чувствительны к регистру, а имена действий -- нет.
-
-Примеры именования:
-
--  `\Bitrix\Disk\Controller\Folder::getAction()` преобразуется в `bitrix:disk.Controller.Folder.get`.
-
--  `\SomeVendor\Somedisk\Controller\SuperFolder::getAction()` преобразуется в `somevendor:somedisk.Controller.SuperFolder.get`.
-
-Здесь `\Bitrix\Disk\Controller\Folder` и `\SomeVendor\Somedisk\Controller\SuperFolder` -- это классы контроллеров, а `getAction` -- это действие в этих классах.
-
-Формат имени:
-
--  Имя действия формируется по шаблону: `vendor:module.Controller.Action`.
-
--  `vendor:` -- это часть, которая указывает на поставщика или разработчика модуля. Например, `bitrix:` или `somevendor:`.
-
--  `module` -- это название модуля, в котором находится контроллер.
-
--  `Controller` -- это часть пространства имен и название контроллера.
-
--  `Action` -- это конкретное действие, которое выполняется.
-
-Особенности:
-
--  Если `vendor:` не указан, по умолчанию используется `bitrix:`.
-
--  Если задан `defaultNamespace`, его можно не указывать в имени действия, так как система автоматически его подставит.
-
-## Действия в контроллерах
-
-Контроллеры состоят из действий, которые пользователь запрашивает для получения результата. В одном контроллере может быть одно или несколько действий.
-
-### Пример контроллера
-
-Рассмотрим пример контроллера с действиями `item.add` и `item.view` в модуле `example`.
-
-1. Создайте файл `.settings.php` в корне модуля.
-
-   ```php
-   <?php
-   //modules/vendor.example/.settings.php
-   return [
-   	'controllers' => [
-   		'value' => [
-   			'defaultNamespace' => '\\Vendor\\Example\\Controller',
-   		],
-   		'readonly' => true,
-   	]
-   ];
-   ```
-
-2. Создайте файл контроллера `/modules/vendor.example/lib/controller/item.php`.
-
-   ```php
-   namespace Vendor\Example\Controller;
-   use \Bitrix\Main\Error;
-   
-   class Item extends \Bitrix\Main\Engine\Controller
-   {
-       public function addAction(array $fields):? array
-       {
-           $item = Item::add($fields);
-           if (!$item) {
-               $this->addError(new Error('Could not create item.', {код_ошибки}));
-               return null;
-           }
-           return $item->toArray();
-       }
-   
-       public function viewAction($id):? array
-       {
-           $item = Item::getById($id);
-           if (!$item) {
-               $this->addError(new Error('Could not find item.', {код_ошибки}));
-               return null;
-           }
-           return $item->toArray();
-       }
-   }
-   ```
-
-#### Действие addAction
-
-1. Действие пытается создать `Item` из переданных `$fields`.
-
-2. При ошибке возвращает `null` и добавляет ошибку в контроллер.
-
-   ```php
-   {
-   	"status": "error", 
-   	"data": null,
-   	"errors": [
-   		{
-   			"message": "Could not create item.",
-   			"code": {код}
-   		}
-   	]
-   }
-   ```
-
-3. При успехе возвращает массив с данными `Item`.
-
-   ```php
-   {
-   	"status": "success",
-   	"data": {
-   		"ID": 1,
-   		"NAME": "Nobody",
-   		//...поля элемента
-   	},
-   	"errors": null
-   }
-   ```
-
-#### Действие viewAction
-
-1. Действие пытается загрузить `Item` по `$id`. Параметр `$id` будет автоматически получен из `$_POST['id']` или `$_GET['id']`.
-
-2. При ошибке возвращает `null` с соответствующей ошибкой.
-
-   ```php
-   {
-   	"status": "error",
-   	"data": null,
-   	"errors": [
-   		{
-   			"message": "Could not find value for parameter {id}",
-   			"code": 0
-   		}
-   	]
-   }
-   ```
-
-#### Как обратиться к действию контроллера
-
-Для вызова действий используйте соглашение по именованию:
-
--  `Item::addAction` -> `vendor:example.Item.add`
-
--  `Item::viewAction` -> `vendor:example.Item.view`
-
-Пример вызова через `BX.ajax.runAction`:
-
-```javascript
-BX.ajax.runAction('vendor:example.Item.add', {
-	data: {
-		fields: {
-			ID: 1,
-			NAME: "test"
-		} 
-	}
-}).then(function (response) {
-	console.log(response);
-	/**
-	{
-		"status": "success", 
-		"data": {
-			"ID": 1,
-			"NAME": "test"
-		}, 
-		"errors": []
-	}
-	**/			
-}, function (response) {
-	//все ответы, у которых status !== 'success'
-	console.log(response);
-	/**
-	{
-		"status": "error", 
-		"errors": [...]
-	}
-	**/				
-});
-```
-
-Можно получить ссылку на действие и выполнить HTTP-запрос самостоятельно.
+Команда сгенерирует файл `/local/modules/my.blog/lib/Infrastructure/Controller/Post.php`.
 
 ```php
-/** @var \Bitrix\Main\Web\Uri $uri **/
-$uri = \Bitrix\Main\Engine\UrlManager::getInstance()->create('vendor:example.Item.view', ['id' => 1]);
-echo $uri;
-// /bitrix/services/main/ajax.php?action=vendor:example.Item.view&id=1
-// выполняем GET-запрос
-```
+namespace My\Blog\Infrastructure\Controller;
 
-### Как создавать контроллеры и действия
+use Bitrix\Main\Engine\Controller;
 
-Контроллеры:
-
--  должны быть унаследованы от `\Bitrix\Main\Engine\Controller` или его потомков.
-
--  могут располагаться в модуле или внутри компонента в файле `ajax.php`.
-
-Требования к действиям:
-
--  методы должны быть `public` и оканчиваться на `Action`,
-
-   ```php
-   namespace Vendor\Example\Controller;
-   class Item extends \Bitrix\Main\Engine\Controller
-   {
-   	public function addAction(array $fields)
-   	{
-   		//...
-   	}
-   }
-   ```
-
--  могут возвращать:
-
-   -  данные для JSON-ответа,
-
-   -  объект `\Bitrix\Main\HttpResponse` или его наследников,
-
-   -  объекты, которые реализуют интерфейсы: `\JsonSerializable`, `\Bitrix\Main\Type\Contract\Arrayable` и `\Bitrix\Main\Type\Contract\Jsonable`.
-
-### Как создавать классы-действия
-
-Классы-действия наследуются от `\Bitrix\Main\Engine\Action` и позволяют повторно использовать логику в нескольких контроллерах.
-
-```php
-class Test extends \Bitrix\Main\Engine\Controller
+final class Post extends Controller
 {
-    public function configureActions()
+    protected function init()
+    {
+        parent::init();
+
+        // initialize services and/or load modules
+    }
+
+    public function getAutoWiredParameters(): array
+    {
+        return [];
+    }
+
+    public function configureActions(): array
     {
         return [
-            'testoPresto' => [
-                'class' => \TestAction::class,
-                'configure' => ['who' => 'Me'],
-            ],
+            'list' => [],
+            'get' => [],
+            'add' => [],
+            'update' => [],
+            'delete' => [],
         ];
     }
-}
 
-class TestAction extends \Bitrix\Main\Engine\Action
-{
-    protected $who;
+    // replace aliases with alias form settings
 
-    public function configure($params)
+    /**
+     * @ajaxAction my.blog.alias.Post.list
+     */
+    public function listAction()
     {
-        parent::configure($params);
-        $this->who = $params['who'] ?: 'nobody';
+        return 'listAction';
     }
 
-    public function run($objectId = null)
+    /**
+     * @ajaxAction my.blog.alias.Post.get
+     */
+    public function getAction()
     {
-        return "Test action! Know object {$objectId}? Mr. {$this->who}";
+        return 'getAction';
+    }
+
+    /**
+     * @ajaxAction my.blog.alias.Post.add
+     */
+    public function addAction()
+    {
+        return 'addAction';
+    }
+
+    /**
+     * @ajaxAction my.blog.alias.Post.update
+     */
+    public function updateAction()
+    {
+        return 'updateAction';
+    }
+
+    /**
+     * @ajaxAction my.blog.alias.Post.delete
+     */
+    public function deleteAction()
+    {
+        return 'deleteAction';
     }
 }
 ```
 
-### Жизненный цикл контроллера
+### Настроить безопасность
 
-1. Создание контроллера
+По умолчанию каждое действие контроллера требует:
 
-2. Инициализация `Controller::init()`
+-  проверку CSRF-токена,
 
-3. Создание объекта действия. Если не удалось, выбрасывается исключение
+-  разрешенные HTTP-методы: `GET` или `POST`,
 
-4. Подготовка параметров `Controller::prepareParams`
+-  обязательную аутентификацию.
 
-5. Метод `Controller::processBeforeAction(Action $action)`
+Чтобы изменить это поведение, переопределите метод `Controller::getDefaultPreFilters`. Пустой массив отключает префильтры.
 
-6. Событие `onBeforeAction`
+```php
+final class Post extends Controller
+{
+    protected function getDefaultPreFilters()
+    {
+        return [];
+    }
+}
+```
 
-7. Выполнение действия
+## Настроить роутинг
 
-8. Событие `onAfterAction`
+1. Зарегистрируйте маршруты в файле `/local/routes/web.php`, чтобы сделать действия доступными по URL. Если файл отсутствует, создайте его вручную.
 
-9. Метод `Controller::processAfterAction(Action $action, $result)`
+   ```php
+   use Bitrix\Main\Routing\RoutingConfigurator;
+   use My\Blog\Infrastructure\Controller\Post;
+   
+   return static function (RoutingConfigurator $routes) {
+       $routes
+           ->prefix('blog')
+           ->name('blog.post')
+           ->group(static function (RoutingConfigurator $routes) {
+               $routes->any('', [Post::class, 'list'])->name('list');
+               $routes->post('create/', [Post::class, 'add'])->name('add');
+               $routes->get('{code}/', [Post::class, 'get'])->name('get');
+               $routes->put('{code}/', [Post::class, 'update'])->name('update');
+               $routes->delete('{code}/', [Post::class, 'delete'])->name('delete');
+           });
+   };
+   ```
 
-10. Формирование ответа
+2. Подключите файл конфигурации в `/bitrix/.settings.php`.
 
-11. Метод `Controller::finalizeResponse($response)`
+   ```php
+   'routing' => [
+       'value' => [
+           'config' => ['web.php'],
+       ],
+       'readonly' => true,
+   ],
+   ```
 
-12. Вывод `$response` пользователю
+После настройки начнут работать следующие маршруты:
 
-### Несколько пространств имен
+-  `GET /blog/` -> `listAction`
 
-В `.settings.php` можно указать несколько `namespaces`, помимо `defaultNamespace`. Это необходимо, когда контроллеры расположены рядом со своими бизнес-сущностями. Например, в модуле Диск есть интеграция с облаками.
+-  `POST /blog/create/` -> `addAction`
+
+-  `GET /blog/{code}/` -> `getAction`
+
+-  `PUT /blog/{code}/` -> `updateAction`
+
+-  `DELETE /blog/{code}/` -> `deleteAction`
+
+Параметр `{code}` из маршрута передается в действие как аргумент с тем же именем.
+
+{% note tip "" %}
+
+Подробнее о роутинге и маршрутах читайте в статье [Роутинг](./routing).
+
+{% endnote %}
+
+### Вернуть ответ
+
+Контроллер автоматически преобразует скалярные значения и массивы в JSON-ответ через `Bitrix\Main\Engine\Response\AjaxJson`.
+
+Например, при запросе к `/blog/` получите:
+
+```json
+{"status":"success","data":"listAction","errors":[]}
+```
+
+Чтобы вернуть HTML, текст или установить заголовки, используйте `HttpResponse`:
+
+```php
+final class Post extends Controller
+{
+    public function listAction()
+    {
+        $response = new \Bitrix\Main\HttpResponse();
+        $response->appendContent('listAction');
+
+        return $response;
+    }
+}
+```
+
+Другие типы ответов описаны ниже в разделе Респонсы.
+
+### Передать параметр из URL
+
+Добавьте аргумент в метод действия:
+
+```php
+final class Post extends Controller
+{
+    public function getAction(string $code)
+    {
+        return 'getAction: ' . $code;
+    }
+
+    // ...
+}
+```
+
+При запросе по URL `/blog/my-first-blog/` в ответе получите:
+
+```json
+{"status":"success","data":"getAction: my-first-blog","errors":[]}
+```
+
+## Вызвать действие через AJAX
+
+Если не хотите использовать роутинг, вызывайте действия через `/bitrix/services/main/ajax.php`.
+
+### Настроить пространства имен
+
+Укажите пространство имен в `/local/modules/my.blog/.settings.php`:
 
 ```php
 return [
-     'controllers' => [
-         'value' => [
-             'namespaces' => [
-                 '\\Bitrix\\Disk\\CloudIntegration\\Controller' => 'cloud',
-             ],
-             'defaultNamespace' => '\\Bitrix\\Disk\\Controller',
-         ],
-         'readonly' => true,
-     ]
+    'controllers' => [
+        'value' => [
+            'defaultNamespace' => '\\My\\Blog\\Infrastructure\\Controller',
+            // Можно добавить дополнительные пространства:
+            // 'namespaces' => [
+            //     '\\My\\Blog\\Integration\\Controller' => 'integration',
+            // ],
+        ],
+        'readonly' => true,
+    ],
 ];
 ```
 
-В результате доступны для вызова контроллеры, которые расположены в обоих пространствах имен. Пространства поддерживают вызов через полное имя действия и через сокращенную запись.
+Система сопоставляет имена по шаблону:\
+`[vendor]:[module].[namespace].[className].[actionName]`
 
-Эквивалентные вызовы:
+#### Пример преобразования
 
--  `disk.CloudIntegration.Controller.GoogleFile.get`
+| Класс и метод | Идентификатор действия |
+| ------------- | ---------------------- |
+| `\My\Blog\Infrastructure\Controller\Post::getAction()` | `my:blog.Post.get` |
+| `\My\Blog\Integration\Controller\Lang::translateAction()` | `my:blog.integration.Lang.translate` |
 
--  `disk.cloud.GoogleFile.get`
 
--  `disk.Controller.File.get`
+{% note warning "" %}
 
--  `disk.File.get`
+Поддержка PSR-4 в AJAX-контроллерах доступна с версии 20.600.87 главного модуля.\
+Если префикс `vendor:` не указан, система подставляет `bitrix:`.
 
-### Вызов контроллера из компонента
+{% endnote %}
 
-Используйте `BX.ajax.runAction` с подписанными параметрами:
+### Вызвать действие из JavaScript
+
+Для вызова действия используйте `BX.ajax.runAction`.
 
 ```javascript
-BX.ajax.runAction('socialnetwork.api.user.stresslevel.get', {
-     signedParameters: this.signedParameters,
-     data: {
-         c: myComponentName,
-         fields: {
-             //..
-         }
-     }
+const response = await BX.ajax.runAction('my:blog.Post.get', {
+    data: {
+        code: 'my-first-blog'
+    }
+});
+console.log(response);
+```
+
+В результате получите объект.
+
+```javascript
+{
+    status: "success",
+    data: "getAction: my-first-blog",
+    errors: []
+}
+```
+
+Чтобы получить объект с ошибками, используйте `try/catch`.
+
+```javascript
+try {
+    const response = await BX.ajax.runAction('my:blog.Post.get');
+} catch (error) {
+    console.log(error);
+}
+```
+
+Пример объекта ошибки:
+
+```javascript
+{
+    status:"error",
+    data:null,
+    errors:[
+        {
+            message:"Could not find value for parameter {code}",
+            code:100,
+            customData:null
+        }
+    ]
+}
+```
+
+### Вызвать напрямую через HTTP
+
+Действие можно вызвать напрямую:
+
+```
+GET /bitrix/services/main/ajax.php?action=my:blog.Post.get&code=my-first-blog
+```
+
+{% note warning "" %}
+
+Такой способ не рекомендуется. Он не дает преимуществ перед `BX.ajax.runAction`. Если использовать `BX` невозможно, настройте отдельный маршрут.
+
+{% endnote %}
+
+## Разделить HTTP- и AJAX-контроллеры
+
+Чтобы избежать дублирования точек входа, вынесите логику в разные контроллеры. Это упростит управление доступом и аналитику.
+
+1. Создайте два контроллера:
+
+   ```bash
+   php bitrix.php make:controller post -m my.blog --actions=get,list -C Web
+   php bitrix.php make:controller post -m my.blog --actions=add,update,delete -C Ajax
+   ```
+
+   Получите два файла:
+
+   -  `/local/modules/my.blog/lib/Infrastructure/Controller/Web/Post.php`
+
+   -  `/local/modules/my.blog/lib/Infrastructure/Controller/Ajax/Post.php`
+
+2. Укажите AJAX-пространство в `/local/modules/my.blog/.settings.php`.
+
+   ```php
+   'controllers' => [
+       'value' => [
+           'defaultNamespace' => '\\My\\Blog\\Infrastructure\\Controller\\Ajax',
+       ],
+       'readonly' => true,
+   ],
+   ```
+
+3. В роутинге оставьте только Web-контроллер.
+
+   ```php
+   use Bitrix\Main\Routing\RoutingConfigurator;
+   use My\Blog\Infrastructure\Controller\Web\Post;
+   
+   return static function (RoutingConfigurator $routes) {
+       $routes
+           ->prefix('blog')
+           ->name('blog.post')
+           ->group(static function (RoutingConfigurator $routes) {
+               $routes->any('', [Post::class, 'list'])->name('list');
+               $routes->get('{code}/', [Post::class, 'get'])->name('get');
+           });
+   };
+   ```
+
+Теперь вызов `BX.ajax.runAction('my:blog.Post.get')` вернет ошибку, потому что действие `get` доступно через HTTP-маршрут.
+
+```json
+{
+    status:"error",
+    data:null,
+    errors:[
+        {
+            message:"Could not find description of get in My\\Blog\\Infrastructure\\Controller\\Ajax\\Post",
+            code:22002,
+            customData:null
+        }
+    ]
+}
+```
+
+## Аргументы действий
+
+Аргументы методов с суффиксом `Action` формируются автоматически из запроса по имени и типу.
+
+```php
+final class Post extends Controller
+{
+    public function getAction(string $code)
+    {
+        return 'getAction: ' . $code;
+    }
+
+    public function listAction(int $limit = 10, ?int $categoryId = null)
+    {
+        return 'listAction: ' . $limit;
+    }
+
+    // ...
+}
+```
+
+Правила:
+
+-  В методе `getAction` параметр `code` обязателен. При его отсутствии получите ошибку `Could not find value for parameter`.
+
+-  В `listAction` можно не передавать параметры: `limit` примет значение `10`, `categoryId` -- `null`.
+
+-  Если тип данных не совпадает, возникнет ошибка `Invalid value to match with parameter`.
+
+### Автоваринг встроенных классов
+
+Bitrix Framework создает объекты автоматически, если указать их в аргументах.
+
+#### Текущий пользователь
+
+Чтобы получить данные текущего пользователя, в аргументе укажите `\Bitrix\Main\Engine\CurrentUser`.
+
+```php
+final class Post extends Controller
+{
+    public function listAction(\Bitrix\Main\Engine\CurrentUser $user)
+    {
+        $isGuest = empty($user->getId());
+        if ($isGuest)
+        {
+            $this->addError(
+                new \Bitrix\Main\Error('Need authenticated')
+            );
+
+            return false;
+        }
+    }
+
+    // ...
+}
+```
+
+#### Постраничная навигация
+
+Чтобы получить объект навигации, укажите `Bitrix\Main\UI\PageNavigation`.
+
+```php
+final class Post extends Controller
+{
+    public function listAction(\Bitrix\Main\UI\PageNavigation $pagination)
+    {
+        return [
+            'page' => $pagination->getCurrentPage(),
+            'size' => $pagination->getPageSize(),
+            'limit' => $pagination->getLimit(),
+            'offset' => $pagination->getOffset(),
+        ];
+    }
+}
+```
+
+При запросе к `/blog/` в ответе получите `{"page":1,"size":20,"limit":20,"offset":0}`.
+
+Если запросить `/blog/?nav=page-3-size-33`, получите `{"page":3,"size":33,"limit":33,"offset":66}`.
+
+При вызове через `BX.ajax.runAction` параметры навигации передавайте в поле `navigation`.
+
+```javascript
+BX.ajax.runAction('my:blog.Post.list', {
+    navigation: { page: 3, size: 33 }
 });
 ```
 
-Внутри кода действия используйте метод `Controller::getUnsignedParameters()`.
+{% note tip "" %}
+
+О классе `PageNavigation` читайте в статье [Постраничная навигация](./../cms-basics/page-navigation).
+
+{% endnote %}
+
+#### Тело JSON-запроса
+
+Чтобы получить данные  из тела запроса с `Content-Type: application/json`, используйте `Bitrix\Main\Engine\JsonPayload`.
 
 ```php
-<?php
-	//...
-	public function getAction(array $fields)
-	{
-		//внутри распакованный, проверенный массив параметров
-		$parameters = $this->getUnsignedParameters();
-        
-		return $parameters['level'] * 100;
-	}
-```
-
-## Отладка и ответы контроллера
-
-Для удобной отладки ошибок включайте `debug => true` в `.settings.php`. Это позволит увидеть трейс ошибок и исключений.
-
-Если нужно отдать файл, воспользуйтесь классами `\Bitrix\Main\Engine\Response\File` и `\Bitrix\Main\Engine\Response\BFile`.
-
-```php
-class Controller extends Engine\Controller
+final class Post extends Controller
 {
-    public function downloadAction($orderId)
-    {
-        // Найдите прикрепленный fileId по $orderId
-        return \Bitrix\Main\Engine\Response\BFile::createByFileId($fileId);
-    }
-    public function downloadGeneratedTemplateAction()
-    {
-        // Генерация файла ... $generatedPath
-        return new \Bitrix\Main\Engine\Response\File(
-            $generatedPath,
-            'Test.pdf',
-            \Bitrix\Main\Web\MimeType::getByFileExtension('pdf')
-        );
-    }
-    public function showImageAction($orderId)
-    {
-        // Найдите прикрепленный imageId по $orderId
-        return \Bitrix\Main\Engine\Response\BFile::createByFileId($imageId)
-            ->showInline(true);
-    }
+    public function listAction(\Bitrix\Main\Engine\JsonPayload $json)
+    {
+        return [
+            'from array' => $json->getData()['value'] ?? null,
+            'from dictionary' => $json->getDataList()->get('value'),
+        ];
+    }
 }
 ```
 
-Для отдачи отресайзенного изображения используйте `\Bitrix\Main\Engine\Response\ResizedImage`.
+Проверьте через `curl`:
 
-Никогда не позволяйте пользователю запрашивать произвольные размеры для ресайза. Всегда подписывайте параметры или явно указывайте размеры в коде.
+```bash
+curl --request POST \
+    --url 'http://localhost/blog/' \
+    --header 'Content-Type: application/json' \
+    --data '{"value": 123}'
+```
+
+### Автоваринг кастомных классов
+
+Чтобы внедрить кастомный объект, укажите правила в `getAutoWiredParameters`.
+
+Допустим, есть таблет `MyPost`:
 
 ```php
-class Controller extends Engine\Controller
+final class Post extends Controller
 {
-    public function showAvatarAction($userId)
-    {
-        // Найдите прикрепленный imageId по $userId
-        return \Bitrix\Main\Engine\Response\ResizedImage::createByImageId($imageId, 100, 100);
-    }
+    public function getAction(string $code)
+    {
+        $post = \MyPost::query()->where('CODE', $code)->fetchObject();
+        if (!$post)
+        {
+            $this->addError(
+                new \Bitrix\Main\Error('Not found post')
+            );
+
+            return false;
+        }
+
+        // ...
+    }
 }
 ```
+
+Вместо поиска статьи по коду внутри действия, можно автоматически преобразовать параметр `code` в объект `MyPost`.
+
+**Вариант 1**. `ExactParameter` -- строгое соответствие имени.
+
+```php
+final class Post extends Controller
+{
+    public function getAutoWiredParameters(): array
+    {
+        return [
+            new \Bitrix\Main\Engine\AutoWire\ExactParameter(
+                \MyPost::class,
+                'code',
+                static function(string $className, string $code) {
+                    return \MyPost::query()->where('CODE', $code)->fetchObject();
+                }
+            )
+        ];
+    }
+
+    public function getAction(\MyPost $code)
+    {
+        // ...
+    }
+}
+```
+
+Если запись не найдена, система вернет ошибку `Could not construct parameter {code}`.
+
+**Вариант 2.** `Parameter` -- произвольное имя аргумента.
+
+```php
+final class Post extends Controller
+{
+    public function getAutoWiredParameters(): array
+    {
+        return [
+            new \Bitrix\Main\Engine\AutoWire\Parameter(
+                \MyPost::class,
+                function() {
+                    $code = (string)$this->getRequest()->get('code');
+
+                    return \MyPost::query()->where('CODE', $code)->fetchObject();
+                }
+            )
+        ];
+    }
+
+    public function getAction(\MyPost $post)
+    {
+        // ...
+    }
+}
+```
+
+Для валидации параметров используйте `Bitrix\Main\Validation\Engine\AutoWire\ValidationParameter`.
+
+{% note tip "" %}
+
+Подробнее о валидации в контроллерах читайте в статье [Валидация](./validation).
+
+{% endnote %}
+
+### Использовать сервис-локатор
+
+Сервис-локатор `Bitrix\Main\DI\ServiceLocator` подключается автоматически, если:
+
+-  класс не является экземпляром `CurrentUser`, `JsonPayload` или `PageNavigation`,
+
+-  класс не указан в `Controller::getAutoWiredParameters`.
+
+Это позволяет внедрять собственные сервисы:
+
+```php
+class PostRepository
+{}
+
+class PostService
+{
+    public function __construct(
+        private readonly PostRepository $repo,
+    )
+    {}
+}
+
+final class Post extends Controller
+{
+    public function getAction(PostService $service, string $code)
+    {
+        $response = new \Bitrix\Main\HttpResponse();
+        $response->addHeader('Content-type', 'text/plain');
+        $response->setContent(
+            var_export($service, true)
+        );
+
+        return $response;
+    }
+}
+```
+
+{% note warning "" %}
+
+Если класс не зарегистрирован в контейнере, он создается напрямую. Для управления жизненным циклом зарегистрируйте его в DI.
+
+{% endnote %}
+
+## Реквесты
+
+Реквест -- это класс, который описывает входные данные, применяет валидацию и передает их в действие.
+
+### Создать реквест
+
+Чтобы создать реквест, используйте консольную команду `make:request`.
+
+```bash
+php bitrix.php make:request PostCreate -m my.blog --fields
+```
+
+Команда генерирует файл `/local/modules/my.blog/lib/Request/PostCreateRequest.php` со следующим содержимым:
+
+```php
+namespace My\Blog\Infrastructure\Controller\Request;
+
+final class PostCreateRequest
+{
+    public function __construct(
+        public readonly ?string $title,
+        public readonly ?string $code,
+        public readonly ?string $content,
+    )
+    {}
+
+    public static function createFromRequest(\Bitrix\Main\Request $request): self
+    {
+        return new self(
+            $request->get('title'),
+            $request->get('code'),
+            $request->get('content'),
+        );
+    }
+}
+```
+
+Добавьте правила валидации.
+
+```php
+namespace My\Blog\Infrastructure\Controller\Request;
+
+use Bitrix\Main\Validation\Rule\Length;
+use Bitrix\Main\Validation\Rule\NotEmpty;
+
+final class PostCreateRequest
+{
+    public function __construct(
+        #[NotEmpty]
+        public readonly ?string $title,
+        #[NotEmpty]
+        public readonly ?string $code,
+        #[Length(max: 10_000)]
+        public readonly ?string $content,
+    )
+    {}
+
+    public static function createFromRequest(\Bitrix\Main\Request $request): self
+    {
+        return new self(
+            $request->get('title'),
+            $request->get('code'),
+            $request->get('content'),
+        );
+    }
+}
+```
+
+### Зарегистрировать реквест
+
+Добавьте реквест в контроллер через автоваринг аргументов `getAutoWiredParameters()`.
+
+```php
+final class Post extends Controller
+{
+    public function getAutoWiredParameters(): array
+    {
+        return [
+            new \Bitrix\Main\Validation\Engine\AutoWire\ValidationParameter(
+                PostCreateRequest::class,
+                fn() => PostCreateRequest::createFromRequest($this->getRequest()),
+            )
+        ];
+    }
+
+    public function addAction(PostCreateRequest $request): ?array
+    {
+        // ...
+    }
+}
+```
+
+Валидация выполняется до вызова действия. При ошибках действие не запускается.
+
+## Респонсы
+
+Контроллер поддерживает разные типы ответов:
+
+-  `Bitrix\Main\Engine\Response\AjaxJson`
+
+-  `Bitrix\Main\HttpResponse`
+
+-  `Bitrix\Main\Engine\Response\File`
+
+-  `Bitrix\Main\Engine\Response\BFile`
+
+-  `Bitrix\Main\Engine\Response\ResizedImage`
+
+-  `Bitrix\Main\Engine\Response\Component`
+
+-  `Bitrix\Main\Engine\Response\HtmlContent`
+
+-  `Bitrix\Main\Engine\Response\Json`
+
+-  `Bitrix\Main\Engine\Response\OpenDesktopApp`
+
+-  `Bitrix\Main\Engine\Response\OpenMobileApp`
+
+-  `Bitrix\Main\Engine\Response\Redirect`
+
+-  `Bitrix\Main\Engine\Response\Zip\Archive`
+
+### Вернуть JSON
+
+Этот тип используется по умолчанию. Явно создавайте `Json`, если нужен ответ без полей `status` и `errors`.
+
+### Вернуть файлы
+
+Чтобы вернуть файл, используйте `Response\File` или `Response\BFile`.
+
+```php
+use Bitrix\Main\Engine\Response\BFile;
+use Bitrix\Main\Engine\Response\File;
+
+public function downloadExportAction(string $blogCode)
+{
+    // Генерируем CSV-файл
+    $filePath = $this->generateBlogExport($blogCode);
+    return new File($filePath, "blog-{$blogCode}.csv", 'text/csv');
+}
+
+public function downloadAvatarAction(int $userId)
+{
+    $fileId = UserTable::getList(['filter' => ['ID' => $userId]])->fetch()['AVATAR_FILE_ID'];
+    return BFile::createByFileId($fileId);
+}
+```
+
+### Вернуть изображение
+
+Чтобы вернуть ресайз изображения, используйте `Response\ResizedImage`.
+
+```php
+use Bitrix\Main\Engine\Response\ResizedImage;
+
+public function avatarAction(int $userId)
+{
+    $imageId = /* ... */;
+    return ResizedImage::createByImageId($imageId, 100, 100);
+}
+```
+
+{% note warning "" %}
+
+Никогда не позволяйте пользователю задавать размеры напрямую. Используйте фиксированные значения или подписанные параметры.
+
+{% endnote %}
 
 ## Рендеринг
 
-Для работы с HTML-представлениями, компонентами и расширениями контроллеры предоставляют методы рендеринга. Это позволяет реализовать полноценные страницы в рамках MVC-архитектуры.
+Рендеринг -- это отрисовка HTML-страниц, компонентов или расширений из контроллера.
 
 {% note info "" %}
 
@@ -415,57 +834,27 @@ class Controller extends Engine\Controller
 
 {% endnote %}
 
-### Рендеринг файла
+### Рендеринг представления
 
-Чтобы вывести страницу используйте метод `renderView()`. Система автоматически найдет файл в директориях модуля.
+Чтобы вывести HTML-страницу, используйте метод `renderView()`. Переменные из второго аргумента доступны в шаблоне как `$blogs`.
 
 ```php
-class Entity extends Controller
+public function indexAction(): \Bitrix\Main\Engine\Response\View
 {
-    public function indexAction(): View
-    {
-        return $this->renderView('entity/index');
-    }
+    $blogs = BlogTable::getList()->fetchAll();
+    return $this->renderView('blog/index', [
+        'blogs' => $blogs
+    ]);
 }
 ```
 
-Система будет искать файл по пути `[module-folder]/views/entity/index.php`, где `[module-folder]` -- это путь до модуля в директории `bitrix` или `local`.
+Система ищет шаблон по пути `/local/modules/my.blog/views/blog/index.php`.
 
-Если указать ведущий `/`, поиск будет осуществляться от корня сайта. Такой вызов подключит тот же самый файл:
+### Рендеринг компонента
 
-```php
-class Entity extends Controller
-{
-    public function indexAction(): View
-    {
-        return $this->renderView('/local/modules/my.module/views/entity/index.php');
-    }
-}
-```
+Если страница состоит из одного компонента, отрисуйте его напрямую через `renderComponent()`. Отдельное представление не требуется.
 
-Если система не найдет путь к указанному файлу, она выбросит исключение `NotFoundPathToViewException`.
-
-Система автоматически подключает основной шаблон сайта -- добавлять header и footer вручную не нужно. Для представлений в директории модуля система обеспечивает защиту, поэтому проверка пролога не требуется.
-
-#### Передать параметры в представление
-
-Второй аргумент метода `renderView()` позволяет передавать данные в шаблон.
-
-```php
-class EntityController extends Controller
-{
-    public function indexAction(): View
-    {
-        return $this->renderView('entity/index', [
-            'param' => 'value',
-        ]);
-    }
-}
-```
-
-### Рендеринг компонентов
-
-Если страница содержит только один компонент, вы можете сразу вывести его с помощью `renderComponent()` и не создавать отдельное представление. Параметры метода:
+Параметры метода:
 
 -  `$name` -- символьное имя компонента, обязательный параметр.
 
@@ -474,14 +863,11 @@ class EntityController extends Controller
 -  `$params` -- ассоциативный массив параметров для передачи в компонент.
 
 ```php
-class EntityController extends Controller
+public function viewAction(string $code): \Bitrix\Main\Engine\Response\Component
 {
-    public function indexAction(): Component
-    {
-        return $this->renderComponent('bitrix:component.name', 'template-name', [
-            'param' => 'value',
-        ]);
-    }
+    return $this->renderComponent('my.blog:post.list', '', [
+        'BLOG_CODE' => $code
+    ]);
 }
 ```
 
@@ -490,242 +876,96 @@ class EntityController extends Controller
 Для компонентов и страниц, которые выводят только расширение, используйте прямой рендеринг расширения `renderExtension` без создания представлений или компонентов.
 
 ```php
-class EntityController extends Controller
+public function editorAction(string $blogCode): \Bitrix\Main\Engine\Response\Extension
 {
-    public function indexAction(): Extension
-    {
-        return $this->renderExtension('mymodule.vue.widget', [
-            'option' => 'name',
-        ]);
-    }
+    return $this->renderExtension('my.blog.vue.editor', [
+        'blogCode' => $blogCode
+    ]);
 }
 ```
 
-В метод можно передать только название расширения, без параметров.
-
-#### Настроить расширение
-
-Чтобы включить функцию, добавьте в файл `config.php` расширения параметр `controllerEntrypoint`. Укажите в нем функцию или метод, который выполняет рендеринг расширения.
+В `config.php` расширения укажите точку входа:
 
 ```php
-return [
-    // ...
-    'controllerEntrypoint' => 'MyModule.Vue.Widget.render',
-];
+'render' => [
+    'controllerEntrypoint' => 'MyBlog.Vue.Editor.render',
+],
 ```
-
-Если вы не укажете параметр `controllerEntrypoint`, система выбросит исключение `Bitrix\Main\Engine\Response\Render\Exception\InvalidConfigExtensionException`.
-
-#### Как работает рендеринг расширений
-
-При вызове `renderExtension()` система генерирует HTML-страницу, которая автоматически инициализирует ваше расширение.
-
-```html
-<html>
-    <head>...</head>
-    <body>
-        <!-- header -->
-
-        <div id="render_container_hb2j34235"></div>
-        <script>
-        BX.ready(function(){
-            // После загрузки страницы запускается функция рендеринга
-            MyModule.Vue.Widget.render('#render_container_hb2j34235', {'option': 'name'});
-        });
-        </script>
-
-        <!-- footer -->
-    </body>
-</html>
-```
-
-Функцию рендеринга на стороне клиента можно реализовать двумя способами.
-
-1. Использовать готовое приложение.
-
-   ```javascript
-   export function renderExtension(selector, options)
-   {
-       const app = BitrixVue.createApp(App);
-       app.use(router);
-       app.use(pinia);
-   
-       const store = useAppStore();
-       store.$patch(options); // Применяем переданные параметры
-   
-       app.mount(selector); // Монтируем приложение в контейнер
-   }
-   ```
-
-2. Создать приложение напрямую.
-
-   ```javascript
-   import { BitrixVue } from 'ui.vue3';
-   
-   export class Widget {
-       static renderExtension(selector, options) {
-           const app = BitrixVue.createApp({
-               data() {
-                   return { ...options }; // Данные из параметров
-               },
-               template: `<div>Ваш шаблон</div>`,
-           });
-           app.mount(selector);
-       }
-   }
-   ```
-
-Для неадаптированных расширений создайте отдельное представление с прямым вызовом расширения.
 
 {% note info "" %}
 
-Этот подход не является Server-Side Rendering (SSR). Расширения рендерятся в браузере после загрузки страницы, что оптимально для интерфейсов без требований к SEO.
+Рендеринг расширений работает в браузере -- это не Server-Side Rendering (SSR). Используйте его для интерфейсов без требований к SEO.
 
 {% endnote %}
 
 ### Отключить шаблон сайта
 
-Все методы рендеринга по умолчанию используют основной шаблон сайта. Чтобы отключить шаблон сайта передайте параметр `withSiteTemplate` со значением `false`.
+Чтобы отключить общий шаблон сайта, укажите `withSiteTemplate: false`.
 
 ```php
-// Файл
-return $this->renderView('entity/index', withSiteTemplate: false);
-
-// Компонент
-return $this->renderComponent('bitrix:component.name', withSiteTemplate: false);
-
-// Расширение
-return $this->renderExtension('mymodule.vue.widget', withSiteTemplate: false);
+$this->renderView('blog/index', withSiteTemplate: false);
 ```
 
-Отключение шаблона сайта не препятствует загрузке расширений и скриптов -- они остаются в выводе.
+## Ошибки и исключения
 
-### Обработка ошибок
-
-При ошибках рендеринга контроллер возвращает стандартный JSON-ответ с описанием ошибки, как в AJAX-действиях.
-
-## Постраничная навигация
-
-Постраничная навигация позволяет управлять отображением данных, разбивая их на страницы. В Bitrix это реализуется с помощью `\Bitrix\Main\UI\PageNavigation`.
-
-### Использование PageNavigation
-
-Для организации постраничной навигации в AJAX-действии необходимо использовать `\Bitrix\Main\UI\PageNavigation`. Это позволяет задавать лимит и смещение для выборки данных.
+Чтобы получить сообщение об ошибке, добавьте ошибку в контроллер с помощью `addError`:
 
 ```php
-use \Bitrix\Main\Engine\Response;
-use \Bitrix\Main\UI\PageNavigation;
+use Bitrix\Main\Error;
 
-public function listChildrenAction(Folder $folder, PageNavigation $pageNavigation)
+public function deleteAction(string $code)
 {
-	$children = $folder->getChildren([
-		'limit' => $pageNavigation->getLimit(),
-		'offset' => $pageNavigation->getOffset(),
-	]);
-
-	return new Response\DataType\Page('files', $children, function() use ($folder) {
-		return $folder->countChildren();
-	});
+    $blog = Blog::getByCode($code);
+    if (!$blog) {
+        $this->addError(new Error('Блог не найден', 'BLOG_NOT_FOUND'));
+        return null;
+    }
+    $blog->delete();
+    return ['success' => true];
 }
 ```
 
-### Передача номера страницы
+Ответ при ошибке:
 
-Для передачи номера страницы в JavaScript API используйте параметр `navigation`. Это позволяет указать, какую страницу данных необходимо загрузить.
-
-```javascript
-BX.ajax.runAction('vendor:someController.listChildren', {
-data: {
-    folderId: 12 
-},
-navigation: {
-    page: 3
-}
-});
-```
-
-### Оптимизация подсчета записей
-
-В `Response\DataType\Page($id, $items, $totalCount)` параметр `$totalCount` может быть числом или `\Closure`. Это позволяет отложить вычисление общего количества записей, что повышает производительность.
-
-## Внедрение зависимостей
-
-Внедрение зависимостей позволяет автоматически передавать объекты и параметры в методы действий контроллеров.
-
-### Автоматическое извлечение параметров
-
-Скалярные параметры, такие как `$userId`, `$newName`, `$groups`, автоматически извлекаются из REQUEST. Если параметр не найден и не имеет значения по умолчанию, действие не будет запущено, и сервер отправит сообщение об ошибке.
-
-```php
-public function renameUserAction($userId, $newName = 'guest', array $groups = array(2))
+```json
 {
-	$user = User::getById($userId);
-	$user->rename($newName);
-
-	return $user;
+    "status": "error",
+    "data": null,
+    "errors": [{
+        "message": "Блог не найден",
+        "code": "BLOG_NOT_FOUND"
+    }]
 }
 ```
 
-### Внедрение стандартных объектов
+Для отладки включите режим разработки `debug => true` в `/.settings.php`, чтобы видеть стек вызовов при ошибках.
 
-По умолчанию можно внедрять объекты, такие как `\Bitrix\Main\Engine\CurrentUser`, `\Bitrix\Main\UI\PageNavigation`, и `\CRestServer`. Имя параметра может быть произвольным, связывание происходит по классу.
+## Жизненный цикл контроллера
 
-### Внедрение пользовательских типов
+При вызове действия система выполняет последовательность шагов.
 
-Для внедрения своих типов объектов используйте метод `getPrimaryAutoWiredParameter`, который возвращает объект `ExactParameter`. Это позволяет автоматически создавать объекты на основе переданных данных.
+1. Создает экземпляр контроллера через  `new Controller()`.
 
-```php
-class Folder extends Controller
-{
-	public function getPrimaryAutoWiredParameter()
-	{
-	    return new ExactParameter(
-	        Folder::class,
-	        'folder',
-	        function($className, $id) {
-	            return Folder::loadById($id);
-	        }
-	    );
-	}
+2. Вызывает `Controller::init()` -- инициализация, которую можно переопределить.
 
-	public function renameAction(Folder $folder);
+3. Создает объект действия по имени `*Action`.
 
-	public function downloadAction(Folder $folder);
+4. Выполняет `Controller::prepareParams()` -- извлечение и валидация параметров.
 
-	public function deleteAction(Folder $folder);
-}
-```
+5. Выполняет `Controller::processBeforeAction($action)` -- предварительная обработка.
 
-### Вызов в JavaScript
+6. Вызывает событие `onBeforeAction`, которое позволяет отменить выполнение.
 
-При вызове действий с внедрением зависимостей в JavaScript необходимо передавать идентификаторы объектов, которые будут использоваться для создания экземпляров.
+7. Выполняет действие -- вызов `actionNameAction(...)`.
 
-```javascript
-BX.ajax.runAction('folder.rename', {
-data: {
-    id: 1 
-}
-});
-```
+8. Вызывает событие `onAfterAction` после выполнения действия.
 
-### Множественное внедрение
+9. Выполняет `Controller::processAfterAction(\$action, \$result)` -- постобработка результата.
 
-Если требуется описать несколько параметров для создания, используйте метод `getAutoWiredParameters`. Это позволяет гибко настраивать внедрение нескольких объектов в одно действие.
+10. Формирует ответ -- преобразование в JSON, HTML или файл.
 
-## Часто встречающиеся ошибки
+11. Выполняет `Controller::finalizeResponse(\$response)` -- финальная настройка заголовков.
 
-**Не найден обязательный параметр**
+12. Отправляет ответ пользователю.
 
-Решение: убедиться, что все обязательные параметры передаются в запросе. Проверьте, что параметры указаны в `$_POST` или `$_GET`, и их имена соответствуют ожидаемым.
-
-**Неверный тип параметра**
-
-Решение: проверить, что передаваемые параметры соответствуют ожидаемым типам. Используйте type-hinting для автоматической проверки типов.
-
-**Не удалось создать объект**
-
-Решение: убедиться, что функция создания объекта возвращает корректный экземпляр. Проверьте, что все необходимые данные для создания объекта передаются в запросе.
-
-**Проблемы с подписанными параметрами**
-
-Решение: убедиться, что подписанные параметры корректно передаются и проверяются. Используйте метод `getUnsignedParameters()` для работы с ними внутри контроллера.
+Переопределите шаги `2`, `5`, `9`, `11`, чтобы подключить сервисы, проверить права доступа, логировать запросы или изменить ответ.

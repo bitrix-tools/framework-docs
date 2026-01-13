@@ -1,6 +1,6 @@
 ---
 title: Выборка данных
-description: 'Выборка данных. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
+description: >-
 ---
 
 Для выборки данных с фильтрацией, группировкой и сортировкой в Bitrix Framework используются метод `getList` и объект [`Entity\Query`](./query-builder).
@@ -48,8 +48,9 @@ $result = BookTable::getList([
 ```php
 // Получение данных построчно
 $rows = [];
-$result = BookTable::getList($parameters);
-while ($row = $result->fetch()) {
+$result = BookTable::getList([$parameters]);
+while ($row = $result->fetch()) 
+{
     $rows[] = $row;
 }
 
@@ -67,8 +68,10 @@ class BookTable extends \Bitrix\Main\Entity\DataManager
     public static function fetchDataModification(): array
     {
         return [
-            function ($data) {
-                if (isset($data['PUBLISH_DATE'])) {
+            function ($data) 
+			{
+                if (isset($data['PUBLISH_DATE'])) 
+				{
                     $data['PUBLISH_DATE'] = date('d.m.Y', strtotime($data['PUBLISH_DATE']));
                 }
                 return $data;
@@ -199,7 +202,7 @@ BookTable::getList([
 
 -  `'%=NAME' => '%тест%'` -- содержит подстроку «тест»
 
-Последний вариант отличается от `'%NAME' => 'тест'` итоговым SQL-запросом.
+Последний вариант отличается от `‘%NAME' => 'тест'` итоговым SQL-запросом.
 
 -  `==` -- булево выражение для `ExpressionField`, например, `EXISTS()` или `NOT EXISTS()`
 
@@ -766,7 +769,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 
 6. **Сравнение** **с другим полем**
 
-   Метод `whereColumn` упрощает сравнение полей:
+   Метод `whereColumn` упрощает сравнение полей.
 
    ```php
    \Bitrix\Main\UserTable::query()
@@ -784,7 +787,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    // WHERE `main_user`.`NAME` = `main_user`.`LOGIN`
    ```
 
-   `whereIn` позволяет гибко использовать колонки в фильтре:
+   Метод `whereIn` позволяет гибко использовать колонки в фильтре.
 
    ```php
    \Bitrix\Main\UserTable::query()
@@ -908,6 +911,7 @@ use \Bitrix\Main\ORM\Query\Query;
 Для упрощения таких конструкций используйте хелпер. Хелпер -- это вспомогательный метод, который упрощает работу с выражениями. `Query::expr()` является хелпером, который позволяет использовать SQL-функции:
 
 ```php
+use \Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where(Query::expr()->length("LAST_NAME"), '>', 10)
     ->exec();
@@ -947,7 +951,6 @@ use \Bitrix\Main\ORM\Query\Query;
 
 ```php
 use \Bitrix\Main\ORM\Query\Query;
-
 \Bitrix\Main\UserTable::getList([
     'filter' => ['=ID' => 1]
 ]);

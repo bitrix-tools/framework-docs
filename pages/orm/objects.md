@@ -1,6 +1,6 @@
 ---
 title: Объекты
-description: 'Объекты. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
+description: "Объекты. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации."
 ---
 
 В Bitrix Framework объект представляет собой экземпляр класса. Класс соответствует записи в базе данных. Это позволяет работать с данными в виде объектов, а не массивов, что делает код более удобным.
@@ -408,7 +408,7 @@ $book->setTitle('Another one title');
 var_dump($book->state === State::CHANGED); // true
 
 $book->delete();
-var_dump($book->state === State::RAW); // true
+var_dump($book->state === State::DELETED); // true
 ```
 
 ## Сохранить объект
