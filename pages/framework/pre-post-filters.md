@@ -33,8 +33,8 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 {
     #[Prefilters([
         new HttpMethod([
-            HttpMethod::GET,
-            HttpMethod::POST,
+            HttpMethod::METHOD_GET,
+            HttpMethod::METHOD_POST,
         ]),
     ])]
     public function indexAction()
