@@ -18,10 +18,10 @@ navigation:
         type: 'link'
         url: '/pages/framework/architecture.html'
 
-#      - text: 'Справочник API'
-#        type: 'link'
-#        url: '/api/'
-#        target: '_blank'
+      - text: 'Справочник API'
+        type: 'link'
+        url: '/api/'
+        target: '_blank'
 
       - text: 'Быстрый старт'
         type: 'link'
