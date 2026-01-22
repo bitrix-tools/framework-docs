@@ -11,8 +11,6 @@ description: 'Расширения. Документация по Bitrix Framewo
 
 -  `/bitrix/js/<module>/<extension>/`
 
--  `/bitrix/modules/js/<module>/<extension>/`
-
 -  `/local/js/<module>/<extension>/`
 
 ## Структура
