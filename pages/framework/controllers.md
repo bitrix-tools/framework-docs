@@ -839,7 +839,7 @@ public function avatarAction(int $userId)
 Чтобы вывести HTML-страницу, используйте метод `renderView()`. Переменные из второго аргумента доступны в шаблоне как `$blogs`.
 
 ```php
-public function indexAction(): \Bitrix\Main\Engine\Response\View
+public function indexAction(): \Bitrix\Main\Engine\Response\Render\View
 {
     $blogs = BlogTable::getList()->fetchAll();
     return $this->renderView('blog/index', [
@@ -863,7 +863,7 @@ public function indexAction(): \Bitrix\Main\Engine\Response\View
 -  `$params` -- ассоциативный массив параметров для передачи в компонент.
 
 ```php
-public function viewAction(string $code): \Bitrix\Main\Engine\Response\Component
+public function viewAction(string $code): \Bitrix\Main\Engine\Response\Render\Component
 {
     return $this->renderComponent('my.blog:post.list', '', [
         'BLOG_CODE' => $code
@@ -876,7 +876,7 @@ public function viewAction(string $code): \Bitrix\Main\Engine\Response\Component
 Для компонентов и страниц, которые выводят только расширение, используйте прямой рендеринг расширения `renderExtension` без создания представлений или компонентов.
 
 ```php
-public function editorAction(string $blogCode): \Bitrix\Main\Engine\Response\Extension
+public function editorAction(string $blogCode): \Bitrix\Main\Engine\Response\Render\Extension
 {
     return $this->renderExtension('my.blog.vue.editor', [
         'blogCode' => $blogCode
