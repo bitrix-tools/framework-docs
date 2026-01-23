@@ -277,7 +277,7 @@ $userFields = [
     ],
 ];
 
-$userFieldId = $userTypeEntity->Add($userFields);
+$userFieldId = $userTypeEntity->Add( $userFields ); 
 ```
 
 **Пояснения к коду**
@@ -347,9 +347,11 @@ $enumField->SetEnumValues($newID, $addEnum);
 Код делает поле обязательным для заполнения.
 
 ```php
-$userTypeEntity->Update($userFieldId, [
-    'MANDATORY' => 'Y',
-]);
+$userTypeEntity->Update( $userFieldId,
+    [
+       'MANDATORY' => 'Y',
+    ]
+);
 ```
 
 ### Как обновить значения поля
@@ -367,18 +369,18 @@ $userTypeEntity->Update($userFieldId, [
 ```php
 global $USER_FIELD_MANAGER;
 
-$section = CIBlockSection::GetList([], [
+$section = CIBlockSection::GetList( [], [
     'IBLOCK_CODE'   => 'shop_news',
     'CODE'          => 'test_section',
 ])->Fetch();
 
-if (!$section) {
-    throw new Exception('Секция не найдена');
+if( !$section ) {
+    throw new Exception( 'Секция не найдена' );
 }
 
-$USER_FIELD_MANAGER->Update('IBLOCK_3_SECTION', $section['ID'], [
-    'UF_DEV2DAY_FIELD' => 'updated value'
-]);
+$USER_FIELD_MANAGER->Update( 'IBLOCK_3_SECTION', $section['ID'], [
+    'UF_DEV2DAY_FIELD'  => 'updated value'
+] );
 ```
 
 В случае успешного обновления метод `Update` вернет `true`.
@@ -394,7 +396,7 @@ $USER_FIELD_MANAGER->Update('IBLOCK_3_SECTION', $section['ID'], [
 {% endnote %}
 
 ```php
-$userTypeEntity->Delete($userFieldId);
+$userTypeEntity->Delete( $userFieldId );
 ```
 
 ## Выборка, фильтрация и сортировка
@@ -424,7 +426,8 @@ $rows = MyTable::query()
     ->addSelect('UF_GRATITUDE')
     ->where('UF_GRATITUDE', '>', 50)
     ->addOrder('UF_GRATITUDE', 'DESC')
-    ->fetchCollection();
+    ->fetchCollection()
+;
 ```
 
 ORM автоматически добавит JOIN к таблице пользовательских полей. Ничего писать вручную не нужно.
@@ -432,7 +435,8 @@ ORM автоматически добавит JOIN к таблице польз�
 После получения коллекции объектов можно работать с пользовательскими полями через геттеры и сеттеры.
 
 ```php
-foreach ($rows as $row) {
+foreach ($rows as $row)
+{
     $value = $row->getUfGratitude();
     $row->setUfGratitude($value + 50);
     $row->save();
