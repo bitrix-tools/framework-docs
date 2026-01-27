@@ -254,3 +254,47 @@ if (!$result->isSuccess()) {
     // ...
 }
 ```
+
+## Сообщение об ошибке после валидации
+
+Можно указать свой текст ошибки, который будет возвращен после валидации.
+
+```php
+use Bitrix\Main\Validation\Rule\PositiveNumber;
+
+class User
+{
+    public function __construct(
+        #[PositiveNumber(errorMessage: 'Invalid ID!')]
+        public readonly int $id,
+        #[PositiveNumber]
+        public readonly int $departmentId
+    )
+    {}
+}
+
+$user = new User(
+    id: -150,
+    departmentId: -1
+);
+
+/** @var \Bitrix\Main\Validation\ValidationService $service */
+$result = $service->validate($user);
+foreach ($result->getErrors() as $error) {
+    echo $error->getMessage();
+}
+// output: 'Invalid ID!'
+// output: 'Значение поля меньше допустимого'
+```
+
+## Получить сработавший валидатор
+
+Результат валидации хранит ошибки `\Bitrix\Main\Validation\ValidationError`. Каждая ошибка содержит свойство `failedValidator`.
+
+```php
+$errors = $service->validate($dto)->getErrors();
+foreach ($errors as $error) {
+    $failedValidator = $error->getFailedValidator();
+    // ...
+}
+```

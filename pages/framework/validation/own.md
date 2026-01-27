@@ -29,8 +29,8 @@ class UUIDv4Validator implements ValidatorInterface
         $result = new ValidationResult();
 
         if (
-            !is_string($uuid)
-            || preg_match('/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $uuid) !== 1
+            !is_string($value)
+            || preg_match('/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $value) !== 1
         ) {
             $result->addError(new ValidationError(
                 message: Loc::getMessage('FUSION_VALIDATION_VALIDATOR_UUIDV4_NOT_VALID'),
@@ -62,7 +62,7 @@ use Bitrix\Main\Validation\Rule\PropertyValidationAttributeInterface;
 use Bitrix\Main\Validation\ValidationError;
 use Bitrix\Main\Validation\ValidationResult;
 
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 class UUIDv4 implements PropertyValidationAttributeInterface
 {
     public function validateProperty(mixed $propertyValue): ValidationResult
@@ -73,7 +73,7 @@ class UUIDv4 implements PropertyValidationAttributeInterface
             !is_string($propertyValue)
             || preg_match('/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $propertyValue) !== 1
         ) {
-            $result->addError(new ValidationError('Значение не должно быть равно 1'));
+            $result->addError(new ValidationError('Значение должно быть корректным UUID v4'));
             return $result;
         }
 
@@ -251,6 +251,6 @@ class DateInterval extends AbstractClassValidationAttribute
 
 ```
 
-> Наследование `AbstractClassValidationAttribute` позволяет вам вернуть одно сообщение об ошибке errorMessage, вместо стандартных ответов валидатора
+> Наследование `AbstractClassValidationAttribute` позволяет вам вернуть одно сообщение об ошибке `errorMessage`, вместо стандартных ответов валидатора
 
 
