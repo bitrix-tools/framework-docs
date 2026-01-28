@@ -109,7 +109,15 @@ items:
       - name: Cookie-файлы
         href: /pages/framework/cookies.md
       - name: Валидация
-        href: /pages/framework/validation.md
+        items:
+          - name: Основное
+            href: /pages/framework/validation/main.md
+          - name: Существующие правила
+            href: /pages/framework/validation/exist.md
+          - name: Контроллеры
+            href: /pages/framework/validation/controller.md
+          - name: Свои правила
+            href: /pages/framework/validation/own.md
       - name: Результат работы и ошибки
         href: /pages/framework/results-and-errors.md
       - name: Компоненты
