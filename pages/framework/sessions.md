@@ -289,7 +289,7 @@ return [
 
 -  `lifetime` -- задает время жизни сессии в секундах.
 
--  `mode` -- режим работы сессий: `default` -- стандартный, `separated` -- [разделенный](./sessions#разделенный-режим-сессии).
+-  `mode` -- режим работы сессий: `default` -- стандартный, `separated` -- [разделенный](./sessions#razdelennyj-rezhim-sessii).
 
 -  `regenerateIdAfterLogin` -- отвечает за перегенерацию `session_id()` после успешного входа пользователя. По умолчанию `false`.
 
