@@ -20,6 +20,14 @@ title: Что нового
 
 ### 2026
 
+#### 29 января
+
+-  Добавили новый раздел [Информационные блоки](./pages/modules/iblocks/overview.html).
+-  Добавили описание новых команд в статье [Консольные команды](./pages/framework/console-commands.html#vstroennye-komandy).
+-  Описали рендеринг компонента для AJAX в статье [Контроллеры](./pages/framework/controllers.html#rendering-komponenta-dlya-ajax).
+-  Добавили новый раздел Валидация массивов в статью [Валидация](./pages/framework/validation.html#validaciya-massivov).
+-  Добавили информацию про мобильные PUSH-уведомления в статью [Двухэтапная авторизация](./pages/security/two-factor-auth.html#mobilnye-push-uvedomleniya)
+
 #### 13 января
 
 -  Добавили новую статью [Аннотации классов](./pages/orm/annotations.html).
