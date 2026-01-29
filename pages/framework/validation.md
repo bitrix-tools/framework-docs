@@ -73,7 +73,9 @@ public function __construct(int $userId)
 
    ```php
    use Bitrix\Main\DI\ServiceLocator;
+   use Bitrix\Main\Result;
    use Bitrix\Main\Validation\ValidationService;
+   
    class UserService
    {
        private ValidationService $validation;
@@ -174,6 +176,103 @@ foreach ($result3->getErrors() as $error)
 }
 ```
 
+### Валидация массивов
+
+Атрибут `#[ElementsType]` проверяет, что все элементы массива соответствуют одному из типов перечисления `\Bitrix\Main\Validation\Rule\Enum\Type`.
+
+-  `Type::Integer` -- целое число.
+
+-  `Type::String` -- строка.
+
+-  `Type::Float` -- число с плавающей точкой.
+
+-  `Type::Numeric` -- число, целое или с плавающей точкой.
+
+```php
+use Bitrix\Main\Validation\Rule\ElementsType;
+use Bitrix\Main\Validation\Rule\Enum\Type;
+use Bitrix\Main\Validation\Rule\NotEmpty;
+
+final class UserSettingsDto
+{
+    public function __construct(
+        // Свойство должно быть непустым массивом
+        #[NotEmpty]
+        // Все элементы массива должны быть целыми числами
+        #[ElementsType(Type::Integer)] // Используем элемент перечисления
+        public array $favoriteIds = []
+    ) 
+    {
+    }
+}
+
+// Пример использования
+$settings = new UserSettingsDto([1, 2, 3]);
+$result = $validationService->validate($settings); // Успешно
+
+$invalidSettings = new UserSettingsDto([1, 'текст', 3]);
+$result = $validationService->validate($invalidSettings); // Ошибка
+// Сообщение: "favoriteIds: Не все элементы массива соответствуют ожидаемому типу"
+```
+
+{% note info "" %}
+
+Атрибут `#[ElementsType]` не проверяет, заполнен ли массив. Для этого требуется дополнительно использовать атрибут `#[NotEmpty]`.
+
+{% endnote %}
+
+Если элементы требуют сложных правил, создайте для элемента отдельный DTO. Система проверит каждый элемент массива как отдельный объект.
+
+```php
+use Bitrix\Main\Validation\Rule\RegExp;
+use Bitrix\Main\Validation\Rule\Length;
+
+// DTO для одного элемента (тега)
+final class TagDto
+{
+    public function __construct(
+        #[RegExp('/^[a-z0-9\-_]+$/')]
+        #[Length(max: 20)]
+        public string $name
+    )
+    {
+    }
+}
+
+final class ArticleDto
+{
+    // Каждый элемент массива будет провалидирован как объект TagDto
+    public function __construct(
+        #[ElementsType(TagDto::class)]
+        public array $tags = []
+    )
+    {
+    }
+}
+
+// Использование
+$article = new ArticleDto();
+$article->tags = [
+    new TagDto('Tag1'),
+    new TagDto('Tag2'),
+    new TagDto('Invalid Tag!'), // Вызовет ошибку: не соответствует RegExp
+];
+
+$result = $validationService->validate($article);
+if (!$result->isSuccess()) {
+    foreach ($result->getErrors() as $error) {
+        // Путь к ошибке будет включать индекс элемента, например: "tags.2.name"
+        echo $error->getCode() . ': ' . $error->getMessage() . PHP_EOL;
+    }
+}
+```
+
+Если проверка типа `Type` или валидация через вложенный DTO не решают задачу, измените структуру объекта. Массив как нетипизированное хранилище параметров сложно валидировать.
+
+1. **Преобразовать массив в свойства объекта.** Если массив содержит пары `ключ=>значение`, создайте для каждого параметра отдельное типизированное свойство класса с конкретными атрибутами валидации.
+
+2. **Вынести массив в отдельный объект.** Создайте новый класс для данных из массива и добавьте его как типизированное свойство в исходный DTO.
+
 ### Валидация в контроллерах
 
 В контроллерах валидация помогает убедиться в корректности данных из запроса.
@@ -181,6 +280,7 @@ foreach ($result3->getErrors() as $error)
 ```php
 use Bitrix\Main\Validation\Rule\NotEmpty;
 use Bitrix\Main\Validation\Rule\PhoneOrEmail;
+
 final class CreateUserDto
 {
     public function __construct(
@@ -193,13 +293,19 @@ final class CreateUserDto
         #[NotEmpty]
         public ?string $passwordRepeat,
     )
-    {}
+    {
+    }
 }
 ```
 
 В коде класс будет выглядеть следующим образом:
 
 ```php
+use Bitrix\Main\DI\ServiceLocator;
+use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Result;
+use Bitrix\Main\Validation\ValidationService;
+
 class UserController extends Controller
 {
     private ValidationService $validation;
@@ -234,6 +340,10 @@ class UserController extends Controller
 Создайте фабричный метод в DTO, чтобы избежать повторения кода.
 
 ```php
+use Bitrix\Main\HttpRequest;
+use Bitrix\Main\Validation\Rule\NotEmpty;
+use Bitrix\Main\Validation\Rule\PhoneOrEmail;
+
 final class CreateUserDto
 {
     public function __construct(
@@ -262,6 +372,9 @@ final class CreateUserDto
 Класс `Bitrix\Main\Validation\Engine\AutoWire\ValidationParameter` устранит повторяющуюся логику валидации.
 
 ```php
+use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Result;
+
 class UserController extends Controller
 {
     public function getAutoWiredParameters()
@@ -319,6 +432,7 @@ if (!$result->isSuccess())
 
 ```php
 use Bitrix\Main\Validation\Rule\PositiveNumber;
+
 class User
 {
     public function __construct(
@@ -456,10 +570,12 @@ Bitrix Framework предоставляет готовые атрибуты и �
 
 ```php
 namespace Bitrix\Main\Validation\Validator;
+
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Validation\ValidationError;
 use Bitrix\Main\Validation\ValidationResult;
 use Bitrix\Main\Validation\Validator\ValidatorInterface;
+
 final class Min implements ValidatorInterface
 {
     public function __construct(
@@ -515,7 +631,8 @@ class NotOne implements PropertyValidationAttributeInterface
     public function validateProperty(mixed $propertyValue): ValidationResult
     {
         $result = new ValidationResult();
-        if ($propertyValue === 1) {
+        if ($propertyValue === 1)
+        {
             $result->addError(new ValidationError('Значение не должно быть равно 1'));
         }
         return $result;
@@ -542,7 +659,9 @@ final class Range extends AbstractPropertyValidationAttribute
         private readonly int $min,
         private readonly int $max,
         protected ?string $errorMessage = null
-    ) {}
+    )
+    {
+    }
 
     protected function getValidators(): array
     {
@@ -574,7 +693,8 @@ class NotOne extends AbstractClassValidationAttribute
         $result = new ValidationResult();
         $properties = (new ReflectionClass($object))->getProperties();
         
-        if (count($properties) > 2) {
+        if (count($properties) > 2)
+        {
             $result->addError(new ValidationError('Класс содержит слишком много свойств'));
         }
         return $result;

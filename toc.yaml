@@ -235,3 +235,16 @@ items:
         href: /pages/performance/hot-and-cold-session.md
       - name: Как оптимизировать запросы к базе данных
         href: /pages/performance/query-optimization.md
+
+  - name: Модули
+    items:
+    - name: Информационные блоки
+      items:
+        - name: Введение и базовые концепции
+          href: /pages/modules/iblocks/overview.md
+        - name: Схема работы инфоблоков и основные объекты
+          href: /pages/modules/iblocks/architecture.md
+        - name: Работа с инфоблоками через API
+          href: /pages/modules/iblocks/api.md
+        - name: Производительность и частые ошибки
+          href: /pages/modules/iblocks/performance.md

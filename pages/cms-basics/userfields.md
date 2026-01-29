@@ -277,7 +277,7 @@ $userFields = [
     ],
 ];
 
-$userFieldId = $userTypeEntity->Add( $userFields ); 
+$userFieldId = $userTypeEntity->Add($userFields); 
 ```
 
 **Пояснения к коду**
@@ -310,6 +310,7 @@ $userFieldId = $userTypeEntity->Add( $userFields );
 
 ```php
 $enumField = new CUserFieldEnum();
+
 $addEnum = [];
 $addEnum['n'.$i] = [
     'XML_ID' => $key,
@@ -317,6 +318,7 @@ $addEnum['n'.$i] = [
     'DEF' => 'N',
     'SORT' => $i*10
 ];
+
 $enumField->SetEnumValues($newID, $addEnum);
 ```
 
@@ -347,11 +349,9 @@ $enumField->SetEnumValues($newID, $addEnum);
 Код делает поле обязательным для заполнения.
 
 ```php
-$userTypeEntity->Update( $userFieldId,
-    [
-       'MANDATORY' => 'Y',
-    ]
-);
+$userTypeEntity->Update($userFieldId, [
+    'MANDATORY' => 'Y',
+]);
 ```
 
 ### Как обновить значения поля
@@ -369,18 +369,19 @@ $userTypeEntity->Update( $userFieldId,
 ```php
 global $USER_FIELD_MANAGER;
 
-$section = CIBlockSection::GetList( [], [
-    'IBLOCK_CODE'   => 'shop_news',
-    'CODE'          => 'test_section',
+$section = \CIBlockSection::GetList([], [
+    'IBLOCK_CODE' => 'shop_news',
+    'CODE' => 'test_section',
 ])->Fetch();
 
-if( !$section ) {
-    throw new Exception( 'Секция не найдена' );
+if (!$section)
+{
+    throw new \Exception('Секция не найдена');
 }
 
-$USER_FIELD_MANAGER->Update( 'IBLOCK_3_SECTION', $section['ID'], [
-    'UF_DEV2DAY_FIELD'  => 'updated value'
-] );
+$USER_FIELD_MANAGER->Update('IBLOCK_3_SECTION', $section['ID'], [
+    'UF_DEV2DAY_FIELD' => 'updated value',
+]);
 ```
 
 В случае успешного обновления метод `Update` вернет `true`.
@@ -396,7 +397,7 @@ $USER_FIELD_MANAGER->Update( 'IBLOCK_3_SECTION', $section['ID'], [
 {% endnote %}
 
 ```php
-$userTypeEntity->Delete( $userFieldId );
+$userTypeEntity->Delete($userFieldId);
 ```
 
 ## Выборка, фильтрация и сортировка
@@ -456,12 +457,12 @@ foreach ($rows as $row)
    -  `USER_TYPE_ID` -- тип данных. Укажите `double` -- число.
 
    ```php
-   $type = new CUserTypeEntity();
+   $type = new \CUserTypeEntity();
+   
    $type->Add([
        'ENTITY_ID' => 'BLOG_RATING',
        'FIELD_NAME' => 'UF_RATING',
        'USER_TYPE_ID' => 'double',
-       // необязательно
        'SETTINGS' => [
            'DEFAULT_VALUE' => 5,
        ],
@@ -469,7 +470,7 @@ foreach ($rows as $row)
            'ru' => 'Рейтинг',
        ],
        'LIST_FILTER_LABEL' => [
-          'ru' => 'Рейтинг',
+           'ru' => 'Рейтинг',
        ],
        'EDIT_FORM_LABEL' => [
            'ru' => 'Рейтинг',
@@ -489,9 +490,11 @@ foreach ($rows as $row)
    $manager = \Bitrix\Main\UserField\Internal\UserFieldHelper::getInstance()->getManager();
    $entityId = 'BLOG_RATING';
    $itemId = 123;
+   
    $fields = [
        'UF_RATING' => 50,
    ];
+   
    $manager->Update($entityId, $itemId, $fields); 
    ```
 
@@ -499,11 +502,12 @@ foreach ($rows as $row)
 
    ```php
    /**
-   * @var \CUserTypeManager $manager
-   */
+    * @var \CUserTypeManager $manager
+    */
    $manager = \Bitrix\Main\UserField\Internal\UserFieldHelper::getInstance()->getManager();
    $entityId = 'BLOG_RATING';
    $itemId = 123;
+   
    $specificValue = $manager->GetUserFieldValue($entityId, 'UF_RATING', $itemId);
    $allFields = $manager->GetUserFields($entityId, $itemId);
    ```

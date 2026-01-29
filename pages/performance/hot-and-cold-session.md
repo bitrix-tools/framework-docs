@@ -47,7 +47,7 @@ return [
     'session' => [
         'value' => [
             'mode' => 'separated',
-            'lifetime' = 14400, 
+            'lifetime' => 14400, 
             'handlers' => [
                 'kernel' => 'encrypted_cookies',
                 'general' => [
