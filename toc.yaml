@@ -31,14 +31,6 @@ navigation:
         type: 'link'
         url: '/whats-new.html'
 
-      #- text: 'Основы CMS'
-      #  type: 'link'
-      #  url: '#'
-
-      #- text: 'Модули'
-      #  type: 'link'
-      #  url: '#'
-
     rightItems:
       - type: controls
 
@@ -51,10 +43,7 @@ items:
         href: /pages/about/cms-comparison.md
       - name: Отличия от других фреймворков
         href: /pages/about/framework-comparison.md
-      - name: Правки в документации
-        href: change-article.md
-        hidden: true
-      - name: Чего нового
+      - name: Что нового
         href: whats-new.md
         hidden: true
       - name: Страница 404
@@ -248,3 +237,5 @@ items:
           href: /pages/modules/iblocks/api.md
         - name: Производительность и частые ошибки
           href: /pages/modules/iblocks/performance.md
+  - name: Обратная связь
+    href: feedback.md
