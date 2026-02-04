@@ -712,7 +712,7 @@ $APPLICATION->IncludeComponent("custom:catalog.element", "", array(...), $compon
 
 В одной папке, например, `/bitrix/templates/текущий_шаблон_сайта/components/` есть шаблоны двух компонентов:
 
--  `catalog` -- контроллер, в нем есть catalog.section,
+-  `catalog` -- комплексный компонент, в нем есть catalog.section,
 
 -  `catalog.section` -- обычный компонент.
 
