@@ -626,7 +626,7 @@ $elementClassName = \Bitrix\Iblock\IblockTable::compileEntity('News');
 
 {% note warning "" %}
 
-Не используйте `\Bitrix\Iblock\ElemantTable`. Он работает только с базовыми полями.
+Не используйте `\Bitrix\Iblock\ElementTable`. Он работает только с базовыми полями.
 
 {% endnote %}
 
