@@ -239,3 +239,5 @@ items:
           href: /pages/modules/iblocks/performance.md
   - name: Обратная связь
     href: feedback.md
+  - name: Контрибьюторам
+    href: CONTRIBUTING.md
