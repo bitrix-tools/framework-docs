@@ -121,12 +121,14 @@ class MyComponent extends CBitrixComponent
 {
     public function executeComponent()
     {
-        // если используется кеш, а также есть сохраненные данные, то выводим данные из кеша
+        // Проверяем кеш. Если кеша нет, startResultCache() вернет true
+        // и код внутри условия выполнится для генерации данных
+        // Если кеш есть — вернет false, и данные будут взяты из кеша
         if ($this->startResultCache())
         {
-            // иначе формируем массив $arResult
+            // Формируем массив $arResult
             $this->initResult();
-            // подключаем шаблон компонента
+            // Подключаем шаблон компонента
             $this->includeComponentTemplate();
         }
     }
