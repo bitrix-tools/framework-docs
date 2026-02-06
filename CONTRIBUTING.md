@@ -2,11 +2,8 @@
 
 Документация Bitrix Framework находится в открытом репозитории на [GitHub](https://github.com/bitrix-tools/framework-docs). Если вы нашли ошибку или хотите дополнить статью, отправьте нам Pull Request.
 
-{% note tip "" %}
-
-[Как отправить Pull Request](./feedback.md#pullrequest)
-
-{% endnote %}
+> [!TIP]
+> [Как отправить Pull Request](./feedback.md#pullrequest)
 
 Чтобы все статьи выглядели единообразно, придерживайтесь правил оформления текста и примеров кода.
 
