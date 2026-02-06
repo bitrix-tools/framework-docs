@@ -113,6 +113,8 @@ items:
         href: /pages/framework/events.md
       - name: Очереди сообщений
         href: /pages/framework/messenger.md
+      - name: Временное хранение
+        href: /pages/framework/storage.md
       - name: Консольные команды
         href: /pages/framework/console-commands.md
 
