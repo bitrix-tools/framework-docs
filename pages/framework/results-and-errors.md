@@ -128,7 +128,7 @@ function updateUserWithTypedResult(int $userId, array $fields): UserUpdateResult
         return $result;
     }
     try {
-        $updatedData = updateUserInDatabase(\$userId, \$fields);
+        $updatedData = updateUserInDatabase($userId, $fields);
         $result->setUpdatedData(
             $updatedData,
             new DateTime()
