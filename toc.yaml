@@ -185,6 +185,31 @@ items:
       - name: Панель администрирования
         href: /pages/cms-basics/admin-panel.md
 
+  - name: Расширенные знания
+    items:
+      - name: Дата и время
+        href: /pages/advanced/datetime.md
+      - name: Локализация
+        href: /pages/advanced/localization.md
+      - name: Отладка
+        href: /pages/advanced/debug.md
+      - name: Резервное копирование
+        href: /pages/advanced/backup.md
+      - name: Логгеры
+        href: /pages/advanced/logger.md
+      - name: Идентификатор UUID
+        href: /pages/advanced/uuid.md
+      - name: Итератор
+        href: /pages/advanced/stepper.md
+      - name: Работа с изображениями
+        href: /pages/advanced/images.md
+      - name: Геолокация
+        href: /pages/advanced/geolocation.md
+      - name: Нумератор
+        href: /pages/advanced/numerator.md
+      - name: Пользовательские соглашения
+        href: /pages/advanced/user-consent.md
+
   - name: Безопасность
     items:
       - name: Права доступа
