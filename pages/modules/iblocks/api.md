@@ -181,8 +181,8 @@ $result = $authorProp->Add([
     'IBLOCK_ID'     => $iblockId,
     'NAME'          => 'Автор',
     'CODE'          => 'AUTHOR',      
-    'PROPERTY_TYPE' => 'S',           // строка
-    'MULTIPLE'      => 'N',           // одно значение 
+    'PROPERTY_TYPE' => 'S', // строка
+    'MULTIPLE'      => 'N', // одно значение 
 ]);
 
 if (!$result)
@@ -198,7 +198,7 @@ $result = $tagsProp->Add([
     'NAME'          => 'Теги',
     'CODE'          => 'TAGS',
     'PROPERTY_TYPE' => 'S',     
-    'MULTIPLE'      => 'Y',      // несколько значений
+    'MULTIPLE'      => 'Y', // несколько значений
 ]);
 
 if (!$result)
