@@ -361,9 +361,9 @@ final class CreateUserDto
     public static function createFromRequest(\Bitrix\Main\HttpRequest $request): self
     {
         return new static(
-            login: (string)$request->getRequest()->get('login'),
-            password: (string)$request->getRequest()->get('password'),
-            passwordRepeat: (string)$request->getRequest()->get('passwordRepeat'),
+            login: (string)$request->get('login'),
+            password: (string)$request->get('password'),
+            passwordRepeat: (string)$request->get('passwordRepeat'),
         );
     }
 }
