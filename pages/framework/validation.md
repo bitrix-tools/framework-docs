@@ -221,11 +221,12 @@ $result = $validationService->validate($invalidSettings); // Ошибка
 
 {% endnote %}
 
-Если элементы требуют сложных правил, создайте для элемента отдельный DTO. Система проверит каждый элемент массива как отдельный объект.
+Если элементы требуют сложных правил, создайте для элемента отдельный DTO. Для полной валидации объектов в массиве используйте атрибут `#[Validatable]`.
 
 ```php
 use Bitrix\Main\Validation\Rule\RegExp;
 use Bitrix\Main\Validation\Rule\Length;
+use Bitrix\Main\Validation\Rule\Recursive\Validatable;
 
 // DTO для одного элемента (тега)
 final class TagDto
@@ -241,9 +242,9 @@ final class TagDto
 
 final class ArticleDto
 {
-    // Каждый элемент массива будет провалидирован как объект TagDto
+    // Атрибут Validatable обеспечит валидацию каждого объекта TagDto в массиве
     public function __construct(
-        #[ElementsType(TagDto::class)]
+        #[Validatable]
         public array $tags = []
     )
     {
@@ -253,8 +254,8 @@ final class ArticleDto
 // Использование
 $article = new ArticleDto();
 $article->tags = [
-    new TagDto('Tag1'),
-    new TagDto('Tag2'),
+    new TagDto('tag1'),
+    new TagDto('tag2'),
     new TagDto('Invalid Tag!'), // Вызовет ошибку: не соответствует RegExp
 ];
 
@@ -263,6 +264,29 @@ if (!$result->isSuccess()) {
     foreach ($result->getErrors() as $error) {
         // Путь к ошибке будет включать индекс элемента, например: "tags.2.name"
         echo $error->getCode() . ': ' . $error->getMessage() . PHP_EOL;
+    }
+}
+```
+
+{% note info "" %}
+
+`#[ElementsType]` проверяет только **тип** элементов массива, но не выполняет полную валидацию объектов. Для валидации объектов в массиве используйте атрибут `#[Validatable]`.
+
+{% endnote %}
+
+Если необходимо одновременно проверить тип и провалидировать объекты, можно комбинировать атрибуты:
+
+```php
+final class ArticleDto
+{
+    public function __construct(
+        // Проверяет, что все элементы массива являются объектами класса TagDto
+        #[ElementsType(className: TagDto::class)]
+        // Валидирует каждый объект TagDto в массиве
+        #[Validatable]
+        public array $tags = []
+    )
+    {
     }
 }
 ```
