@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 4 марта
+
+- Добавили новую статью [Vue.js](./pages/framework/vue.md).
+
 #### 26 февраля
 
 - Добавили описание подключения key-value хранилищ в статью [Конфигурация](./pages/database/configuration.md#key-value).
