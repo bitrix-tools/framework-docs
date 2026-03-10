@@ -22,7 +22,7 @@ title: Что нового
 
 #### 4 марта
 
-- Добавили новую статью [Vue.js](./pages/framework/vue.md).
+- Добавили новую статью [Vue.js](./pages/advanced/vue.md).
 
 #### 26 февраля
 
