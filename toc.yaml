@@ -197,6 +197,8 @@ items:
         href: /pages/advanced/backup.md
       - name: Vue.js
         href: /pages/advanced/vue.md
+      - name: Многосайтовость
+        href: /pages/advanced/multisite.md
       - name: Логгеры
         href: /pages/advanced/logger.md
       - name: Идентификатор UUID
