@@ -207,6 +207,8 @@ items:
         href: /pages/advanced/stepper.md
       - name: Работа с изображениями
         href: /pages/advanced/images.md
+      - name: HTTP-клиент
+        href: /pages/advanced/http-client.md
       - name: Геолокация
         href: /pages/advanced/geolocation.md
       - name: Нумератор
