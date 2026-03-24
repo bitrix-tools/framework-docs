@@ -934,9 +934,7 @@ public function editorAction(string $blogCode): \Bitrix\Main\Engine\Response\Ren
 В `config.php` расширения укажите точку входа:
 
 ```php
-'render' => [
-    'controllerEntrypoint' => 'MyBlog.Vue.Editor.render',
-],
+'controllerEntrypoint' => 'MyBlog.Vue.Editor.render',
 ```
 
 {% note info "" %}
