@@ -242,6 +242,8 @@ items:
         href: /pages/security/proactive-security.md
       - name: Двухэтапная авторизация
         href: /pages/security/two-factor-auth.md
+      - name: Шифрование данных
+        href: /pages/security/cipher.md
 
   - name: Производительность
     items:
