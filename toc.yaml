@@ -244,6 +244,8 @@ items:
         href: /pages/security/two-factor-auth.md
       - name: Шифрование данных
         href: /pages/security/cipher.md
+      - name: Криптографические поля в ORM
+        href: /pages/security/cryptofield.md
 
   - name: Производительность
     items:
