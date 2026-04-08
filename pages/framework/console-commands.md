@@ -311,10 +311,18 @@ return [
 
 ```bash
 # Выполнять команду каждый день в 3:00
-0 3 * * * php /path/to/document_root/bitrix/bitrix.php [command] --no-interaction
+0 3 * * * cd /path/to/document_root && php bitrix/bitrix.php [command] --no-interaction
 
 # Выполнять команду каждое воскресенье в 4:00
-0 4 * * 0 php /path/to/document_root/bitrix/bitrix.php [command] --no-interaction
+0 4 * * 0 cd /path/to/document_root && php bitrix/bitrix.php [command] --no-interaction
 ```
 
 Опция `--no-interaction` отключает интерактивные запросы.
+
+{% note tip "" %}
+
+Важно: Для корректного определения DOCUMENT_ROOT консольными скриптами Битрикса необходимо запускать команду таким образом, чтобы путь к скрипту был указан относительно текущей рабочей директории.
+Рекомендуется использовать конструкцию cd `/path/to/site && php bitrix/bitrix.php ....`
+Запуск по абсолютному пути (например, `php /var/www/.../bitrix.php`) без предварительного перехода в директорию сайта может привести к ошибке инициализации, так как текущая реализация некорректно обрабатывает абсолютные пути в `$_SERVER['SCRIPT_NAME']`.
+
+{% endnote %}
