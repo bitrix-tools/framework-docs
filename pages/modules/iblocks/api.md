@@ -145,7 +145,7 @@ ORM-методы `PropertyTable::add`, `PropertyTable::update`, `PropertyTable::
 
 {% note tip "" %}
 
-Подробную информацию о свойствах и типах читайте в статье [Схема работы и основные объекты](./architecture).
+Подробную информацию о свойствах и типах читайте в статье [Схема работы и основные объекты](./architecture.md).
 
 {% endnote %}
 
@@ -357,7 +357,7 @@ ORM позволяет работать с разделами как с полн
 
 {% note tip "" %}
 
-О том, как создать пользовательские поля к разделам инфоблока читайте в статье [Пользовательские поля](./../../cms-basics/userfields).
+О том, как создать пользовательские поля к разделам инфоблока читайте в статье [Пользовательские поля](./../../cms-basics/userfields.md).
 
 {% endnote %}
 
@@ -469,14 +469,15 @@ foreach ($sections as $item)
 
 ### Получить родительский раздел
 
-Чтобы получить родительский раздел, подгрузите его через псевдоним `PARENT_SECTION`.
+Чтобы получить родительский раздел, добавьте в выборку связь `PARENT_SECTION`.
 
 ```php
 // находим вложенный раздел Выставки и его родителя Мероприятия за один запрос
 $exhibitionSection = $sectionNewsClass::query()
     ->setSelect([
-        'ID', 'NAME',
-        'PARENT_SECTION' => 'IBLOCK_SECTION', // загружаем родителя
+        'ID',
+        'NAME',
+        'PARENT_SECTION', // загружаем родителя
     ])
     ->where('CODE', 'exhibitions')
     ->setLimit(1)
@@ -484,7 +485,7 @@ $exhibitionSection = $sectionNewsClass::query()
 
 if ($exhibitionSection)
 {
-    $parent = $exhibitionSection->getIblockSection(); // метод возвращает объект родителя
+    $parent = $exhibitionSection->getParentSection(); // метод возвращает объект родителя
     if ($parent)
     {
         echo "Родительский раздел: " . $parent->getName(); // Мероприятия
@@ -494,7 +495,7 @@ if ($exhibitionSection)
 
 {% note info "" %}
 
-Без `PARENT_SECTION` в `setSelect()` метод `getIblockSection()` вернет `null`.
+Без `PARENT_SECTION` в `setSelect()` метод `getParentSection()` вернет `null`.
 
 {% endnote %}
 
