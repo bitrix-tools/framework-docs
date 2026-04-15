@@ -186,7 +186,7 @@ function setCityCookie(city) {
     xhr.open("POST", "/local/ajax/set_cookie.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    xhr.onreadystatecha nge = () => {
+    xhr.onreadystatechange = () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             if (response.STATUS === 'SUCCESS') {
