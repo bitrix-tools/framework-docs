@@ -262,6 +262,13 @@ items:
       - name: Как оптимизировать запросы к базе данных
         href: /pages/performance/query-optimization.md
 
+  - name: Пользовательский интерфейс UI
+    items:
+      - name: Анимации Lottie
+        href: /pages/ui/lottie.md
+      - name: Работа с эмодзи
+        href: /pages/ui/emoji.md
+
   - name: Модули
     items:
     - name: Информационные блоки
