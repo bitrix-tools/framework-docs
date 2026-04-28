@@ -138,7 +138,7 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
 В начале настройки меню содержит только два пункта: создание пула и настройку localhost. После создания пула появляются все пункты. Чтобы выбрать пункт меню, введите число и нажмите Enter. Для выхода из меню нажмите `0` или `Ctrl+C`.
 
-![](./install-env-2.png){width=937px height=408px}
+![](./_images/install-env-2.png){width=937px height=408px}
 
 ## Обязательные настройки окружения
 
@@ -232,4 +232,4 @@ wget https://dev.1c-bitrix.ru/download/scripts/bitrix_server_test.php # скач
 
 Откройте страницу `bitrix_server_test.php` в браузере. Скрипт покажет параметры конфигурации сервера, необходимые для использования всех возможностей продукта.
 
-![](./install-env.png){width=1049px height=820px}
+![](./_images/install-env.png){width=1049px height=820px}

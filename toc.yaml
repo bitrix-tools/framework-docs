@@ -52,6 +52,8 @@ items:
 
   - name: С чего начать
     items:
+      - name: Как кастомизировать
+        href: /pages/get-started/how-customize.md
       - name: Установка окружения
         href: /pages/get-started/install-env.md
       - name: Установка дистрибутива
