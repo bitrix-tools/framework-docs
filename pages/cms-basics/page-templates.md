@@ -198,17 +198,17 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 
 В результате шаблон будет доступен при создании страницы.
 
-![](./page-templates.png){width=677px height=323px}
+![](./_images/page-templates.png){width=677px height=323px}
 
 При создании новой страницы по этому шаблону контент-менеджер увидит визуальный редактор с заполненными элементами.
 
-![](./page-templates-2.png){width=700px height=506px}
+![](./_images/page-templates-2.png){width=700px height=506px}
 
 ### Активный шаблон
 
 Активный шаблон -- это шаблон, который при создании страницы запрашивает дополнительные данные у контент-менеджера. Эти данные можно использовать для настройки структуры или содержимого страницы.
 
-![](./page-templates-5.png){width=650px height=438px}
+![](./_images/page-templates-5.png){width=650px height=438px}
 
 #### Примеры шаблонов
 
@@ -392,7 +392,7 @@ $pageTemplate = new CBootstrapPageTemplate;
 
 Шаблон `bootstrap` имеет название Шаблоны сеток страницы. Он предлагает выбрать вариант сетки страницы.
 
-![](./page-templates-7.png){width=575px height=297px}
+![](./_images/page-templates-7.png){width=575px height=297px}
 
 Чтобы создать страницу по шаблону `bootstrap`, выполните следующие действия:
 
@@ -402,7 +402,7 @@ $pageTemplate = new CBootstrapPageTemplate;
 
 3. Выберите вариант сетки страницы и нажмите Готово.
 
-   ![](./page-templates-4.png){width=576px height=461px}
+   ![](./_images/page-templates-4.png){width=576px height=461px}
 
 #### Структура шаблона
 
@@ -444,7 +444,7 @@ $MESS ['BT_COL_4'] = "Мозаика";
 
 Активный шаблон будет создан на основе штатного шаблона `bootstrap` и [пассивного шаблона](./page-templates#пример-создания-пассивного-шаблона)  `announcement.php`. В форме создания страницы новый шаблон будет выводить два вопроса.
 
-![](./page-templates-8.png){width=521px height=422px}
+![](./_images/page-templates-8.png){width=521px height=422px}
 
 1. В `/bitrix/templates/eshop_bootstrap_v4/page_templates/` создайте копию папки `bootstrap` и переименуйте ее в `new_template`.
 

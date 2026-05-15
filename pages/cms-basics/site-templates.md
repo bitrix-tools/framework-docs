@@ -63,7 +63,7 @@ Header, рабочая область и footer должны всегда сле
 
 {% endnote %}
 
-![](./site-templates-4.png){width=470px height=559px}
+![](./_images/site-templates-4.png){width=470px height=559px}
 
 ### Как собирается страница
 
@@ -124,11 +124,11 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
 
    -  Тип -- тип шаблона. Укажите, что данный шаблон -- это шаблон сайта, а не почтовый.
 
-   ![](./site-templates-10.png){width=691px height=357px}
+   ![](./_images/site-templates-10.png){width=691px height=357px}
 
 3. В поле «Внешний вид шаблона сайта» напишите код шаблона. Чтобы обозначить границу между верхней и нижней частью, используйте разделитель `#WORK_AREA#`.
 
-   ![](./site-templates-11.png){width=611px height=161px}
+   ![](./_images/site-templates-11.png){width=611px height=161px}
 
 4. На вкладке «Стили сайта» заполните файл `styles.css`.
 
@@ -144,17 +144,17 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
 
 -  **Через административный раздел**. Откройте список шаблонов и в меню шаблона нажмите пункт Изменить.
 
-   ![](./site-templates-3.png){width=695px height=407px}
+   ![](./_images/site-templates-3.png){width=695px height=407px}
 
 -  **Через публичный раздел**. На административной панели нажмите *Шаблон сайта > В панели управления > Редактировать шаблон*.
 
-   ![](./site-templates.png){width=538px height=245px}
+   ![](./_images/site-templates.png){width=538px height=245px}
 
 ### Экспорт и импорт
 
 Шаблон можно экспортировать в файл `<идентификатор_шаблона>.tar.gz`. Для этого в меню шаблона нажмите Скачать .
 
-![](./site-templates-2.png){width=636px height=330px}
+![](./_images/site-templates-2.png){width=636px height=330px}
 
 Готовый шаблон можно загрузить в систему с помощью менеджера файлов или через специальный интерфейс.
 
@@ -172,7 +172,7 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
 
 4. Укажите сайт, если к нему нужно привязать загруженный шаблон как шаблон по умолчанию.
 
-   ![](./site-templates-15.png){width=692px height=490px}
+   ![](./_images/site-templates-15.png){width=692px height=490px}
 
 ## Условия применения шаблона
 
@@ -216,7 +216,7 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
 
    -  В колонке Условие укажите `print=Y`.
 
-   ![](./site-templates-16.png){width=690px height=397px}
+   ![](./_images/site-templates-16.png){width=690px height=397px}
 
 ### Примеры
 

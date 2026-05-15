@@ -166,6 +166,10 @@ items:
         href: /pages/cms-basics/site-templates.md
       - name: Шаблоны страницы
         href: /pages/cms-basics/page-templates.md
+      - name: Свойства страницы и раздела
+        href: /pages/cms-basics/properties.md
+      - name: Заголовки страницы
+        href: /pages/cms-basics/titles.md
       - name: Работа с почтой
         href: /pages/cms-basics/mail.md
       - name: Работа с СМС
@@ -270,6 +274,12 @@ items:
         href: /pages/ui/lottie.md
       - name: Работа с эмодзи
         href: /pages/ui/emoji.md
+      - name: Системный алерт
+        href: /pages/ui/system-alert.md
+      - name: Системный чип
+        href: /pages/ui/system-chip.md
+      - name: Системный диалог
+        href: /pages/ui/system-dialog.md
 
   - name: Модули
     items:

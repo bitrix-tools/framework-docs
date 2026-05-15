@@ -65,7 +65,7 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
 {% endnote %}
 
-![](./includes-2.png){width=663px height=412px}
+![](./_images/includes-2.png){width=663px height=412px}
 
 ### Рекурсивное подключение файлов раздела
 
@@ -75,7 +75,7 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
 -  Нерекурсивный режим -- опция отключена. Система выполняет поиск файла только в текущем разделе.
 
-![](./includes-6.png){width=700px height=464px}
+![](./_images/includes-6.png){width=700px height=464px}
 
 ### Шаблон области
 
@@ -87,11 +87,11 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
 Файл включаемой области для раздела размещают в этом же разделе сайта. Для страницы -- в той же директории, где расположена страница. Например, страница `article.php` находится в папке `/my-section/`, значит файл включаемой области `article_myinc.php` создаем тоже в `/my-section/`.
 
-![](./includes-3.png){width=588px height=290px}
+![](./_images/includes-3.png){width=588px height=290px}
 
 Файл области, которая настроена на показ из файла, рекомендуется размещать в папке сайта `/include/`. Имя файла может быть произвольным.
 
-![](./includes-4.png){width=583px height=288px}
+![](./_images/includes-4.png){width=583px height=288px}
 
 ### Как создать файл области
 
@@ -103,7 +103,7 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
 2. Нажмите *Добавить область* или *Добавить область как PHP*.
 
-   ![](./includes-8.png){width=299px height=103px}
+   ![](./_images/includes-8.png){width=299px height=103px}
 
 3. Добавьте контент области с помощью визуального редактора или в режиме PHP-кода.
 
@@ -131,7 +131,7 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
 2. Нажмите *Изменить область* или *Изменить область как PHP*.
 
-   ![](./includes-5.png){width=522px height=189px}
+   ![](./_images/includes-5.png){width=522px height=189px}
 
 3. Отредактируйте контент области в визуальном редакторе или в режиме PHP.
 
@@ -173,7 +173,7 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
    -  Шаблон области по умолчанию -- выберите значение `другое` и укажите файл с шаблоном `sect_headerinc.php`.
 
-      ![](./includes.png){width=700px height=433px}
+      ![](./_images/includes.png){width=700px height=433px}
 
 4. В каждом разделе создайте файлы `sect_headerinc.php` и напишите в них код верхних частей.
 

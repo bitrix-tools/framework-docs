@@ -517,7 +517,7 @@ echo Loc::getMessage('COMPANY_MODULE_PAGE_TITLE');
 
 {% note tip "" %}
 
-Подробнее в статье [Локализация](./../rasshirennye-znaniya/regionalnye-nastroyki-culture.md).
+Подробнее в статье [Локализация](./../advanced/localization.md).
 
 {% endnote %}
 

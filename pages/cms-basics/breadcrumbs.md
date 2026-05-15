@@ -37,7 +37,7 @@ description: 'Хлебные крошки. Основы Bitrix CMS: ключев
 
 2. уберите отметку в параметрах *Устанавливать заголовок страницы* и *Включать раздел в цепочку навигации*.
 
-![](./breadcrumbs.png){width=647px height=462px}
+![](./_images/breadcrumbs.png){width=647px height=462px}
 
 ## Как управлять навигационной цепочкой
 
@@ -55,7 +55,7 @@ description: 'Хлебные крошки. Основы Bitrix CMS: ключев
 
 2. В поле Заголовок введите новое название и сохраните его.
 
-![](./breadcrumbs-4.png){width=683px height=422px}
+![](./_images/breadcrumbs-4.png){width=683px height=422px}
 
 {% note tip "" %}
 
@@ -73,11 +73,11 @@ description: 'Хлебные крошки. Основы Bitrix CMS: ключев
 
    -  Название -- *Не показывать навигационную цепочку*.
 
-   ![](./breadcrumbs-2.png){width=616px height=233px}
+   ![](./_images/breadcrumbs-2.png){width=616px height=233px}
 
 3. Откройте свойства раздела или страницы и установите значение `Y` .
 
-   ![](./breadcrumbs-3.png){width=675px height=412px}
+   ![](./_images/breadcrumbs-3.png){width=675px height=412px}
 
 ### Добавить свой пункт в цепочку
 
