@@ -92,18 +92,6 @@ echo $datetime->format('d.m.Y H:i:s'); // 25.11.2025 14:30:00
    $date = Date::createFromTimestamp($timestamp);
    ```
 
--  `createFromText($text)` — создает объект `Date` из текста. Вернет `null`, если не сможет распарсить текст. Метод учитывает текущий язык сайта и понимает фразы на этом языке, например, `tomorrow` или `сегодня вечером`.
-
-   ```php
-   use Bitrix\Main\Type\Date;
-
-   $date = Date::createFromText('end of next week');
-   if ($date === null)
-   {
-       // Не удалось разобрать текст
-   }
-   ```
-
 ### Методы
 
 #### Форматировать дату
