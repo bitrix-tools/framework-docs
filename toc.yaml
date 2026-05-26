@@ -201,6 +201,8 @@ items:
         href: /pages/advanced/debug.md
       - name: Резервное копирование
         href: /pages/advanced/backup.md
+      - name: Монитор качества
+        href: /pages/advanced/quality-monitor.md
       - name: Vue.js
         href: /pages/advanced/vue.md
       - name: Многосайтовость

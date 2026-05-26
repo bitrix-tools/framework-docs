@@ -101,9 +101,9 @@ $insertedId = $db->add('b_user', [
 
 Создает новую таблицу метод `createTable`. Параметры метода:
 
--  `$tableName` -- имя создаваемой таблицы,
+-  `$tableName` — имя создаваемой таблицы,
 
--  `$arFields` -- массив полей таблицы в формате `'FIELD_NAME' => FieldObject`.
+-  `$arFields` — массив полей таблицы в формате `'FIELD_NAME' => FieldObject`.
 
 ```php
 $db->createTable('my_table', [
@@ -135,13 +135,13 @@ $db->dropTable('my_table');
 
 Создает индекс метод `createIndex`. Параметры метода:
 
--  `$indexName` -- имя создаваемого индекса,
+-  `$indexName` — имя создаваемого индекса,
 
--  `$tableName` -- имя таблицы,
+-  `$tableName` — имя таблицы,
 
--  `$columns` -- массив имен столбцов для индекса,
+-  `$columns` — массив имен столбцов для индекса,
 
--  `$unique` -- флаг уникальности индекса, по умолчанию `false`.
+-  `$unique` — флаг уникальности индекса, по умолчанию `false`.
 
 ```php
 $db->createIndex('idx_name', 'my_table', ['NAME'], true);
@@ -151,9 +151,9 @@ $db->createIndex('idx_name', 'my_table', ['NAME'], true);
 
 Создает первичный ключ метод `createPrimaryIndex`. Параметры метода:
 
--  `$tableName` -- имя таблицы,
+-  `$tableName` — имя таблицы,
 
--  `$columnNames`  -- массив имен столбцов, входящих в первичный ключ.
+-  `$columnNames`  — массив имен столбцов, входящих в первичный ключ.
 
 ```php
 $db->createPrimaryIndex('my_table', ['ID']);
@@ -163,9 +163,9 @@ $db->createPrimaryIndex('my_table', ['ID']);
 
 Удаляет столбец метод `dropColumn`. Параметры метода:
 
--  `$tableName` -- имя таблицы,
+-  `$tableName` — имя таблицы,
 
--  `$columnName`  -- имя удаляемого столбца.
+-  `$columnName`  — имя удаляемого столбца.
 
 ```php
 $db->dropColumn('my_table', 'DESCRIPTION');
@@ -175,9 +175,9 @@ $db->dropColumn('my_table', 'DESCRIPTION');
 
 Переименовывает таблицу метод `renameTable`. Параметры метода:
 
--  `$oldTableName` -- текущее имя таблицы,
+-  `$oldTableName` — текущее имя таблицы,
 
--  `$newTableName` -- новое имя таблицы.
+-  `$newTableName` — новое имя таблицы.
 
 ```php
 $db->renameTable('old_table', 'new_table');
@@ -230,9 +230,9 @@ while ($row = $result->fetch()) {
 
 ### Разница между `fetch()` и `fetchRaw()`
 
--  `fetch()` -- автоматически преобразует данные согласно настройкам системы.
+-  `fetch()` — автоматически преобразует данные согласно настройкам системы.
 
--  `fetchRaw()` -- возвращает данные в оригинальном формате.
+-  `fetchRaw()` — возвращает данные в оригинальном формате.
 
 ```php
 // fetch() — с преобразованием типов
@@ -309,6 +309,6 @@ $fields = $result->getFields();
 
 {% note warning "" %}
 
-Объект `Result` поддерживает только последовательное чтение данных -- после прохода по результатам повторный запрос данных невозможен.
+Объект `Result` поддерживает только последовательное чтение данных — после прохода по результатам повторный запрос данных невозможен.
 
 {% endnote %}

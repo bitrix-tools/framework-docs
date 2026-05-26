@@ -132,7 +132,7 @@ $helper->convertToDbDate(new \Bitrix\Main\Type\Date('01.01.2015')); // '2015-01-
 $helper->convertToDbDateTime(new \Bitrix\Main\Type\DateTime('01.01.2015 01:23:45')); // '2015-01-01 01:23:45'
 ```
 
-Два последних метода -- `convertToDbDate` и `convertToDbDateTime` -- принимают `null` или объекты `Date`/`DateTime`. При других типах данных выбрасывают исключение.
+Два последних метода — `convertToDbDate` и `convertToDbDateTime` — принимают `null` или объекты `Date`/`DateTime`. При других типах данных выбрасывают исключение.
 
 Получить формат даты для текущей БД:
 
@@ -212,7 +212,7 @@ $helper->getSubstrFunction($helper->quote('column_name'), 1);     // SUBSTR(`col
 $helper->getSubstrFunction($helper->quote('column_name'), 1, 10); // SUBSTR(`column_name`, 1, 10)
 ```
 
-Провести конкатенацию -- объединение строк:
+Провести конкатенацию — объединение строк:
 
 ```php
 $helper->getConcatFunction(); // ''
@@ -266,7 +266,7 @@ $helper->getMatchFunction($helper->quote('column_name'), $helper->convertToDb('v
 
 ### Как совершать пакетные операции с данными
 
-`prepareMerge()` -- добавляет или обновляет одну запись:
+`prepareMerge()` — добавляет или обновляет одну запись:
 
 ```php
 [ $sql ] = $helper->prepareMerge(
@@ -292,7 +292,7 @@ VALUES (1, 's1', 'counter_name', 10)
 ON DUPLICATE KEY UPDATE `CNT` = `CNT` + 10
 ```
 
-`prepareMergeValues()` -- добавляет или обновляет несколько записей:
+`prepareMergeValues()` — добавляет или обновляет несколько записей:
 
 ```php
 $sql = $helper->prepareMergeValues(
@@ -317,7 +317,7 @@ VALUES (1, 's1', 'counter_name', 1),(2, 's1', 'counter_name', 1),(2, 's1', 'anot
 ON DUPLICATE KEY UPDATE `CNT` = `CNT` + 1
 ```
 
-`prepareMergeSelect()` -- добавляет или обновляет из подзапроса:
+`prepareMergeSelect()` — добавляет или обновляет из подзапроса:
 
 ```php
 $sql = $helper->prepareMergeSelect(
@@ -339,7 +339,7 @@ INSERT INTO `b_user_counter` (`USER_ID`,`SITE_ID`,`CODE`,`CNT`)
 ON DUPLICATE KEY UPDATE `CNT` = `CNT` + 10
 ```
 
-`prepareMergeMultiple()` -- полностью заменяет записи:
+`prepareMergeMultiple()` — полностью заменяет записи:
 
 ```php
 $sqlQueries = $helper->prepareMergeMultiple(
@@ -362,19 +362,19 @@ VALUES (1, 's1', 'counter_name', 5), (2, 's1', 'counter_name', 10), (2, 's1', 'a
 
 ## SqlExpression. Безопасное построение запросов
 
-SqlExpression использует специальные метки -- плейсхолдеры. При компиляции запроса плейсхолдеры заменяются на экранированные значения для предотвращения SQL-инъекций.
+SqlExpression использует специальные метки — плейсхолдеры. При компиляции запроса плейсхолдеры заменяются на экранированные значения для предотвращения SQL-инъекций.
 
--  `?` -- автоматическое преобразование.
+-  `?` — автоматическое преобразование.
 
--  `?s` -- строка.
+-  `?s` — строка.
 
--  `?i` -- целое число.
+-  `?i` — целое число.
 
--  `?f` -- число с плавающей точкой.
+-  `?f` — число с плавающей точкой.
 
--  `?#` -- имя столбца.
+-  `?#` — имя столбца.
 
--  `?v` -- подстановка значений VALUES для запросов типа INSERT и UPDATE.
+-  `?v` — подстановка значений VALUES для запросов типа INSERT и UPDATE.
 
 Создать новый объект:
 
@@ -434,7 +434,7 @@ $sql = new SqlExpression(
 SELECT * FROM `` WHERE ID = NULL OR NAME = NULL
 ```
 
-Для дат используйте базовый плейсхолдер `?` для автоматического форматирования. Для строкового представления -- `?s`:
+Для дат используйте базовый плейсхолдер `?` для автоматического форматирования. Для строкового представления — `?s`:
 
 ```php
 $sql = new SqlExpression(
