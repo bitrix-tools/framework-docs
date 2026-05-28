@@ -282,6 +282,18 @@ items:
         href: /pages/ui/system-chip.md
       - name: Системный диалог
         href: /pages/ui/system-dialog.md
+      - name: Системный хайлайтер
+        href: /pages/ui/system-highlighter.md
+      - name: Системное поле ввода
+        href: /pages/ui/system-input.md
+      - name: Системная метка
+        href: /pages/ui/system-label.md
+      - name: Системное меню
+        href: /pages/ui/system-menu.md
+      - name: Скелетон загрузки
+        href: /pages/ui/system-skeleton.md
+      - name: Типографика
+        href: /pages/ui/typography.md
 
   - name: Модули
     items:
