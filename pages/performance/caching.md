@@ -55,15 +55,15 @@ $cache = Bitrix\Main\Application::getInstance()->getCache();
 // Проверяем наличие кеша
 if ($cache->initCache(3600, 'cache_key'))
 {
-	// Получаем данные из кеша
-    $data = $cache->getVars(); 
+    // Получаем данные из кеша
+    $data = $cache->getVars();
 }
 elseif ($cache->startDataCache())
 {
-	// Если кеша нет, получаем данные из базы
+    // Если кеша нет, получаем данные из базы
     $data = getDataFromDatabase();
 
-	// Сохраняем результаты в кеш
+    // Сохраняем результаты в кеш
     $cache->endDataCache($data);
 }
 ```
@@ -73,24 +73,24 @@ elseif ($cache->startDataCache())
 ```php
 // Инициализация кеша с дополнительными параметрами
 if ($cache->initCache(
-	$cacheTime, // Время жизни кеша в секундах
-	$cacheId, // Уникальный идентификатор кеша
-	$cacheDir // Путь к подкаталогу в кеше
+    $cacheTime, // Время жизни кеша в секундах
+    $cacheId, // Уникальный идентификатор кеша
+    $cacheDir // Путь к подкаталогу в кеше
 ))
 {
-	$result = $cache->getVars();
+    $result = $cache->getVars();
 }
 elseif ($cache->startDataCache())
 {
-	$result = array();
-	// Если данные недействительны, отменяем кеширование
-	if ($isInvalid)
-	{
-		$cache->abortDataCache();
-	}
-	// Сохраняем валидные данные
-	$cache->endDataCache($result);
-} 
+    $result = array();
+    // Если данные недействительны, отменяем кеширование
+    if ($isInvalid)
+    {
+        $cache->abortDataCache();
+    }
+    // Сохраняем валидные данные
+    $cache->endDataCache($result);
+}
 ```
 
 Пример с кешированием буфера вывода.
@@ -101,9 +101,9 @@ $cache = Bitrix\Main\Data\Cache::createInstance();
 // Если есть закешированные данные, они выведутся в буфер в методе Cache::startDataCache
 if ($cache->startDataCache(3600, 'xxxx'))
 {
-	echo 'Какой-нибудь HTML';
-	
-	$cache->endDataCache();
+    echo 'Какой-нибудь HTML';
+
+    $cache->endDataCache();
 }
 ```
 
@@ -145,26 +145,28 @@ $cache = Application::getInstance()->getCache();
 // Проверяем наличие кеша
 if ($cache->initCache(3600, 'cache_key'))
 {
-	// Получаем данные из кеша
-    $data = $cache->getVars(); 
+    // Получаем данные из кеша
+    $data = $cache->getVars();
 }
 elseif ($cache->startDataCache())
 {
-	// Если кеша нет, получаем данные из базы
+    // Если кеша нет, получаем данные из базы
     $data = getDataFromDatabase();
 
-	// Сохраняем результаты в кеш
+    // Сохраняем результаты в кеш
     $cache->endDataCache($data);
 }
 ```
 
 ### Управляемое кеширование
 
-Управляемое кеширование автоматически обновляет кеш при изменении данных. Кеш хранится в папке `/bitrix/managed_cache/`.
+Управляемое кеширование дает методы для точечного сброса кеша. При файловом хранении управляемый кеш находится в папке `/bitrix/managed_cache/`.
+
+В отличие от неуправляемого кеша, разработчик может удалить не только одну запись, но и группу записей, связанную с таблицей ORM или другим каталогом кеша.
 
 Преимущества:
 
--  Мгновенное обновление контента на сайте.
+-  Можно сбрасывать кеш по ключу или каталогу, не очищая весь кеш.
 
 -  Поддержка различных хранилищ: Redis, Memcached, APC, XCache, файлы.
 
@@ -176,7 +178,11 @@ elseif ($cache->startDataCache())
 
 3. Включите управляемый кеш.
 
-Для часто обновляемых данных управляемое кеширование не подходит. В таких случаях лучше использовать неуправляемое кеширование.
+Управляемый кеш обновляется автоматически в тех сценариях, где код знает, какой кеш нужно очистить. Например, ORM очищает кеш выборок после вызова методов `add`, `update` и `delete`.
+
+Если разработчик использует `ManagedCache` напрямую и не передает в метод `read()` третий аргумент с каталогом кеша, кеш не связан с таблицей ORM. Такой кеш нужно очищать вручную или ждать истечения TTL.
+
+Для часто обновляемых данных управляемое кеширование может не дать преимущества: кеш будет часто сбрасываться и пересоздаваться. Если данные должны быть всегда актуальными, лучше не кешировать их. Если небольшая задержка допустима, используйте неуправляемый кеш с коротким TTL или управляемый кеш с заданным правилом сброса.
 
 {% note warning "" %}
 
@@ -184,65 +190,74 @@ elseif ($cache->startDataCache())
 
 {% endnote %}
 
-Пример использования управляемого кеширования:
+Пример управляемого кеша без привязки к таблице:
 
 ```php
 use Bitrix\Main\Application;
 
 $managedCache = Application::getInstance()->getManagedCache();
-$cacheKey = 'key';
+$cacheKey = 'user_list';
 
 // Проверяем наличие кеша с помощью read
 if ($managedCache->read(3600, $cacheKey))
 {
     // Получаем данные из кеша с помощью get
-	$data = $managedCache->get('key-of-value');
+    $data = $managedCache->get($cacheKey);
 }
 else
 {
     // Если кеша нет, загружаем данные и сохраняем их в кеш
-	$data = loadDataFromAnywhere();
-	$managedCache->set('key-of-value', $data);
+    $data = loadUsers();
+    $managedCache->set($cacheKey, $data);
 }
 ```
 
-Пример работы с управляемым кешем через специальные методы:
+В примере кеш живет 3600 секунд. При изменении пользователей система не очистит запись автоматически, потому что в методе `read()` не указан каталог кеша. Чтобы обновить данные раньше, очистите запись по ключу:
 
 ```php
 use Bitrix\Main\Application;
 
 $managedCache = Application::getInstance()->getManagedCache();
-$cacheKey = 'key';
+$managedCache->clean('user_list');
+```
 
-// если нужно просто получить данные
-$vars = $managedCache->getImmediate(3600, $cacheKey);
-if ($vars === false)
+Если нужно сохранить данные сразу, а не в конце хита, используйте `setImmediate`. Перед записью вызовите `read()`, чтобы объект кеша подготовил запись:
+
+```php
+use Bitrix\Main\Application;
+
+$managedCache = Application::getInstance()->getManagedCache();
+$cacheKey = 'user_list';
+
+if (!$managedCache->read(3600, $cacheKey))
 {
-	$vars = loadDataFromAnywhere();
-	$managedCache->setImmediate($cacheKey, $vars);
+    $data = loadUsers();
+    $managedCache->setImmediate($cacheKey, $data);
 }
 ```
 
-Управляемое кеширование связано с ORM и базой данных.
-
-1. Укажите таблицу БД в методе третьим параметром.
-
-2. Кеш автоматически сбросится при обновлении данных в этой таблице через ORM.
+Чтобы запись `ManagedCache` сбрасывалась вместе с кешем ORM-таблицы, передайте третьим параметром каталог этой таблицы. Каталог формируется по схеме `orm_<имя_таблицы>`. Кеш в таком каталоге сбросится, когда ORM очистит кеш таблицы. Например, когда ORM вызывает очистку после изменения данных через `add`, `update` или `delete`.
 
 ```php
 use Bitrix\Main\Application;
 
 $managedCache = Application::getInstance()->getManagedCache();
-$cacheKey = 'key';
+$cacheKey = 'active_user_list';
+$cacheDir = 'orm_b_user';
 
 // Проверяем наличие кеша с помощью read
-if ($managedCache->read(3600, $cacheKey, 'b_user'))
+if ($managedCache->read(3600, $cacheKey, $cacheDir))
 {
-	// ...
+    $users = $managedCache->get($cacheKey);
+}
+else
+{
+    $users = loadActiveUsers();
+    $managedCache->set($cacheKey, $users);
 }
 ```
 
-Сбросить кеш через таблицу ORM:
+Также сбросить кеш таблицы ORM можно вручную:
 
 ```php
 \Bitrix\Main\UserTable::cleanCache();
@@ -317,12 +332,12 @@ if ($managedCache->read(3600, $cacheKey, 'b_user'))
 Пример для таблицы `b_group`:
 
 ```php
-'cache_flags'=>   array(
-      'value'=> array(
-         "b_group_max_ttl" => 200,
-         "b_group_min_ttl" => 100,
-      )
-   ),
+'cache_flags' => array(
+    'value' => array(
+        'b_group_max_ttl' => 200,
+        'b_group_min_ttl' => 100,
+    ),
+),
 ```
 
 -  `b_group_max_ttl` — устанавливает максимальное время жизни кеша. Например, значение `86400` означает 1 день. Значение `0` полностью отключает кеширование для этой таблицы.
@@ -334,10 +349,10 @@ if ($managedCache->read(3600, $cacheKey, 'b_user'))
 SID (Site ID) нужен для уникальной идентификации кеша каждого сайта. Формируется так:
 
 ```php
-$_SERVER["DOCUMENT_ROOT"] . "#01"
+$_SERVER['DOCUMENT_ROOT'] . '#01'
 ```
 
--  `$_SERVER["DOCUMENT_ROOT"]` — путь к корневой директории сайта.
+-  `$_SERVER['DOCUMENT_ROOT']` — путь к корневой директории сайта.
 
 -  `#01` — уникальный суффикс для разделения сайтов.
 
@@ -363,8 +378,8 @@ $_SERVER["DOCUMENT_ROOT"] . "#01"
 
 ```php
 'redis' => array(
-	'host' => '127.0.0.1', // Адрес сервера Redis
-	'port' => '6379', // Порт сервера Redis
+    'host' => '127.0.0.1', // Адрес сервера Redis
+    'port' => '6379', // Порт сервера Redis
 ),
 ```
 
@@ -375,19 +390,19 @@ $_SERVER["DOCUMENT_ROOT"] . "#01"
 #### Redis
 
 ```php
-'cache' => array('value' => array(
-          'type' => array(
-              'class_name' => '\\Bitrix\\Main\\Data\\CacheEngineRedis', // Класс для работы с Redis
-              'extension' => 'redis' // Требуется расширение PHP redis
-          ),
-          'redis' => array(
-              'host' => '127.0.0.1', // Адрес сервера Redis
-              'port' => '6379', // Порт сервера Redis
-          ),
-          'sid' => $_SERVER["DOCUMENT_ROOT"]."#01" // Уникальный идентификатор для разделения кеша между сайтами
-)),
-      ),
-  ),
+'cache' => array(
+    'value' => array(
+        'type' => array(
+            'class_name' => '\\Bitrix\\Main\\Data\\CacheEngineRedis', // Класс для работы с Redis
+            'extension' => 'redis', // Требуется расширение PHP redis
+        ),
+        'redis' => array(
+            'host' => '127.0.0.1', // Адрес сервера Redis
+            'port' => '6379', // Порт сервера Redis
+        ),
+        'sid' => $_SERVER['DOCUMENT_ROOT'] . '#01', // Уникальный идентификатор для разделения кеша между сайтами
+    ),
+),
 ```
 
 #### Memcache
@@ -397,13 +412,13 @@ $_SERVER["DOCUMENT_ROOT"] . "#01"
     'value' => array(
         'type' => array(
             'class_name' => '\\Bitrix\\Main\\Data\\CacheEngineMemcache', // Класс для работы с Memcache
-            'extension' => 'memcached' // Требуется расширение PHP memcached
+            'extension' => 'memcache', // Требуется расширение PHP memcache
         ),
         'memcache' => array(
             'host' => '127.0.0.1', // Адрес сервера Memcache
             'port' => '11211', // Порт сервера Memcache
         ),
-        'sid' => $_SERVER["DOCUMENT_ROOT"]."#01" // Уникальный идентификатор для разделения кеша между сайтами
+        'sid' => $_SERVER['DOCUMENT_ROOT'] . '#01', // Уникальный идентификатор для разделения кеша между сайтами
     ),
 ),
 ```
@@ -412,19 +427,18 @@ $_SERVER["DOCUMENT_ROOT"] . "#01"
 
 ```php
 <?php
-return array (
+return array(
     'cache' => array(
-        'value' => array (
+        'value' => array(
             'type' => 'memcache',
             'memcache' => array(
-                'host' => 'unix:///tmp/memcached.sock', // Сокет Unix для подключения к Memcache
-                'port' => '0' // Порт не используется при работе через сокет
+                'host' => 'unix:///tmp/memcached.sock', // Unix-сокет сервера Memcached
+                'port' => '0', // Порт не используется при работе через сокет
             ),
-            'sid' => $_SERVER["DOCUMENT_ROOT"]."#01" // Уникальный идентификатор для разделения кеша между сайтами
+            'sid' => $_SERVER['DOCUMENT_ROOT'] . '#01', // Уникальный идентификатор для разделения кеша между сайтами
         ),
     ),
 );
-?>
 ```
 
 Файл `.settings.php` содержит статические настройки с API, а `.settings_extra.php` позволяет динамически изменять параметры без API.
@@ -436,9 +450,9 @@ return array (
     'value' => array(
         'type' => array(
             'class_name' => '\\Bitrix\\Main\\Data\\CacheEngineApc', // Класс для работы с APC
-            'extension' => 'apcu' // Требуется расширение PHP apcu
+            'extension' => 'apcu', // Требуется расширение PHP apcu
         ),
-        'sid' => $_SERVER["DOCUMENT_ROOT"]."#01" // Уникальный идентификатор для разделения кеша между сайтами
+        'sid' => $_SERVER['DOCUMENT_ROOT'] . '#01', // Уникальный идентификатор для разделения кеша между сайтами
     ),
 ),
 ```
@@ -450,9 +464,9 @@ return array (
     'value' => array(
         'type' => array(
             'class_name' => '\\Bitrix\\Main\\Data\\CacheEngineXCache', // Класс для работы с XCache
-            'extension' => 'xcache' // Требуется расширение PHP xcache
+            'extension' => 'xcache', // Требуется расширение PHP xcache
         ),
-        'sid' => $_SERVER["DOCUMENT_ROOT"]."#01" // Уникальный идентификатор для разделения кеша между сайтами
+        'sid' => $_SERVER['DOCUMENT_ROOT'] . '#01', // Уникальный идентификатор для разделения кеша между сайтами
     ),
 ),
 ```
@@ -466,9 +480,9 @@ return array (
             'class_name' => '\\Bitrix\\Main\\Data\\CacheEngineFiles', // Класс для работы с файловым кешированием
         ),
         'root_directory' => '/user_cache_dir/', // Директория для хранения файлов кеша
-        'sid' => $_SERVER["DOCUMENT_ROOT"]."#01" // Уникальный идентификатор для разделения кеша между сайтами
+        'sid' => $_SERVER['DOCUMENT_ROOT'] . '#01', // Уникальный идентификатор для разделения кеша между сайтами
     ),
-)
+),
 ```
 
 С версии главного модуля 24.100.0, можно использовать произвольную директорию для файлового кеширования через параметр `root_directory`. По умолчанию используется `/bitrix/cache/`.
@@ -581,21 +595,21 @@ $taggedCache = Application::getInstance()->getTaggedCache();
 // Проверяем наличие кеша
 if ($cache->initCache(3600, 'cache_key', $cacheDir))
 {
-	// Получаем данные из кеша
-	$data = $cache->getVars(); 
+    // Получаем данные из кеша
+    $data = $cache->getVars();
 }
 elseif ($cache->startDataCache())
-{	
-	// Если кеша нет, получаем данные из базы
-	$data = getDataFromDatabase();
-	
-	// Помечаем кеш тегом
-	$taggedCache->startTagCache($cacheDir);
-	$taggedCache->registerTag('my_tag');
-	$taggedCache->endTagCache();
+{
+    // Если кеша нет, получаем данные из базы
+    $data = getDataFromDatabase();
 
-	// Сохраняем результаты в кеш
-	$cache->endDataCache($data);
+    // Помечаем кеш тегом
+    $taggedCache->startTagCache($cacheDir);
+    $taggedCache->registerTag('my_tag');
+    $taggedCache->endTagCache();
+
+    // Сохраняем результаты в кеш
+    $cache->endDataCache($data);
 }
 ```
 
