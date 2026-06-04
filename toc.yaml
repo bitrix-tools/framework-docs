@@ -294,6 +294,8 @@ items:
         href: /pages/ui/system-skeleton.md
       - name: Типографика
         href: /pages/ui/typography.md
+      - name: Иконки
+        href: /pages/ui/icons.md
 
   - name: Модули
     items:
