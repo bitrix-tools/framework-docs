@@ -311,10 +311,16 @@ return [
 
 ```bash
 # Выполнять команду каждый день в 3:00
-0 3 * * * php /path/to/document_root/bitrix/bitrix.php [command] --no-interaction
+0 3 * * * cd /path/to/document_root && php bitrix/bitrix.php [command] --no-interaction
 
 # Выполнять команду каждое воскресенье в 4:00
-0 4 * * 0 php /path/to/document_root/bitrix/bitrix.php [command] --no-interaction
+0 4 * * 0 cd /path/to/document_root && php bitrix/bitrix.php [command] --no-interaction
 ```
 
 Опция `--no-interaction` отключает интерактивные запросы.
+
+{% note tip "" %}
+
+В cron сначала перейдите в корень сайта, затем запускайте bitrix.php по относительному пути. Это нужно, чтобы консольный скрипт корректно определил DOCUMENT_ROOT.
+
+{% endnote %}
