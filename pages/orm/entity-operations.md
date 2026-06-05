@@ -303,7 +303,7 @@ new Entity\TextField('EDITIONS_ISBN', [
 
 ```php
 BookTable::update($id, [ // Обновление записи в таблице BookTable
-    'READERS_COUNT' => new DB\SqlEx * pression('?# + 1', 'READERS_COUNT') // Увеличение значения поля READERS_COUNT на 1
+    'READERS_COUNT' => new \Bitrix\Main\DB\SqlExpression('?# + 1', 'READERS_COUNT') // Увеличение значения поля READERS_COUNT на 1
 ]);
 ```
 
@@ -314,14 +314,14 @@ BookTable::update($id, [ // Обновление записи в таблице 
 ```php
 // правильно
 BookTable::update($id, [ // Обновление записи в таблице BookTable
-    'READERS_COUNT' => new DB\SqlEx * pression('?# + ?i', 'READERS_COUNT', $readersCount) // Увеличение значения поля READERS_COUNT на значение переменной $readersCount
+    'READERS_COUNT' => new \Bitrix\Main\DB\SqlExpression('?# + ?i', 'READERS_COUNT', $readersCount) // Увеличение значения поля READERS_COUNT на значение переменной $readersCount
     // '?#' - плейсхолдер для имени поля, заменяется на 'READERS_COUNT'
     // '?i' - плейсхолдер для целочисленного значения, заменяется на $readersCount
 ]);
 
 // неправильно
 BookTable::update($id, [ // Обновление записи в таблице BookTable
-    'READERS_COUNT' => new DB\SqlEx * pression('?# + '.$readersCount, 'READERS_COUNT') // Небезопасное увеличение значения поля READERS_COUNT
+    'READERS_COUNT' => new \Bitrix\Main\DB\SqlExpression('?# + '.$readersCount, 'READERS_COUNT') // Небезопасное увеличение значения поля READERS_COUNT
     // Отсутствие плейсхолдера для значения, что может привести к SQL-инъекциям
 ]);
 ```
