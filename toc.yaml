@@ -52,6 +52,8 @@ items:
 
   - name: С чего начать
     items:
+      - name: Как кастомизировать
+        href: /pages/get-started/how-customize.md
       - name: Установка окружения
         href: /pages/get-started/install-env.md
       - name: Установка дистрибутива
@@ -164,6 +166,10 @@ items:
         href: /pages/cms-basics/site-templates.md
       - name: Шаблоны страницы
         href: /pages/cms-basics/page-templates.md
+      - name: Свойства страницы и раздела
+        href: /pages/cms-basics/properties.md
+      - name: Заголовки страницы
+        href: /pages/cms-basics/titles.md
       - name: Работа с почтой
         href: /pages/cms-basics/mail.md
       - name: Работа с СМС
@@ -195,6 +201,8 @@ items:
         href: /pages/advanced/debug.md
       - name: Резервное копирование
         href: /pages/advanced/backup.md
+      - name: Монитор качества
+        href: /pages/advanced/quality-monitor.md
       - name: Vue.js
         href: /pages/advanced/vue.md
       - name: Многосайтовость
@@ -207,6 +215,8 @@ items:
         href: /pages/advanced/stepper.md
       - name: Работа с изображениями
         href: /pages/advanced/images.md
+      - name: HTTP-клиент
+        href: /pages/advanced/http-client.md
       - name: Геолокация
         href: /pages/advanced/geolocation.md
       - name: Нумератор
@@ -240,6 +250,10 @@ items:
         href: /pages/security/proactive-security.md
       - name: Двухэтапная авторизация
         href: /pages/security/two-factor-auth.md
+      - name: Шифрование данных
+        href: /pages/security/cipher.md
+      - name: Криптографические поля в ORM
+        href: /pages/security/cryptofield.md
 
   - name: Производительность
     items:
@@ -256,18 +270,47 @@ items:
       - name: Как оптимизировать запросы к базе данных
         href: /pages/performance/query-optimization.md
 
+  - name: Пользовательский интерфейс UI
+    items:
+      - name: Анимации Lottie
+        href: /pages/ui/lottie.md
+      - name: Работа с эмодзи
+        href: /pages/ui/emoji.md
+      - name: Системный алерт
+        href: /pages/ui/system-alert.md
+      - name: Системный чип
+        href: /pages/ui/system-chip.md
+      - name: Системный диалог
+        href: /pages/ui/system-dialog.md
+      - name: Системный хайлайтер
+        href: /pages/ui/system-highlighter.md
+      - name: Системное поле ввода
+        href: /pages/ui/system-input.md
+      - name: Системная метка
+        href: /pages/ui/system-label.md
+      - name: Системное меню
+        href: /pages/ui/system-menu.md
+      - name: Скелетон загрузки
+        href: /pages/ui/system-skeleton.md
+      - name: Типографика
+        href: /pages/ui/typography.md
+      - name: Иконки
+        href: /pages/ui/icons.md
+
   - name: Модули
     items:
-    - name: Информационные блоки
-      items:
-        - name: Введение и базовые концепции
-          href: /pages/modules/iblocks/overview.md
-        - name: Схема работы инфоблоков и основные объекты
-          href: /pages/modules/iblocks/architecture.md
-        - name: Работа с инфоблоками через API
-          href: /pages/modules/iblocks/api.md
-        - name: Производительность и частые ошибки
-          href: /pages/modules/iblocks/performance.md
+      - name: Архитектура модулей
+        href: /pages/modules/architecture.md
+      - name: Информационные блоки
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/iblocks/overview.md
+          - name: Схема работы инфоблоков и основные объекты
+            href: /pages/modules/iblocks/architecture.md
+          - name: Работа с инфоблоками через API
+            href: /pages/modules/iblocks/api.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/iblocks/performance.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам

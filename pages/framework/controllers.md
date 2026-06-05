@@ -11,15 +11,15 @@ description: 'Контроллеры. Документация по Bitrix Frame
 
 -  формирует ответ и отдает его представлению.
 
-Основную логику реализуют действия -- публичные методы с суффиксом `Action`, например, `listAction`, `getAction`, `addAction`.
+Основную логику реализуют действия — публичные методы с суффиксом `Action`, например, `listAction`, `getAction`, `addAction`.
 
 ## Создать контроллер через консоль
 
 Создайте контроллер с помощью консольной команды `make:controller`. Укажите модуль и действия:
 
--  `-m my.blog` -- модуль, в котором создается контроллер,
+-  `-m my.blog` — модуль, в котором создается контроллер,
 
--  `--actions=index,view` -- список действий.
+-  `--actions=index,view` — список действий.
 
 ```bash
 php bitrix.php make:controller post -m my.blog --actions=index,view
@@ -429,7 +429,7 @@ final class Post extends Controller
 
 -  В методе `getAction` параметр `code` обязателен. При его отсутствии получите ошибку `Could not find value for parameter`.
 
--  В `listAction` можно не передавать параметры: `limit` примет значение `10`, `categoryId` -- `null`.
+-  В `listAction` можно не передавать параметры: `limit` примет значение `10`, `categoryId` — `null`.
 
 -  Если тип данных не совпадает, возникнет ошибка `Invalid value to match with parameter`.
 
@@ -552,7 +552,7 @@ final class Post extends Controller
 
 Вместо поиска статьи по коду внутри действия, можно автоматически преобразовать параметр `code` в объект `MyPost`.
 
-**Вариант 1**. `ExactParameter` -- строгое соответствие имени.
+**Вариант 1**. `ExactParameter` — строгое соответствие имени.
 
 ```php
 final class Post extends Controller
@@ -579,7 +579,7 @@ final class Post extends Controller
 
 Если запись не найдена, система вернет ошибку `Could not construct parameter {code}`.
 
-**Вариант 2.** `Parameter` -- произвольное имя аргумента.
+**Вариант 2.** `Parameter` — произвольное имя аргумента.
 
 ```php
 final class Post extends Controller
@@ -658,7 +658,7 @@ final class Post extends Controller
 
 ## Реквесты
 
-Реквест -- это класс, который описывает входные данные, применяет валидацию и передает их в действие.
+Реквест — это класс, который описывает входные данные, применяет валидацию и передает их в действие.
 
 ### Создать реквест
 
@@ -826,7 +826,7 @@ public function avatarAction(int $userId)
 
 ## Рендеринг
 
-Рендеринг -- это отрисовка HTML-страниц, компонентов или расширений из контроллера.
+Рендеринг — это отрисовка HTML-страниц, компонентов или расширений из контроллера.
 
 {% note info "" %}
 
@@ -856,11 +856,11 @@ public function indexAction(): \Bitrix\Main\Engine\Response\Render\View
 
 Параметры метода:
 
--  `$name` -- символьное имя компонента, обязательный параметр.
+-  `$name` — символьное имя компонента, обязательный параметр.
 
--  `$template` -- название шаблона компонента.
+-  `$template` — название шаблона компонента.
 
--  `$params` -- ассоциативный массив параметров для передачи в компонент.
+-  `$params` — ассоциативный массив параметров для передачи в компонент.
 
 ```php
 public function viewAction(string $code): \Bitrix\Main\Engine\Response\Render\Component
@@ -877,15 +877,15 @@ public function viewAction(string $code): \Bitrix\Main\Engine\Response\Render\Co
 
 Параметры метода:
 
--  `$name` -- символьное имя компонента, обязательный параметр,
+-  `$name` — символьное имя компонента, обязательный параметр,
 
--  `$template` -- название шаблона компонента,
+-  `$template` — название шаблона компонента,
 
--  `$params` -- ассоциативный массив параметров для передачи в компонент,
+-  `$params` — ассоциативный массив параметров для передачи в компонент,
 
--  `$additionalResponseParams` -- дополнительные данные, которые попадают в ответ,
+-  `$additionalResponseParams` — дополнительные данные, которые попадают в ответ,
 
--  `$dataKeys` -- список ключей из результата работы компонента, которые попадают в ответ.
+-  `$dataKeys` — список ключей из результата работы компонента, которые попадают в ответ.
 
 Пример использования:
 
@@ -934,14 +934,12 @@ public function editorAction(string $blogCode): \Bitrix\Main\Engine\Response\Ren
 В `config.php` расширения укажите точку входа:
 
 ```php
-'render' => [
-    'controllerEntrypoint' => 'MyBlog.Vue.Editor.render',
-],
+'controllerEntrypoint' => 'MyBlog.Vue.Editor.render',
 ```
 
 {% note info "" %}
 
-Рендеринг расширений работает в браузере -- это не Server-Side Rendering (SSR). Используйте его для интерфейсов без требований к SEO.
+Рендеринг расширений работает в браузере — это не Server-Side Rendering (SSR). Используйте его для интерфейсов без требований к SEO.
 
 {% endnote %}
 
@@ -993,25 +991,25 @@ public function deleteAction(string $code)
 
 1. Создает экземпляр контроллера через  `new Controller()`.
 
-2. Вызывает `Controller::init()` -- инициализация, которую можно переопределить.
+2. Вызывает `Controller::init()` — инициализация, которую можно переопределить.
 
 3. Создает объект действия по имени `*Action`.
 
-4. Выполняет `Controller::prepareParams()` -- извлечение и валидация параметров.
+4. Выполняет `Controller::prepareParams()` — извлечение и валидация параметров.
 
-5. Выполняет `Controller::processBeforeAction($action)` -- предварительная обработка.
+5. Выполняет `Controller::processBeforeAction($action)` — предварительная обработка.
 
 6. Вызывает событие `onBeforeAction`, которое позволяет отменить выполнение.
 
-7. Выполняет действие -- вызов `actionNameAction(...)`.
+7. Выполняет действие — вызов `actionNameAction(...)`.
 
 8. Вызывает событие `onAfterAction` после выполнения действия.
 
-9. Выполняет `Controller::processAfterAction(\$action, \$result)` -- постобработка результата.
+9. Выполняет `Controller::processAfterAction(\$action, \$result)` — постобработка результата.
 
-10. Формирует ответ -- преобразование в JSON, HTML или файл.
+10. Формирует ответ — преобразование в JSON, HTML или файл.
 
-11. Выполняет `Controller::finalizeResponse(\$response)` -- финальная настройка заголовков.
+11. Выполняет `Controller::finalizeResponse(\$response)` — финальная настройка заголовков.
 
 12. Отправляет ответ пользователю.
 

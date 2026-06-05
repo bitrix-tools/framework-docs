@@ -69,9 +69,9 @@ $arComponentDescription = [
 
 Файл `.parameters.php` содержит массив `$arComponentParameters`, который описывает входные параметры компонента. Добавьте в массив группу `USER_CARD` и два параметра:
 
--  `USER_ID` -- числовой параметр с идентификатором пользователя,
+-  `USER_ID` — числовой параметр с идентификатором пользователя,
 
--  `SHOW_EMAIL` -- чекбокс, который определяет, показывать ли email.
+-  `SHOW_EMAIL` — чекбокс, который определяет, показывать ли email.
 
 ```php
 <?php
@@ -102,14 +102,15 @@ $arComponentParameters = [
 
 ### Файл class.php
 
-Файл `class.php` -- основной файл логики компонента. Чтобы получить данные пользователя и передать их в шаблон, используйте методы:
+Файл `class.php` — основной файл логики компонента. Чтобы получить данные пользователя и передать их в шаблон, используйте методы:
 
--  `initResult()` -- получает данные из базы,
+-  `initResult()` — получает данные из базы,
 
--  `executeComponent()` -- выполняет компонент и кеширует результаты.
+-  `executeComponent()` — выполняет компонент и кеширует результаты.
 
 ```php
 <?php
+
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 class UserCardComponent extends CBitrixComponent
@@ -125,9 +126,10 @@ class UserCardComponent extends CBitrixComponent
     {
         $arParams['USER_ID'] ??= 0;
         $arParams['SHOW_EMAIL'] ??= 'Y';
-        
+
         return $arParams;
     }
+
     /**
      * Основной метод выполнения компонента
      *
@@ -140,16 +142,16 @@ class UserCardComponent extends CBitrixComponent
         if ($this->startResultCache())
         {
             $this->initResult();
-            
+
             // Если ничего не найдено, отменяем кеширование
             if (empty($this->arResult))
             {
                 $this->abortResultCache();
                 ShowError('Пользователь не найден');
-                
+
                 return;
             }
-            
+
             $this->includeComponentTemplate();
         }
     }
@@ -166,7 +168,7 @@ class UserCardComponent extends CBitrixComponent
         {
             return;
         }
-        
+
         $user = \Bitrix\Main\UserTable::query()
             ->setSelect([
                 'NAME',
@@ -185,7 +187,7 @@ class UserCardComponent extends CBitrixComponent
             'NAME' => $user['NAME'],
             'EMAIL' => $user['EMAIL'],
         ];
-        
+
         // Получаем путь до аватара, если он указан
         if (!empty($user['PERSONAL_PHOTO']))
         {
@@ -205,7 +207,7 @@ class UserCardComponent extends CBitrixComponent
 
 Вывод данных через `<?= $arResult['NAME'] ?>` безопасен и не приведет к XSS или HTML-инъекциям. Данные в массивах `$arParams` и `$arResult` экранированы и подготовлены для вывода.
 
-Есть ряд исключений для типов данных. Подробнее в статье [Компоненты](./../framework/components).
+Есть ряд исключений для типов данных. Подробнее в статье [Компоненты](./../framework/components.md).
 
 {% endnote %}
 
@@ -306,11 +308,11 @@ $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 
 Все файлы компонента `user.card` можно [скачать в архиве](https://dev.1c-bitrix.ru/docs/chm_files/user.card.zip). Для работы распакуйте архив в папку `/local/components/my/`.
 
-![](./create-component.png){width=700px height=435px}
+![](./_images/create-component.png){width=700px height=435px}
 
 ## Как добавить компонент на страницу
 
-Сначала создайте страницу, например, `/my-page/index.php`. Подробности читайте в статье [Создание страницы](./create-page).
+Сначала создайте страницу, например, `/my-page/index.php`. Подробности читайте в статье [Создание страницы](./create-page.md).
 
 Разместите на странице и настройте новый компонент.
 
@@ -320,38 +322,43 @@ $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 
 3. Переместите компонент Карточка пользователя в рабочую область страницы.
 
-   ![](./create-component-4.png){width=740px height=478px}
+   ![](./_images/create-component-4.png){width=740px height=478px}
 
 4. Откроется форма с параметрами компонента. Выполните настройки:
 
-   -  Идентификатор пользователя -- введите идентификатор пользователя, карточка которого должна быть отображена.
+   -  Идентификатор пользователя — введите идентификатор пользователя, карточка которого должна быть отображена.
 
       Чтобы вывести карточку текущего пользователя, в параметре укажите `={$USER->GetID()}`.
 
-   -  Показывать email -- отметьте опцию, чтобы в карточке был показан email.
+   -  Показывать email — отметьте опцию, чтобы в карточке был показан email.
 
-   ![](./create-component-5.png){width=717px height=456px}
+   ![](./_images/create-component-5.png){width=717px height=456px}
 
 В результате на странице `/my-page/index.php` будет выведена карточка пользователя.
 
-![](./create-component-6.png){width=261px height=401px}
+![](./_images/create-component-6.png){width=261px height=401px}
 
 ### Исходный код страницы
 
 Страница `/my-page/index.php` с размещенным на ней компонентом имеет следующий код:
 
 ```php
-<?php  
+<?php
+
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
-$APPLICATION->SetTitle("");  
+$APPLICATION->SetTitle('');
 ?>
-<?$APPLICATION->IncludeComponent(
+<?php
+
+$APPLICATION->IncludeComponent(
     "my:user.card",
     "",
     Array(
         "SHOW_EMAIL" => "Y",
         "USER_ID" => "1"  /* или "USER_ID" => $USER->GetID() для текущего пользователя */
     )
-);?>
-<?php require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php'); ?>
+);
+
+require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');
+?>
 ```

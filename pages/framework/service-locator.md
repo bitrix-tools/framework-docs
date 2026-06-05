@@ -3,7 +3,7 @@ title: Service Locator
 description: 'Service Locator. Документация по Bitrix Framework: принципы работы, архитектура и примеры использования.'
 ---
 
-Service Locator -- это шаблон проектирования для управления сервисами приложения. Вместо создания сервисов напрямую, используется специальный объект -- Service Locator. Он отвечает за создание и поиск сервисов, что упрощает их использование и замену.
+Service Locator — это шаблон проектирования для управления сервисами приложения. Вместо создания сервисов напрямую, используется специальный объект — Service Locator. Он отвечает за создание и поиск сервисов, что упрощает их использование и замену.
 
 Класс [\\Bitrix\\Main\\DI\\ServiceLocator](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-DI-ServiceLocator.html) реализует интерфейс PSR-11. Доступен с версии main 20.5.400.
 
@@ -19,7 +19,7 @@ if ($serviceLocator->has('someService'))
 
 ## Режим Autowire
 
-По умолчанию Service Locator работает в режиме Autowire -- автоматически разрешает все зависимости у сервисов.
+По умолчанию Service Locator работает в режиме Autowire — автоматически разрешает все зависимости у сервисов.
 
 Также контейнер может автоматически создавать объекты указанных классов, даже если их нет внутри контейнера.
 
@@ -140,14 +140,14 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
 
    Регистрация через API осуществляется методами класса [\\Bitrix\\Main\\DI\\ServiceLocator](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-DI-ServiceLocator.html).
 
-   -  `getInstance()` -- получить экземпляр локатора.
+   -  `getInstance()` — получить экземпляр локатора.
 
-   -  `addInstance(string $code, $service)` -- зарегистрировать экземпляр сервиса.
+   -  `addInstance(string $code, $service)` — зарегистрировать экземпляр сервиса.
 
-   -  `addInstanceLazy(string $code, $configuration)` -- выполнить ленивую регистрацию с конфигурацией, при которой система создаст сервис только при обращении к нему.
+   -  `addInstanceLazy(string $code, $configuration)` — выполнить ленивую регистрацию с конфигурацией, при которой система создаст сервис только при обращении к нему.
 
-   -  `has(string $code)` -- проверить наличие сервиса.
+   -  `has(string $code)` — проверить наличие сервиса.
 
-   -  `get(string $code)` -- получить сервис. Метод создает сервис при первом обращении. Если сервиса нет, выбрасывается исключение \\Psr\\Container\\NotFoundExceptionInterface.
+   -  `get(string $code)` — получить сервис. Метод создает сервис при первом обращении. Если сервиса нет, выбрасывается исключение \\Psr\\Container\\NotFoundExceptionInterface.
 
-   Подробное описание методов -- в [справочнике API](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-DI-ServiceLocator.html).
+   Подробное описание методов — в [справочнике API](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-DI-ServiceLocator.html).

@@ -232,7 +232,7 @@ CIBlockElement::GetList([], [
 
    -  Выберите подозрительный запрос и откройте План исполнения.
 
-      ![](./performance.png){width=679px height=266px}
+      ![](./_images/performance.png){width=679px height=266px}
 
    -  Если в строке `key` указано `<null>`, а в условиях есть `Using filesort` или `Using temporary`, запрос не использует индекс.
 
