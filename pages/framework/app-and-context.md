@@ -29,7 +29,7 @@ $application = Application::getInstance();
 $context = Application::getInstance()->getContext();
 ```
 
-Если приложение -- `Bitrix\Main\HttpApplication`, вызов вернет `Bitrix\Main\HttpContext`.
+Если приложение — `Bitrix\Main\HttpApplication`, вызов вернет `Bitrix\Main\HttpContext`.
 
 ### Запрос
 
@@ -42,7 +42,7 @@ $context = Application::getInstance()->getContext();
 $request = $context->getRequest();
 ```
 
--  **Класс запроса**. Запрос -- экземпляр класса, наследующего [`Bitrix\Main\Request`](https://dev.1c-bitrix.ru/api_d7/bitrix/main/request/index.php). Для HTTP-запросов это [`Bitrix\Main\HttpRequest`](https://dev.1c-bitrix.ru/api_d7/bitrix/main/httprequest/index.php), который предоставляет доступ к параметрам.
+-  **Класс запроса**. Запрос — экземпляр класса, наследующего [`Bitrix\Main\Request`](https://dev.1c-bitrix.ru/api_d7/bitrix/main/request/index.php). Для HTTP-запросов это [`Bitrix\Main\HttpRequest`](https://dev.1c-bitrix.ru/api_d7/bitrix/main/httprequest/index.php), который предоставляет доступ к параметрам.
 
 ### Доступ к параметрам
 

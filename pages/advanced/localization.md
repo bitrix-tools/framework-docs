@@ -251,7 +251,7 @@ $culture = $context->getCulture();
 
 -  `getNameFormat()` — возвращает формат отображения имени пользователя.
 
-## Локализация в JavaScript и Vue
+## Локализация в JavaScript и Vue {#vue-js}
 
 Bitrix Framework поддерживает локализацию не только в PHP, но и в клиентской части: в JavaScript и компонентах на BitrixVue. Система автоматически передает необходимые языковые фразы из PHP в JavaScript-окружение.
 

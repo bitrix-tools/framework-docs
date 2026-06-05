@@ -186,5 +186,3 @@ else
 \Bitrix\Main\Service\GeoIp\Manager::setLogErrors(true);
 $geoResult = \Bitrix\Main\Service\GeoIp\Manager::getDataResult('92.50.195.50');
 ```
-
-##
