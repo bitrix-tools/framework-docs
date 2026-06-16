@@ -20,6 +20,14 @@ title: Что нового
 
 ### 2026
 
+#### 16 июня
+
+- Добавили новую статью [Окно сообщения](./pages/ui/dialogs-messagebox.md).
+- Добавили новую статью [Подсказка](./pages/ui/hint.md).
+- Добавили новую статью [Всплывающие окна и меню main.popup](./pages/ui/main-popup.md).
+- Добавили новую статью [Боковая панель main.sidepanel](./pages/ui/main-sidepanel.md).
+- Добавили новую статью [Менеджер уведомлений](./pages/ui/notification-manager.md).
+
 #### 4 июня
 
 - Добавили новую статью [Иконки](./pages/ui/icons.md).

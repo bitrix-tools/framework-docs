@@ -296,6 +296,16 @@ items:
         href: /pages/ui/typography.md
       - name: Иконки
         href: /pages/ui/icons.md
+      - name: Окно сообщения
+        href: /pages/ui/dialogs-messagebox.md
+      - name: Подсказка
+        href: /pages/ui/hint.md
+      - name: Всплывающие окна и меню main.popup
+        href: /pages/ui/main-popup.md
+      - name: Боковая панель main.sidepanel
+        href: /pages/ui/main-sidepanel.md
+      - name: Менеджер уведомлений
+        href: /pages/ui/notification-manager.md
 
   - name: Модули
     items:
