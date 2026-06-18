@@ -214,6 +214,8 @@ function findParentTableRow(element)
 }
 
 function addCopyIconsToCodeElements() {
+    restoreDoubleHyphensInCodeElements();
+
     const codeElements = document.querySelectorAll('code');
 
     codeElements.forEach(codeElement => {
@@ -310,6 +312,25 @@ function addCopyIconsToCodeElements() {
         if (nextElement)
         {
             nextElement.style.backgroundColor = blendColor;
+        }
+    });
+}
+
+function restoreDoubleHyphensInCodeElements() {
+    const codeElements = document.querySelectorAll('code');
+
+    codeElements.forEach((codeElement) => {
+        const text = codeElement.textContent;
+        if (!text.includes('—')) {
+            return;
+        }
+
+        const fixedText = text
+            .replace(/var\(—(?=[a-z_])/gi, 'var(--')
+            .replace(/(^|[\s"'`=;:])—(?=[a-z_<])/gi, '$1--');
+
+        if (fixedText !== text) {
+            codeElement.textContent = fixedText;
         }
     });
 }
