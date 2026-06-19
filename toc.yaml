@@ -321,6 +321,28 @@ items:
             href: /pages/modules/iblocks/api.md
           - name: Производительность и частые ошибки
             href: /pages/modules/iblocks/performance.md
+      - name: Торговый каталог
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/catalog/overview.md
+          - name: Схема работы торгового каталога и основные объекты
+            href: /pages/modules/catalog/architecture.md
+          - name: Как выбрать API торгового каталога
+            href: /pages/modules/catalog/choose-catalog-api.md
+          - name: Базовые настройки каталога
+            href: /pages/modules/catalog/catalog-settings.md
+          - name: Работа с товарами и торговыми предложениями
+            href: /pages/modules/catalog/products-and-offers.md
+          - name: Доступность, цены и подписка
+            href: /pages/modules/catalog/availability-prices-subscription.md
+          - name: Складской учет
+            href: /pages/modules/catalog/inventory-management.md
+          - name: Комплекты, наборы и скидки
+            href: /pages/modules/catalog/bundles-sets-discounts.md
+          - name: Экспорт и импорт
+            href: /pages/modules/catalog/export-import.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/catalog/performance.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам
