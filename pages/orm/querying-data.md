@@ -296,6 +296,8 @@ BookTable::getList([
 Для подсчета количества записей используйте `ExpressionField`:
 
 ```php
+use \Bitrix\Main\ORM;
+
 BookTable::getList([
     'select' => ['CNT'],
     'runtime' => [
@@ -312,6 +314,8 @@ BookTable::getList([
 После того, как добавили вычисляемое поле, его можно использовать в фильтрах:
 
 ```php
+use \Bitrix\Main\ORM;
+
 BookTable::getList([
     'select' => ['PUBLISH_DATE'],
     'filter' => ['>CNT' => 5],
@@ -335,6 +339,8 @@ BookTable::getList([
 Если вычисляемое поле нужно только в `select`, `runtime` можно не использовать. Система поддерживает вложенные выражения, которые разворачиваются в финальном SQL.
 
 ```php
+use \Bitrix\Main\ORM;
+
 BookTable::getList([
     'select' => [
         new ORM\Fields\ExpressionField('MAX_AGE', 'MAX(%s)', ['AGE_DAYS'])
