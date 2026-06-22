@@ -197,6 +197,8 @@ items:
         href: /pages/advanced/datetime.md
       - name: Локализация
         href: /pages/advanced/localization.md
+      - name: Кодировка
+        href: /pages/advanced/encoding.md
       - name: Отладка
         href: /pages/advanced/debug.md
       - name: Резервное копирование
