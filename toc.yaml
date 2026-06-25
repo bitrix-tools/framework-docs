@@ -138,6 +138,16 @@ items:
         href: /pages/database/nosql.md
       - name: HandlerSocket
         href: /pages/database/handlersocket.md
+      - name: Миграция на PostgreSQL
+        items:
+          - name: Как перейти с MySQL на PostgreSQL
+            href: /pages/database/postgresql/migration.md
+          - name: Поддержка PostgreSQL в модулях
+            href: /pages/database/postgresql/module-support.md
+          - name: Как писать код, совместимый с PostgreSQL
+            href: /pages/database/postgresql/compatible-code.md
+          - name: Установка PostgreSQL на macOS
+            href: /pages/database/postgresql/installation-macos.md
 
   - name: ORM
     items:

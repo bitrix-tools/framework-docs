@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 25 июня
+
+- Добавили новый раздел [Миграция на PostgreSQL](./pages/database/postgresql/migration.md).
+
 #### 22 июня
 
 - Добавили новую статью [Кодировка](./pages/advanced/encoding.md).
