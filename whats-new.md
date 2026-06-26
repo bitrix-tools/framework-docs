@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 26 июня
+
+- Обновили статью [Экосистема](./pages/about/ecosystem.md)
+
 #### 25 июня
 
 - Добавили новый раздел [Миграция на PostgreSQL](./pages/database/postgresql/migration.md).
