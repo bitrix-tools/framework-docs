@@ -29,11 +29,13 @@ description: 'Шаблоны страницы. Основы Bitrix CMS: ключ
 
 Шаблон страницы — это PHP-файл, который содержит структуру страницы и соответствует правилам оформления.
 
-Шаблоны хранятся в следующих папках:
+Собственные шаблоны страниц размещайте в папках пользовательских шаблонов сайта:
 
--  `/bitrix/templates/.default/page_templates` — для всех шаблонов сайта,
+-  `/local/templates/.default/page_templates` — для всех шаблонов сайта,
 
--  `/bitrix/templates/[идентификатор_шаблона]/page_templates` — для конкретного шаблона сайта.
+-  `/local/templates/[идентификатор_шаблона]/page_templates` — для конкретного шаблона сайта.
+
+Штатные примеры шаблонов страниц находятся в `/bitrix/templates/.default/page_templates` и `/bitrix/templates/[идентификатор_шаблона]/page_templates`. Их можно скопировать в `/local/templates/` и использовать как основу для своего шаблона.
 
 Каждая папка может содержать:
 
@@ -55,13 +57,15 @@ description: 'Шаблоны страницы. Основы Bitrix CMS: ключ
 
 #### Как создать пассивный шаблон
 
-**Первый способ**. Скопировать штатный шаблон `/bitrix/templates/.default/page_templates/standard.php` и отредактировать его.
+**Первый способ**. Скопировать штатный шаблон
+
+`/bitrix/templates/.default/page_templates/standard.php` в `/local/templates/.default/page_templates/` и отредактировать копию.
 
 **Второй способ**. Создать шаблон с нуля.
 
 1. Продумайте структуру страницы. Это может быть HTML, текст, изображения, таблицы, компоненты и PHP-код.
 
-2. В папке `/bitrix/templates/[идентификатор_шаблона]/page_templates` создайте файл, например `new.php`.
+2. В папке `/local/templates/[идентификатор_шаблона]/page_templates` создайте файл, например `new.php`.
 
 3. В файле разместите код шаблона.
 
@@ -80,7 +84,7 @@ $APPLICATION->SetTitle("Title");
 
 #### Как подключить пассивный шаблон
 
-Чтобы шаблон появился в меню создания страницы, в файл `/bitrix/templates/[идентификатор_шаблона]/page_templates/.content.php` добавьте строку:
+Чтобы шаблон появился в меню создания страницы, в файл `/local/templates/[идентификатор_шаблона]/page_templates/.content.php` добавьте строку:
 
 ```php
 TEMPLATE["new.php"] = Array("name"=>"Новый шаблон", "sort"=>4);
@@ -114,9 +118,13 @@ $TEMPLATE["new.php"] = Array("name"=>GetMessage("new"), "sort"=>4);
 
 По имени `new` будет выполнен поиск названия шаблона в языковом файле.
 
-Файлы с языковыми сообщениями хранятся в папке `/bitrix/templates/[идентификатор_шаблона]/lang`. Папка содержит подпапки с названиями языков .
+Языковые файлы пользовательского шаблона храните в папке `lang` того шаблона сайта, где расположен файл страницы:
 
-Например, языковые сообщения для русского языка расположены в файле `/bitrix/templates/[идентификатор_шаблона]/lang/ru/page_templates/.content.php`. Чтобы добавить название шаблона на русском языке, создайте в файле запись `$MESS['new'] = "Новый шаблон";`.
+-  для общего шаблона — `/local/templates/.default/lang/`,
+
+-  для шаблона конкретного сайта — `/local/templates/[идентификатор_шаблона]/lang/`.
+
+Например, название шаблона на русском языке добавьте в файл `/local/templates/[идентификатор_шаблона]/lang/ru/page_templates/.content.php`: `$MESS['new'] = "Новый шаблон";`.
 
 ```php
 <?
@@ -127,13 +135,15 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 ?>
 ```
 
-Аналогично добавляется строка для английского языка в файле `/bitrix/templates/.default/lang/en/page_templates/.content.php` с английским названием `$MESS['new'] = "New template";`.
+Аналогично добавьте строку для английского языка в файл `/local/templates/[идентификатор_шаблона]/lang/en/page_templates/.content.php`: `$MESS['new'] = "New template";`.
+
+Если берете за основу штатный шаблон, пример языковых файлов можно посмотреть в `/bitrix/templates/.default/lang/ru/page_templates/.content.php` или в папке нужного штатного шаблона.
 
 #### Пример создания пассивного шаблона
 
 Будет создан общий шаблон страницы объявления, который доступен для всех шаблонов сайта.
 
-1. В папке `/bitrix/templates/.default/page_templates` создайте файл `announcement.php`.
+1. В папке `/local/templates/.default/page_templates` создайте файл `announcement.php`.
 
 2. Добавьте код шаблона и проверьте наличие подключенных `header.php` и `footer.php`.
 
@@ -184,13 +194,13 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 
 4. Настройте языковые файлы:
 
-   -  для русского языка в файле `/bitrix/templates/.default/lang/ru/page_templates/.content.php`,
+   -  для русского языка в файле `/local/templates/.default/lang/ru/page_templates/.content.php`,
 
    ```php
    $MESS['announcement'] = "Важное объявление";
    ```
 
-   -  для английского языка в файле `/bitrix/templates/.default/lang/en/page_templates/.content.php`.
+   -  для английского языка в файле `/local/templates/.default/lang/en/page_templates/.content.php`.
 
    ```php
    $MESS ['announcement'] = "Important announcement";
@@ -442,11 +452,11 @@ $MESS ['BT_COL_4'] = "Мозаика";
 
 #### Пример создания активного шаблона
 
-Активный шаблон будет создан на основе штатного шаблона `bootstrap` и [пассивного шаблона](./page-templates#пример-создания-пассивного-шаблона)  `announcement.php`. В форме создания страницы новый шаблон будет выводить два вопроса.
+Активный шаблон будет создан на основе штатного шаблона `bootstrap` и [пассивного шаблона](./page-templates.md#пример-создания-пассивного-шаблона)  `announcement.php`. В форме создания страницы новый шаблон будет выводить два вопроса.
 
 ![](./_images/page-templates-8.png){width=521px height=422px}
 
-1. В `/bitrix/templates/eshop_bootstrap_v4/page_templates/` создайте копию папки `bootstrap` и переименуйте ее в `new_template`.
+1. Скопируйте штатный шаблон `/bitrix/templates/eshop_bootstrap_v4/page_templates/bootstrap` в папку пользовательского шаблона `/local/templates/<идентификатор_шаблона>/page_templates/new_template`.
 
 2. Откройте файл `template.php` и внесите изменения в код.
 
