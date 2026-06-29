@@ -334,6 +334,95 @@ $arModuleVersion = [
 
 -  регистрацию обработчиков событий.
 
+### Пошаговая установка
+
+Если перед установкой нужно получить параметры от администратора, разбейте установку на шаги. На первом шаге `DoInstall()` показывает административную форму через `$APPLICATION->IncludeAdminFile()`. Форма передает скрытые поля `install=Y`, `step=2` и параметры установки. На втором шаге `DoInstall()` читает значения из запроса и выполняет установку: создает таблицы, регистрирует модуль, копирует файлы, добавляет обработчики событий.
+
+Для пошаговой установки создайте два файла:
+
+-  `/install/install_step1.php` — форма первого шага,
+
+-  `/install/index.php` — файл описания модуля с классом, который показывает форму и обрабатывает второй шаг.
+
+В форме служебные поля управляют сценарием установки:
+- `id` — указывает модуль,
+- `install=Y` — сохраняет действие установки,
+- `step=2` — переводит установщик ко второму шагу,
+- `lang` — сохраняет язык административного интерфейса.
+
+Пример файла `/install/install_step1.php` для первого шага установки.
+
+```php
+<?php
+// Файл: /local/modules/company.module/install/install_step1.php
+?>
+<form action="<?= $APPLICATION->GetCurPage() ?>">
+    <?= bitrix_sessid_post() ?>
+    <input type="hidden" name="lang" value="<?= LANG ?>">
+    <input type="hidden" name="id" value="company.module">
+    <input type="hidden" name="install" value="Y">
+    <input type="hidden" name="step" value="2">
+
+    <p>
+        <input type="checkbox" name="create_demo_data" id="create_demo_data" value="Y">
+        <label for="create_demo_data">Создать демонстрационные данные</label>
+    </p>
+
+    <input type="submit" name="inst" value="Установить модуль">
+</form>
+```
+
+Пример обработки шагов в файле `/install/index.php`.
+
+```php
+<?php
+class company_module extends CModule
+{
+    public $MODULE_ID = 'company.module';
+
+    public function InstallDB(array $params = [])
+    {
+        if (($params['createDemoData'] ?? 'N') === 'Y')
+        {
+            // Создание демонстрационных данных модуля
+        }
+
+        return true;
+    }
+
+    public function DoInstall()
+    {
+        global $APPLICATION;
+
+        if (!check_bitrix_sessid())
+        {
+            return false;
+        }
+
+        $step = (int)($_REQUEST['step'] ?? 1);
+
+        if ($step < 2)
+        {
+            $APPLICATION->IncludeAdminFile(
+                'Установка модуля',
+                __DIR__ . '/install_step1.php'
+            );
+
+            return true;
+        }
+
+        $this->InstallDB([
+            'createDemoData' => $_REQUEST['create_demo_data'] ?? 'N',
+        ]);
+        $this->InstallFiles();
+
+        RegisterModule($this->MODULE_ID);
+
+        return true;
+    }
+}
+```
+
 ## Удалить модуль
 
 Чтобы удалить модуль, нажмите *Стереть* на странице *Установленные решения* и подтвердите действие.
@@ -359,6 +448,127 @@ $arModuleVersion = [
 -  проактивную защиту `security`.
 
 {% endnote %}
+
+### Пошаговое удаление с сохранением данных
+
+Если перед удалением модуля нужно спросить администратора, сохранять ли таблицы базы данных или другие данные модуля, разбейте удаление на шаги.
+
+Для пошагового удаления создайте три файла:
+
+-  `/install/uninstall_step1.php` — форма с вопросом о сохранении данных,
+
+-  `/install/index.php` — файл описания модуля с классом, который показывает форму, читает `savedata` и выполняет удаление,
+
+-  `/install/uninstall_step2.php` — экран результата удаления.
+
+На первом шаге метод `DoUninstall()` показывает административную форму. В форме передайте скрытые поля `uninstall=Y`, `step=2` и поле с флагом сохранения данных, например `savedata=Y`.
+
+В форме удаления поле:
+- `id` — указывает модуль,
+- `uninstall=Y` — сохраняет действие удаления,
+- `step=2` — переводит удаление ко второму шагу,
+- `savedata=Y` — передает решение администратора сохранить данные.
+
+```php
+<?php
+// Файл: /local/modules/company.module/install/uninstall_step1.php
+?>
+<form action="<?= $APPLICATION->GetCurPage() ?>">
+    <?= bitrix_sessid_post() ?>
+    <input type="hidden" name="lang" value="<?= LANG ?>">
+    <input type="hidden" name="id" value="company.module">
+    <input type="hidden" name="uninstall" value="Y">
+    <input type="hidden" name="step" value="2">
+
+    <p>Вы можете сохранить данные в таблицах базы данных:</p>
+    <p>
+        <input type="checkbox" name="savedata" id="savedata" value="Y" checked>
+        <label for="savedata">Сохранить таблицы</label>
+    </p>
+
+    <input type="submit" name="inst" value="Удалить модуль">
+</form>
+```
+
+На втором шаге `DoUninstall()` получает значение `savedata` из запроса и передает его в метод удаления базы данных. Если администратор оставил флаг `savedata=Y`, метод `UnInstallDB()` не удаляет таблицы. Если флага нет или он отличается от `Y`, метод удаляет данные модуля.
+
+```php
+<?php
+use Bitrix\Main\Application;
+
+class company_module extends CModule
+{
+    public $MODULE_ID = 'company.module';
+
+    public function DoUninstall()
+    {
+        if (!check_bitrix_sessid())
+        {
+            return false;
+        }
+
+        global $APPLICATION;
+
+        $step = (int)($_REQUEST['step'] ?? 1);
+
+        if ($step < 2)
+        {
+            $APPLICATION->IncludeAdminFile(
+                'Удаление модуля',
+                __DIR__ . '/uninstall_step1.php'
+            );
+
+            return true;
+        }
+
+        $this->UnInstallDB([
+            'savedata' => $_REQUEST['savedata'] ?? 'N',
+        ]);
+        $this->UnInstallFiles();
+
+        UnRegisterModule($this->MODULE_ID);
+
+        $APPLICATION->IncludeAdminFile(
+            'Удаление модуля',
+            __DIR__ . '/uninstall_step2.php'
+        );
+
+        return true;
+    }
+
+    public function UnInstallDB(array $params = [])
+    {
+        if (($params['savedata'] ?? 'N') === 'Y')
+        {
+            return true;
+        }
+
+        $connection = Application::getConnection();
+        $connection->dropTable('company_module_item');
+
+        return true;
+    }
+}
+```
+
+Файл `uninstall_step2.php` нужен, чтобы показать результат удаления. Если при удалении возникли ошибки, сохраните их в свойство класса или в глобальную переменную и выведите на этом экране вместо сообщения об успешном завершении.
+
+```php
+<?php
+// Файл: /local/modules/company.module/install/uninstall_step2.php
+
+if (!check_bitrix_sessid())
+{
+    return;
+}
+?>
+<p>Удаление модуля завершено.</p>
+
+<form action="<?= $APPLICATION->GetCurPage() ?>">
+    <input type="hidden" name="lang" value="<?= LANG ?>">
+    <input type="submit" value="Вернуться к списку модулей">
+</form>
+```
 
 ## Параметры модуля
 
