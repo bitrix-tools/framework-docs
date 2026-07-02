@@ -318,6 +318,8 @@ items:
         href: /pages/ui/main-sidepanel.md
       - name: Менеджер уведомлений
         href: /pages/ui/notification-manager.md
+      - name: Кнопки ui.buttons
+        href: /pages/ui/ui-buttons.md
 
   - name: Модули
     items:
