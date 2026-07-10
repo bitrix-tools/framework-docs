@@ -258,7 +258,7 @@ if (!check_bitrix_sessid())
     return;
 }
 
-echo CAdminMessage::ShowNote('Модуль установлен');
+CAdminMessage::ShowNote('Модуль установлен');
 ?>
 ```
 
@@ -273,7 +273,7 @@ if (!check_bitrix_sessid())
     return;
 }
 
-echo CAdminMessage::ShowNote('Модуль удален');
+CAdminMessage::ShowNote('Модуль удален');
 ?>
 ```
 
