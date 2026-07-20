@@ -21,7 +21,7 @@ XSS (Cross-Site Scripting) — уязвимость, которая позвол
 
 {% endnote %}
 
-```html
+```php
 <!-- Правильно: спецсимволы экранированы, скрипты не выполнятся -->
 <div><?= \Bitrix\Main\Text\HtmlFilter::encode($foo) ?></div>
 <textarea><?= \Bitrix\Main\Text\HtmlFilter::encode($foo) ?></textarea>
@@ -53,7 +53,7 @@ const valueEscaped = Text.encode(valueNotSafe);
 
 Заключайте значения атрибутов в двойные кавычки `"`. С одинарными кавычками экранирование не сработает.
 
-```html
+```php
 <!-- Правильно: значения в двойных кавычках -->
 <input type="text" name="foo" value="<?= htmlspecialcharsbx($fooValue) ?>" />
 
@@ -65,7 +65,7 @@ const valueEscaped = Text.encode(valueNotSafe);
 
 Метод `CUtil::JSEscape` экранирует спецсимволы JavaScript `'`, `"`, `\`, `\n`, `\r`. Подходит для строк, заключенных в кавычки.
 
-```html
+```php
 // Правильно: строка в кавычках, спецсимволы экранированы
 <script>
   var foo = '<?= CUtil::JSEscape($foo) ?>';
@@ -115,7 +115,7 @@ $foo = ['key' => $userInput];
 ?>
 <script>
   // Безопасный вывод: <script> и другие спецсимволы экранированы
-	  var foo = <?= Bitrix\Main\Web\Json::encode($foo) ?>;
+      var foo = <?= Bitrix\Main\Web\Json::encode($foo) ?>;
 </script>
 ```
 

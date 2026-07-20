@@ -121,16 +121,14 @@ final class RedirectGuestToLogin extends Base
     public function onBeforeAction(Event $event)
     {
         $isAuthorized = $this->getAction()->getController()->getCurrentUser()?->getId() > 0;
-		if ($isAuthorized)
-		{
-			return;
-		}
+        if ($isAuthorized) {
+            return;
+        }
 
         $requestUri = Application::getInstance()
             ->getContext()
             ->getRequest()
-            ->getRequestUri()
-        ;
+            ->getRequestUri();
 
         \LocalRedirect('/login/?backurl=' . urlencode($requestUri));
     }

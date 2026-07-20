@@ -224,7 +224,7 @@ return array (
         'readonly' => false,
     ),
     // настройки обработки ошибок
-    'exception_handling' => array 
+    'exception_handling' => array (
         'value' => array (
             'debug' => false, // режим отладки
             'handled_errors_types' => 4437, // типы обрабатываемых ошибок

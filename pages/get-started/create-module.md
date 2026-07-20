@@ -146,8 +146,7 @@ class my_module extends CModule
     {
         include __DIR__ . '/version.php';
 
-        if (isset($arModuleVersion['VERSION'], $arModuleVersion['VERSION_DATE']))
-        {
+        if (isset($arModuleVersion['VERSION'], $arModuleVersion['VERSION_DATE'])) {
             $this->MODULE_VERSION = $arModuleVersion['VERSION'];
             $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         }
@@ -160,8 +159,7 @@ class my_module extends CModule
     {
         global $USER, $APPLICATION;
         
-        if (!$USER->IsAdmin())
-        {
+        if (!$USER->IsAdmin()) {
             return;
         }
         
@@ -180,8 +178,7 @@ class my_module extends CModule
     {
         global $USER, $APPLICATION;
         
-        if (!$USER->IsAdmin())
-        {
+        if (!$USER->IsAdmin()) {
             return;
         }
         
@@ -253,8 +250,7 @@ class my_module extends CModule
 
 ```php
 <?php
-if (!check_bitrix_sessid())
-{
+if (!check_bitrix_sessid()) {
     return;
 }
 
@@ -268,8 +264,7 @@ CAdminMessage::ShowNote('Модуль установлен');
 
 ```php
 <?php
-if (!check_bitrix_sessid())
-{
+if (!check_bitrix_sessid()) {
     return;
 }
 

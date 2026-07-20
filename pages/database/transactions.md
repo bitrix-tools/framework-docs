@@ -29,8 +29,8 @@ try {
 
     // Пример SQL-запроса
     $db->queryExecute(
-		"UPDATE my_table SET active = '".\$db->getSqlHelper()->forSql('N')."' WHERE age > ".(int)0
-	);
+        "UPDATE my_table SET active = '".\$db->getSqlHelper()->forSql('N')."' WHERE age > ".(int)0
+    );
 
     // Пример изменения через ORM
     \Bitrix\Main\SiteTable::update('s1', ['ACTIVE' => 'N']);

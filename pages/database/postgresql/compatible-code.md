@@ -249,8 +249,7 @@ SELECT ID, POSITION(',' IN NAME) AS A_POS FROM b_user
 ```php
 $lockName = 'mylock';
 $connection = \Bitrix\Main\Application::getConnection();
-if ($connection->lock($lockName))
-{
+if ($connection->lock($lockName)) {
     // ...
     $connection->unlock($lockName);
 }
@@ -356,14 +355,12 @@ $update = [
     'DATA' => 'a',
 ];
 $merge = $helper->prepareMerge('b_module_table', ['KEY_ID'], $update, $update);
-if ($merge[0])
-{
+if ($merge[0]) {
     $connection->query($merge[0]);
 }
 //or another helper method
 //$update - is a row in a rows array
-foreach ($helper->prepareMergeMultiple('b_module_table', ['KEY_ID'], [$update]) as $sql)
-{
+foreach ($helper->prepareMergeMultiple('b_module_table', ['KEY_ID'], [$update]) as $sql) {
     $connection->query($sql);
 }
 ```

@@ -198,7 +198,8 @@ Array (
 Создадим класс `PublisherTable`, который представляет собой таблицу издательств в базе данных. Этот класс наследуется от `DataManager` — основного класса для работы с данными в Bitrix Framework.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
+
 use Bitrix\Main\ORM\Data\DataManager; // Импорт класса DataManager для работы с данными
 use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связей «один ко многим»
 
@@ -249,24 +250,24 @@ $data = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253, [
 
 // Вернет
 Array (
-	[0] => Array (
-		[ID] => 253
-		[TITLE] => Publisher Title 253
-		[BOOK_ID] => 2
-		[BOOK_TITLE] => Title 2
-		[BOOK_PUBLISHER_ID] => 253
-		[BOOK_ISBN] => 456-1-05-586920-1
-		[BOOK_IS_ARCHIVED] => N 
-	) 
-	[1] => Array (
-		[ID] => 253
-		[TITLE] => Publisher Title 253
-		[BOOK_ID] => 1
-		[BOOK_TITLE] => Title 1
-		[BOOK_PUBLISHER_ID] => 253
-		[BOOK_ISBN] => 978-3-16-148410-0
-		[BOOK_IS_ARCHIVED] => Y
-	)
+    [0] => Array (
+        [ID] => 253
+        [TITLE] => Publisher Title 253
+        [BOOK_ID] => 2
+        [BOOK_TITLE] => Title 2
+        [BOOK_PUBLISHER_ID] => 253
+        [BOOK_ISBN] => 456-1-05-586920-1
+        [BOOK_IS_ARCHIVED] => N 
+    ) 
+    [1] => Array (
+        [ID] => 253
+        [TITLE] => Publisher Title 253
+        [BOOK_ID] => 1
+        [BOOK_TITLE] => Title 1
+        [BOOK_PUBLISHER_ID] => 253
+        [BOOK_ISBN] => 978-3-16-148410-0
+        [BOOK_IS_ARCHIVED] => Y
+    )
 )
 ```
 
@@ -456,7 +457,8 @@ class CoverTable extends DataManager // Класс CoverTable наследует
 Для связи «один к одному» между таблицами `BookTable` и `CoverTable` используется поле `Reference`. Это поле позволяет создать связь между таблицами через указанные условия соединения.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
+
 use Bitrix\Main\ORM\Fields\Relations\Reference; // Импорт класса Reference для создания связей между таблицами
 use Bitrix\Main\ORM\Query\Join; // Импорт класса Join для определения условий соединения
 
@@ -855,15 +857,15 @@ class StoreBookTable extends DataManager
 ```php
 // Объект книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-	->fetchObject();
+    ->fetchObject();
 // Объект магазина
 $store = \Bitrix\Main\Test\Typography\StoreTable::getByPrimary(34)
-	->fetchObject();
+    ->fetchObject();
 // Новый объект связи книги с магазином
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::createObject()
-	->setBook($book)
-	->setStore($store)
-	->setQuantity(5);
+    ->setBook($book)
+    ->setStore($store)
+    ->setQuantity(5);
 // Сохранение
 $item->save();
 ```
@@ -873,7 +875,8 @@ $item->save();
 ```php
 // Объект существующей связи
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::getByPrimary([
-	'STORE_ID' => 33, 'BOOK_ID' => 2
+    'STORE_ID' => 33, 
+    'BOOK_ID' => 2,
 ])->fetchObject();
 // Обновление количества
 $item->setQuantity(12);
@@ -886,7 +889,8 @@ $item->save();
 ```php
 // Объект существующей связи
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::getByPrimary([
-	'STORE_ID' => 33, 'BOOK_ID' => 2
+    'STORE_ID' => 33, 
+    'BOOK_ID' => 2,
 ])->fetchObject();
 // Удаление
 $item->delete();
@@ -897,16 +901,18 @@ $item->delete();
 ```php
 // Добавление записи
 \Bitrix\Main\Test\Typography\StoreBookTable::add([
-	'STORE_ID' => 34, 'BOOK_ID' => 1, 'QUANTITY' => 5
+    'STORE_ID' => 34, 
+    'BOOK_ID' => 1,
+    'QUANTITY' => 5,
 ]);
 // Обновление записи
 \Bitrix\Main\Test\Typography\StoreBookTable::update(
-	['STORE_ID' => 34, 'BOOK_ID' => 1],
-	['QUANTITY' => 12]
+    ['STORE_ID' => 34, 'BOOK_ID' => 1],
+    ['QUANTITY' => 12]
 );
 // Удаление записи
 \Bitrix\Main\Test\Typography\StoreBookTable::delete(
-	['STORE_ID' => 34, 'BOOK_ID' => 1]
+    ['STORE_ID' => 34, 'BOOK_ID' => 1]
 );
 ```
 
@@ -967,8 +973,7 @@ $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1, [
     'select' => ['*', 'STORE_ITEMS'] // Выбираем все поля книги и связанные записи о наличии в магазинах
 ])->fetchObject();
 
-foreach ($book->getStoreItems() as $storeItem) // Перебираем все связанные записи о наличии книги в магазинах
-{
+foreach ($book->getStoreItems() as $storeItem) { // Перебираем все связанные записи о наличии книги в магазинах
     printf(
         'store "%s" has %s of book "%s"', // Форматируем строку для вывода информации
         $storeItem->getStoreId(), // Получаем ID магазина

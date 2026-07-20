@@ -90,41 +90,37 @@ done
 
    ![](./_images/psg_4.png)
 
-4. После создания базы данных и проверки подключения добавьте подключение в файл [`/bitrix/.settings.php`](../../framework/settings.md). Откройте ссылку в окне мастера, чтобы отредактировать файл в новой вкладке. В файле должен появиться блок подключения:
+   4. После создания базы данных и проверки подключения добавьте подключение в файл [`/bitrix/.settings.php`](../../framework/settings.md). Откройте ссылку в окне мастера, чтобы отредактировать файл в новой вкладке. В файле должен появиться блок подключения:
 
-   ![](./_images/psg_5.png)
+      ![](./_images/psg_5.png)
 
-   ```php
-    'connections' => 
-    array (
-        'value' => 
-        array (
-            'default' => 
-            array (
-            'className' => '\\Bitrix\\Main\\DB\\MysqliConnection',
-            'host' => 'localhost',
-            'database' => 'cp',
-            'login' => 'cp',
-            'password' => 'cp',
-            'options' => 2,
-            'charset' => 'utf8',
-            'include_after_connected' => '',
-        ),
-        'default_pgsql' =>
-        array (
-            'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
-            'host' => 'localhost',
-            'database' => 'portal',
-            'login' => 'bitrix',
-            'password' => 'passwd',
-            'options' => 2,
-            'charset' => 'utf-8',
-            'include_after_connected' => '',
-        ),
-    ),
-    'readonly' => true,
-    ),
-   ```
+      ```php
+      'connections' => [
+          'value' => [
+              'default' => [
+                  'className' => '\\Bitrix\\Main\\DB\\MysqliConnection',
+                  'host' => 'localhost',
+                  'database' => 'cp',
+                  'login' => 'cp',
+                  'password' => 'cp',
+                  'options' => 2,
+                  'charset' => 'utf8',
+                  'include_after_connected' => '',
+              ],
+              'default_pgsql' => [
+                  'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
+                  'host' => 'localhost',
+                  'database' => 'portal',
+                  'login' => 'bitrix',
+                  'password' => 'passwd',
+                  'options' => 2,
+                  'charset' => 'utf-8',
+                  'include_after_connected' => '',
+              ],
+          ],
+          'readonly' => true,
+      ]
+      ```
 5. На следующем шаге мастера выберите добавленное подключение.
 
    ![](./_images/psg_6.png)
@@ -204,24 +200,24 @@ done
    ```
 8. Отредактируйте файл [.settings.php](../../framework/settings.md).
 
-   ```text
+   ```bash
    root@cp:/var/www/html# vi bitrix/.settings.php
-   'connections' =>
-    array (
-        'value' => 
-        array (
-            'default' =>
-            array (
-                'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
-                'host' => 'localhost',
-                'database' => 'portaldb',
-                'login' => 'bitrix',
-                'password' => 'passwd',
-                'options' => 2,
-                'charset' => 'utf-8',
-                'include_after_connected' => '',
-            ),
-        ),
+   ```
+   ```php
+   'connections' => [
+       'value' => [
+           'default' => [
+               'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
+               'host' => 'localhost',
+               'database' => 'portaldb',
+               'login' => 'bitrix',
+               'password' => 'passwd',
+               'options' => 2,
+               'charset' => 'utf-8',
+               'include_after_connected' => '',
+           ],
+       ],
+   ],
    ```
 9. Удалите модули без поддержки PostgreSQL.
 

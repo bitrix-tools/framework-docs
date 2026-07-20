@@ -72,14 +72,14 @@ description: 'Шаблоны страницы. Основы Bitrix CMS: ключ
 4. Убедитесь, что в начале и конце файла есть вызовы `header.php` и `footer.php`. Они обязательны.
 
 ```php
-<?
+<?php
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 $APPLICATION->SetTitle("Title");
 ?>
 
 <p>Добавьте контент на страницу</p>
 
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
+<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
 ```
 
 #### Как подключить пассивный шаблон
@@ -87,7 +87,7 @@ $APPLICATION->SetTitle("Title");
 Чтобы шаблон появился в меню создания страницы, в файл `/local/templates/[идентификатор_шаблона]/page_templates/.content.php` добавьте строку:
 
 ```php
-TEMPLATE["new.php"] = Array("name"=>"Новый шаблон", "sort"=>4);
+TEMPLATE["new.php"] = ["name" => "Новый шаблон", "sort" => 4];
 ```
 
 -  `"new.php"` — имя файла шаблона,
@@ -99,12 +99,12 @@ TEMPLATE["new.php"] = Array("name"=>"Новый шаблон", "sort"=>4);
 Пример содержимого файла:
 
 ```php
-<?
+<?php
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-$TEMPLATE["standard.php"] = Array("name"=>"Стандартная страница", "sort"=>1);
-$TEMPLATE["page_inc.php"] = Array("name"=>"Включаемая область страницы", "sort"=>2);
-$TEMPLATE["sect_inc.php"] = Array("name"=>"Включаемая область раздела", "sort"=>3);
-$TEMPLATE["new.php"] = Array("name"=>"Новый шаблон", "sort"=>4);
+$TEMPLATE["standard.php"] = ["name" => "Стандартная страница", "sort" => 1];
+$TEMPLATE["page_inc.php"] = ["name" => "Включаемая область страницы", "sort" => 2];
+$TEMPLATE["sect_inc.php"] = ["name" => "Включаемая область раздела", "sort" => 3];
+$TEMPLATE["new.php"] = ["name" => "Новый шаблон", "sort" => 4];
 ?>
 ```
 
@@ -113,7 +113,9 @@ $TEMPLATE["new.php"] = Array("name"=>"Новый шаблон", "sort"=>4);
 Используйте языковые файлы для шаблонов, если сайт использует несколько языков. В этом случае в файле `.content.php` вместо названия шаблона будет использоваться метод `GetMessage("new")`:
 
 ```php
-$TEMPLATE["new.php"] = Array("name"=>GetMessage("new"), "sort"=>4);
+use Bitrix\Main\Localization\Loc;
+
+$TEMPLATE["new.php"] = ["name" => Loc::getMessage("new"), "sort" => 4];
 ```
 
 По имени `new` будет выполнен поиск названия шаблона в языковом файле.
@@ -127,7 +129,7 @@ $TEMPLATE["new.php"] = Array("name"=>GetMessage("new"), "sort"=>4);
 Например, название шаблона на русском языке добавьте в файл `/local/templates/[идентификатор_шаблона]/lang/ru/page_templates/.content.php`: `$MESS['new'] = "Новый шаблон";`.
 
 ```php
-<?
+<?php
 $MESS['standart'] = "Стандартная страница";
 $MESS['new'] = "Новый шаблон";
 $MESS['page_inc'] = "Включаемая область для страницы";
@@ -148,7 +150,7 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 2. Добавьте код шаблона и проверьте наличие подключенных `header.php` и `footer.php`.
 
    ```php
-   <?
+   <?php
    require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
    $APPLICATION->SetTitle("Title");
    ?>
@@ -172,24 +174,26 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
    <hr>
     <span style="color: #555555;"><i>Напишите нам, что Вы думаете об этом объявлении. Для этого воспользуйтесь формой обратной связи. Спасибо!</i></span><br>
     <br>
-   <?$APPLICATION->IncludeComponent(
+   <?php $APPLICATION->IncludeComponent(
        "bitrix:main.feedback",
        "",
-       Array(
+       [
            "EMAIL_TO" => "sale@example.ru",
-           "EVENT_MESSAGE_ID" => array("7"),
+           "EVENT_MESSAGE_ID" => ["7"],
            "OK_TEXT" => "Спасибо за Ваше мнение!",
-           "REQUIRED_FIELDS" => array("NAME","EMAIL"),
+           "REQUIRED_FIELDS" => ["NAME", "EMAIL"],
            "USE_CAPTCHA" => "Y"
-       )
+       ]
    );?>
-   <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
+   <?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
    ```
 
 3. Откройте файл `.content.php` и добавьте строку:
 
    ```php
-   $TEMPLATE["announcement.php"] = Array("name"=>GetMessage("announcement"), "sort"=>2);
+   use Bitrix\Main\Localization\Loc;
+   
+   $TEMPLATE["announcement.php"] = ["name" => Loc::etMessage("announcement"), "sort"=>2];
    ```
 
 4. Настройте языковые файлы:
@@ -231,9 +235,9 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 {% cut "Код файла template.php шаблона bootstrap" %}
 
 ```php
-<?
-if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
-    die();
+<?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+use Bitrix\Main\Localization\Loc;
 
 CPageTemplate::IncludeLangFile(__FILE__);
 
@@ -241,62 +245,62 @@ class CBootstrapPageTemplate
 {
     function GetDescription()
     {
-        return array(
-            "name" => GetMessage("bt_wizard_name"),
-            "description" => GetMessage("bt_wizard_title"),
-            "modules" => array("bitrix.eshop"),
-        );
+        return [
+            "name" => Loc::getMessage("bt_wizard_name"),
+            "description" => Loc::getMessage("bt_wizard_title"),
+            "modules" => ["bitrix.eshop"],
+        ];
     }
 
     function GetFormHtml()
     {
         $s = '
 <tr class="section">
-    <td colspan="4">'.GetMessage("BT_TYPE").'</td>
+    <td colspan="4">'.Loc::getMessage("BT_TYPE").'</td>
 </tr>
 ';
         $s .= '
 <tr>
     <td style="vertical-align: top; padding-top:10px">
         <input type="radio" name="BT_COL" value="1" id="BT_COL_1" checked>
-        <label for="BT_COL_1">'.GetMessage("BT_COL_1").'</label><br>
+        <label for="BT_COL_1">'.Loc::getMessage("BT_COL_1").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_1.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
     <td style="padding-top:10px">
         <input type="radio" name="BT_COL" value="2_1" id="BT_COL_2_1">
-        <label for="BT_COL_2_1">'.GetMessage("BT_COL_2_1").'</label><br>
+        <label for="BT_COL_2_1">'.Loc::getMessage("BT_COL_2_1").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_2_1.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
     <td style="padding-top:10px">
         <input type="radio" name="BT_COL" value="1_2" id="BT_COL_1_2">
-        <label for="BT_COL_1_2">'.GetMessage("BT_COL_1_2").'</label><br>
+        <label for="BT_COL_1_2">'.Loc::getMessage("BT_COL_1_2").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_1_2.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
     <td style="padding-top:10px">
         <input type="radio" name="BT_COL" value="1_2_1" id="BT_COL_1_2_1">
-        <label for="BT_COL_1_2_1">'.GetMessage("BT_COL_1_2_1").'</label><br>
+        <label for="BT_COL_1_2_1">'.Loc::getMessage("BT_COL_1_2_1").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_1_2_1.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
 </tr>
 <tr>
     <td style="padding-top:20px">
         <input type="radio" name="BT_COL" value="1_1" id="BT_COL_1_1">
-        <label for="BT_COL_1_1">'.GetMessage("BT_COL_1_1").'</label><br>
+        <label for="BT_COL_1_1">'.Loc::getMessage("BT_COL_1_1").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_1_1.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
     <td style="padding-top:20px">
         <input type="radio" name="BT_COL" value="1_1_1" id="BT_COL_1_1_1">
-        <label for="BT_COL_1_1_1">'.GetMessage("BT_COL_1_1_1").'</label><br>
+        <label for="BT_COL_1_1_1">'.Loc::getMessage("BT_COL_1_1_1").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_1_1_1.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
     <td style="padding-top:20px">
         <input type="radio" name="BT_COL" value="5" id="BT_COL_5">
-        <label for="BT_COL_5">'.GetMessage("BT_COL_5").'</label><br>
+        <label for="BT_COL_5">'.Loc::getMessage("BT_COL_5").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_5.png" style="margin-top: 7px; padding-left: 17px;"/><br>
     </td>
     <td style="padding-top:20px">
         <input type="radio" name="BT_COL" value="4" id="BT_COL_4">
-        <label for="BT_COL_4">'.GetMessage("BT_COL_4").'</label><br>
+        <label for="BT_COL_4">'.Loc::getMessage("BT_COL_4").'</label><br>
         <img src="/bitrix/images/bitrix.eshop/col_4.png" style="margin-top: 7px; padding-left: 17px;"/>
     </td>
 </tr>
@@ -309,10 +313,8 @@ class CBootstrapPageTemplate
         $gridHtml = '
 <div class="row">';
 
-        if (isset($_POST['BT_COL']))
-        {
-            switch ($_POST['BT_COL'])
-            {
+        if (isset($_POST['BT_COL'])) {
+            switch ($_POST['BT_COL']) {
                 case '1':
                 {
                     $gridHtml.= '
@@ -387,9 +389,9 @@ class CBootstrapPageTemplate
 </div>
 ';
 
-        $s = '<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>';
+        $s = '<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>';
         $s.= $gridHtml;
-        $s.= '<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>';
+        $s.= '<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>';
         return $s;
     }
 }
@@ -435,18 +437,18 @@ $pageTemplate = new CBootstrapPageTemplate;
 Пример файла с русскими языковыми фразами для шаблона `bootstrap`: `/bitrix/templates/eshop_bootstrap_v4/page_templates/bootstrap/lang/ru/template.php`.
 
 ```php
-<?
-$MESS ['bt_wizard_name'] = "Шаблоны сеток страницы";
-$MESS ['bt_wizard_title'] = "Раздел с шаблоном сетки";
-$MESS ['BT_TYPE'] = "Выберите вариант шаблона сетки страницы";
-$MESS ['BT_COL_1'] = "Одна колонка";
-$MESS ['BT_COL_2_1'] = "Правое меню";
-$MESS ['BT_COL_1_2'] = "Левое меню";
-$MESS ['BT_COL_1_2_1'] = "Два меню";
-$MESS ['BT_COL_1_1'] = "Две колонки";
-$MESS ['BT_COL_1_1_1'] = "Три колонки";
-$MESS ['BT_COL_5'] = "Главная";
-$MESS ['BT_COL_4'] = "Мозаика";
+<?php
+$MESS['bt_wizard_name'] = "Шаблоны сеток страницы";
+$MESS['bt_wizard_title'] = "Раздел с шаблоном сетки";
+$MESS['BT_TYPE'] = "Выберите вариант шаблона сетки страницы";
+$MESS['BT_COL_1'] = "Одна колонка";
+$MESS['BT_COL_2_1'] = "Правое меню";
+$MESS['BT_COL_1_2'] = "Левое меню";
+$MESS['BT_COL_1_2_1'] = "Два меню";
+$MESS['BT_COL_1_1'] = "Две колонки";
+$MESS['BT_COL_1_1_1'] = "Три колонки";
+$MESS['BT_COL_5'] = "Главная";
+$MESS['BT_COL_4'] = "Мозаика";
 ?>
 ```
 
@@ -461,9 +463,9 @@ $MESS ['BT_COL_4'] = "Мозаика";
 2. Откройте файл `template.php` и внесите изменения в код.
 
    ```php
-   <?
-   if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
-       die();
+   <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+   
+   use Bitrix\Main\Localization\Loc;
    
    CPageTemplate::IncludeLangFile(__FILE__);
    
@@ -472,8 +474,8 @@ $MESS ['BT_COL_4'] = "Мозаика";
        function GetDescription()
        {
            return array(
-               "name" => GetMessage("bt_wizard_name"),
-               "description" => GetMessage("bt_wizard_title"),
+               "name" => Loc::getMessage("bt_wizard_name"),
+               "description" => Loc::getMessage("bt_wizard_title"),
            );
        }
    
@@ -484,7 +486,7 @@ $MESS ['BT_COL_4'] = "Мозаика";
    // Первый вопрос
            $s = '
    <tr class="section">
-       <td>'.GetMessage("BT_TYPE_1").'</td>
+       <td>'.Loc::getMessage("BT_TYPE_1").'</td>
    </tr>
    ';
    
@@ -493,13 +495,13 @@ $MESS ['BT_COL_4'] = "Мозаика";
    <tr>
        <td style="vertical-align: top; padding-top:10px">
            <input type="radio" name="BT_COL_1" value="1_1" id="BT_COL_1_1" checked>
-           <label for="BT_COL_1_1">'.GetMessage("BT_COL_1_1").'</label><br>
+           <label for="BT_COL_1_1">'.Loc::getMessage("BT_COL_1_1").'</label><br>
        </td>
    </tr>
    <tr>
        <td style="padding-top:10px">
            <input type="radio" name="BT_COL_1" value="1_2" id="BT_COL_1_2">
-           <label for="BT_COL_1_2">'.GetMessage("BT_COL_1_2").'</label><br>
+           <label for="BT_COL_1_2">'.Loc::getMessage("BT_COL_1_2").'</label><br>
        </td>
    </tr>
    ';
@@ -507,7 +509,7 @@ $MESS ['BT_COL_4'] = "Мозаика";
    // Второй вопрос
            $s .= '
    <tr class="section">
-       <td>'.GetMessage("BT_TYPE_2").'</td>
+       <td>'.Loc::getMessage("BT_TYPE_2").'</td>
    </tr>
    ';
    
@@ -516,13 +518,13 @@ $MESS ['BT_COL_4'] = "Мозаика";
    <tr>
        <td style="vertical-align: top; padding-top:10px">
            <input type="radio" name="BT_COL_2" value="2_1" id="BT_COL_2_1" checked>
-           <label for="BT_COL_2_1">'.GetMessage("BT_COL_2_1").'</label><br>
+           <label for="BT_COL_2_1">'.Loc::getMessage("BT_COL_2_1").'</label><br>
        </td>
    </tr>
    <tr>
        <td style="padding-top:10px">
            <input type="radio" name="BT_COL_2" value="2_2" id="BT_COL_2_2">
-           <label for="BT_COL_2_2">'.GetMessage("BT_COL_2_2").'</label><br>
+           <label for="BT_COL_2_2">'.Loc::getMessage("BT_COL_2_2").'</label><br>
        </td>
    </tr>
    ';
@@ -545,10 +547,8 @@ $MESS ['BT_COL_4'] = "Мозаика";
        <td>';
    
    // Изменение шаблона в зависимости от ответа на первой вопрос об изображении
-           if (isset($_POST['BT_COL_1']))
-           {
-               switch ($_POST['BT_COL_1'])
-               {
+           if (isset($_POST['BT_COL_1'])) {
+               switch ($_POST['BT_COL_1']) {
                    case '1_1':
                    {
                        $myNewHtml.= '
@@ -578,17 +578,15 @@ $MESS ['BT_COL_4'] = "Мозаика";
     <br>';
    
    // Изменение шаблона в зависимости от ответа на второй вопрос об обратной связи
-           if (isset($_POST['BT_COL_2']))
-           {
-               switch ($_POST['BT_COL_2'])
-               {
+           if (isset($_POST['BT_COL_2'])) {
+               switch ($_POST['BT_COL_2']) {
                    case '2_1':
                    {
                        $myNewHtml.= '
    <hr>
     <span style="color: #555555;"><i>Напишите нам, что Вы думаете об этом объявлении. Для этого воспользуйтесь формой обратной связи. Спасибо!</i></span><br>
     <br>
-   <?$APPLICATION->IncludeComponent(
+   <?php $APPLICATION->IncludeComponent(
        "bitrix:main.feedback",
        "",
        Array(
@@ -614,9 +612,9 @@ $MESS ['BT_COL_4'] = "Мозаика";
    ';
    
    // Формируем готовый шаблон
-           $s = '<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>';
+           $s = '<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>';
            $s.= $myNewHtml;
-           $s.= '<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>';
+           $s.= '<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>';
            return $s;
        }
    }
@@ -628,15 +626,15 @@ $MESS ['BT_COL_4'] = "Мозаика";
 3. Отредактируйте файл с языковыми сообщениями `/new_template/lang/ru/template.php`.
 
    ```php
-   <?
-   $MESS ['bt_wizard_name'] = "Объявление";
-   $MESS ['bt_wizard_title'] = "Уточнение по шаблону";
-   $MESS ['BT_TYPE_1'] = "Оставить стандартное изображение?";
-   $MESS ['BT_COL_1_1'] = "Да";
-   $MESS ['BT_COL_1_2'] = "Нет, установлю своё";
-   $MESS ['BT_TYPE_2'] = "Нужен блок формы обратной связи?";
-   $MESS ['BT_COL_2_1'] = "Да, нужен";
-   $MESS ['BT_COL_2_2'] = "Нет, не нужен";
+   <?php
+   $MESS['bt_wizard_name'] = "Объявление";
+   $MESS['bt_wizard_title'] = "Уточнение по шаблону";
+   $MESS['BT_TYPE_1'] = "Оставить стандартное изображение?";
+   $MESS['BT_COL_1_1'] = "Да";
+   $MESS['BT_COL_1_2'] = "Нет, установлю своё";
+   $MESS['BT_TYPE_2'] = "Нужен блок формы обратной связи?";
+   $MESS['BT_COL_2_1'] = "Да, нужен";
+   $MESS['BT_COL_2_2'] = "Нет, не нужен";
    ?>
    ```
 

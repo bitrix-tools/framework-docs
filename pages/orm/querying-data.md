@@ -12,7 +12,7 @@ description: 'Выборка данных. ORM Bitrix Framework: ключевы�
 Рассмотрим применение метода на примере сущности `BookTable`. Метод принимает параметры:
 
 ```php
-use \Bitrix\Main\ORM;
+use Bitrix\Main\ORM;
 
 $result = BookTable::getList([
     'select' => ['ISBN', 'TITLE', 'PUBLISH_DATE', 'CNT'], // поля, которые нужно получить
@@ -24,7 +24,7 @@ $result = BookTable::getList([
     'runtime' => [ // динамически определенные поля
         new ORM\Fields\ExpressionField('CNT', 'COUNT(*)')
     ],
-	'count_total' => true // список всех элементов без постраничного вывода
+    'count_total' => true // список всех элементов без постраничного вывода
 
 ]);
 ```
@@ -51,8 +51,7 @@ $result = BookTable::getList([
 // Получение данных построчно
 $rows = [];
 $result = BookTable::getList($parameters);
-while ($row = $result->fetch()) 
-{
+while ($row = $result->fetch()) {
     $rows[] = $row;
 }
 
@@ -71,9 +70,8 @@ class BookTable extends \Bitrix\Main\Entity\DataManager
     {
         return [
             function ($data) 
-			{
-                if (isset($data['PUBLISH_DATE'])) 
-				{
+            {
+                if (isset($data['PUBLISH_DATE'])) {
                     $data['PUBLISH_DATE'] = date('d.m.Y', strtotime($data['PUBLISH_DATE']));
                 }
                 return $data;
@@ -298,7 +296,7 @@ BookTable::getList([
 Для подсчета количества записей используйте `ExpressionField`:
 
 ```php
-use \Bitrix\Main\ORM;
+use Bitrix\Main\ORM;
 
 BookTable::getList([
     'select' => ['CNT'],
@@ -316,7 +314,7 @@ BookTable::getList([
 После того, как добавили вычисляемое поле, его можно использовать в фильтрах:
 
 ```php
-use \Bitrix\Main\ORM;
+use Bitrix\Main\ORM;
 
 BookTable::getList([
     'select' => ['PUBLISH_DATE'],
@@ -341,7 +339,7 @@ BookTable::getList([
 Если вычисляемое поле нужно только в `select`, `runtime` можно не использовать. Система поддерживает вложенные выражения, которые разворачиваются в финальном SQL.
 
 ```php
-use \Bitrix\Main\ORM;
+use Bitrix\Main\ORM;
 
 BookTable::getList([
     'select' => [
@@ -492,7 +490,7 @@ $row = $result->fetch();
 Одну таблицу можно описать несколькими сущностями, разделив записи на сегменты. Метод `setDefaultScope` выполняется при каждом запросе, задавая фильтры и другие параметры.
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
 
 class Element4Table extends \Bitrix\Iblock\ElementTable
 {
@@ -534,7 +532,7 @@ class Element5Table extends \Bitrix\Iblock\ElementTable
 На пользовательском уровне можно задавать предустановленные выборки с помощью методов `with*`, аналога `setDefaultScope`.
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
 
 class UserTable
 {
@@ -559,7 +557,7 @@ $activeUsers = UserTable::query()
 Метод принимает объект `Bitrix\Main\ORM\Query\Query`, позволяя задавать фильтры и другие параметры. Можно добавить свои аргументы:
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
 
 class UserTable
 {
@@ -875,7 +873,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 Вы можете использовать вложенные фильтры для более сложных условий:
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
+
 \Bitrix\Main\UserTable::query()
     ->where(Query::filter()->where([
         ["ID", '>', 1],
@@ -888,7 +887,8 @@ use \Bitrix\Main\ORM\Query\Query;
 Для объединения условий с логикой `OR`:
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
+
 \Bitrix\Main\UserTable::query()
     ->where('ACTIVE', true)
     ->where(Query::filter()
@@ -905,7 +905,7 @@ use \Bitrix\Main\ORM\Query\Query;
 Вы также можете использовать цепочку вызовов для создания условий с `OR`:
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where('ACTIVE', true)
     ->where(Query::filter()
@@ -922,7 +922,7 @@ use \Bitrix\Main\ORM\Query\Query;
 В фильтре можно использовать `ExpressionField`, который автоматически регистрируется как runtime поле. Это позволяет создавать сложные условия:
 
 ```php
-use \Bitrix\Main\ORM\Fields\ExpressionField;
+use Bitrix\Main\ORM\Fields\ExpressionField;
 
 \Bitrix\Main\UserTable::query()
     ->where(new ExpressionField('LNG', 'LENGTH(%s)', 'LAST_NAME'), '>', 10)
@@ -933,7 +933,7 @@ use \Bitrix\Main\ORM\Fields\ExpressionField;
 Для упрощения таких конструкций используйте хелпер. Хелпер — это вспомогательный метод, который упрощает работу с выражениями. `Query::expr()` является хелпером, который позволяет использовать SQL-функции:
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where(Query::expr()->length("LAST_NAME"), '>', 10)
     ->exec();
@@ -972,7 +972,7 @@ use \Bitrix\Main\ORM\Query\Query;
 При использовании `getList`, фильтр можно вставить вместо массива:
 
 ```php
-use \Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::getList([
     'filter' => ['=ID' => 1]
 ]);
@@ -989,8 +989,8 @@ use \Bitrix\Main\ORM\Query\Query;
 Референсы — это связи между таблицами, которые позволяют объединять данные из разных таблиц. Они описываются с помощью `ReferenceField`:
 
 ```php
-use \Bitrix\Main\Entity;
-use \Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\Entity;
+use Bitrix\Main\ORM\Query\Join;
 
 new Entity\ReferenceField('GROUP', GroupTable::class,
     Join::on('this.GROUP_ID', 'ref.ID')
@@ -1000,8 +1000,8 @@ new Entity\ReferenceField('GROUP', GroupTable::class,
 Метод `on` — это сокращенная запись `Query::filter()` с предустановленным условием по колонкам. Он позволяет строить условия JOIN:
 
 ```php
-use \Bitrix\Main\Entity;
-use \Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\Entity;
+use Bitrix\Main\ORM\Query\Join;
 
 new Entity\ReferenceField('GROUP', GroupTable::class,
     Join::on('this.GROUP_ID', 'ref.ID')

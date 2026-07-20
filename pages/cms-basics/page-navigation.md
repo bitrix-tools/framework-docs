@@ -229,10 +229,8 @@ echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3);
         )
         ->exec()
     ;
-    foreach ($queryResult as $i => $user)
-    {
-        if ($i === $pagination->getLimit())
-        {
+    foreach ($queryResult as $i => $user) {
+        if ($i === $pagination->getLimit()) {
             break;
         }
         

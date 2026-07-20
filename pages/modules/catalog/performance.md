@@ -39,8 +39,7 @@ description: 'Производительность и частые ошибки.
 Неверный подход:
 
 ```php
-foreach ($productIds as $productId)
-{
+foreach ($productIds as $productId) {
     $price = \Bitrix\Catalog\PriceTable::getList([
         'select' => ['PRICE', 'CURRENCY'],
         'filter' => ['=PRODUCT_ID' => $productId],
@@ -69,8 +68,7 @@ $priceIterator = \Bitrix\Catalog\PriceTable::getList([
     ],
 ]);
 
-while ($price = $priceIterator->fetch())
-{
+while ($price = $priceIterator->fetch()) {
     $priceMap[(int)$price['PRODUCT_ID']] = $price;
 }
 ```
@@ -233,8 +231,7 @@ $result = \Bitrix\Catalog\Model\Price::update($priceId, [
     'CURRENCY' => 'RUB',
 ]);
 
-if (!$result->isSuccess())
-{
+if (!$result->isSuccess()) {
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -262,8 +259,7 @@ $result = \Bitrix\Catalog\Model\Price::recountPricesFromBase([
     'PRODUCT_ID' => $productId,
 ]);
 
-if (!$result->isSuccess())
-{
+if (!$result->isSuccess()) {
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -325,13 +321,11 @@ $iterator = \CIBlockElement::GetList(
 Подключайте модули `iblock` и `catalog` до обращения к таблицам каталога:
 
 ```php
-if (!\Bitrix\Main\Loader::includeModule('iblock'))
-{
+if (!\Bitrix\Main\Loader::includeModule('iblock')) {
     throw new \Bitrix\Main\SystemException('Модуль iblock не установлен.');
 }
 
-if (!\Bitrix\Main\Loader::includeModule('catalog'))
-{
+if (!\Bitrix\Main\Loader::includeModule('catalog')) {
     throw new \Bitrix\Main\SystemException('Модуль catalog не установлен.');
 }
 ```
@@ -353,8 +347,7 @@ $result = \Bitrix\Catalog\Model\Product::add([
     'QUANTITY' => 100,
 ]);
 
-if (!$result->isSuccess())
-{
+if (!$result->isSuccess()) {
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -387,8 +380,7 @@ if (!$result->isSuccess())
 $limit = 500;
 $offset = 0;
 
-do
-{
+do {
     $rows = \Bitrix\Catalog\ProductTable::getList([
         'select' => ['ID', 'QUANTITY', 'TYPE'],
         'order' => ['ID' => 'ASC'],
@@ -396,14 +388,12 @@ do
         'offset' => $offset,
     ])->fetchAll();
 
-    foreach ($rows as $row)
-    {
+    foreach ($rows as $row) {
         // Обработать товар
     }
 
     $offset += $limit;
-}
-while (!empty($rows));
+} while (!empty($rows));
 ```
 
 ### Неверная передача параметров в GetOptimalPriceList
@@ -422,8 +412,7 @@ while (!empty($rows));
 $currentPage = (int)($_GET['PAGEN_1'] ?? 1);
 $pageCount = (int)$arResult['NAV_RESULT']->NavPageCount;
 
-if ($currentPage > $pageCount)
-{
+if ($currentPage > $pageCount) {
     \CHTTP::SetStatus('404 Not Found');
     require $_SERVER['DOCUMENT_ROOT'] . '/404.php';
     exit;
@@ -437,8 +426,7 @@ if ($currentPage > $pageCount)
 ```php
 $catalogInfo = \CCatalogSKU::getInfoByIBlock($iblockId);
 
-if (!$catalogInfo)
-{
+if (!$catalogInfo) {
     return;
 }
 

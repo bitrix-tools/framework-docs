@@ -131,21 +131,20 @@ $em->addEventHandler(
 ```php
 class BookTable extends Entity\DataManager
 {
-	...
-	
     public static function onBeforeAdd(Entity\Event $event)
     {
         $result = new Entity\EventResult;
         $data = $event->getParameter("fields");
 
-        if (isset($data['ISBN']))
-        {
+        if (isset($data['ISBN'])) {
             $cleanIsbn = str_replace('-', '', $data['ISBN']); // Удаляем дефисы из ISBN
             $result->modifyFields(['ISBN' => $cleanIsbn]); // Модифицируем поле ISBN
         }
 
         return $result;
     }
+    
+    // ...
 }
 ```
 
@@ -180,7 +179,7 @@ class BookTable extends Entity\DataManager
         //     }
         // },
         new Entity\Validator\RegExp('/\d{13}/'), // Валидатор, проверяющий, что значение содержит 13 цифр подряд
-        ...
+        // ...
     ];
 }
 ```
@@ -197,8 +196,7 @@ public static function onBeforeUpdate(Entity\Event $event)
     $result = new Entity\EventResult;
     $data = $event->getParameter("fields");
 
-    if (isset($data['ISBN']))
-    {
+    if (isset($data['ISBN'])) {
         $result->unsetFields(['ISBN']); // Удаляет поле ISBN из данных для обновления
     }
 
@@ -214,9 +212,8 @@ public static function onBeforeUpdate(Entity\Event $event)
     $result = new Entity\EventResult;
     $data = $event->getParameter("fields");
 
-    if (isset($data['ISBN']))
-    {
-    // Получает объект поля ISBN и выдает сообщение об ошибке
+    if (isset($data['ISBN'])) {
+        // Получает объект поля ISBN и выдает сообщение об ошибке
         $result->addError(new Entity\FieldError( 
             $event->getEntity()->getField('ISBN'), 
             'Запрещено менять ISBN код у существующих книг' 
@@ -235,8 +232,7 @@ public static function onBeforeUpdate(Entity\Event $event)
     $result = new Entity\EventResult;
     $data = $event->getParameter("fields");
 
-    if (...)
-    { // Здесь должна быть ваша логика комплексной проверки данных
+    if (...) { // Здесь должна быть ваша логика комплексной проверки данных
         $result->addError(new Entity\EntityError(
             'Невозможно обновить запись' 
         ));
@@ -337,8 +333,7 @@ BookTable::update($id, [ // Обновление записи в таблице 
 ```php
 // Вызов с проверкой успешности выполнения запроса
 $result = BookTable::update(...); // Выполнение обновления и сохранение результата
-if (!$result->isSuccess())
-{ // Проверка успешности выполнения
+if (!$result->isSuccess()) { // Проверка успешности выполнения
     // обработка ошибки
     // Здесь можно добавить код для обработки ошибок, например, логирование или уведомление пользователя
 }
@@ -353,6 +348,7 @@ BookTable::update(...); // Обновление записи без провер
 
 ```php
 namespace SomePartner\MyBooksCatalog; // Определение пространства имен для организации кода
+
 use Bitrix\Main\Entity; // Импорт класса Entity для работы с ORM
 use Bitrix\Main\Type; // Импорт класса Type для работы с типами данных
 
@@ -415,8 +411,7 @@ class BookTable extends Entity\DataManager // Класс BookTable наслед�
     {
         $result = new Entity\EventResult; // Создание объекта для результата события
         $data = $event->getParameter("fields"); // Получение данных полей из события
-        if (isset($data['ISBN'])) // Проверка наличия поля ISBN
-        {
+        if (isset($data['ISBN'])) { // Проверка наличия поля ISBN
             $cleanIsbn = str_replace('-', '', $data['ISBN']); // Удаление дефисов из ISBN
             $result->modifyFields(array('ISBN' => $cleanIsbn)); // Модификация поля ISBN
         }

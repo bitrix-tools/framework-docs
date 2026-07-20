@@ -447,8 +447,7 @@ final class Post extends Controller
     public function listAction(\Bitrix\Main\Engine\CurrentUser $user)
     {
         $isGuest = empty($user->getId());
-        if ($isGuest)
-        {
+        if ($isGuest) {
             $this->addError(
                 new \Bitrix\Main\Error('Need authenticated')
             );
@@ -536,8 +535,7 @@ final class Post extends Controller
     public function getAction(string $code)
     {
         $post = \MyPost::query()->where('CODE', $code)->fetchObject();
-        if (!$post)
-        {
+        if (!$post) {
             $this->addError(
                 new \Bitrix\Main\Error('Not found post')
             );
@@ -902,19 +900,19 @@ public function viewAction(string $code): \Bitrix\Main\Engine\Response\Component
 
 ```json
 {
-	"html": "HTML код компонента",
-	"assets": {
-		// списки используемых ресурсов
-		"js": [],
-		"css": [],
-		"strings": [],
-	},
-	"additionalParams": {
-		// дополнительные параметры респонса, если указан аргумент $additionalResponseParams
-	},
-	"componentResult": {
-		// результат работы компонента, если указан аргумент $dataKeys
-	}
+    "html": "HTML код компонента",
+    "assets": {
+        // списки используемых ресурсов
+        "js": [],
+        "css": [],
+        "strings": [],
+    },
+    "additionalParams": {
+        // дополнительные параметры респонса, если указан аргумент $additionalResponseParams
+    },
+    "componentResult": {
+        // результат работы компонента, если указан аргумент $dataKeys
+    }
 }
 ```
 

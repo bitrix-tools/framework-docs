@@ -737,7 +737,7 @@ BX.addCustomEvent("onFrameDataRequestFail", function(response) {
 
 -  `AssetMode::NO_ASSETS` — ресурсы не добавляются в `<head>`.
 
-```javascript
+```php
 $dynamicArea = new \Bitrix\Main\Page\FrameStatic("workarea");
 
 $dynamicArea->setAssetMode(AssetMode::STANDARD); // Устанавливает режим добавления ресурсов
@@ -822,7 +822,7 @@ $id = $this->randString(); // Генерация стабильного иден
 
 Для хранения данных в локальном хранилище браузера используйте метод `setBrowserStorage(true)`.
 
-```javascript
+```php
 $frame = $this->createFrame()->begin(); // Создание динамической зоны
 $frame->setBrowserStorage(true); // Включает использование локального хранилища браузера
 // Здесь размещается динамический контент
@@ -833,7 +833,7 @@ $frame->end(); // Завершение динамической зоны
 
 Если нужно кешировать весь контент шаблона и обновлять его на втором хите, поместите код шаблона в `createFrame()->begin()`.
 
-```javascript
+```php
 $frame = $this->createFrame()->begin(); // Начало динамической зоны для всего шаблона
    // Весь контент шаблона
 $frame->end(); // Завершение динамической зоны

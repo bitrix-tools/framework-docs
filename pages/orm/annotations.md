@@ -61,8 +61,6 @@ namespace Bitrix\Main {
 ```php
 class MyClass
 {
-    // ...
-    
     private function getName(EO_User $user): string
     {
         return CUser::FormatName(
@@ -74,6 +72,7 @@ class MyClass
             ],
         );
     }
+    // ...
 }
 ```
 

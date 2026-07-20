@@ -76,8 +76,8 @@ import { Dom, Tag } from 'main.core';
 const container = document.getElementById('settings-container');
 
 Dom.append(
-	Tag.render`<span data-hint="Настройка применяется к новым задачам."></span>`,
-	container,
+    Tag.render`<span data-hint="Настройка применяется к новым задачам."></span>`,
+    container,
 );
 
 BX.UI.Hint.init(container);

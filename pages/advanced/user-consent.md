@@ -72,11 +72,7 @@ description: 'Пользовательские соглашения. Продв�
 В файле параметров компонента `.parameters.php` объявите параметр `'USER_CONSENT' => []`.
 
 ```php
-<?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
-{
-    die();
-}
+<?php if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 $arComponentParameters = [
     'GROUPS' => [
@@ -110,8 +106,8 @@ $arComponentParameters = [
     <input name="PHONE" placeholder="Телефон">
     <input name="NAME" placeholder="Имя">
     <br>
-    <? if ($arParams['USER_CONSENT'] === 'Y'): ?>
-        <? $APPLICATION->IncludeComponent(
+    <?php if ($arParams['USER_CONSENT'] === 'Y'): ?>
+        <?php $APPLICATION->IncludeComponent(
             'bitrix:main.userconsent.request',
             '',
             [
@@ -125,7 +121,7 @@ $arComponentParameters = [
                 ],
             ]
         ); ?>
-    <? endif; ?>
+    <?php endif; ?>
     <input type="submit" value="Подписаться">
 </form>
 ```
@@ -149,8 +145,8 @@ $arComponentParameters = [
     <input type="text" placeholder="Электронный адрес" name="EMAIL">
     <input type="submit" id="fire_event" value="Отправить">
     <br>
-    <? if ($arParams['USER_CONSENT'] === 'Y'): ?>
-        <? $APPLICATION->IncludeComponent(
+    <?php if ($arParams['USER_CONSENT'] === 'Y'): ?>
+        <?php $APPLICATION->IncludeComponent(
             'bitrix:main.userconsent.request',
             '',
             [
@@ -165,7 +161,7 @@ $arComponentParameters = [
                 ],
             ]
         ); ?>
-    <? endif; ?>
+    <?php endif; ?>
 </div>
 
 <script>
@@ -175,14 +171,12 @@ BX.ready(() => {
         BX.onCustomEvent('my-event-name');
     });
 
-    if (!BX.UserConsent)
-    {
+    if (!BX.UserConsent) {
         return;
     }
 
     const control = BX.UserConsent.load(BX('my_container'));
-    if (!control)
-    {
+    if (!control) {
         return;
     }
 

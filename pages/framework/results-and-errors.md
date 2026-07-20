@@ -122,8 +122,7 @@ function updateUserInDatabase(int $userId, array $fields): array
 function updateUserWithTypedResult(int $userId, array $fields): UserUpdateResult
 {
     $result = new UserUpdateResult();
-    if ($userId <= 0) 
-    {
+    if ($userId <= 0) {
         $result->addError(new Error('Invalid user ID', 100));
         return $result;
     }

@@ -117,9 +117,9 @@ $settings = Numerator::getSettingsFields('DOCUMENT');
                 ['settingName' => 'year', 'value' => 'year', 'title' => 'В пределах года',],],
             ],
             ['settingName' => 'timezone', 'type' => 'array', 'values' => [...]],
-            ...,
+            // ...,
         ],
-        ...,
+        // ...,
     ],
     'settingsWords' => [
         'Bitrix_Main_Numerator_Generator_SequentNumberGenerator' => ['{NUMBER}' => 'Последовательный номер',],

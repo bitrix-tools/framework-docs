@@ -43,7 +43,7 @@ description: 'Сессия в разделенном режиме. Оптими�
 
 ```php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'separated',

@@ -264,7 +264,8 @@ $response->setContent('Hello, world!'); // установить контент
 -  [Zip/Archive](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Engine-Response-Zip-Archive.html) — работает с архивом. Для NGINX можно использовать расширение mod_zip для создания архивов без нагрузки на PHP.
 
    ```php
-   use \Bitrix\Main\Engine\Response;
+   use Bitrix\Main\Engine\Response;
+
    $archive = new Response\Zip\Archive('archive.zip');
    $archive->addEntry(Response\Zip\ArchiveEntry::createFromFileId($fileId));
    ```
@@ -320,7 +321,7 @@ $response->setStatus('301 Moved Permanently');
 -  `toJson()` — создает объект с форматом `OUTPUT_JSON_FORMAT`.
 
 ```php
-use \Bitrix\Main\Engine\Response\Converter;
+use Bitrix\Main\Engine\Response\Converter;
 
 // Преобразование строки: первая буква в нижний регистр + camelCase
 $converter = new Converter(Converter::LC_FIRST | Converter::TO_CAMEL);

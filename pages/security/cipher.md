@@ -123,8 +123,7 @@ $decrypted = $cipher->decrypt($decoded, $cryptoKey);
 Обрабатывайте ошибки с помощью `try/catch`.
 
 ```php
-try
-{
+try {
     $cipher = new \Bitrix\Main\Security\Cipher();
 
     $originalData = 'Конфиденциальная информация';
@@ -138,9 +137,7 @@ try
     
     // Результат должен совпадать с исходными данными
     echo $decryptedData; // Конфиденциальная информация
-}
-catch(\Bitrix\Main\Security\SecurityException $e)
-{
+} catch(\Bitrix\Main\Security\SecurityException $e) {
     // Обрабатываем ошибку
     echo 'Ошибка шифрования: ' . $e->getMessage();
 }

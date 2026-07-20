@@ -133,7 +133,6 @@ BX.ajax.runAction('my:module.user.like', { /* данные */ });
 
 ```php
 <?php
-
 namespace My\Module\Services;
 
 use Bitrix\Main\ArgumentException;
@@ -171,24 +170,19 @@ class LikeService
 
     private function getLikedUsersIds(): array
     {
-        try
-        {
+        try {
             $cookieValue = Context::getCurrent()->getRequest()->getCookie(self::COOKIE_NAME);
-            if (empty($cookieValue))
-            {
+            if (empty($cookieValue)) {
                 return [];
             }
 
             $value = Json::decode($cookieValue);
-            if (!is_array($value))
-            {
+            if (!is_array($value)) {
                 return [];
             }
 
             return $value;
-        }
-        catch (ArgumentException)
-        {
+        } catch (ArgumentException) {
             return [];
         }
     }
@@ -220,7 +214,6 @@ class LikeService
 
 ```php
 <?php
-
 namespace My\Module\Controller;
 
 use Bitrix\Main\Engine\Controller;
@@ -254,15 +247,15 @@ class User extends Controller
     /**
      * Действие для обработки лайков
      *
-     * @param  int $likedUserId
+     * @param  LikeService $service
+     * @param  int         $likedUserId
      *
-     * @return void
+     * @return array|null
      */
     public function likeAction(LikeService $service, int $likedUserId)
     {
         // Базовая валидация: ID должен быть положительным целым
-        if ($likedUserId < 1)
-        {
+        if ($likedUserId < 1) {
             $this->addError(new Error('Неверный ID пользователя'));
 
             return null;
@@ -270,12 +263,9 @@ class User extends Controller
 
         // Если лайка нет — добавляем, иначе удаляем
         $isLikeAction = !$service->isLiked($likedUserId);
-        if ($isLikeAction)
-        {
+        if ($isLikeAction) {
             $service->likeUser($likedUserId);
-        }
-        else
-        {
+        } else {
             $service->dislikeUser($likedUserId);
         }
 
@@ -300,9 +290,7 @@ class User extends Controller
 -  Класс `my-user-card__like-text--liked` определяет внешний вид активного лайка.
 
 ```php
-<?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
-die();
+<?php if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Localization\Loc;
 
@@ -315,7 +303,6 @@ use Bitrix\Main\Localization\Loc;
  */
 
 $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text--liked' : '';
-
 ?>
 
 <div class="my-user-card">
@@ -468,15 +455,11 @@ BX.ready(() => {
 
 ```php
 <?php
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Loader;
 use My\Module\Services\LikeService;
-
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
-{
-    die();
-}
 
 class UserCardComponent extends CBitrixComponent
 {
@@ -502,21 +485,18 @@ class UserCardComponent extends CBitrixComponent
 
     public function executeComponent()
     {
-        if (!Loader::includeModule('my.module'))
-        {
+        if (!Loader::includeModule('my.module')) {
             ShowError('Модуль my.module не установлен');
 
             return;
         }
 
         // кешируем результат, чтобы не делать постоянные запросы к базе
-        if ($this->startResultCache())
-        {
+        if ($this->startResultCache()) {
            $this->initResult();
 
             // в случае если ничего не найдено, отменяем кеширование
-            if (empty($this->arResult))
-            {
+            if (empty($this->arResult)) {
                 $this->abortResultCache();
                 ShowError('Пользователь не найден');
 
@@ -534,8 +514,7 @@ class UserCardComponent extends CBitrixComponent
     private function initResult(): void
     {
         $userId = (int)$this->arParams['USER_ID'];
-        if ($userId < 1)
-        {
+        if ($userId < 1) {
             return;
         }
 
@@ -547,10 +526,9 @@ class UserCardComponent extends CBitrixComponent
                 'PERSONAL_PHOTO',
             ])
             ->where('ID', $userId)
-            ->fetch()
-        ;
-        if (empty($user))
-        {
+            ->fetch();
+
+        if (empty($user)) {
             return;
         }
 
@@ -561,8 +539,7 @@ class UserCardComponent extends CBitrixComponent
         ];
 
         // получаем путь до аватарки, в случае если она указана
-        if (!empty($user['PERSONAL_PHOTO']))
-        {
+        if (!empty($user['PERSONAL_PHOTO'])) {
             $this->arResult['PERSONAL_PHOTO_SRC'] = \CFile::GetPath($user['PERSONAL_PHOTO']);
         }
     }

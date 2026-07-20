@@ -153,16 +153,14 @@ $catalogCreated = \CCatalog::Add([
     'SKU_PROPERTY_ID'   => 0,
 ]);
 
-if (!$catalogCreated)
-{
+if (!$catalogCreated) {
     throw new \RuntimeException('Не удалось создать торговый каталог');
 }
 
 // Получить базовый тип цены для добавления цены товара
 $basePriceType = \Bitrix\Catalog\GroupTable::getBasePriceType();
 
-if (!$basePriceType)
-{
+if (!$basePriceType) {
     throw new \RuntimeException('Базовый тип цен не найден');
 }
 
@@ -179,8 +177,7 @@ $productResult = \Bitrix\Catalog\Model\Product::add([
 ]);
 
 // Проверить результат создания товара
-if (!$productResult->isSuccess())
-{
+if (!$productResult->isSuccess()) {
     throw new \RuntimeException(implode('; ', $productResult->getErrorMessages()));
 }
 
@@ -193,8 +190,7 @@ $priceResult = \Bitrix\Catalog\Model\Price::add([
 ]);
 
 // Проверить результат создания цены
-if (!$priceResult->isSuccess())
-{
+if (!$priceResult->isSuccess()) {
     throw new \RuntimeException(implode('; ', $priceResult->getErrorMessages()));
 }
 ```

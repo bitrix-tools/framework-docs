@@ -143,8 +143,7 @@ $element->save();
 $existingElement = $entityClass::getByPrimary($element->getId())
     ->fetchObject();
 
-if ($existingElement)
-{
+if ($existingElement) {
     // Работать со свойствами элемента
     $value = $existingElement->getSomeProperty();
 }

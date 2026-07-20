@@ -84,58 +84,58 @@ description: 'Меню. Основы Bitrix CMS: ключевые объекты
 {% cut "Пример файла .тип.menu.php" %}
 
 ```php
-<?
-$aMenuLinks = Array(
-    Array(
+<?php
+$aMenuLinks = [
+    [
         "Новости", 
         "news/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Как купить", 
         "about/howto/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Доставка", 
         "about/delivery/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "О магазине", 
         "about/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Гарантия", 
         "about/guaranty/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Контакты", 
         "about/contacts/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Книги", 
         "/books/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    )
-);
+    ]
+];
 ?>
 ```
 
@@ -148,43 +148,50 @@ $aMenuLinks = Array(
 {% cut "Пример файла .тип.menu_ext.php" %}
 
 ```php
-<?
+<?php
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+
+use Bitrix\Main\Loader;
 global $APPLICATION;
 // Подготовим массив для дополнительных пунктов меню
-$aMenuLinksExt = array();
-if(CModule::IncludeModule('iblock'))
-{
+$aMenuLinksExt = [];
+if(Loader::includeModule('iblock')) {
     // Фильтр для выборки инфоблоков типа catalog и привязанных к текущему сайту
-    $arFilter = array(
+    $arFilter = [
         "TYPE" => "catalog",
         "SITE_ID" => SITE_ID,
-    );
+    ];
     // Получаем список инфоблоков, сортируем по полю SORT, затем по ID
-    $dbIBlock = CIBlock::GetList(array('SORT' => 'ASC', 'ID' => 'ASC'), $arFilter);
+    $dbIBlock = CIBlock::GetList(['SORT' => 'ASC', 'ID' => 'ASC'], $arFilter);
     $dbIBlock = new CIBlockResult($dbIBlock);
-    if ($arIBlock = $dbIBlock->GetNext())
-    {
-        if(defined("BX_COMP_MANAGED_CACHE"))
+    if ($arIBlock = $dbIBlock->GetNext()) {
+        if(defined("BX_COMP_MANAGED_CACHE")) {
             $GLOBALS["CACHE_MANAGER"]->RegisterTag("iblock_id_".$arIBlock["ID"]);
+        }
         // Если инфоблок активен, подключаем компонент для генерации меню из его разделов
-        if($arIBlock["ACTIVE"] == "Y")
-        {
+        if ($arIBlock["ACTIVE"] == "Y") {
             // Подключаем компонент menu.sections
-            $aMenuLinksExt = $APPLICATION->IncludeComponent("bitrix:menu.sections", "bootstrap_v4", array(
-                "IS_SEF" => "Y",
-                "SEF_BASE_URL" => "",
-                "SECTION_PAGE_URL" => $arIBlock['SECTION_PAGE_URL'],
-                "DETAIL_PAGE_URL" => $arIBlock['DETAIL_PAGE_URL'],
-                "IBLOCK_TYPE" => $arIBlock['IBLOCK_TYPE_ID'],
-                "IBLOCK_ID" => $arIBlock['ID'],
-                "DEPTH_LEVEL" => "3",
-                "CACHE_TYPE" => "N",
-            ), false, Array('HIDE_ICONS' => 'Y'));
+            $aMenuLinksExt = $APPLICATION->IncludeComponent(
+                "bitrix:menu.sections", 
+                "bootstrap_v4", 
+                [
+                    "IS_SEF" => "Y",
+                    "SEF_BASE_URL" => "",
+                    "SECTION_PAGE_URL" => $arIBlock['SECTION_PAGE_URL'],
+                    "DETAIL_PAGE_URL" => $arIBlock['DETAIL_PAGE_URL'],
+                    "IBLOCK_TYPE" => $arIBlock['IBLOCK_TYPE_ID'],
+                    "IBLOCK_ID" => $arIBlock['ID'],
+                    "DEPTH_LEVEL" => "3",
+                    "CACHE_TYPE" => "N",
+                ], 
+                false, 
+                ['HIDE_ICONS' => 'Y']
+            );
         }
     }
-    if(defined("BX_COMP_MANAGED_CACHE"))
+    if (defined("BX_COMP_MANAGED_CACHE")) {
         $GLOBALS["CACHE_MANAGER"]->RegisterTag("iblock_id_new");
+    }
 }
 // Объединяем основное меню с динамическими пунктами
 $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
@@ -208,37 +215,37 @@ $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
 5. Условие отображения — PHP-выражение, которое должно вернуть `true`.
 
 ```php
-<?
-$aMenuLinks = Array(
-    Array(
+<?php
+$aMenuLinks = [
+    [
         "Новости", 
         "news/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "CSite::InDir('/index.php')" 
-    ),
-    Array(
+    ],
+    [
         "Как купить", 
         "about/howto/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Доставка", 
         "about/delivery/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "CSite::InDir('/personal/')" 
-    ),
-    Array(
+    ],
+    [
         "Гарантия", 
         "about/guaranty/", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "CSite::InGroup(array(1,6))" 
-    ),
-);
+    ],
+];
 ?>
 ```
 
@@ -349,7 +356,7 @@ $aMenuLinks = Array(
 Дополнительные параметры передаются в шаблон с помощью массива `$PARAMS` в виде пар `имя => значение`. Например:
 
 ```php
-if ($PARAMS["SEPARATOR"]=="Y") {
+if ($PARAMS["SEPARATOR"] === "Y") {
     // выводим разделитель
 }
 ```
@@ -451,23 +458,23 @@ if ($PARAMS["SEPARATOR"]=="Y") {
 Пример шаблона `.default`:
 
 ```php
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?if (!empty($arResult)):?>
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if (!empty($arResult)):?>
 <ul class="left-menu">
-<?
+<?php
 foreach($arResult as $arItem):
     if($arParams["MAX_LEVEL"] == 1 && $arItem["DEPTH_LEVEL"] > 1) 
         continue;
 ?>
-    <?if($arItem["SELECTED"]):?>
-        <li><a href="<?=$arItem["LINK"]?>" class="selected"><?=$arItem["TEXT"]?></a></li>
-    <?else:?>
-        <li><a href="<?=$arItem["LINK"]?>"><?=$arItem["TEXT"]?></a></li>
-    <?endif?>
+    <?php if($arItem["SELECTED"]): ?>
+        <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
+    <?php else: ?>
+        <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
+    <?php endif; ?>
     
-<?endforeach?>
+<?php endforeach; ?>
 </ul>
-<?endif?>
+<?php endif; ?>
 ```
 
 ### Как работает массив \$arResult
@@ -523,21 +530,21 @@ foreach($arResult as $arItem):
 Права доступа могут влиять на внешний вид меню. В шаблоне можно скрывать элементы, менять стили или добавлять изображения в зависимости от пользователя.
 
 ```php
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?if (!empty($arResult)):?>
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die(); ?>
+<?php if (!empty($arResult)): ?>
 <!-- Если есть пункты меню, выводим блок -->
 <div class="blue-tabs-menu">
     <ul>
-<?foreach($arResult as $arItem):?>
-    <?if ($arItem["PERMISSION"] > "D"):?>
+<?php foreach($arResult as $arItem): ?>
+    <?php if ($arItem["PERMISSION"] > "D"): ?>
         <!-- Показываем пункты, к которым у пользователя есть доступ -->
-        <li><a href="<?=$arItem["LINK"]?>"><nobr><?=$arItem["TEXT"]?></nobr></a></li>
-    <?endif?>
-<?endforeach?>
+        <li><a href="<?= $arItem["LINK"] ?>"><nobr><?= $arItem["TEXT"] ?></nobr></a></li>
+    <?php endif; ?>
+<?php endforeach; ?>
     </ul>
 </div>
 <div class="menu-clear-left"></div>
-<?endif?>
+<?php endif; ?>
 ```
 
 {% note warning "" %}
@@ -597,23 +604,23 @@ foreach($arResult as $arItem):
 Файл `.submenu.menu.php` содержит массив из двух пунктов.
 
 ```php
-<?
-$aMenuLinks = Array(
-    Array(
+<?php
+$aMenuLinks = [
+    [
         "Новая страница 1", 
         "/test-menu/new-page-1.php", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    ),
-    Array(
+    ],
+    [
         "Новая страница 2", 
         "/test-menu/new-page-2.php", 
-        Array(), 
-        Array(), 
+        [], 
+        [], 
         "" 
-    )
-);
+    ]
+];
 ?>
 ```
 
@@ -712,8 +719,8 @@ $aMenuLinks = Array(
 9. Допишите проверку включения кода из ядра:
 
    ```php
-   <? 
-   if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+   <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+   
    global $APPLICATION; 
    $aMenuLinksExt = $APPLICATION->IncludeComponent(…
    ```
@@ -727,13 +734,13 @@ $aMenuLinks = Array(
     В результате код в файле должен быть следующим:
 
     ```php
-    <? 
-    if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+    <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+
     global $APPLICATION; 
     $aMenuLinksExt = $APPLICATION->IncludeComponent(
         "bitrix:menu.sections",
         "",
-        Array(
+        [
             "CACHE_TIME" => "36000000",
             "CACHE_TYPE" => "A",
             "DEPTH_LEVEL" => "2",
@@ -745,7 +752,7 @@ $aMenuLinks = Array(
             "SECTION_PAGE_URL" => "#SECTION_ID#/",
             "SECTION_URL" => "/books/#SECTION_ID#/",
             "SEF_BASE_URL" => "/books/"
-        )
+        ]
     );
     $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
     ?>
@@ -820,29 +827,29 @@ $aMenuLinks = Array(
 11. В шаблоне найдите следующий участок кода:
 
     ```php
-    <?if($arItem["SELECTED"]):?>
-        <li><a href="<?=$arItem["LINK"]?>" class="selected"><?=$arItem["TEXT"]?></a></li>
-    <?else:?>
-        <li><a href="<?=$arItem["LINK"]?>"><?=$arItem["TEXT"]?></a></li>
-    <?endif?>
+    <?php if($arItem["SELECTED"]): ?>
+        <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
+    <?php else:?>
+        <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
+    <?php endif ?>
     ```
 
 12. Замените его на код:
 
     ```php
-    <?if($arItem["SELECTED"]):?>
+    <?php if($arItem["SELECTED"]): ?>
         <li>
-            <a href="<?=$arItem["LINK"]?>">
-                <img src="<?=(array_key_exists("ACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["ACT"]) ? $arItem["PARAMS"]["ACT"] : "/images/menu/default.png")?>" />
+            <a href="<?= $arItem["LINK"] ?>">
+                <img src="<?= (array_key_exists("ACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["ACT"]) ? $arItem["PARAMS"]["ACT"] : "/images/menu/default.png") ?>" />
             </a>
         </li>
-    <?else:?>
+    <?php else:?>
         <li>
-            <a href="<?=$arItem["LINK"]?>">
-                <img src="<?=(array_key_exists("NOACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["NOACT"]) ? $arItem["PARAMS"]["NOACT"] : "/images/menu/default.png")?>" />
+            <a href="<?= $arItem["LINK"] ?>">
+                <img src="<?= (array_key_exists("NOACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["NOACT"]) ? $arItem["PARAMS"]["NOACT"] : "/images/menu/default.png") ?>" />
             </a>
         </li>
-    <?endif?>
+    <?php endif?>
     ```
 
 13. Сохраните шаблон.
@@ -875,13 +882,13 @@ $aMenuLinks = Array(
 2. В шаблоне меню замените
 
    ```php
-   <a href="<?=$arItem["LINK"]?>"><?=$arItem["TEXT"]?></a>
+   <a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a>
    ```
 
    на строку
 
    ```php
-   <a href="<?=$arItem["LINK"]?>" <?=$arItem["PARAMS"]["target"]?>><?=$arItem["TEXT"]?></a>
+   <a href="<?= $arItem["LINK"] ?>" <?= $arItem["PARAMS"]["target"] ?>><?= $arItem["TEXT"] ?></a>
    ```
 
 ### Показать пункт для неавторизованных пользователей
@@ -926,23 +933,23 @@ $aMenuLinks = Array(
 2. В шаблоне меню
 
    ```php
-   <?if($arItem["SELECTED"]):?>
-   	    <li><a href="<?=$arItem["LINK"]?>" class="selected"><?=$arItem["TEXT"]?></a></li>
-   <?else:?>
-   	    <li><a href="<?=$arItem["LINK"]?>"><?=$arItem["TEXT"]?></a></li>
-   <?endif?>
+   <?php if ($arItem["SELECTED"]): ?>
+           <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
+   <?php else: ?>
+           <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
+   <?php endif; ?>
    ```
 
    замените первую ссылку в коде на строку
 
    ```php
-   <a href="<?=$arItem["LINK"]?>" class="selected" title="<?=$arItem["PARAMS"]["A_TITLE"]?>"><?=$arItem["TEXT"]?></a>
+   <a href="<?= $arItem["LINK"] ?>" class="selected" title="<?= $arItem["PARAMS"]["A_TITLE"] ?>"><?= $arItem["TEXT"] ?></a>
    ```
 
 3. Вторую строку замените на следующую строку
 
    ```php
-   <a href="<?=$arItem["LINK"]?>" title="<?=$arItem["PARAMS"]["A_TITLE"]?>"><?=$arItem["TEXT"]?></a>
+   <a href="<?= $arItem["LINK"] ?>" title="<?= $arItem["PARAMS"]["A_TITLE"] ?>"><?= $arItem["TEXT"] ?></a>
    ```
 
 ### Добавить изображения рядом с пунктами меню
@@ -957,13 +964,13 @@ $aMenuLinks = Array(
 2. В шаблоне меню после строки
 
    ```php
-   <a href="<?=$arItem["LINK"]?>">
+   <a href="<?= $arItem["LINK"] ?>">
    ```
 
    добавьте строку с изображением
 
    ```php
-   <img src="<?=$arItem["PARAMS"]["IMG"]?>" border="0" />
+   <img src="<?= $arItem["PARAMS"]["IMG"] ?>" border="0" />
    ```
 
 ### Разные изображения для языков сайта
@@ -971,7 +978,7 @@ $aMenuLinks = Array(
 1. Если сайт двуязычный, в шаблоне меню добавьте класс языка.
 
    ```php
-   <body class="lang-<?=LANG?>">
+   <body class="lang-<?= LANG ?>">
    ```
 
 2. В CSS-файле укажите правила для смены изображений по языку.
@@ -996,7 +1003,7 @@ $aMenuLinks = Array(
 Если шаблон сайта простой, можно добавить в код проверку с помощью строк:
 
 ```php
-if($APPLICATION->GetCurPage() == "/index.php") {
+if ($APPLICATION->GetCurPage() == "/index.php") {
      // вывод меню для главной страницы
 } else {
      // вывод другого меню
@@ -1028,8 +1035,8 @@ if($APPLICATION->GetCurPage() == "/index.php") {
 Для более глубокой вложенности добавьте следующий код в шаблон:
 
 ```php
-<?if (!empty($arResult)):?>
-<?
+<?php if (!empty($arResult)): ?>
+<?php 
 // Определяем, какие пункты меню должны быть открыты для дерева
 $lastLevel = 0;
 $selected = false;
@@ -1040,15 +1047,17 @@ foreach(array_reverse($arResult) as $arItem){
         $selected = true;
     }
     // Если уже нашли выбранный пункт и поднимаемся выше по дереву
-    if ($selected and $arItem["DEPTH_LEVEL"] < $lastLevel){ 
-        $arResult[ $arItem["ITEM_INDEX"] ]["SELECTED"] = true; // Подсвечиваем родителя
+    if ($selected and $arItem["DEPTH_LEVEL"] < $lastLevel) {
+        $arResult[$arItem["ITEM_INDEX"]]["SELECTED"] = true; // Подсвечиваем родителя
         $lastLevel--; // Переходим на уровень выше
     }
 }
 ?>
 <div class="menu-sitemap-tree">
 <ul>
-<?$previousLevel = 0;foreach($arResult as $arItem):?>
+<?php 
+$previousLevel = 0;
+foreach($arResult as $arItem): ?>
 ```
 
 ### Скрыть боковое меню по свойству страницы
@@ -1068,11 +1077,11 @@ foreach(array_reverse($arResult) as $arItem){
 3. В нижнюю часть сайта `footer.php` добавьте код:
 
    ```php
-   if( 'Y' != $APPLICATION->GetPageProperty('hide_menu') ){
+   if ($APPLICATION->GetPageProperty('hide_menu') !== 'Y') {
        ob_start();
        echo 'проверка отложенного меню!';
        // здесь выводим меню компонентом или другим способом
-       $APPLICATION->SetPageProperty('menu', ob_get_clean() );
+       $APPLICATION->SetPageProperty('menu', ob_get_clean());
    }
    ```
 

@@ -88,18 +88,18 @@ $APPLICATION->IncludeComponent(
 ```php
 <?php
 $APPLICATION->IncludeComponent(
-	"bitrix:menu",
-	"horizontal_multilevel",
-	Array(
-		"ROOT_MENU_TYPE" => "top", 
-		"MAX_LEVEL" => "3", 
-		"CHILD_MENU_TYPE" => "left", 
-		"USE_EXT" => "Y", 
-		"MENU_CACHE_TYPE" => "A",
-		"MENU_CACHE_TIME" => "3600",
-		"MENU_CACHE_USE_GROUPS" => "Y",
-		"MENU_CACHE_GET_VARS" => Array()
-	)
+    "bitrix:menu",
+    "horizontal_multilevel",
+    [
+        "ROOT_MENU_TYPE" => "top", 
+        "MAX_LEVEL" => "3", 
+        "CHILD_MENU_TYPE" => "left", 
+        "USE_EXT" => "Y", 
+        "MENU_CACHE_TYPE" => "A",
+        "MENU_CACHE_TIME" => "3600",
+        "MENU_CACHE_USE_GROUPS" => "Y",
+        "MENU_CACHE_GET_VARS" => []
+    ]
 );?>
 ```
 
@@ -112,8 +112,7 @@ $APPLICATION->IncludeComponent(
 ```php
 <?php
 
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
-{
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
     die();
 }
 
@@ -124,8 +123,7 @@ class MyComponent extends CBitrixComponent
         // Проверяем кеш. Если кеша нет, startResultCache() вернет true
         // и код внутри условия выполнится для генерации данных
         // Если кеш есть — вернет false, и данные будут взяты из кеша
-        if ($this->startResultCache())
-        {
+        if ($this->startResultCache()) {
             // Формируем массив $arResult
             $this->initResult();
             // Подключаем шаблон компонента
@@ -166,27 +164,29 @@ class MyComponent extends CBitrixComponent
 
 ```php
 <?php
-$arComponentDescription = array(
-	"NAME" => GetMessage("COMP_NAME"),
-	"DESCRIPTION" => GetMessage("COMP_DESCR"),
-	"ICON" => "/images/icon.gif",
-	"PATH" => array(
-		"ID" => "content",
-		"CHILD" => array(
-			"ID" => "catalog",
-			"NAME" => "Каталог товаров"
-		)
-	),
-	"AREA_BUTTONS" => array(
-		array(
-			'URL' => "javascript:alert('Это кнопка!!!');",
-			'SRC' => '/images/button.jpg',
-			'TITLE' => "Это кнопка!"
-		),
-	),
-	"CACHE_PATH" => "Y",
-	"COMPLEX" => "Y"
-);
+use Bitrix\Main\Localization\Loc;
+
+$arComponentDescription = [
+    "NAME" => Loc::getMessage("COMP_NAME"),
+    "DESCRIPTION" => Loc::getMessage("COMP_DESCR"),
+    "ICON" => "/images/icon.gif",
+    "PATH" => [
+        "ID" => "content",
+        "CHILD" => [
+            "ID" => "catalog",
+            "NAME" => "Каталог товаров"
+        ]
+    ],
+    "AREA_BUTTONS" => [
+        [
+            'URL' => "javascript:alert('Это кнопка!!!');",
+            'SRC' => '/images/button.jpg',
+            'TITLE' => "Это кнопка!"
+        ],
+    ],
+    "CACHE_PATH" => "Y",
+    "COMPLEX" => "Y"
+];
 ?>
 ```
 
@@ -227,11 +227,14 @@ $arComponentDescription = array(
 
 ```php
 <?php
-CModule::IncludeModule("iblock");
+use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
+
+Loader::includeModule("iblock");
 
 $dbIBlockType = CIBlockType::GetList(
-    array("sort" => "asc"),
-    array("ACTIVE" => "Y")
+    ["sort" => "asc"],
+    ["ACTIVE" => "Y"]
 );
 while ($arIBlockType = $dbIBlockType->Fetch()) {
     if ($arIBlockTypeLang = CIBlockType::GetByIDLang($arIBlockType["ID"], LANGUAGE_ID)) {
@@ -239,61 +242,61 @@ while ($arIBlockType = $dbIBlockType->Fetch()) {
     }
 }
 
-$arComponentParameters = array(
-    "GROUPS" => array(
-        "SETTINGS" => array(
-            "NAME" => GetMessage("SETTINGS_PHR")
-        ),
-        "PARAMS" => array(
-            "NAME" => GetMessage("PARAMS_PHR")
-        ),
-    ),
-    "PARAMETERS" => array(
-        "IBLOCK_TYPE_ID" => array(
+$arComponentParameters = [
+    "GROUPS" => [
+        "SETTINGS" => [
+            "NAME" => Loc::getMessage("SETTINGS_PHR")
+        ],
+        "PARAMS" => [
+            "NAME" => Loc::getMessage("PARAMS_PHR")
+        ],
+    ],
+    "PARAMETERS" => [
+        "IBLOCK_TYPE_ID" => [
             "PARENT" => "SETTINGS",
-            "NAME" => GetMessage("INFOBLOCK_TYPE_PHR"),
+            "NAME" => Loc::getMessage("INFOBLOCK_TYPE_PHR"),
             "TYPE" => "LIST",
             "ADDITIONAL_VALUES" => "Y",
             "VALUES" => $arIblockType,
             "REFRESH" => "Y"
-        ),
-        "BASKET_PAGE_TEMPLATE" => array(
+        ],
+        "BASKET_PAGE_TEMPLATE" => [
             "PARENT" => "PARAMS",
-            "NAME" => GetMessage("BASKET_LINK_PHR"),
+            "NAME" => Loc::getMessage("BASKET_LINK_PHR"),
             "TYPE" => "STRING",
             "MULTIPLE" => "N",
             "DEFAULT" => "/personal/basket.php",
             "COLS" => 25
-        ),
-        "SET_TITLE" => array(),
-        "CACHE_TIME" => array(),
-        "VARIABLE_ALIASES" => array(
-            "IBLOCK_ID" => array(
-                "NAME" => GetMessage("CATALOG_ID_VARIABLE_PHR"),
-            ),
-            "SECTION_ID" => array(
-                "NAME" => GetMessage("SECTION_ID_VARIABLE_PHR"),
-            ),
-        ),
-        "SEF_MODE" => array(
-            "list" => array(
-                "NAME" => GetMessage("CATALOG_LIST_PATH_TEMPLATE_PHR"),
+        ],
+        "SET_TITLE" => [],
+        "CACHE_TIME" => [],
+        "VARIABLE_ALIASES" => [
+            "IBLOCK_ID" => [
+                "NAME" => Loc::getMessage("CATALOG_ID_VARIABLE_PHR"),
+            ],
+            "SECTION_ID" => [
+                "NAME" => Loc::getMessage("SECTION_ID_VARIABLE_PHR"),
+            ],
+        ],
+        "SEF_MODE" => [
+            "list" => [
+                "NAME" => Loc::getMessage("CATALOG_LIST_PATH_TEMPLATE_PHR"),
                 "DEFAULT" => "index.php",
-                "VARIABLES" => array()
-            ),
-            "section1" => array(
-                "NAME" => GetMessage("SECTION_LIST_PATH_TEMPLATE_PHR"),
+                "VARIABLES" => []
+            ],
+            "section1" => [
+                "NAME" => Loc::getMessage("SECTION_LIST_PATH_TEMPLATE_PHR"),
                 "DEFAULT" => "#IBLOCK_ID#",
-                "VARIABLES" => array("IBLOCK_ID")
-            ),
-            "section2" => array(
-                "NAME" => GetMessage("SUB_SECTION_LIST_PATH_TEMPLATE_PHR"),
+                "VARIABLES" => ["IBLOCK_ID"]
+            ],
+            "section2" => [
+                "NAME" => Loc::getMessage("SUB_SECTION_LIST_PATH_TEMPLATE_PHR"),
                 "DEFAULT" => "#IBLOCK_ID#/#SECTION_ID#",
-                "VARIABLES" => array("IBLOCK_ID", "SECTION_ID")
-            ),
-        ),
-    )
-);
+                "VARIABLES" => ["IBLOCK_ID", "SECTION_ID"]
+            ],
+        ],
+    ]
+];
 ?>
 ```
 
@@ -306,10 +309,10 @@ $arComponentParameters = array(
 Массив групп параметров компонента. Группы помогают организовать параметры в визуальных средствах Bitrix. Пример группы:
 
 ```php
-"SETTINGS" => array(
+"SETTINGS" => [
   "NAME" => "Настройки",
   "SORT" => 100
-)
+]
 ```
 
 **Перечень стандартных групп**
@@ -332,7 +335,7 @@ $arComponentParameters = array(
 Массив параметров компонента. Каждый параметр описывается следующим образом:
 
 ```php
-"код параметра" => array(
+"код параметра" => [
    "PARENT" => "код группы",  // если нет — ставится ADDITIONAL_SETTINGS
    "NAME" => "название параметра на текущем языке",
    "TYPE" => "тип элемента управления, в котором будет устанавливаться параметр",
@@ -343,7 +346,7 @@ $arComponentParameters = array(
    "SIZE" => "число строк для списка (если нужен не выпадающий список)",
    "DEFAULT" => "значение по умолчанию",
    "COLS" => "ширина поля в символах",
-),
+],
 ```
 
 **Параметр TYPE**
@@ -363,12 +366,12 @@ $arComponentParameters = array(
 -  `COLORPICKER` — выбор цвета:
 
    ```php
-   $arComponentParameters["PARAMETERS"]["COLOR"]  = Array(
+   $arComponentParameters["PARAMETERS"]["COLOR"] = [
        "PARENT" => "BASE",
        "NAME" => 'Выбор цвета',
        "TYPE" => "COLORPICKER",
        "DEFAULT" => 'FFFF00'
-   );
+   ];
    ```
 
 **Пример использования параметра REFRESH**
@@ -399,19 +402,19 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
 -  `VARIABLE_ALIASES` — описывает переменные, которые комплексный компонент может получать из HTTP-запроса. Каждый элемент массива имеет вид:
 
    ```php
-   "внутреннее название переменной" => array(
+   "внутреннее название переменной" => [
        "NAME" => "название переменной на текущем языке",
-   );
+   ];
    ```
 
 -  `SEF_MODE` — описывает шаблоны путей в режиме ЧПУ. Каждый элемент массива имеет вид:
 
    ```php
-   "код шаблона пути" => array(
+   "код шаблона пути" => [
        "NAME" => "название шаблона пути на текущем языке",
        "DEFAULT" => "шаблон пути по умолчанию",
        "VARIABLES" => "массив внутренних названий переменных, которые могут использоваться в шаблоне"
-   );
+   ];
    ```
 
 #### Тип параметров CUSTOM
@@ -430,13 +433,13 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
 
 ```php
 {
-	data:JS_DATA,                     // JS_DATA из .parameters.php
-	oCont: td,                        // контейнер для отрисовки интерфейса
-	oInput: input,                    // input, в котором передается значение параметра на сервер при сохранении
-	propertyID:"MAP_DATA",            // название параметра
-	propertyParams: { /*...*/ },      // полное описание параметра из .parameters.php
-	fChange:function(){ /*...*/ },    // callback для вызова при изменении параметра
-	getElements:function(){ /*...*/ } // возвращает объект со всеми параметрами компонента
+    data: JS_DATA,                      // JS_DATA из .parameters.php
+    oCont: td,                          // контейнер для отрисовки интерфейса
+    oInput: input,                      // input, в котором передается значение параметра на сервер при сохранении
+    propertyID: "MAP_DATA",             // название параметра
+    propertyParams: { /*...*/ },        // полное описание параметра из .parameters.php
+    fChange: function() { /*...*/ },    // callback для вызова при изменении параметра
+    getElements: function() { /*...*/ } // возвращает объект со всеми параметрами компонента
 }
 ```
 
@@ -445,23 +448,25 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
 Файл `.parameters.php` содержит параметр `MAP_DATA`.
 
 ```php
-$arComponentParameters = array(
-//...
-'MAP_DATA' => array(
-	'NAME' => GetMessage('MYMS_PARAM_DATA'),
-	'TYPE' => 'CUSTOM',
-	'JS_FILE' => '/bitrix/components/bitrix/map.google.view/settings/settings.js',
-	'JS_EVENT' => 'OnGoogleMapSettingsEdit',
-	'JS_DATA' => LANGUAGE_ID.'||'.GetMessage('MYMS_PARAM_DATA_SET'),
-	'DEFAULT' => serialize(array(
-		'google_lat' => GetMessage('MYMS_PARAM_DATA_DEFAULT_LAT'),
-		'google_lon' => GetMessage('MYMS_PARAM_DATA_DEFAULT_LON'),
-		'google_scale' => 13
-	)),
-	'PARENT' => 'BASE',
-	)
-//...
-);
+use Bitrix\Main\Localization\Loc;
+
+$arComponentParameters = [
+   // ...
+   'MAP_DATA' => [
+       'NAME' => Loc::getMessage('MYMS_PARAM_DATA'),
+       'TYPE' => 'CUSTOM',
+       'JS_FILE' => '/bitrix/components/bitrix/map.google.view/settings/settings.js',
+       'JS_EVENT' => 'OnGoogleMapSettingsEdit',
+       'JS_DATA' => LANGUAGE_ID.'||'.Loc::getMessage('MYMS_PARAM_DATA_SET'),
+       'DEFAULT' => serialize([
+           'google_lat' => Loc::getMessage('MYMS_PARAM_DATA_DEFAULT_LAT'),
+           'google_lon' => Loc::getMessage('MYMS_PARAM_DATA_DEFAULT_LON'),
+           'google_scale' => 13
+       ]),
+       'PARENT' => 'BASE',
+    ],
+   // ...
+];
 ```
 
 Файл с кодом интерфейса — `/bitrix/components/bitrix/map.google.view/settings/settings.js`. Функция `JCEditorOpener` создает кнопку, которая открывает модальное окно с настройками карты.
@@ -469,46 +474,48 @@ $arComponentParameters = array(
 ```javascript
 function JCEditorOpener(arParams)
 {
-	this.jsOptions = arParams.data.split('||');
-	this.arParams = arParams;
-	var obButton = document.createElement('BUTTON');     //создать кнопку
-	this.arParams.oCont.appendChild(obButton);           // добавить в контейнер
+    this.jsOptions = arParams.data.split('||');
+    this.arParams = arParams;
+    var obButton = document.createElement('BUTTON');     //создать кнопку
+    this.arParams.oCont.appendChild(obButton);           // добавить в контейнер
    
-	obButton.innerHTML = this.jsOptions[1];              //текст из JS_DATA
+    obButton.innerHTML = this.jsOptions[1];              //текст из JS_DATA
    
-	obButton.onclick = BX.delegate(this.btnClick, this); // callback
-	this.saveData = BX.delegate(this.__saveData, this);
+    obButton.onclick = BX.delegate(this.btnClick, this); // callback
+    this.saveData = BX.delegate(this.__saveData, this);
 }
 ```
 
 Код файла `/bitrix/components/bitrix/map.google.view/settings/settings.php` определяет внешний вид окна.
 
-```html
+```php
 <!-- Заголовок и описание -->
-<?
+<?php
+use Bitrix\Main\Localization\Loc;
+
 $obJSPopup->ShowTitlebar();
 $obJSPopup->StartDescription('bx-edit-menu');
 ?>
-	<p><b><?echo GetMessage('MYMV_SET_POPUP_WINDOW_TITLE')?></b></p>             
-	<p class="note"><?echo GetMessage('MYMV_SET_POPUP_WINDOW_DESCRIPTION')?></p> 
+    <p><b><?= Loc::getMessage('MYMV_SET_POPUP_WINDOW_TITLE') ?></b></p>             
+    <p class="note"><?= Loc::getMessage('MYMV_SET_POPUP_WINDOW_DESCRIPTION') ?></p> 
 
 <!-- Блок контента  -->
-<?
+<?php
 $obJSPopup->StartContent();
 ?>
 ...
 
 <!-- Блок кнопок  -->
-<?
+<?php
 $obJSPopup->StartButtons();
 ?>
 
 <!-- Кнопка сохранения настроек  -->
-<input type="submit" value="<?echo GetMessage('MYMV_SET_SUBMIT')?>" onclick="return jsGoogleCE.__saveChanges();" class="adm-btn-save"/>
+<input type="submit" value="<?= Loc::getMessage('MYMV_SET_SUBMIT'); ?>" onclick="return jsGoogleCE.__saveChanges();" class="adm-btn-save"/>
 
 <!-- Кнопка отмены  -->
-<?
-$obJSPopup->ShowStandardButtons(array('cancel'));
+<?php
+$obJSPopup->ShowStandardButtons(['cancel']);
 $obJSPopup->EndButtons();
 ?>
 ```
@@ -607,10 +614,12 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 
    ```php
    <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-   $arTemplateDescription = array(
-      "NAME" => GetMessage("ADV_BANNER_NAME"),
-      "DESCRIPTION" => GetMessage("ADV_BANNER_DESC"),
-   );
+   use Bitrix\Main\Localization\Loc;
+   
+   $arTemplateDescription = [
+      "NAME" => Loc::getMessage("ADV_BANNER_NAME"),
+      "DESCRIPTION" => Loc::getMessage("ADV_BANNER_DESC"),
+   ];
    ?>
    ```
 
@@ -619,20 +628,23 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
    ```php
    <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
    
-   if (!CModule::IncludeModule("advertising"))
-      return;
+   use Bitrix\Main\Localization\Loc;
+   use Bitrix\Main\Loader;
    
-   $arTypeFields = Array("-" =>GetMessage("ADV_SELECT_DEFAULT"));
+   if (!Loader::includeModule("advertising")) {
+      return;
+   }
+   
+   $arTypeFields = ["-" => Loc::getMessage("ADV_SELECT_DEFAULT")];
    $res = CAdvType::GetList($by, $order, Array("ACTIVE" => "Y"),$is_filtered, "Y");
    
-   while (is_object($res) && $ar = $res->GetNext())
-   {
+   while (is_object($res) && $ar = $res->GetNext()) {
       $arTypeFields[$ar["SID"]] = "[".$ar["SID"]."] ".$ar["NAME"];
    }
    
    $arTemplateParameters = [
       "TYPE" => [
-         "NAME" => GetMessage("ADV_TYPE"),
+         "NAME" => Loc::getMessage("ADV_TYPE"),
          "PARENT" => "BASE",
          "TYPE" => "LIST",
          "DEFAULT" => "",
@@ -640,13 +652,13 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
          "ADDITIONAL_VALUES" => "N",
       ],
       "NOINDEX" => [
-         "NAME" => GetMessage("adv_banner_params_noindex"),
+         "NAME" => Loc::getMessage("adv_banner_params_noindex"),
          "PARENT" => "BASE",
          "TYPE" => "CHECKBOX",
          "DEFAULT" => "N",
       ],
       "QUANTITY" => [
-         "NAME" => GetMessage("ADV_QUANTITY"),
+         "NAME" => Loc::getMessage("ADV_QUANTITY"),
          "PARENT" => "BASE",
          "TYPE" => "STRING",
          "DEFAULT" => "1",
@@ -654,21 +666,18 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
       "CACHE_TIME" => ["DEFAULT"=>"0"],
    ];
    
-   if ($templateProperties['NEED_TEMPLATE'] == 'Y')
-   {
-      $templates = array('-' => GetMessage("ADV_NOT_SELECTED"));
+   if ($templateProperties['NEED_TEMPLATE'] == 'Y') {
+      $templates = ['-' => Loc::getMessage("ADV_NOT_SELECTED")];
       $arTemplates = CComponentUtil::GetTemplatesList('bitrix:advertising.banner.view');
    
-      if (is_array($arTemplates) && !empty($arTemplates))
-      {
-         foreach ($arTemplates as $template)
-         {
+      if (is_array($arTemplates) && !empty($arTemplates)) {
+         foreach ($arTemplates as $template) {
                $templates[$template['NAME']] = $template['NAME'];
          }
       }
    
       $arTemplateParameters['DEFAULT_TEMPLATE'] = [
-         "NAME" => GetMessage("ADV_DEFAULT_TEMPLATE"),
+         "NAME" => Loc::getMessage("ADV_DEFAULT_TEMPLATE"),
          "PARENT" => "BASE",
          "TYPE" => "LIST",
          "VALUES" => $templates,
@@ -707,7 +716,7 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 Если компонент вызывается в составе комплексного компонента, то его шаблон сначала ищется в составе шаблона родительского компонента, а потом — в собственных шаблонах. Чтобы это правило работало, при вызове компонентов в составе комлексных компонентов не забывайте указывать четвертым параметром переменную `$component`, указывающую на родительский компонент:
 
 ```php
-$APPLICATION->IncludeComponent("custom:catalog.element", "", array(...), $component);
+$APPLICATION->IncludeComponent("custom:catalog.element", "", [...], $component);
 ```
 
 {% note info "" %}
@@ -796,7 +805,7 @@ $APPLICATION->IncludeComponent("custom:catalog.element", "", array(...), $compon
 В `component_epilog.php` доступны `$arParams` и `$arResult`, но их значения берутся из кеша. Набор ключей массива `$arResult`, попадающих в кеш, определяется в `class.php` с помощью:
 
 ```php
-$this->SetResultCacheKeys(array(
+$this->SetResultCacheKeys([
     "ID",
     "IBLOCK_TYPE_ID",
     "LIST_PAGE_URL",
@@ -804,7 +813,7 @@ $this->SetResultCacheKeys(array(
     "NAME",
     "SECTION",
     "ELEMENTS",
-));
+]);
 ```
 
 Используйте эту конструкцию, чтобы ограничить размер кеша только необходимыми данными.
@@ -842,10 +851,11 @@ $this->SetResultCacheKeys(array(
 ### Пример файла component_epilog.php
 
 ```php
-<?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+<?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 global $APPLICATION;
-if (isset($arResult['MY_TITLE']))
+if (isset($arResult['MY_TITLE'])) {
     $APPLICATION->SetTitle($arResult['MY_TITLE']);
+}
 ?>
 ```
 
@@ -889,7 +899,7 @@ if (isset($templateData) && is_array($templateData)) {
 
 ```php
 $this->IncludeComponentTemplate();
-if($arParams["SET_TITLE"]) {
+if ($arParams["SET_TITLE"]) {
     $APPLICATION->SetTitle($arResult["NAME"]);
 }
 ```
@@ -901,7 +911,8 @@ if($arParams["SET_TITLE"]) {
 Если языковые фразы в `component_epilog.php` должны отличаться от фраз в компоненте, создайте файл `/lang/ru/component_epilog.php` и подключите его:
 
 ```php
-use \Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Localization\Loc;
+
 Loc::loadLanguageFile(__FILE__);
 Loc::getMessage("MY_MESS");
 ```
@@ -1021,6 +1032,7 @@ class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\
     {
         return $this->errorCollection->getErrorByCode($code);
     }
+}
 ```
 
 ### Реализация в ajax.php
@@ -1034,16 +1046,16 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 class ExampleAjaxController extends \Bitrix\Main\Engine\Controller
 {
-// В параметр $person автоматически подставляются данные из REQUEST
-public function sayByeAction($person = 'guest')
-{
-return "Goodbye {$person}";
-}
+    // В параметр $person автоматически подставляются данные из REQUEST
+    public function sayByeAction($person = 'guest')
+    {
+        return "Goodbye {$person}";
+    }
 
-public function listUsersAction(array $filter)
-{
-// Логика действия
-}
+    public function listUsersAction(array $filter)
+    {
+        // Логика действия
+    }
 }
 ```
 
@@ -1058,12 +1070,13 @@ public function listUsersAction(array $filter)
 ```php
 class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract\Controllerable
 {
-protected function listKeysSignedParameters()
-{
-    return [
-        'STORAGE_ID',
-        'PATH_TO_SOME_ENTITY',
-    ];
+    protected function listKeysSignedParameters()
+    {
+        return [
+            'STORAGE_ID',
+            'PATH_TO_SOME_ENTITY',
+        ];
+    }
 }
 ```
 
@@ -1071,11 +1084,11 @@ protected function listKeysSignedParameters()
 
 В шаблоне компонента можно получить подписанные параметры и передать их в ваш JavaScript-класс компонента.
 
-```javascript
+```php
 <script type="text/javascript">
 new BX.ExampleComponent({
-	signedParameters: '<?= $this->getComponent()->getSignedParameters() ?>',
-	componentName: '<?= $this->getComponent()->getName() ?>'
+    signedParameters: '<?= $this->getComponent()->getSignedParameters() ?>',
+    componentName: '<?= $this->getComponent()->getName() ?>'
 });
 </script>
 ```
@@ -1086,11 +1099,11 @@ new BX.ExampleComponent({
 
 ```javascript
 BX.ajax.runComponentAction(this.componentName, action, {
-	mode: 'class',
-	signedParameters: this.signedParameters,
-	data: data
-	}).then(function (response) {
-	// Обработка ответа
+    mode: 'class',
+    signedParameters: this.signedParameters,
+    data: data
+    }).then(function (response) {
+    // Обработка ответа
 });
 ```
 

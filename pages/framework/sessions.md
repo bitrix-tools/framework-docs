@@ -11,9 +11,8 @@ description: 'Сессии. Документация по Bitrix Framework: пр
 
 ```php
 $session = \Bitrix\Main\Application::getInstance()->getSession();
-if (!$session->has('foo'))
-{
-	$session->set('foo', 'bar');            
+if (!$session->has('foo')) {
+    $session->set('foo', 'bar');            
 }
 echo $session['foo']; //bar
 ```
@@ -95,7 +94,7 @@ define('BX_SECURITY_SESSION_VIRTUAL', true);
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -114,6 +113,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -136,7 +136,7 @@ return [
    ```php
    // bitrix/.settings.php
    return [
-       //...
+       // ...
        'session' => [
            'value' => [
                'mode' => 'default',
@@ -174,6 +174,7 @@ return [
    ```php
    // bitrix/.settings.php
    return [
+       // ...
        'session' => [
            'value' => [
                'mode' => 'default',
@@ -198,7 +199,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -219,7 +220,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -251,7 +252,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -272,7 +273,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-//...        
+    // ...
     'session' => [
         'value' => [
             'lifetime' => (int),
@@ -280,7 +281,7 @@ return [
             'regenerateIdAfterLogin' => (bool),
             'ignoreSessionStartErrors' => (bool),
             'handlers' => [
-                //...       
+                // ...       
             ],
         ]                   
     ] 
@@ -307,7 +308,7 @@ return [
 
 ```php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'separated',

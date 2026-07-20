@@ -53,13 +53,10 @@ $cache = Bitrix\Main\Application::getInstance()->getCache();
 
 ```php
 // Проверяем наличие кеша
-if ($cache->initCache(3600, 'cache_key'))
-{
+if ($cache->initCache(3600, 'cache_key')) {
     // Получаем данные из кеша
     $data = $cache->getVars();
-}
-elseif ($cache->startDataCache())
-{
+} elseif ($cache->startDataCache()) {
     // Если кеша нет, получаем данные из базы
     $data = getDataFromDatabase();
 
@@ -79,13 +76,10 @@ if ($cache->initCache(
 ))
 {
     $result = $cache->getVars();
-}
-elseif ($cache->startDataCache())
-{
+} elseif ($cache->startDataCache()) {
     $result = array();
     // Если данные недействительны, отменяем кеширование
-    if ($isInvalid)
-    {
+    if ($isInvalid) {
         $cache->abortDataCache();
     }
     // Сохраняем валидные данные
@@ -99,8 +93,7 @@ elseif ($cache->startDataCache())
 $cache = Bitrix\Main\Data\Cache::createInstance();
 
 // Если есть закешированные данные, они выведутся в буфер в методе Cache::startDataCache
-if ($cache->startDataCache(3600, 'xxxx'))
-{
+if ($cache->startDataCache(3600, 'xxxx')) {
     echo 'Какой-нибудь HTML';
 
     $cache->endDataCache();
@@ -143,13 +136,10 @@ use Bitrix\Main\Application;
 $cache = Application::getInstance()->getCache();
 
 // Проверяем наличие кеша
-if ($cache->initCache(3600, 'cache_key'))
-{
+if ($cache->initCache(3600, 'cache_key')) {
     // Получаем данные из кеша
     $data = $cache->getVars();
-}
-elseif ($cache->startDataCache())
-{
+} elseif ($cache->startDataCache()) {
     // Если кеша нет, получаем данные из базы
     $data = getDataFromDatabase();
 
@@ -199,13 +189,10 @@ $managedCache = Application::getInstance()->getManagedCache();
 $cacheKey = 'user_list';
 
 // Проверяем наличие кеша с помощью read
-if ($managedCache->read(3600, $cacheKey))
-{
+if ($managedCache->read(3600, $cacheKey)) {
     // Получаем данные из кеша с помощью get
     $data = $managedCache->get($cacheKey);
-}
-else
-{
+} else {
     // Если кеша нет, загружаем данные и сохраняем их в кеш
     $data = loadUsers();
     $managedCache->set($cacheKey, $data);
@@ -229,8 +216,7 @@ use Bitrix\Main\Application;
 $managedCache = Application::getInstance()->getManagedCache();
 $cacheKey = 'user_list';
 
-if (!$managedCache->read(3600, $cacheKey))
-{
+if (!$managedCache->read(3600, $cacheKey)) {
     $data = loadUsers();
     $managedCache->setImmediate($cacheKey, $data);
 }
@@ -246,12 +232,9 @@ $cacheKey = 'active_user_list';
 $cacheDir = 'orm_b_user';
 
 // Проверяем наличие кеша с помощью read
-if ($managedCache->read(3600, $cacheKey, $cacheDir))
-{
+if ($managedCache->read(3600, $cacheKey, $cacheDir)) {
     $users = $managedCache->get($cacheKey);
-}
-else
-{
+} else {
     $users = loadActiveUsers();
     $managedCache->set($cacheKey, $users);
 }
@@ -593,13 +576,10 @@ $cacheDir = 'my_cache_dir';
 $taggedCache = Application::getInstance()->getTaggedCache();
 
 // Проверяем наличие кеша
-if ($cache->initCache(3600, 'cache_key', $cacheDir))
-{
+if ($cache->initCache(3600, 'cache_key', $cacheDir)) {
     // Получаем данные из кеша
     $data = $cache->getVars();
-}
-elseif ($cache->startDataCache())
-{
+} elseif ($cache->startDataCache()) {
     // Если кеша нет, получаем данные из базы
     $data = getDataFromDatabase();
 

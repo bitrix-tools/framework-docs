@@ -70,14 +70,14 @@ Header, рабочая область и footer должны всегда сле
 Чтобы собрать страницу сайта, необходимо в начале файла подключить `header.php`, добавить контент и в конце файла подключить `footer.php`.
 
 ```php
-<?
+<?php
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 $APPLICATION->SetTitle("Заголовок страницы");
 ?>
 
 Контент страницы
 
-<?
+<?php
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
 ?>
 ```

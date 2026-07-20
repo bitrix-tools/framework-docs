@@ -46,7 +46,7 @@ class BookTable extends Bitrix\Main\ORM\Data\DataManager
     {
         return Book::class;
     }
-    //...
+    // ...
 }
 ```
 
@@ -340,7 +340,7 @@ $book->unset($fieldName);
 Метод `isFilled` проверяет, содержит ли объект актуальное значение из базы данных.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Book;
 // актуальными считаются значения из методов fetch* и wakeUp
 // в примере при инициализации объекта передается только первичный ключ
 $book = Book::wakeUp(1);
@@ -354,7 +354,7 @@ var_dump($book->isTitleFilled()); // true
 Метод `isChanged` определяет, было ли установлено новое значение в течение сеанса.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Book;
 // объект может иметь исходное значение, а может и не иметь
 // это не повлияет на дальнейшее поведение
 $book = Book::wakeUp(['ID' => 1, 'TITLE' => 'Title 1']);
@@ -370,7 +370,7 @@ var_dump($book->isTitleChanged()); // true
 Метод `has` проверяет, есть ли в объекте какое-либо значение поля — актуальное из базы данных или установленное в сеансе. Это эквивалентно `isFilled() || isChanged()`.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Book;
 
 $book = Book::wakeUp(['ID' => 1, 'TITLE' => 'Title 1']);
 $book->setIsArchived(true);
@@ -394,8 +394,8 @@ var_dump($book->hasIsbn()); // false
 Переход между состояниями происходит автоматически на основе изменений данных. Состояние объекта можно проверить с помощью публичного read-only свойства `state` и констант класса `\Bitrix\Main\ORM\Objectify\State`.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
-use \Bitrix\Main\ORM\Objectify\State;
+use Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\ORM\Objectify\State;
 
 $book = new Book;
 $book->setTitle('New title');

@@ -32,13 +32,13 @@ else {
 
 Добавить классы в автозагрузку можно в файле `/local/modules/[ваш_модуль]/include.php`, который система автоматически подключает при первом обращении к модулю.
 
-```Plain text
+```
 /local/modules/mymodule/
-    ├── include.php    // регистрируйте классы в файле include.php
-    ├── lib/           // основные классы в папке lib
-    │   └── main.php
-    └── classes/      // дополнительные классы в папке classes
-        └── tools
+├── include.php       // регистрируйте классы в файле include.php
+├── lib/              // основные классы в папке lib
+│   └── main.php
+└── classes/          // дополнительные классы в папке classes
+    └── tools.php
 ```
 
 {% note info "" %}

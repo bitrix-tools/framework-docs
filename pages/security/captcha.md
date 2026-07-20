@@ -107,15 +107,15 @@ $cpt->SetCodeCrypt($captchaPass);
 
 Добавьте в форму три элемента:
 
-```html
+```php
 <!-- Скрытое поле с кодом CAPTCHA -->
-<input name="captcha_code" value="<?=htmlspecialchars($cpt->GetCodeCrypt());?>" type="hidden">
+<input name="captcha_code" value="<?= htmlspecialchars($cpt->GetCodeCrypt()); ?>" type="hidden">
 
 <!-- Поле для ввода CAPTCHA -->
 <input id="captcha_word" name="captcha_word" type="text">
 
 <!-- Изображение CAPTCHA -->
-<img src="/bitrix/tools/captcha.php?captcha_code=<?=htmlspecialchars($cpt->GetCodeCrypt());?>">
+<img src="/bitrix/tools/captcha.php?captcha_code=<?= htmlspecialchars($cpt->GetCodeCrypt()); ?>">
 ```
 
 Чтобы проверить, правильно ли пользователь ввел CAPTCHA, добавьте в обработчик формы код:
@@ -148,12 +148,12 @@ $code = $APPLICATION->CaptchaGetCode();
 
 Код передается в HTML для отображения картинки. Картинка генерируется скриптом `/bitrix/tools/captcha.php`.
 
-```html
+```php
 <!-- Скрытое поле для хранения идентификатора CAPTCHA -->
-<input type="hidden" name="captcha_sid" value="<?=$code;?>" />
+<input type="hidden" name="captcha_sid" value="<?= $code; ?>" />
 
 <!-- Отображение картинки CAPTCHA -->
-<img src="/bitrix/tools/captcha.php?captcha_sid=<?=$code;?>" alt="CAPTCHA" />
+<img src="/bitrix/tools/captcha.php?captcha_sid=<?= $code; ?>" alt="CAPTCHA" />
 ```
 
 При обращении к скрипту:
@@ -202,10 +202,10 @@ $code = $cpt->GetSID();
 
 3. Обновите путь к файлу в HTML-коде.
 
-```html
+```php
 <!-- Скрытое поле для хранения идентификатора CAPTCHA -->
-<input type="hidden" name="captcha_sid" value="<?=$code;?>" />
+<input type="hidden" name="captcha_sid" value="<?= $code; ?>" />
 
 <!-- Отображение картинки CAPTCHA через кастомный скрипт captcha2.php  -->
-<img src="/bitrix/tools/captcha2.php?captcha_sid=<?=$code;?>"alt="CAPTCHA" />
+<img src="/bitrix/tools/captcha2.php?captcha_sid=<?= $code; ?>"alt="CAPTCHA" />
 ```

@@ -49,8 +49,7 @@ description: 'Криптографические поля в ORM. Руковод
 -  поддержку OpenSSL на сервере.
 
 ```php
-if (\Bitrix\Main\ORM\Fields\CryptoField::cryptoAvailable())
-{
+if (\Bitrix\Main\ORM\Fields\CryptoField::cryptoAvailable()) {
     // можно работать с CryptoField и SecretField
 }
 ```
@@ -161,8 +160,7 @@ BookTable::enableCrypto('ISBN');
 Если таблица только создается и в ней еще нет данных, сразу включите шифрование для нужной колонки в установщике модуля.
 
 ```php
-if (\Bitrix\Main\ORM\Fields\CryptoField::cryptoAvailable())
-{
+if (\Bitrix\Main\ORM\Fields\CryptoField::cryptoAvailable()) {
     BookTable::enableCrypto('ISBN');
 }
 ```
@@ -211,14 +209,12 @@ class TempBookTable extends DataManager
     }
 }
 
-if (CryptoField::cryptoAvailable())
-{
+if (CryptoField::cryptoAvailable()) {
     $connection = Application::getConnection();
     $result = $connection->query('SELECT ID, ISBN FROM book');
 
     // Перебираем все записи и обновляем ISBN через временный класс
-    while ($row = $result->fetch())
-    {
+    while ($row = $result->fetch()) {
         // Передаем то же значение, но поле crypto зашифрует его
         TempBookTable::update($row['ID'], ['ISBN' => $row['ISBN']]);
     }
@@ -257,9 +253,9 @@ use Bitrix\Main\ORM\Fields\SecretField;
 public static function getMap()
 {
     return [
-		// ...
+        // ...
         // другие поля
-		// ...
+        // ...
 
         'API_TOKEN' => new SecretField('API_TOKEN', [
             'secret_length' => 32,
@@ -277,8 +273,7 @@ public static function getMap()
 Как и для `CryptoField`, после создания таблицы или добавления поля с уже существующими данными, нужно включить шифрование с помощью `enableCrypto()`.
 
 ```php
-if (\Bitrix\Main\ORM\Fields\CryptoField::cryptoAvailable())
-{
+if (\Bitrix\Main\ORM\Fields\CryptoField::cryptoAvailable()) {
     MyTable::enableCrypto('API_TOKEN');
 }
 ```

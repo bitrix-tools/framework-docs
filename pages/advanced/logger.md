@@ -225,8 +225,7 @@ class MyClass implements Log\LoggerAwareInterface
     
     public function doSomething()
     {
-        if ($this->logger)
-        {
+        if ($this->logger) {
             $this->logger->error('Error!');
         }
     }
@@ -256,16 +255,14 @@ class MyClass implements Log\LoggerAwareInterface
     
     public function doSomething()
     {
-        if ($logger = $this->getLogger())
-        {
+        if ($logger = $this->getLogger()) {
             $logger->error('Error!');
         }
     }
 
     protected function getLogger()
     {
-        if ($this->logger === null)
-        {
+        if ($this->logger === null) {
             $logger = Diag\Logger::create('myClassLogger', [$this]);
             $this->setLogger($logger);
         }
@@ -469,8 +466,7 @@ return [
                             public function format($message, array $context = []): string
                             {
                                 // Игнорируем запросы к push-серверу
-                                if ($this->request->getUri()->getPort() === 1337)
-                                {
+                                if ($this->request->getUri()->getPort() === 1337) {
                                     return '';
                                 }
     

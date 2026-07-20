@@ -73,12 +73,10 @@ description: 'Производительность и частые ошибки.
 function updateActiveElementsStat()
 {
     $cache = new \CPHPCache();
-    if ($cache->InitCache(3600, 'active_elements_count', '/stats/'))
-    {
+    if ($cache->InitCache(3600, 'active_elements_count', '/stats/')) {
         $count = $cache->GetVars()['count'];
     } else {
-        if ($cache->StartDataCache())
-        {
+        if ($cache->StartDataCache()) {
             // Выбираем только ID и дату начала активности
             $iterator = \Bitrix\Iblock\ElementTable::getList([
                 'select' => ['ID', 'DATE_ACTIVE_FROM'],
@@ -91,8 +89,7 @@ function updateActiveElementsStat()
             ]);
 
             $count = 0;
-            while ($element = $iterator->fetch())
-            {
+            while ($element = $iterator->fetch()) {
                 $count++;
             }
 
@@ -127,8 +124,7 @@ $taggedCache->clearByTag('iblock_id_123');
 
 ```php
 $row = $result->Fetch();
-if ($row)
-{
+if ($row) {
     $row['NAME'] = \Bitrix\Main\Text\HtmlFilter::encode($row['NAME']);
 }
 ```
@@ -376,8 +372,7 @@ CIBlockElement::GetList(
 Чтобы исправить проблему, в шаблоне компонента до вывода HTML установите код 404:
 
 ```php
-if (!$arResult['ELEMENT'])
-{
+if (!$arResult['ELEMENT']) {
     \CHTTP::SetStatus('404 Not Found');
     require $_SERVER['DOCUMENT_ROOT'].'/404.php';
     exit;

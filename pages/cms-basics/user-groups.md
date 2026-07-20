@@ -201,12 +201,9 @@ $newGroupId = $group->Add([
     'USER_ID'     => [128, 134], // Опционально: добавить пользователей при создании
 ]);
 
-if ($newGroupId > 0)
-{
+if ($newGroupId > 0) {
     echo "Группа добавлена, ID: " . $newGroupId;
-}
-else
-{
+} else {
     echo "Ошибка: " . $group->LAST_ERROR;
 }
 ```
@@ -221,8 +218,7 @@ $group->Update($groupId, [
     'DESCRIPTION'  => 'Новое Описание группы',
     'USER_ID'      => [1, 2],
 ]);
-if ($group->LAST_ERROR)
-{
+if ($group->LAST_ERROR) {
     echo "Ошибка: " . $group->LAST_ERROR;
 }
 ```
@@ -235,11 +231,9 @@ if ($group->LAST_ERROR)
  */
 
 $isDeleted = CGroup::Delete($groupId);
-if (!$isDeleted)
-{
+if (!$isDeleted) {
     $error = (string)$APPLICATION->GetException();
-    if (empty($error))
-    {
+    if (empty($error)) {
         $error = "Не пытайтесь удалить группы 1 или 2, они служебные";
     }
 }

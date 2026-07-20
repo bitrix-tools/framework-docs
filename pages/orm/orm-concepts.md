@@ -17,10 +17,10 @@ ORM (Object-Relational Mapping) — это технология, которая 
 
 ```sql
 Book
-	ID int [autoincrement, primary]
-	ISBN str [match: /[0-9X-]+/]
-	TITLE str [max_length: 50]
-	PUBLISH_DATE date
+    ID int [autoincrement, primary]
+    ISBN str [match: /[0-9X-]+/]
+    TITLE str [max_length: 50]
+    PUBLISH_DATE date
 ```
 
 Здесь:
@@ -421,14 +421,12 @@ new Entity\ExpressionField('AGE_DAYS',
 ```php
 class BookTable extends Entity\DataManager
 {
-	...
-	
-	public static function getUfId()
-	{
-		return 'MY_BOOK';
-	}
-	
-	...
+    public static function getUfId()
+    {
+        return 'MY_BOOK';
+    }
+    
+    // ...
 }
 ```
 

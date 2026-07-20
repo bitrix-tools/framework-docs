@@ -48,7 +48,7 @@ try_files $uri $uri/ /bitrix/routing_index.php;
     'value' => [
         'config' => ['web.php'], // Можно добавить другие файлы: 'api.php', 'admin.php'
     ],
-        'readonly' => true, // Защищает настройки от изменений
+    'readonly' => true, // Защищает настройки от изменений
 ],
 ```
 
@@ -74,9 +74,7 @@ try_files $uri $uri/ /bitrix/routing_index.php;
 use Bitrix\Main\Routing\RoutingConfigurator;
 
 return static function (RoutingConfigurator $routes) {
-
     $routes->any('/blog', static fn() => 'my blog'); // использует замыкание
-
 };
 ```
 
@@ -236,8 +234,7 @@ class PostViewAction extends \Bitrix\Main\Engine\Action implements \Bitrix\Main\
 
 ```php
 $app = \Bitrix\Main\Application::getInstance();
-if ($app->hasCurrentRoute())
-{
+if ($app->hasCurrentRoute()) {
     $code = $app->getCurrentRoute()->getParameterValue('code');
 }
 ```

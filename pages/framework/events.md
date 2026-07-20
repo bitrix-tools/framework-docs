@@ -200,8 +200,7 @@ final class TicketService
         $result = new Result();
 
         $error = $this->canClose($ticketId, $closeReason);
-        if ($error)
-        {
+        if ($error) {
             return $result->addError($error);
         }
 
@@ -215,20 +214,14 @@ final class TicketService
         $event = new BeforeTicketCloseEvent($ticketId, $closeReason);
         $event->send();
 
-        foreach ($event->getResults() as $result)
-        {
-            if ($result->getType() === EventResult::ERROR)
-            {
+        foreach ($event->getResults() as $result) {
+            if ($result->getType() === EventResult::ERROR) {
                 return new Error(
                     (string)($result->getParameters()['message'] ?? 'Unknown'),
                 );
-            }
-            elseif ($result->getType() === EventResult::SUCCESS)
-            {
+            } elseif ($result->getType() === EventResult::SUCCESS) {
                 // Обработка успешного результата
-            }
-            elseif ($result->getType() === EventResult::UNDEFINED)
-            {
+            } elseif ($result->getType() === EventResult::UNDEFINED) {
                 // Обработка неопределенного результата
             }
         }
@@ -245,8 +238,7 @@ final class BeforeTicketCloseEventHandler
 {
     public static function handle(BeforeTicketCloseEvent $event): EventResult
     {
-        if (self::hasOpenTasks($event->ticketId))
-        {
+        if (self::hasOpenTasks($event->ticketId)) {
             return new EventResult(
                 EventResult::ERROR,
                 parameters: [

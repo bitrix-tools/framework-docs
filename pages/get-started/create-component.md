@@ -31,10 +31,10 @@ description: 'Создание компонента. Пошаговое руко
 ├── .parameters.php         // Параметры компонента
 ├── class.php               // Логика компонента
 ├── templates/
-│ ├── .default/
-│ │ ├── template.php        // Шаблон вывода
-│ │ ├── script.js           // Логика для карточки
-│ │ └── style.css           // Стили карточки
+│   └── .default/
+│       ├── template.php    // Шаблон вывода
+│       ├── script.js       // Логика для карточки
+│       └── style.css       // Стили карточки
 └── lang/
     └── ru/
         └── messages.php    // Локализация
@@ -139,13 +139,11 @@ class UserCardComponent extends CBitrixComponent
     public function executeComponent()
     {
         // Кешируем результат, чтобы не делать постоянные запросы к базе
-        if ($this->startResultCache())
-        {
+        if ($this->startResultCache()) {
             $this->initResult();
 
             // Если ничего не найдено, отменяем кеширование
-            if (empty($this->arResult))
-            {
+            if (empty($this->arResult)) {
                 $this->abortResultCache();
                 ShowError('Пользователь не найден');
 
@@ -164,8 +162,7 @@ class UserCardComponent extends CBitrixComponent
     private function initResult(): void
     {
         $userId = (int)$this->arParams['USER_ID'];
-        if ($userId < 1)
-        {
+        if ($userId < 1) {
             return;
         }
 
@@ -176,10 +173,9 @@ class UserCardComponent extends CBitrixComponent
                 'PERSONAL_PHOTO',
             ])
             ->where('ID', $userId)
-            ->fetch()
-        ;
-        if (empty($user))
-        {
+            ->fetch();
+
+        if (empty($user)) {
             return;
         }
 
@@ -189,8 +185,7 @@ class UserCardComponent extends CBitrixComponent
         ];
 
         // Получаем путь до аватара, если он указан
-        if (!empty($user['PERSONAL_PHOTO']))
-        {
+        if (!empty($user['PERSONAL_PHOTO'])) {
             $this->arResult['PERSONAL_PHOTO_SRC'] = \CFile::GetPath($user['PERSONAL_PHOTO']);
         }
     }
@@ -344,19 +339,16 @@ $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 
 ```php
 <?php
-
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
 $APPLICATION->SetTitle('');
-?>
-<?php
 
 $APPLICATION->IncludeComponent(
     "my:user.card",
     "",
-    Array(
+    [
         "SHOW_EMAIL" => "Y",
         "USER_ID" => "1"  /* или "USER_ID" => $USER->GetID() для текущего пользователя */
-    )
+    ]
 );
 
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');

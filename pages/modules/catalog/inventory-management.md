@@ -10,8 +10,7 @@ description: 'Складской учет. Модуль Торговый кат�
 Перед выполнением примеров подключите модуль `catalog` и проверьте права пользователя на изменение данных каталога и складских документов.
 
 ```php
-if (!\Bitrix\Main\Loader::includeModule('catalog'))
-{
+if (!\Bitrix\Main\Loader::includeModule('catalog')) {
     throw new \RuntimeException('Не удалось подключить модуль catalog');
 }
 ```
@@ -71,8 +70,7 @@ $storeId = \CCatalogStore::Add([
     'SORT'            => 100,
 ]);
 
-if (!$storeId)
-{
+if (!$storeId) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось создать склад';
@@ -168,8 +166,7 @@ $contractorId = \CCatalogContractor::add([
     'KPP'         => '770001001',
 ]);
 
-if (!$contractorId)
-{
+if (!$contractorId) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось создать поставщика-юрлицо';
@@ -198,8 +195,7 @@ $contractorId = \CCatalogContractor::add([
     'INN'         => '390000000000',
 ]);
 
-if (!$contractorId)
-{
+if (!$contractorId) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось создать поставщика-физлицо';
@@ -248,8 +244,7 @@ $storeProductId = \CCatalogStoreProduct::Add([
     'AMOUNT'     => 12,
 ]);
 
-if (!$storeProductId)
-{
+if (!$storeProductId) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось записать остаток на складе';
@@ -269,8 +264,7 @@ $storeProductResult = \CCatalogStoreProduct::UpdateFromForm([
     'AMOUNT'     => 15, // числовое значение остатка
 ]);
 
-if (!$storeProductResult)
-{
+if (!$storeProductResult) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось обновить остаток на складе';
@@ -299,8 +293,7 @@ $barcodeResult = \Bitrix\Catalog\StoreBarcodeTable::add([
     'CREATED_BY' => $responsibleUserId,
 ]);
 
-if (!$barcodeResult->isSuccess())
-{
+if (!$barcodeResult->isSuccess()) {
     throw new \RuntimeException(implode('; ', $barcodeResult->getErrorMessages()));
 }
 
@@ -322,13 +315,11 @@ $barcodeRow = \Bitrix\Catalog\StoreBarcodeTable::getList([
     'limit' => 1,
 ])->fetch();
 
-if (!$barcodeRow)
-{
+if (!$barcodeRow) {
     throw new \RuntimeException('Штрихкод не найден');
 }
 
-if ((int)$barcodeRow['PRODUCT_ID'] !== $productId)
-{
+if ((int)$barcodeRow['PRODUCT_ID'] !== $productId) {
     throw new \RuntimeException('Штрихкод относится к другому товару');
 }
 ```
@@ -458,8 +449,7 @@ $documentId = \CCatalogDocs::add([
     ],
 ]);
 
-if (!$documentId)
-{
+if (!$documentId) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось создать документ';
@@ -613,8 +603,7 @@ $documentRows = \Bitrix\Catalog\StoreDocumentElementTable::getList([
 ```php
 $conducted = \CCatalogDocs::conductDocument($documentId, $responsibleUserId);
 
-if (!$conducted)
-{
+if (!$conducted) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось провести документ';
@@ -634,8 +623,7 @@ if (!$conducted)
 ```php
 $cancelled = \CCatalogDocs::cancellationDocument($documentId, $responsibleUserId);
 
-if (!$cancelled)
-{
+if (!$cancelled) {
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось отменить проведение документа';
@@ -669,8 +657,7 @@ $storeRows = \Bitrix\Catalog\StoreProductTable::getList([
     ],
 ])->fetchAll();
 
-foreach ($storeRows as $row)
-{
+foreach ($storeRows as $row) {
     echo $row['STORE_TITLE'] . ': ' . $row['AMOUNT'] . "\n";
 }
 ```
@@ -735,8 +722,7 @@ $storeProductRow = \Bitrix\Catalog\StoreProductTable::getList([
     'limit' => 1,
 ])->fetch();
 
-if (!$storeProductRow)
-{
+if (!$storeProductRow) {
     throw new \RuntimeException('Остаток товара на складе не найден');
 }
 
@@ -814,8 +800,7 @@ $documentRows = \Bitrix\Catalog\StoreDocumentElementTable::getList([
 $documentElementIds = array_column($documentRows, 'ID');
 
 $batchRows = [];
-if (!empty($documentElementIds))
-{
+if (!empty($documentElementIds)) {
     $batchRows = \Bitrix\Catalog\StoreBatchDocumentElementTable::getList([
         'select' => [
             'PRODUCT_BATCH_ID',

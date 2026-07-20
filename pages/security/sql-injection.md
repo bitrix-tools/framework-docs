@@ -114,7 +114,7 @@ $select = $_REQUEST['select']
 //['ID' => 'ID', 'TITLE' => 'TITLE', 'LAST_NAME' => 'RESPONSIBLE.LAST_NAME'];
 
 $result = \Bitrix\Tasks\Internals\TaskTable::getList([
-	'select' => $select // доступ к любым поля и связям
+    'select' => $select // доступ к любым поля и связям
 ]);
 var_dump($result->fetchAll());
 
@@ -140,7 +140,7 @@ var_dump($result->fetchAll());
 // Пример подбора email через фильтр
 $result = \Bitrix\Main\UserTable::getList([
     // Если что-то возвращается, значит email начинается с буквы А. Если нет — пробуем другой символ.
-	'filter' => ['ID' => 1, '%=EMAIL' => "A%"]
+    'filter' => ['ID' => 1, '%=EMAIL' => "A%"]
 ]);
 ```
 

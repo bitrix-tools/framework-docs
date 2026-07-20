@@ -59,8 +59,7 @@ $result = $iblockType->Add([
     ],
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($iblockType->getLastError()->getMessage());
 }
 ```
@@ -107,8 +106,7 @@ $result = $iblock->Add([
     ],
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($iblock->getLastError()->getMessage());
 }
 
@@ -181,12 +179,11 @@ $result = $authorProp->Add([
     'IBLOCK_ID'     => $iblockId,
     'NAME'          => 'Автор',
     'CODE'          => 'AUTHOR',      
-    'PROPERTY_TYPE' => 'S',           // строка
-    'MULTIPLE'      => 'N',           // одно значение 
+    'PROPERTY_TYPE' => 'S',       // строка
+    'MULTIPLE'      => 'N',       // одно значение 
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($authorProp->getLastError()->getMessage());
 }
 
@@ -198,11 +195,10 @@ $result = $tagsProp->Add([
     'NAME'          => 'Теги',
     'CODE'          => 'TAGS',
     'PROPERTY_TYPE' => 'S',     
-    'MULTIPLE'      => 'Y',      // несколько значений
+    'MULTIPLE'      => 'Y',       // несколько значений
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($tagsProp->getLastError()->getMessage());
 }
 ```
@@ -218,8 +214,8 @@ $property->Add([
     'IBLOCK_ID'     => $iblockId,
     'NAME'          => 'Фото',
     'CODE'          => 'PHOTO',
-    'PROPERTY_TYPE' => 'F',      // файл
-    'MULTIPLE'      => 'N',      // один файл
+    'PROPERTY_TYPE' => 'F',        // файл
+    'MULTIPLE'      => 'N',        // один файл
 ]);
 
 // Галерея — несколько файлов
@@ -246,12 +242,11 @@ $result = $property->Add([
     'IBLOCK_ID'     => $iblockId,
     'NAME'          => 'Источник',
     'CODE'          => 'SOURCE',
-    'PROPERTY_TYPE' => 'L',          // список
+    'PROPERTY_TYPE' => 'L',        // список
     'MULTIPLE'      => 'N',
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($property->getLastError()->getMessage());
 }
 
@@ -264,7 +259,7 @@ $enum->Add([
     'PROPERTY_ID' => $propId,
     'VALUE'       => 'РИА Новости',
     'SORT'        => 10,
-    'XML_ID'      => 'ria',           // уникальный код, только латиница
+    'XML_ID'      => 'ria',         // уникальный код, только латиница
 ]);
 
 $enum->Add([
@@ -293,13 +288,12 @@ $result = $property->Add([
     'IBLOCK_ID'         => $iblockId,
     'NAME'              => 'Итог',
     'CODE'              => 'SUMMARY',      
-    'PROPERTY_TYPE'     => 'S',           // строка
-    'USER_TYPE'         => 'HTML',        // специальное поле для редактирования текста или кода HTML
+    'PROPERTY_TYPE'     => 'S',       // строка
+    'USER_TYPE'         => 'HTML',    // специальное поле для редактирования текста или кода HTML
     'MULTIPLE'          => 'N',
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($property->getLastError()->getMessage());
 }
 ```
@@ -330,16 +324,15 @@ $result = $property->Add([
     'IBLOCK_ID'         => $iblockId,
     'NAME'              => 'Рубрика',
     'CODE'              => 'CATEGORY',
-    'PROPERTY_TYPE'     => 'S',              // в базе — строка, хранит UF_XML_ID
-    'USER_TYPE'         => 'directory',      // выпадающий список из Highload-блока
+    'PROPERTY_TYPE'     => 'S',         // в базе — строка, хранит UF_XML_ID
+    'USER_TYPE'         => 'directory', // выпадающий список из Highload-блока
     'MULTIPLE'          => 'N',
     'USER_TYPE_SETTINGS' => [
         'TABLE_NAME' => 'b_news_categories', // название таблицы Highload-блока
     ],
 ]);
 
-if (!$result)
-{
+if (!$result) {
     throw new \Exception($property->getLastError()->getMessage());
 }
 ```
@@ -414,8 +407,7 @@ $section = $sectionNewsClass::query()
     ->where('CODE', 'events')
     ->setLimit(1)
     ->fetchObject();
-if ($section)
-{
+if ($section) {
     echo "Раздел: " . $section->getName(); // Мероприятия
     echo "Активен: " . ($section->getActive() ? 'да' : 'нет');
 }
@@ -435,8 +427,7 @@ $parentSection = $sectionNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($parentSection)
-{
+if ($parentSection) {
     // создаем вложенный раздел Выставки
     $exhibitionSection = $sectionNewsClass::createObject()
         ->setIblockId($iblockId)
@@ -461,8 +452,7 @@ $sections = $sectionNewsClass::query()
     ->setOrder(['NAME' => 'ASC'])
     ->setLimit(10)
     ->fetchCollection();
-foreach ($sections as $item)
-{
+foreach ($sections as $item) {
     echo $item->getName() . "\n";
 }
 ```
@@ -483,11 +473,9 @@ $exhibitionSection = $sectionNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($exhibitionSection)
-{
+if ($exhibitionSection) {
     $parent = $exhibitionSection->getParentSection(); // метод возвращает объект родителя
-    if ($parent)
-    {
+    if ($parent) {
         echo "Родительский раздел: " . $parent->getName(); // Мероприятия
     }
 }
@@ -514,18 +502,15 @@ $exhibitionSection = $sectionNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($exhibitionSection)
-{
+if ($exhibitionSection) {
     $exhibitionSection
         ->setName('Выставки 2025-2026') // изменим название раздела
         ->setActive(false);             // и деактивируем его
 
     $result = $exhibitionSection->save();
 
-    if (!$result->isSuccess())
-    {
-        foreach ($result->getErrors() as $error)
-        {
+    if (!$result->isSuccess()) {
+        foreach ($result->getErrors() as $error) {
             echo $error->getMessage() . "\n";
         }
     }
@@ -565,8 +550,7 @@ $conferenceSection = $sectionNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($conferenceSection)
-{
+if ($conferenceSection) {
     $manager = $conferenceSection->get('UF_MANAGER'); // строка
     echo "Ответственный: " . $manager; // Ирина Сидорова
 }
@@ -602,8 +586,7 @@ $conferenceSection = $sectionNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($conferenceSection)
-{
+if ($conferenceSection) {
     $conferenceSection->delete(); // элементы останутся в базе, но исчезнут из дерева
 }
 ```
@@ -659,10 +642,8 @@ $element = $elementNewsClass::createObject()
 
 $result = $element->save();
 
-if (!$result->isSuccess())
-{
-    foreach ($result->getErrors() as $error)
-    {
+if (!$result->isSuccess()) {
+    foreach ($result->getErrors() as $error) {
         echo $error->getMessage() . "\n";
     }
     return;
@@ -691,8 +672,7 @@ $parentSection = $sectionNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($parentSection)
-{
+if ($parentSection) {
     $element = $elementNewsClass::createObject()
         ->setName('Конференция по кибербезопасности')
         ->setCode('cybersec-conf-2026')
@@ -726,8 +706,8 @@ if ($parentSection)
 $element = $elementNewsClass::createObject()
     ->setName('Новость с автором и источником')
     ->setCode('news-author-source')
-    ->set('AUTHOR', 'Светлана Пирогова')  // строка — текст напрямую
-    ->set('SOURCE', 1);                   // список — идентификатор значения «РИА Новости»
+    ->set('AUTHOR', 'Светлана Пирогова') // строка — текст напрямую
+    ->set('SOURCE', 1);                  // список — идентификатор значения «РИА Новости»
 
 $element->save();
 ```
@@ -878,8 +858,7 @@ $element = $elementNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($element)
-{
+if ($element) {
     echo $element->getName(); // Обновление системы безопасности
 }
 ```
@@ -897,10 +876,9 @@ $element = $elementNewsClass::query()
 echo $element->get('AUTHOR')?->getValue(); // Светлана Пирогова
 
 $source = $element->get('SOURCE');
-if ($source)
-{
-    echo $source->getItem()->getValue();   // РИА Новости
-    echo $source->getItem()->getXmlId();   // ria
+if ($source) {
+    echo $source->getItem()->getValue(); // РИА Новости
+    echo $source->getItem()->getXmlId(); // ria
 }
 ```
 
@@ -914,8 +892,7 @@ $element = $elementNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-foreach ($element->get('TAGS')->getAll() as $tag)
-{
+foreach ($element->get('TAGS')->getAll() as $tag) {
     echo $tag->getValue() . "\n";
 }
 ```
@@ -933,8 +910,7 @@ $element = $elementNewsClass::query()
     ->fetchObject();
 
 $photo = $element->get('PHOTO');
-if ($photo)
-{
+if ($photo) {
     $fileId = $photo->getValue();      // идентификатор сохраненного файла
     $desc  = $photo->getDescription(); // описание
     $path  = \CFile::GetPath($fileId);
@@ -951,15 +927,12 @@ $element = $elementNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-if ($element)
-{
+if ($element) {
     $gallery = $element->get('GALLERY');
     
-    if ($gallery)
-    {
+    if ($gallery) {
         // коллекция PropertyValueCollection
-        foreach ($gallery->getAll() as $other)
-        {
+        foreach ($gallery->getAll() as $other) {
             $fileId = $other->getValue();
             $description = $other->getDescription();
             
@@ -1001,8 +974,7 @@ $elements =
         ->fetchCollection()
 ;
 
-foreach ($elements as $element)
-{
+foreach ($elements as $element) {
     echo $element->getName() . ': ' . $element->get('SOURCE')->getValue() . "\n";
 }
 ```
@@ -1145,8 +1117,7 @@ $element = $elementNewsClass::query()
     ->where('CODE', 'security-update')
     ->fetchObject();
 
-if ($element)
-{
+if ($element) {
     $element
         ->setName('Критическое обновление')
         ->removeAll('TAGS')
@@ -1175,8 +1146,7 @@ $element = $elementNewsClass::query()
     ->where('CODE', 'security-update') // символьный код элемента Обновление системы безопасности 
     ->fetchObject();
 
-if ($element)
-{
+if ($element) {
     $element->delete();
     \CIBlockElement::UpdateSearch($element->getId());
 }
@@ -1344,8 +1314,8 @@ $news = $elementNewsClass::query()
     ->setSelect([
         'ID',
         'NAME',
-        'AUTHOR',               // строка — напрямую
-        'SOURCE.VALUE',         // список — VALUE, а не SOURCE
+        'AUTHOR',                       // строка — напрямую
+        'SOURCE.VALUE',                 // список — VALUE, а не SOURCE
         'DATE_ACTIVE_FROM',
         'SECTION_' => 'IBLOCK_SECTION', // подгружаем раздел за один запрос
     ])
@@ -1354,8 +1324,7 @@ $news = $elementNewsClass::query()
     ->setLimit(10)
     ->fetchCollection();
 
-foreach ($news as $item)
-{
+foreach ($news as $item) {
     $arResult['NEWS'][] = [
         'ID'     => $item->getId(),
         'NAME'   => $item->getName(),
@@ -1378,15 +1347,14 @@ $element = $elementNewsClass::query()
     ->setSelect([
         'ID', 'NAME', 'AUTHOR',
         'PHOTO.VALUE', 'PHOTO.DESCRIPTION', 
-        'SUMMARY',                                // HTML-свойство
+        'SUMMARY', // HTML-свойство
         'SECTION_' => 'IBLOCK_SECTION',     
     ])
     ->where('CODE', $arParams['ELEMENT_CODE'] ?? '')
     ->setLimit(1)
     ->fetchObject();
 
-if ($element)
-{
+if ($element) {
     $arResult['ITEM'] = [
         'ID'     => $element->getId(),
         'NAME'   => $element->getName(),
@@ -1396,8 +1364,7 @@ if ($element)
 
     // Фото
     $photo = $element->get('PHOTO');
-    if ($photo)
-    {
+    if ($photo) {
         $arResult['ITEM']['PHOTO'] = [
             'SRC' => \CFile::GetPath($photo->getValue()),
             'ALT' => $photo->getDescription(),
@@ -1406,8 +1373,7 @@ if ($element)
 
     // Раздел
     $section = $element->getIblockSection();
-    if ($section)
-    {
+    if ($section) {
         $arResult['ITEM']['SECTION_NAME'] = $section->getName();
         $arResult['ITEM']['SECTION_CODE'] = $section->getCode();
     }
@@ -1427,15 +1393,12 @@ $elements = $elementNewsClass::query()
     ->setLimit(5)
     ->fetchCollection();
 
-foreach ($elements as $item)
-{
+foreach ($elements as $item) {
     $text = $item->getDetailText();
-    if ($text)
-    {
+    if ($text) {
         $preview = strip_tags($text);
         $preview = mb_substr($preview, 0, 300);
-        if (mb_strlen($text) > mb_strlen($preview))
-        {
+        if (mb_strlen($text) > mb_strlen($preview)) {
             $preview .= '…';
         }
     } else {
@@ -1467,14 +1430,13 @@ if (!$sourceId) return;
 $similar = $elementNewsClass::query()
     ->setSelect(['ID', 'NAME', 'CODE'])
     ->where('ACTIVE', 'Y')
-    ->where('SOURCE.VALUE', $sourceId)               // фильтр по идентификатору источника
+    ->where('SOURCE.VALUE', $sourceId) // фильтр по идентификатору источника
     ->whereNot('ID', $current->getId())
     ->setLimit(5)
     ->fetchCollection();
 
 $arResult['MORE_FROM_SOURCE'] = [];
-foreach ($similar as $item)
-{
+foreach ($similar as $item) {
     $arResult['MORE_FROM_SOURCE'][] = [
         'NAME' => $item->getName(),
         'URL'  => '/news/' . $item->getCode() . '/', // единый URL-паттерн

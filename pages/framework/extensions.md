@@ -81,8 +81,8 @@ description: 'Расширения. Документация по Bitrix Framewo
 
    ```javascript
    module.exports = {
-   	input: './src/app.js', 
-   	output: './dist/app.bundle.js',
+       input: './src/app.js', 
+       output: './dist/app.bundle.js',
    };
    ```
 
@@ -97,52 +97,52 @@ description: 'Расширения. Документация по Bitrix Framewo
 
    ```javascript
    module.exports = {
-   	// Файл, для которого необходимо выполнить сборку. 
-   	// Необходимо указать относительный путь 
-   	input: string, 
-   	
-   	// Путь к бандлу, который будет создан в результате сборки. 
-   	// Обычно это ./dist/<extension_name>.bundle.js
-   	// Необходимо указать относительный путь 
-   	output: string || {js: string, css: string},
-   	
-   	// Неймспейс, в который будут добавлены все экспорты из файла, 
-   	// указанного в input. Например, 'BX.Main.Filter'
-   	namespace: string,
-   	
-   	// Списки файлов для принудительного объединения. 
-   	// Файлы будут объединены без проверок на дублирование кода. 
-   	// sourcemap's объединяются автоматически. 
-   	// Необходимо указать относительные пути
-   	concat: {
-   		js: Array<string>,
-   		css: Array<string>,
-   	},
-   	
-   	// Разрешает или запрещает сборщику модифицировать config.php.
-   	// По умолчанию true (разрешено)
-   	adjustConfigPhp: boolean,
-   	
-   	// Разрешает или запрещает сборщику удалять неиспользуемый код. 
-   	// По умолчанию true (включено)
-   	treeshake: boolean,
-   	
-   	// Разрешает или запрещает пересобирать бандлы, 
-   	// если сборка запущена не в корне текущего расширения. 
-   	// По умолчанию `false` (разрешено)
-   	'protected': boolean,
-   	
-   	plugins: {
-   		// Переопределяет параметры Babel.
-   		// Можно указать собственные параметры Babel
-   		// https://babeljs.io/docs/en/options
-   		// Если указать false, то код будет собран без транспиляции
-   		babel: boolean | Object,
-   		
-   		// Дополнительные плагины Rollup, 
-   		// которые будут выполняться при сборке бандлов 
-   		custom: Array<string | Function>,
-   	},
+       // Файл, для которого необходимо выполнить сборку. 
+       // Необходимо указать относительный путь 
+       input: string, 
+       
+       // Путь к бандлу, который будет создан в результате сборки. 
+       // Обычно это ./dist/<extension_name>.bundle.js
+       // Необходимо указать относительный путь 
+       output: string || {js: string, css: string},
+       
+       // Неймспейс, в который будут добавлены все экспорты из файла, 
+       // указанного в input. Например, 'BX.Main.Filter'
+       namespace: string,
+       
+       // Списки файлов для принудительного объединения. 
+       // Файлы будут объединены без проверок на дублирование кода. 
+       // sourcemap's объединяются автоматически. 
+       // Необходимо указать относительные пути
+       concat: {
+           js: Array<string>,
+           css: Array<string>,
+       },
+       
+       // Разрешает или запрещает сборщику модифицировать config.php.
+       // По умолчанию true (разрешено)
+       adjustConfigPhp: boolean,
+       
+       // Разрешает или запрещает сборщику удалять неиспользуемый код. 
+       // По умолчанию true (включено)
+       treeshake: boolean,
+       
+       // Разрешает или запрещает пересобирать бандлы, 
+       // если сборка запущена не в корне текущего расширения. 
+       // По умолчанию `false` (разрешено)
+       'protected': boolean,
+       
+       plugins: {
+           // Переопределяет параметры Babel.
+           // Можно указать собственные параметры Babel
+           // https://babeljs.io/docs/en/options
+           // Если указать false, то код будет собран без транспиляции
+           babel: boolean | Object,
+           
+           // Дополнительные плагины Rollup, 
+           // которые будут выполняться при сборке бандлов 
+           custom: Array<string | Function>,
+       },
        // Определяет правила обработки путей к изображениям в CSS.
        // Доступно с версии 3.0.0
        cssImages: {
@@ -220,16 +220,14 @@ description: 'Расширения. Документация по Bitrix Framewo
 -  Базовая конфигурация.
 
    ```php
-   if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
-   {
-   	die();
-   }
+   <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
    return [
-   	'css' => './dist/loader.bundle.css',
-   	'js' => './dist/loader.bundle.js',
-   	'rel' => [
-   		'main.core'
-   	]
+       'css' => './dist/loader.bundle.css',
+       'js' => './dist/loader.bundle.js',
+       'rel' => [
+           'main.core'
+       ]
    ];
    
    ```
@@ -237,49 +235,49 @@ description: 'Расширения. Документация по Bitrix Framewo
 -  Все параметры.
 
    ```php
-   ...
+   // ...
    return [
-   	// Путь к `css` файлу или массив путей 
-   	// Рекомендуем указывать относительный путь 
-   		'css' => String | Array<String>,
-   	
-   	// Путь к `js` файлу или массив путей к `js` файлам 
-   	// Рекомендуем указывать относительный путь 
-   	'js' => String | Array<String>,
-   	
-   	// Список зависимостей
-   	// Необходимо указать имена расширений, которые должны быть 
-   	// подключены перед подключением текущего расширения
-   	// Зависимости подключаются рекурсивно и с учетом указанного порядка 
-   	'rel' => String | Array<String>,
-   	
-   	// Путь к файлу с языковыми фразами или массив путей. 
-   	// Файл `lang//config.php` подключается автоматически, 
-   	// здесь его можно не указывать
-   	'lang' => String | Array<String>,
-   	
-   	// Запрещает подключать `main.core` автоматически как зависимость.
-   	// По умолчанию `false` — `main.core` подключается. 
-   	// При сборке бандла значение параметра устанавливается автоматически,
-   	// если в коде нет прямой зависимости на `main.core`
-   	'skip_core' => Boolean,
-   	
-   	// Обработчик, который вызывается перед подключением расширения на странице.
-   	// В качестве первого параметра будет передан массив конфигурации расширения.
-   	// Обработчик может модифицировать этот массив и вернуть из функции.
-   	// Это полезно, когда необходимо добавить в языковые фразы 
-   	// какие-то данные с сервера
-   	'oninit' => Function,
-   	
-   	// Дополнительные языковые фразы.
-   	// Это полезно для передачи вычисляемых значений языковых фраз.
-   	// Принимает массив. В качестве ключей необходимо указывать идентификаторы языковых фраз
-   	'lang_additional' => Array<string, string>,
-   	// Параметр доступен с версии 20.5.100 модуля main.
-   	// Параметр позволяет указать настройки,
-   	// которые могут быть получены в JS
-   	// с помощью метода Extension.getSettings().
-   	'settings' => Array
+       // Путь к `css` файлу или массив путей 
+       // Рекомендуем указывать относительный путь 
+       'css' => String | Array<String>,
+       
+       // Путь к `js` файлу или массив путей к `js` файлам 
+       // Рекомендуем указывать относительный путь 
+       'js' => String | Array<String>,
+       
+       // Список зависимостей
+       // Необходимо указать имена расширений, которые должны быть 
+       // подключены перед подключением текущего расширения
+       // Зависимости подключаются рекурсивно и с учетом указанного порядка 
+       'rel' => String | Array<String>,
+       
+       // Путь к файлу с языковыми фразами или массив путей. 
+       // Файл `lang//config.php` подключается автоматически, 
+       // здесь его можно не указывать
+       'lang' => String | Array<String>,
+       
+       // Запрещает подключать `main.core` автоматически как зависимость.
+       // По умолчанию `false` — `main.core` подключается. 
+       // При сборке бандла значение параметра устанавливается автоматически,
+       // если в коде нет прямой зависимости на `main.core`
+       'skip_core' => Boolean,
+       
+       // Обработчик, который вызывается перед подключением расширения на странице.
+       // В качестве первого параметра будет передан массив конфигурации расширения.
+       // Обработчик может модифицировать этот массив и вернуть из функции.
+       // Это полезно, когда необходимо добавить в языковые фразы 
+       // какие-то данные с сервера
+       'oninit' => Function,
+       
+       // Дополнительные языковые фразы.
+       // Это полезно для передачи вычисляемых значений языковых фраз.
+       // Принимает массив. В качестве ключей необходимо указывать идентификаторы языковых фраз
+       'lang_additional' => Array<string, string>,
+       // Параметр доступен с версии 20.5.100 модуля main.
+       // Параметр позволяет указать настройки,
+       // которые могут быть получены в JS
+       // с помощью метода Extension.getSettings().
+       'settings' => Array
    ];
    ```
 
@@ -292,29 +290,29 @@ description: 'Расширения. Документация по Bitrix Framewo
 ```javascript
 declare module 'main.loader' 
 {
-	type loaderOptions = {
-		target?: HTMLElement,
-		size?: number,
-		mode?: 'absolute' | 'inline' | 'custom',
-		offset?: {
-			top?: string,
-			left?: string
-		},
-		color?: string
-	};
+    type loaderOptions = {
+        target?: HTMLElement,
+        size?: number,
+        mode?: 'absolute' | 'inline' | 'custom',
+        offset?: {
+            top?: string,
+            left?: string
+        },
+        color?: string
+    };
     
-	class Loader 
-	{
-		constructor(options?: loaderOptions);
-		readonly layout: HTMLElement;
-		readonly circle: HTMLElement;
-		createLayout(): HTMLElement;
-		show(target?: HTMLElement): Promise<any>;
-		hide(): Promise<any>;
-		isShown(): boolean;
-		setOptions(options: loaderOptions): void;
-		destroy(): void;
-	}
+    class Loader 
+    {
+        constructor(options?: loaderOptions);
+        readonly layout: HTMLElement;
+        readonly circle: HTMLElement;
+        createLayout(): HTMLElement;
+        show(target?: HTMLElement): Promise<any>;
+        hide(): Promise<any>;
+        isShown(): boolean;
+        setOptions(options: loaderOptions): void;
+        destroy(): void;
+    }
 }
 ```
 
@@ -324,33 +322,26 @@ declare module 'main.loader'
 
 Если структура `src` имеет вид:
 
--  `src`
-
-   -  `entity`
-
-      -  `column.js`
-
-      -  `row.js`
-
-   -  `app.js`
+```
+src/
+├── entity/
+│   ├── column.js
+│   └── row.js
+└── app.js
+```
 
 Директория `test` должна иметь следующую структуру:
 
--  `test`
-
-   -  `entity`
-
-      -  `column`
-
-         -  `column.test.js`
-
-      -  `row`
-
-         -  `row.test.js`
-
-   -  `app`
-
-      -  `app.test.js`
+```
+test/
+├── entity/
+│   ├── column/
+│   │   └── column.test.js
+│   └── row/
+│       └── row.test.js
+└── app/
+    └── app.test.js
+```
 
 ## Использование расширений
 
@@ -381,8 +372,8 @@ declare module 'main.loader'
    ```javascript
    import {Runtime} from 'main.core';
    Runtime.loadExtension('main.loader').then((exports) => {
-   	// Код, который использует `main.loader`
-   	// В `exports` будут все экспорты из `main.loader`
+       // Код, который использует `main.loader`
+       // В `exports` будут все экспорты из `main.loader`
    });
    ```
 

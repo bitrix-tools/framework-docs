@@ -60,7 +60,7 @@ Redis поддерживает два подхода к организации �
 ```php
 // bitrix/.settings.php
 return [
-//...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -166,7 +166,7 @@ $resource->setnx('foo', 'bar');
     'value' => [
         'default' => [
             'className' => \Bitrix\Main\DB\MysqliConnection::class,
-            //... настройки существующего подключения в БД
+            // ... настройки существующего подключения в БД
         ],
         'custom.memcached' => [
             'className' => \Bitrix\Main\Data\MemcachedConnection::class,
@@ -192,7 +192,7 @@ $resource->setnx('foo', 'bar');
     'value' => [
         'default' => [
             'className' => \Bitrix\Main\DB\MysqliConnection::class,
-            //... настройки существующего подключения в БД
+            // ... настройки существующего подключения в БД
         ],
         'custom.memcached' => [
             'className' => \Bitrix\Main\Data\MemcachedConnection::class,
