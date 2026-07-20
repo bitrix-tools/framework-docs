@@ -31,7 +31,8 @@ class ExampleStepper extends Stepper
     // За один запуск обработаем один шаг и увеличим счетчик прогресса.
     public function execute(array &$option)
     {
-        if (empty($option)) {
+        if (empty($option))
+        {
             $option['steps'] = 0; // сколько обработано
             $option['count'] = 100; // всего шагов
         }
@@ -80,7 +81,8 @@ protected $deleteFile = true;
 
    ```php
    // Запустить через 120 секунд
-   if (\Bitrix\Main\Loader::includeModule('mycompany.mymodule')) {
+   if (\Bitrix\Main\Loader::includeModule('mycompany.mymodule'))
+   {
        \MyCompany\MyModule\Stepper\ExampleStepper::bind(120);
    }
    ```
@@ -190,7 +192,8 @@ public function execute(array &$option)
 ```php
 public function execute(array &$option)
 {
-    if (empty($option)) {
+    if (empty($option))
+    {
         // Инициализация при первом запуске
         $option['steps'] = 0; // количество выполненных шагов
         $option['count'] = $this->calculateTotalItems(); // общее количество шагов

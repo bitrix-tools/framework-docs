@@ -112,7 +112,8 @@ $APPLICATION->IncludeComponent(
 ```php
 <?php
 
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
     die();
 }
 
@@ -123,7 +124,8 @@ class MyComponent extends CBitrixComponent
         // Проверяем кеш. Если кеша нет, startResultCache() вернет true
         // и код внутри условия выполнится для генерации данных
         // Если кеш есть — вернет false, и данные будут взяты из кеша
-        if ($this->startResultCache()) {
+        if ($this->startResultCache())
+        {
             // Формируем массив $arResult
             $this->initResult();
             // Подключаем шаблон компонента
@@ -236,8 +238,10 @@ $dbIBlockType = CIBlockType::GetList(
     ["sort" => "asc"],
     ["ACTIVE" => "Y"]
 );
-while ($arIBlockType = $dbIBlockType->Fetch()) {
-    if ($arIBlockTypeLang = CIBlockType::GetByIDLang($arIBlockType["ID"], LANGUAGE_ID)) {
+while ($arIBlockType = $dbIBlockType->Fetch())
+{
+    if ($arIBlockTypeLang = CIBlockType::GetByIDLang($arIBlockType["ID"], LANGUAGE_ID))
+    {
         $arIblockType[$arIBlockType["ID"]] = "[".$arIBlockType["ID"]."] ".$arIBlockTypeLang["NAME"];
     }
 }
@@ -379,11 +383,13 @@ $arComponentParameters = [
 Параметр `REFRESH` позволяет перегружать форму параметров после выбора значения. Это полезно, например, для фильтрации списка инфоблоков по типу.
 
 ```php
-if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']) > 0) {
+if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']) > 0)
+{
     $arPropList = [];
     $rsProps = CIBlockProperty::GetList([], ['IBLOCK_ID' => $arCurrentValues['IBLOCK_ID']]);
 
-    while ($arProp = $rsProps->Fetch()) {
+    while ($arProp = $rsProps->Fetch())
+    {
         $arPropList[$arProp['ID']] = $arProp['NAME'];
     }
 
@@ -631,14 +637,16 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
    use Bitrix\Main\Localization\Loc;
    use Bitrix\Main\Loader;
    
-   if (!Loader::includeModule("advertising")) {
+   if (!Loader::includeModule("advertising"))
+   {
       return;
    }
    
    $arTypeFields = ["-" => Loc::getMessage("ADV_SELECT_DEFAULT")];
    $res = CAdvType::GetList($by, $order, Array("ACTIVE" => "Y"),$is_filtered, "Y");
    
-   while (is_object($res) && $ar = $res->GetNext()) {
+   while (is_object($res) && $ar = $res->GetNext())
+   {
       $arTypeFields[$ar["SID"]] = "[".$ar["SID"]."] ".$ar["NAME"];
    }
    
@@ -666,12 +674,15 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
       "CACHE_TIME" => ["DEFAULT"=>"0"],
    ];
    
-   if ($templateProperties['NEED_TEMPLATE'] == 'Y') {
+   if ($templateProperties['NEED_TEMPLATE'] == 'Y')
+   {
       $templates = ['-' => Loc::getMessage("ADV_NOT_SELECTED")];
       $arTemplates = CComponentUtil::GetTemplatesList('bitrix:advertising.banner.view');
    
-      if (is_array($arTemplates) && !empty($arTemplates)) {
-         foreach ($arTemplates as $template) {
+      if (is_array($arTemplates) && !empty($arTemplates))
+      {
+         foreach ($arTemplates as $template)
+         {
                $templates[$template['NAME']] = $template['NAME'];
          }
       }
@@ -853,7 +864,8 @@ $this->SetResultCacheKeys([
 ```php
 <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 global $APPLICATION;
-if (isset($arResult['MY_TITLE'])) {
+if (isset($arResult['MY_TITLE']))
+{
     $APPLICATION->SetTitle($arResult['MY_TITLE']);
 }
 ?>
@@ -880,7 +892,8 @@ $templateData = [
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 // Проверяем, что $templateData определена и содержит данные
-if (isset($templateData) && is_array($templateData)) {
+if (isset($templateData) && is_array($templateData))
+{
     // Используем данные из $templateData
     $itemCount = $templateData['ITEM_COUNT'];
     $lastUpdated = $templateData['LAST_UPDATED'];
@@ -899,7 +912,8 @@ if (isset($templateData) && is_array($templateData)) {
 
 ```php
 $this->IncludeComponentTemplate();
-if ($arParams["SET_TITLE"]) {
+if ($arParams["SET_TITLE"])
+{
     $APPLICATION->SetTitle($arResult["NAME"]);
 }
 ```
@@ -1006,7 +1020,8 @@ class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\
     // Пример обработки ошибок
     public function showMeYourErrorAction():? string
     {
-        if (rand(3, 43) === 42) {
+        if (rand(3, 43) === 42)
+        {
             $this->errorCollection[] = new Error('You are so beautiful or so handsome');
             // В ответе будут ошибки, и статус ответа будет 'error'
             return null;

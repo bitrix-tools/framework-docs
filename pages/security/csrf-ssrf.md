@@ -71,7 +71,8 @@ Bitrix Framework предоставляет функции для работы �
 В общем виде для проверки корректности запроса достаточно добавить `check_bitrix_sessid` в условие:
 
 ```php
-if (check_bitrix_sessid()) {
+if (check_bitrix_sessid())
+{
      // Действие выполняется
 }
 ```
@@ -199,11 +200,15 @@ $http->get($_GET['uri']); // Пытаемся отправить запрос
 
 ```php
 $file = CFile::MakeFileArray($_GET['uri']);
-if ($file) {
+if ($file)
+{
      $res = CFile::CheckImageFile($file);
-     if ($res === null) {
+     if ($res === null)
+     {
          // Изображение корректно, можно продолжать
-     } else {
+     }
+     else
+     {
          // Обработка ошибки
      }
 }

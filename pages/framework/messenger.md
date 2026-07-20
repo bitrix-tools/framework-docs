@@ -431,7 +431,8 @@ class SomeReceiver extends AbstractReceiver
 {
     protected function process(MessageInterface $message): void
     {
-        if ($message instanceof SectionMessage) {
+        if ($message instanceof SectionMessage)
+        {
             $section = $this->sectionRepository->getById($message->getSectionId());
             (new SendSectionCommand($section))->run();
             return;

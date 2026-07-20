@@ -129,7 +129,8 @@ $pos = \Bitrix\Main\Service\GeoIp\Manager::getGeoPosition('92.50.195.50');
 $lat = \Bitrix\Main\Service\GeoIp\Manager::getGeoPositionLatitude('92.50.195.50');
 $lon = \Bitrix\Main\Service\GeoIp\Manager::getGeoPositionLongitude('92.50.195.50');
 
-if ($lat !== '' && $lon !== '') {
+if ($lat !== '' && $lon !== '')
+{
     echo "Координаты: $lat, $lon";
 }
 ```
@@ -160,12 +161,15 @@ $geoResult = \Bitrix\Main\Service\GeoIp\Manager::getDataResult(
     ['countryName', 'cityName', 'latitude', 'longitude']
 );
 
-if ($geoResult && $geoResult->isSuccess()) {
+if ($geoResult && $geoResult->isSuccess())
+{
     $data = $geoResult->getGeoData();
     echo $data->cityName; // Калининград
     echo $data->countryName; // Россия
     echo $data->latitude; // 54.70649
-} else {
+}
+else
+{
     echo 'Нет данных для этого IP';
 }
 ```

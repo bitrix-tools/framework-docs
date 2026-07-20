@@ -109,10 +109,13 @@ $http = new HttpClient([
 
 $result = $http->get('https://1c-bitrix.ru/');
 
-if ($result !== false) {
+if ($result !== false)
+{
     var_dump($http->getStatus());
     var_dump($http->getHeaders());
-} else {
+}
+else
+{
     var_dump($http->getError());
 }
 ```
@@ -281,13 +284,16 @@ $body->write(http_build_query($data, '', '&'));
 
 $request = new Request(Method::POST, $uri, [], $body);
 
-try {
+try
+{
     $response = $http->sendRequest($request);
     
     var_dump($response->getStatusCode());
     var_dump($response->getHeaders());
     var_dump((string)$response->getBody());
-} catch (ClientException $e) {
+}
+catch (ClientException $e)
+{
     var_dump($e->getMessage());
 }
 ```
@@ -344,13 +350,16 @@ $request = new Request(Method::POST, $uri, $headers, $body);
 // Закрываем файл после использования
 fclose($res);
 
-try {
+try
+{
     $response = $http->sendRequest($request);
     
     var_dump($response->getStatusCode());
     var_dump($response->getHeaders());
     var_dump((string)$response->getBody());
-} catch (ClientException $e) {
+}
+catch (ClientException $e)
+{
     var_dump($e->getMessage());
 }
 ```
@@ -380,16 +389,21 @@ $http = new HttpClient([
 $uri = new Uri('http://1с-битрикс.рф/');
 $request = new Request(Method::GET, $uri);
 
-try {
-    do {
+try
+{
+    do
+    {
         $response = $http->sendRequest($request);
         
-        if ($response->hasHeader('Location')) {
+        if ($response->hasHeader('Location'))
+        {
             $location = $response->getHeader('Location')[0];
             $request = $request->withUri(new Uri($location));
         }
     } while ($response->hasHeader('Location'));
-} catch (ClientException $e) {
+}
+catch (ClientException $e)
+{
     var_dump($e->getMessage());
 }
 ```
@@ -425,16 +439,21 @@ $urls = [
     'https://www.1c-bitrix.ru/',
 ];
 
-foreach ($urls as $url) {
+foreach ($urls as $url)
+{
     $request = new Request(Method::GET, new Uri($url));
     $http->sendAsyncRequest($request);
 }
 
-try {
-    foreach ($http->wait() as $response) {
+try
+{
+    foreach ($http->wait() as $response)
+    {
         var_dump($response->getStatusCode());
     }
-} catch (ClientException $e) {
+}
+catch (ClientException $e)
+{
     var_dump($e->getMessage());
 }
 ```
@@ -448,17 +467,22 @@ try {
 ```php
 $promises = [];
 
-foreach ($urls as $url) {
+foreach ($urls as $url)
+{
     $request = new Request(Method::GET, new Uri($url));
     $promises[] = $http->sendAsyncRequest($request);
 }
 
-foreach ($promises as $promise) {
-    try {
+foreach ($promises as $promise)
+{
+    try
+    {
         $response = $promise->wait();
         var_dump($promise->getRequest()->getUri()->getHost());
         var_dump($response->getStatusCode());
-    } catch (ClientException $e) {
+    }
+    catch (ClientException $e)
+    {
         var_dump($e->getMessage());
     }
 }
@@ -473,7 +497,8 @@ foreach ($promises as $promise) {
 Callback-функции позволяют строить цепочки обработки без блокирующих вызовов `wait()`.
 
 ```php
-foreach ($urls as $url) {
+foreach ($urls as $url)
+{
     $request = new Request(Method::GET, new Uri($url));
     $promise = $http->sendAsyncRequest($request);
 
@@ -625,7 +650,8 @@ return [
                             public function format($message, array $context = []): string
                             {
                                 // Игнорировать запросы push-сервера
-                                if ($this->request->getUri()->getPort() === 1337) {
+                                if ($this->request->getUri()->getPort() === 1337)
+                                {
                                     return '';
                                 }
 

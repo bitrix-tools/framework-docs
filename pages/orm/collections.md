@@ -17,7 +17,8 @@ description: 'Коллекции. ORM Bitrix Framework: ключевые кон�
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 ```
 
 `$books` — это коллекция объектов класса `Book` с методами для групповых операций.
@@ -69,8 +70,10 @@ class Books extends EO_Book_Collection
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
-foreach ($books as $book) {
+    ->fetchCollection()
+;
+foreach ($books as $book)
+{
     // ...
 }
 ```
@@ -81,7 +84,8 @@ foreach ($books as $book) {
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $bookObjects = $books->getAll();
 echo $bookObjects[0]->getId();
 // выведет значение ID первого объекта
@@ -99,13 +103,15 @@ $books = $bookCollection->collectValues();
 ```php
 // Пример с простым первичным ключом
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $book = $books->getByPrimary(1);
 // книга с ID=1
 
 // Пример с составным первичным ключом
 $booksToAuthor = \Bitrix\Main\Test\Typography\BookAuthorTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $bookToAuthor = $booksToAuthor->getByPrimary(['BOOK_ID' => 2, 'AUTHOR_ID' => 18]);
 // объект отношения книги ID=2 с автором ID=18
 ```
@@ -120,7 +126,8 @@ $book2 = \Bitrix\Main\Test\Typography\Book::wakeUp(2);
 $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->addSelect('*')
     ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 var_dump($books->has($book1)); // false
 var_dump($books->has($book2)); // true
@@ -132,7 +139,8 @@ var_dump($books->has($book2)); // true
 $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->addSelect('*')
     ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 var_dump($books->hasByPrimary(1)); // false
 var_dump($books->hasByPrimary(2)); // true
@@ -144,7 +152,8 @@ var_dump($books->hasByPrimary(2)); // true
 $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->addSelect('*')
     ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 $isEmpty = $books->isEmpty();
 ```
@@ -158,7 +167,8 @@ $book1 = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
 $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->addSelect('*')
     ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 $books->add($book1);
 // или
@@ -172,7 +182,8 @@ $books[] = $book1;
 ```php
 $book1 = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $books->remove($book1);
 // удалится книга с ID=1
 $books->removeByPrimary(2);
@@ -196,7 +207,8 @@ $books[] = (new Book)->setTitle('Title 112');
 $books[] = (new Book)->setTitle('Title 113');
 $books[] = (new Book)
     ->setTitle('Title 114')
-    ->setIsbn('114-000');
+    ->setIsbn('114-000')
+;
 
 $books->save(true);
 // INSERT INTO ... (`TITLE`, `ISBN`) VALUES
@@ -217,7 +229,8 @@ use Bitrix\Main\Test\Typography\BookTable;
 
 $books = BookTable::getList()->fetchCollection();
 $publisher = PublisherTable::wakeUpObject(254);
-foreach ($books as $book) {
+foreach ($books as $book)
+{
     $book->setPublisher($publisher);
 }
 $books->save();
@@ -274,9 +287,11 @@ $books->fill(\Bitrix\Main\ORM\Fields\FieldTypeMask::FLAT);
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $books->walk(static function($book) {
-    if ($book->getPrice() > 1000) {
+    if ($book->getPrice() > 1000)
+    {
         $book->setActive(false);
     }
 });
@@ -304,7 +319,8 @@ $saveResult = \Bitrix\Main\Test\Typography\BookTable::query()
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $titles = $books->getTitleList();
 ```
 
@@ -350,11 +366,13 @@ $books = \Bitrix\Main\Test\Typography\Books::wakeUp([
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
     ->whereIn('ID', [1, 2])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 $anotherBooks = \Bitrix\Main\Test\Typography\BookTable::getList()
     ->whereIn('ID', [3, 4])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 $books = $books->merge($anotherBooks);
 ```

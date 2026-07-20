@@ -93,7 +93,8 @@ $cpt = new CCaptcha();
 
 // Получаем или генерируем пароль для CAPTCHA
 $captchaPass = COption::GetOptionString("main", "captcha_password", "");
-if (strlen($captchaPass) <= 0) {
+if (strlen($captchaPass) <= 0)
+{
     $captchaPass = randString(10); // Генерируем случайный пароль с помощью функции randString
     COption::SetOptionString("main", "captcha_password", $captchaPass); // Сохраняем пароль
 }
@@ -123,10 +124,13 @@ $cpt->SetCodeCrypt($captchaPass);
 ```php
 <?php
 // Проверяем, правильно ли введена CAPTCHA
-if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_code"])) {
+if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_code"]))
+{
     // Неправильное значение
     echo "CAPTCHA введена неверно. Попробуйте еще раз.";
-} else {
+}
+else
+{
     // Правильное значение
     echo "CAPTCHA введена верно.";
 }
@@ -166,7 +170,8 @@ $code = $APPLICATION->CaptchaGetCode();
 
 ```php
 // Проверяем введенный пользователем код CAPTCHA
-if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_sid"])) {
+if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_sid"]))
+{
     echo 'Неверный код CAPTCHA';
 }
 ```

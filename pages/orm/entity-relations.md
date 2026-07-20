@@ -231,7 +231,8 @@ $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253, [
 ])->fetchObject();
 
 // Перебор всех книг, связанных с издательством
-foreach ($publisher->getBooks() as $book) {
+foreach ($publisher->getBooks() as $book)
+{
     echo $book->getTitle(); // Вывод названия каждой книги
 }
 // Цикл выведет "Title 1" и "Title 2"
@@ -278,12 +279,14 @@ Array (
 ```php
 // Инициализация объекта издательства
 $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Метод getByPrimary загружает объект издательства с первичным ключом 253 из базы данных
 
 // Инициализация объекта книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(2)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Метод getByPrimary загружает объект книги с первичным ключом 2 из базы данных
 
 // Добавление книги в коллекцию книг издательства
@@ -735,10 +738,12 @@ class ... extends \Bitrix\Main\ORM\Data\DataManager
 
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::getByPrimary(17)
-    ->fetchObject(); // Получаем объект автора с ID 17
+    ->fetchObject() // Получаем объект автора с ID 17
+;
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject(); // Получаем объект книги с ID 1
+    ->fetchObject() // Получаем объект книги с ID 1
+;
 
 $author->addToBooks($book); // Добавляем книгу к автору
 $author->save(); // Сохраняем изменения
@@ -755,7 +760,8 @@ $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(2, [
     'select' => ['*', 'AUTHORS'] // Выбираем все поля книги и связанных авторов
 ])->fetchObject();
 
-foreach ($book->getAuthors() as $author) {
+foreach ($book->getAuthors() as $author)
+{
     echo $author->getLastName(); // Выводим фамилию каждого автора
 }
 // Цикл выведет "Last name 17" и "Last name 18"
@@ -767,10 +773,12 @@ foreach ($book->getAuthors() as $author) {
 
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::getByPrimary(17)
-    ->fetchObject(); // Получаем объект автора с ID 17
+    ->fetchObject() // Получаем объект автора с ID 17
+;
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject(); // Получаем объект книги с ID 1
+    ->fetchObject() // Получаем объект книги с ID 1
+;
 
 $author->addToBooks($book); // Добавляем книгу к автору
 $author->save(); // Сохраняем изменения
@@ -780,10 +788,12 @@ $author->save(); // Сохраняем изменения
 
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::getByPrimary(17)
-    ->fetchObject(); // Получаем объект автора с ID 17
+    ->fetchObject() // Получаем объект автора с ID 17
+;
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject(); // Получаем объект книги с ID 1
+    ->fetchObject() // Получаем объект книги с ID 1
+;
 
 $book->addToAuthors($author); // Добавляем автора к книге
 $book->save(); // Сохраняем изменения
@@ -857,15 +867,18 @@ class StoreBookTable extends DataManager
 ```php
 // Объект книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Объект магазина
 $store = \Bitrix\Main\Test\Typography\StoreTable::getByPrimary(34)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Новый объект связи книги с магазином
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::createObject()
     ->setBook($book)
     ->setStore($store)
-    ->setQuantity(5);
+    ->setQuantity(5)
+;
 // Сохранение
 $item->save();
 ```

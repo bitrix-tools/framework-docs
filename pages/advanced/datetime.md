@@ -230,7 +230,8 @@ echo $diff->days; // 9
 ```php
 use Bitrix\Main\Type\Date;
 
-if (Date::isCorrect('31.02.2025', 'd.m.Y')) {
+if (Date::isCorrect('31.02.2025', 'd.m.Y'))
+{
     // Код не выполнится, так как дата неверна
 }
 ```
@@ -295,7 +296,8 @@ $dt3 = new DateTime('2025-11-25 14:30:15+03:00', \DateTime::ATOM);
    use Bitrix\Main\Type\DateTime;
 
    $dt = DateTime::tryParse($request['DATE'], 'd.m.Y H:i');
-   if ($dt === null) {
+   if ($dt === null)
+   {
        // Строка имеет неверный формат
    }
    ```

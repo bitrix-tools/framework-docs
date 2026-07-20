@@ -136,7 +136,8 @@ class BookTable extends Entity\DataManager
         $result = new Entity\EventResult;
         $data = $event->getParameter("fields");
 
-        if (isset($data['ISBN'])) {
+        if (isset($data['ISBN']))
+        {
             $cleanIsbn = str_replace('-', '', $data['ISBN']); // Удаляем дефисы из ISBN
             $result->modifyFields(['ISBN' => $cleanIsbn]); // Модифицируем поле ISBN
         }
@@ -196,7 +197,8 @@ public static function onBeforeUpdate(Entity\Event $event)
     $result = new Entity\EventResult;
     $data = $event->getParameter("fields");
 
-    if (isset($data['ISBN'])) {
+    if (isset($data['ISBN']))
+    {
         $result->unsetFields(['ISBN']); // Удаляет поле ISBN из данных для обновления
     }
 
@@ -212,7 +214,8 @@ public static function onBeforeUpdate(Entity\Event $event)
     $result = new Entity\EventResult;
     $data = $event->getParameter("fields");
 
-    if (isset($data['ISBN'])) {
+    if (isset($data['ISBN']))
+    {
         // Получает объект поля ISBN и выдает сообщение об ошибке
         $result->addError(new Entity\FieldError( 
             $event->getEntity()->getField('ISBN'), 

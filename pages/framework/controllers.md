@@ -447,7 +447,8 @@ final class Post extends Controller
     public function listAction(\Bitrix\Main\Engine\CurrentUser $user)
     {
         $isGuest = empty($user->getId());
-        if ($isGuest) {
+        if ($isGuest)
+        {
             $this->addError(
                 new \Bitrix\Main\Error('Need authenticated')
             );
@@ -535,7 +536,8 @@ final class Post extends Controller
     public function getAction(string $code)
     {
         $post = \MyPost::query()->where('CODE', $code)->fetchObject();
-        if (!$post) {
+        if (!$post)
+        {
             $this->addError(
                 new \Bitrix\Main\Error('Not found post')
             );
@@ -959,7 +961,8 @@ use Bitrix\Main\Error;
 public function deleteAction(string $code)
 {
     $blog = Blog::getByCode($code);
-    if (!$blog) {
+    if (!$blog)
+    {
         $this->addError(new Error('Блог не найден', 'BLOG_NOT_FOUND'));
         return null;
     }

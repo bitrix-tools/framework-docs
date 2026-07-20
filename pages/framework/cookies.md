@@ -58,9 +58,12 @@ description: 'Cookie-файлы. Документация по Bitrix Framework:
    $cookieValue = $request->getCookie("example_cookie");
    
    // Проверка наличия и вывод значения
-   if ($cookieValue !== null) {
+   if ($cookieValue !== null)
+   {
        echo "Значение cookie: " . $cookieValue;
-   } else {
+   }
+   else
+   {
        echo "Cookie не найдено.";
    }
    ```
@@ -152,13 +155,15 @@ require $_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.
 use Bitrix\Main\Application;
 use Bitrix\Main\Web\Cookie;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['ACTION'] === 'selectMyCity') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['ACTION'] === 'selectMyCity')
+{
     $APPLICATION->RestartBuffer();
     header('Content-Type: application/json');
 
     $response = ['STATUS' => 'ERROR', 'MESSAGE' => 'Не удалось добавить cookie'];
 
-    if (check_bitrix_sessid()) {
+    if (check_bitrix_sessid())
+    {
         $city = $_POST['city'];
 
         $application = Application::getInstance();

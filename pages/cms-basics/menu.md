@@ -155,7 +155,8 @@ use Bitrix\Main\Loader;
 global $APPLICATION;
 // Подготовим массив для дополнительных пунктов меню
 $aMenuLinksExt = [];
-if(Loader::includeModule('iblock')) {
+if(Loader::includeModule('iblock'))
+{
     // Фильтр для выборки инфоблоков типа catalog и привязанных к текущему сайту
     $arFilter = [
         "TYPE" => "catalog",
@@ -164,12 +165,15 @@ if(Loader::includeModule('iblock')) {
     // Получаем список инфоблоков, сортируем по полю SORT, затем по ID
     $dbIBlock = CIBlock::GetList(['SORT' => 'ASC', 'ID' => 'ASC'], $arFilter);
     $dbIBlock = new CIBlockResult($dbIBlock);
-    if ($arIBlock = $dbIBlock->GetNext()) {
-        if(defined("BX_COMP_MANAGED_CACHE")) {
+    if ($arIBlock = $dbIBlock->GetNext())
+    {
+        if(defined("BX_COMP_MANAGED_CACHE"))
+        {
             $GLOBALS["CACHE_MANAGER"]->RegisterTag("iblock_id_".$arIBlock["ID"]);
         }
         // Если инфоблок активен, подключаем компонент для генерации меню из его разделов
-        if ($arIBlock["ACTIVE"] == "Y") {
+        if ($arIBlock["ACTIVE"] == "Y")
+        {
             // Подключаем компонент menu.sections
             $aMenuLinksExt = $APPLICATION->IncludeComponent(
                 "bitrix:menu.sections", 
@@ -189,7 +193,8 @@ if(Loader::includeModule('iblock')) {
             );
         }
     }
-    if (defined("BX_COMP_MANAGED_CACHE")) {
+    if (defined("BX_COMP_MANAGED_CACHE"))
+    {
         $GLOBALS["CACHE_MANAGER"]->RegisterTag("iblock_id_new");
     }
 }
@@ -356,7 +361,8 @@ $aMenuLinks = [
 Дополнительные параметры передаются в шаблон с помощью массива `$PARAMS` в виде пар `имя => значение`. Например:
 
 ```php
-if ($PARAMS["SEPARATOR"] === "Y") {
+if ($PARAMS["SEPARATOR"] === "Y")
+{
     // выводим разделитель
 }
 ```
@@ -1003,9 +1009,12 @@ $aMenuLinks = [
 Если шаблон сайта простой, можно добавить в код проверку с помощью строк:
 
 ```php
-if ($APPLICATION->GetCurPage() == "/index.php") {
+if ($APPLICATION->GetCurPage() == "/index.php")
+{
      // вывод меню для главной страницы
-} else {
+}
+else
+{
      // вывод другого меню
 }
 ```
@@ -1041,13 +1050,16 @@ if ($APPLICATION->GetCurPage() == "/index.php") {
 $lastLevel = 0;
 $selected = false;
 // Проходим по меню в обратном порядке, чтобы найти выбранный пункт и подсветить его родителей
-foreach(array_reverse($arResult) as $arItem){
-    if ($arItem["SELECTED"]) {
+foreach(array_reverse($arResult) as $arItem)
+{
+    if ($arItem["SELECTED"])
+    {
         $lastLevel = $arItem["DEPTH_LEVEL"]; // Запоминаем уровень выбранного пункта
         $selected = true;
     }
     // Если уже нашли выбранный пункт и поднимаемся выше по дереву
-    if ($selected and $arItem["DEPTH_LEVEL"] < $lastLevel) {
+    if ($selected and $arItem["DEPTH_LEVEL"] < $lastLevel)
+    {
         $arResult[$arItem["ITEM_INDEX"]]["SELECTED"] = true; // Подсвечиваем родителя
         $lastLevel--; // Переходим на уровень выше
     }
@@ -1077,7 +1089,8 @@ foreach($arResult as $arItem): ?>
 3. В нижнюю часть сайта `footer.php` добавьте код:
 
    ```php
-   if ($APPLICATION->GetPageProperty('hide_menu') !== 'Y') {
+   if ($APPLICATION->GetPageProperty('hide_menu') !== 'Y')
+   {
        ob_start();
        echo 'проверка отложенного меню!';
        // здесь выводим меню компонентом или другим способом

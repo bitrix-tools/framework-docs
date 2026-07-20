@@ -24,7 +24,8 @@ description: 'Транзакции. Работа с базой данных в B
 ```php
 $db = \Bitrix\Main\Application::getConnection();
 
-try {
+try
+{
     $db->startTransaction();
 
     // Пример SQL-запроса
@@ -36,7 +37,9 @@ try {
     \Bitrix\Main\SiteTable::update('s1', ['ACTIVE' => 'N']);
 
     $db->commitTransaction();
-} catch (Throwable $e) {
+}
+catch (Throwable $e)
+{
     $db->rollbackTransaction();
     throw $e;
 }
@@ -93,24 +96,32 @@ use Bitrix\Main\DB\SqlExpression;
 use Bitrix\Main\DB\TransactionException;
 
 // Функция обновления счетов
-function updateAccounts(int $userId, Connection $db) {
-    try {
+function updateAccounts(int $userId, Connection $db)
+{
+    try
+    {
         $db->startTransaction();
         // Ваш код изменения данных
         $db->commitTransaction();
-    } catch (Throwable $e) {
+    }
+    catch (Throwable $e)
+    {
         $db->rollbackTransaction();
         throw $e;
     }
 }
 
 // Функция обновления заказов
-function updateOrders(int $userId, Connection $db) {
-    try {
+function updateOrders(int $userId, Connection $db)
+{
+    try
+    {
         $db->startTransaction();
         // Ваш SQL-запрос
         $db->commitTransaction();
-    } catch (Throwable $e) {
+    }
+    catch (Throwable $e)
+    {
         $db->rollbackTransaction();
         throw $e;
     }
@@ -119,17 +130,22 @@ function updateOrders(int $userId, Connection $db) {
 // Основная транзакция
 $db = Application::getConnection();
 
-try {
+try
+{
     $db->startTransaction();
     
     updateOrders($userId, $db);    // Вложенная транзакция
     updateAccounts($userId, $db);  // Вложенная транзакция
     
     $db->commitTransaction();
-} catch (TransactionException $e) {
+}
+catch (TransactionException $e)
+{
     // Если ошибка во вложенной транзакции
     $db->rollbackTransaction();  // Откатываем все
-} catch (Throwable $e) {
+}
+catch (Throwable $e)
+{
     $db->rollbackTransaction();
     throw $e;
 }

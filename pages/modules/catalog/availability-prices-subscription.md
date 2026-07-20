@@ -38,7 +38,8 @@ $result = \Bitrix\Catalog\Model\Product::update($productId, [
     'CAN_BUY_ZERO'   => 'N',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -70,7 +71,8 @@ $result = \Bitrix\Catalog\Model\Product::update($offerId, [
     'CAN_BUY_ZERO'   => 'N',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -100,7 +102,8 @@ $result = \Bitrix\Catalog\Model\Product::update($productId, [
     'NEGATIVE_AMOUNT_TRACE' => 'Y',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -124,7 +127,8 @@ $productRow = \Bitrix\Catalog\ProductTable::getList([
     'limit' => 1,
 ])->fetch();
 
-if (!$productRow) {
+if (!$productRow)
+{
     throw new \RuntimeException('Товар не найден');
 }
 ```
@@ -196,12 +200,15 @@ $price = \Bitrix\Catalog\Model\Price::getList([
     ],
 ])->fetch();
 
-if ($price) {
+if ($price)
+{
     $result = \Bitrix\Catalog\Model\Price::update((int)$price['ID'], [
         'PRICE'    => 1350.00,
         'CURRENCY' => 'RUB',
     ]);
-} else {
+}
+else
+{
     $result = \Bitrix\Catalog\Model\Price::add([
         'PRODUCT_ID'       => $productId,
         'CATALOG_GROUP_ID' => $basePriceTypeId,
@@ -210,7 +217,8 @@ if ($price) {
     ]);
 }
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -241,7 +249,8 @@ $result = \Bitrix\Catalog\Model\Price::add([
     'QUANTITY_TO'      => 9,
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 
@@ -254,7 +263,8 @@ $result = \Bitrix\Catalog\Model\Price::add([
     'QUANTITY_TO'      => null,
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -282,7 +292,8 @@ $quantityPrice = \CCatalogProduct::GetNearestQuantityPrice(
     $userGroups
 );
 
-if ($quantityPrice) {
+if ($quantityPrice)
+{
     echo $quantityPrice['PRICE'];
 }
 ```
@@ -325,7 +336,8 @@ $optimalPrice = \CCatalogProduct::GetOptimalPrice(
     SITE_ID
 );
 
-if ($optimalPrice) {
+if ($optimalPrice)
+{
     echo $optimalPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 }
 ```
@@ -409,7 +421,8 @@ $subscribeId = $subscribeManager->addSubscribe([
     'USER_ID'      => 15,
 ]);
 
-if (!$subscribeId) {
+if (!$subscribeId)
+{
     $error = current($subscribeManager->getErrors());
     $message = $error ? $error->getMessage() : 'Не удалось добавить подписку';
 
@@ -439,7 +452,8 @@ $subscribeRow = \Bitrix\Catalog\SubscribeTable::getList([
     'limit' => 1,
 ])->fetch();
 
-if ($subscribeRow) {
+if ($subscribeRow)
+{
     $subscribeId = (int)$subscribeRow['ID'];
 }
 ```
@@ -453,7 +467,8 @@ if ($subscribeRow) {
 ```php
 $subscribeManager = new \Bitrix\Catalog\Product\SubscribeManager;
 
-if (!$subscribeManager->deactivateSubscription([$subscribeId])) {
+if (!$subscribeManager->deactivateSubscription([$subscribeId]))
+{
     $error = current($subscribeManager->getErrors());
     $message = $error ? $error->getMessage() : 'Не удалось отключить подписку';
 
@@ -466,7 +481,8 @@ if (!$subscribeManager->deactivateSubscription([$subscribeId])) {
 ```php
 $subscribeManager = new \Bitrix\Catalog\Product\SubscribeManager;
 
-if (!$subscribeManager->deleteManySubscriptions([$subscribeId], $productId)) {
+if (!$subscribeManager->deleteManySubscriptions([$subscribeId], $productId))
+{
     $error = current($subscribeManager->getErrors());
     $message = $error ? $error->getMessage() : 'Не удалось удалить подписку';
 
@@ -486,7 +502,8 @@ $unsubscribed = $subscribeManager->unSubscribe([
     'productId' => $productId,
 ]);
 
-if (!$unsubscribed) {
+if (!$unsubscribed)
+{
     $error = current($subscribeManager->getErrors());
     $message = $error ? $error->getMessage() : 'Не удалось отписать пользователя';
 
@@ -509,7 +526,8 @@ if (!$unsubscribed) {
 Если нужно вручную поставить активные подписки товара в очередь отправки, вызовите `runAgentToSendNotice()`.
 
 ```php
-if (!\Bitrix\Catalog\SubscribeTable::runAgentToSendNotice($productId)) {
+if (!\Bitrix\Catalog\SubscribeTable::runAgentToSendNotice($productId))
+{
     throw new \RuntimeException('Не удалось поставить уведомления в очередь');
 }
 ```

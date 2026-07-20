@@ -153,7 +153,8 @@ class ProjectQualityTests
     {
         $path = $_SERVER['DOCUMENT_ROOT'] . '/favicon.ico';
 
-        if (file_exists($path)) {
+        if (file_exists($path))
+        {
             return [
                 'STATUS' => true,
                 'MESSAGE' => [

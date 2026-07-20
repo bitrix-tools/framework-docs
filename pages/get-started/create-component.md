@@ -139,11 +139,13 @@ class UserCardComponent extends CBitrixComponent
     public function executeComponent()
     {
         // Кешируем результат, чтобы не делать постоянные запросы к базе
-        if ($this->startResultCache()) {
+        if ($this->startResultCache())
+        {
             $this->initResult();
 
             // Если ничего не найдено, отменяем кеширование
-            if (empty($this->arResult)) {
+            if (empty($this->arResult))
+            {
                 $this->abortResultCache();
                 ShowError('Пользователь не найден');
 
@@ -162,7 +164,8 @@ class UserCardComponent extends CBitrixComponent
     private function initResult(): void
     {
         $userId = (int)$this->arParams['USER_ID'];
-        if ($userId < 1) {
+        if ($userId < 1)
+        {
             return;
         }
 
@@ -173,9 +176,11 @@ class UserCardComponent extends CBitrixComponent
                 'PERSONAL_PHOTO',
             ])
             ->where('ID', $userId)
-            ->fetch();
+            ->fetch()
+        ;
 
-        if (empty($user)) {
+        if (empty($user))
+        {
             return;
         }
 
@@ -185,7 +190,8 @@ class UserCardComponent extends CBitrixComponent
         ];
 
         // Получаем путь до аватара, если он указан
-        if (!empty($user['PERSONAL_PHOTO'])) {
+        if (!empty($user['PERSONAL_PHOTO']))
+        {
             $this->arResult['PERSONAL_PHOTO_SRC'] = \CFile::GetPath($user['PERSONAL_PHOTO']);
         }
     }

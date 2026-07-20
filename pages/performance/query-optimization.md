@@ -14,8 +14,10 @@ description: 'Как оптимизировать запросы к базе д�
 -  Неправильный подход: выполнить запрос в цикле. Для каждого товара в корзине выполняется отдельный запрос к базе данных. Это неэффективно, так как количество запросов растет с увеличением числа товаров.
 
    ```php
-   foreach ($arResult["ORDERS"] as $key => $val) {
-       foreach ($val["BASKET_ITEMS"] as $vvval) {
+   foreach ($arResult["ORDERS"] as $key => $val)
+   {
+       foreach ($val["BASKET_ITEMS"] as $vvval)
+       {
            $rsEls = CIBlockElement::GetByID($vvval["PRODUCT_ID"]); // Запрос в цикле
        }
    }
@@ -28,15 +30,18 @@ description: 'Как оптимизировать запросы к базе д�
    $arIDs = array();
    
    // Перебираем заказы и товары в корзине
-   foreach($arResult["ORDERS"] as $key => $val) {
-       foreach($val["BASKET_ITEMS"] as $vvval) {
+   foreach($arResult["ORDERS"] as $key => $val)
+   {
+       foreach($val["BASKET_ITEMS"] as $vvval)
+       {
            // Добавляем ID товара в массив
            $arIDs[] = $vvval["PRODUCT_ID"];
        }
    }
    
    // Если массив не пустой, выполняем один запрос
-   if (!empty($arIDs)) {
+   if (!empty($arIDs))
+   {
        $rsEls = CIBlockElement::GetList(
            [],
            ["ID" => $arIDs],
@@ -46,8 +51,10 @@ description: 'Как оптимизировать запросы к базе д�
        );
    
    // Наполняем данные, используя ID
-   foreach($arResult["ORDERS"] as $key => $val) {
-       foreach($val["BASKET_ITEMS"] as $vvval) {
+   foreach($arResult["ORDERS"] as $key => $val)
+   {
+       foreach($val["BASKET_ITEMS"] as $vvval)
+       {
            // Работа с данными
        }
    }
@@ -102,7 +109,8 @@ $rs = CIBlockElement::GetList(
 );
 
 // Сохраняем результаты
-while($ar = $rs->GetNext()) {
+while($ar = $rs->GetNext())
+{
     $arResult['ITEMS'][] = $ar;
 }
 ```
@@ -129,7 +137,8 @@ while($ar = $rs->GetNext()) {
    ```php
    Bitrix\Iblock\ElementTable::query()
        ->setSelect(['ID', 'NAME', 'CODE'])
-       ->where('CODE','xxx')->exec(); 
+       ->where('CODE','xxx')->exec()
+   ;
    ```
 
    Здесь фильтр `where('CODE', 'xxx')` отбирает элементы, у которых поле `CODE` равно `'xxx'`.

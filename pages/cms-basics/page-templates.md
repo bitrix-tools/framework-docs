@@ -313,8 +313,10 @@ class CBootstrapPageTemplate
         $gridHtml = '
 <div class="row">';
 
-        if (isset($_POST['BT_COL'])) {
-            switch ($_POST['BT_COL']) {
+        if (isset($_POST['BT_COL']))
+        {
+            switch ($_POST['BT_COL'])
+            {
                 case '1':
                 {
                     $gridHtml.= '
@@ -547,8 +549,10 @@ $MESS['BT_COL_4'] = "Мозаика";
        <td>';
    
    // Изменение шаблона в зависимости от ответа на первой вопрос об изображении
-           if (isset($_POST['BT_COL_1'])) {
-               switch ($_POST['BT_COL_1']) {
+           if (isset($_POST['BT_COL_1']))
+           {
+               switch ($_POST['BT_COL_1'])
+               {
                    case '1_1':
                    {
                        $myNewHtml.= '
@@ -578,8 +582,10 @@ $MESS['BT_COL_4'] = "Мозаика";
     <br>';
    
    // Изменение шаблона в зависимости от ответа на второй вопрос об обратной связи
-           if (isset($_POST['BT_COL_2'])) {
-               switch ($_POST['BT_COL_2']) {
+           if (isset($_POST['BT_COL_2']))
+           {
+               switch ($_POST['BT_COL_2'])
+               {
                    case '2_1':
                    {
                        $myNewHtml.= '

@@ -73,10 +73,14 @@ description: 'Производительность и частые ошибки.
 function updateActiveElementsStat()
 {
     $cache = new \CPHPCache();
-    if ($cache->InitCache(3600, 'active_elements_count', '/stats/')) {
+    if ($cache->InitCache(3600, 'active_elements_count', '/stats/'))
+    {
         $count = $cache->GetVars()['count'];
-    } else {
-        if ($cache->StartDataCache()) {
+    }
+    else
+    {
+        if ($cache->StartDataCache())
+        {
             // Выбираем только ID и дату начала активности
             $iterator = \Bitrix\Iblock\ElementTable::getList([
                 'select' => ['ID', 'DATE_ACTIVE_FROM'],
@@ -89,7 +93,8 @@ function updateActiveElementsStat()
             ]);
 
             $count = 0;
-            while ($element = $iterator->fetch()) {
+            while ($element = $iterator->fetch())
+            {
                 $count++;
             }
 
@@ -124,7 +129,8 @@ $taggedCache->clearByTag('iblock_id_123');
 
 ```php
 $row = $result->Fetch();
-if ($row) {
+if ($row)
+{
     $row['NAME'] = \Bitrix\Main\Text\HtmlFilter::encode($row['NAME']);
 }
 ```
@@ -213,7 +219,8 @@ CIBlockElement::GetList([], [
 // query() автоматически использует %=
 \Bitrix\Iblock\ElementTable::query()
     ->where('CODE', 'news')
-    ->exec();
+    ->exec()
+;
 ```
 
 ### Проанализировать SQL-запросы
@@ -314,7 +321,8 @@ $res = CIBlockElement::GetList([], $filter, false, false, $arSelect);
 ```php
 $element = \Bitrix\Iblock\Elements\ElementNewsTable::createObject()
     ->setName('Новость')
-    ->set('SOURCE', 105); // 105 — ID варианта в b_iblock_property_enum
+    ->set('SOURCE', 105) // 105 — ID варианта в b_iblock_property_enum
+;
 
 $element->save();
 ```
@@ -327,7 +335,8 @@ $element->save();
 $element = \Bitrix\Iblock\Elements\ElementNewsTable::createObject()
     ->setName('Обзор товара')
     // RELATED_ITEM — код свойства типа Привязка к элементу
-    ->set('RELATED_ITEM', 789); // 789 — ID элемента в инфоблоке Товары
+    ->set('RELATED_ITEM', 789) // 789 — ID элемента в инфоблоке Товары
+;
 $element->save();
 ```
 
@@ -336,7 +345,8 @@ $element->save();
 ```php
 $element = \Bitrix\Iblock\Elements\ElementNewsTable::createObject()
     ->setName('Обзор')
-    ->set('RELATED_ITEM', 'product-2026'); // XML_ID из инфоблока Товары
+    ->set('RELATED_ITEM', 'product-2026') // XML_ID из инфоблока Товары
+;
 
 $element->save();
 ```
@@ -372,7 +382,8 @@ CIBlockElement::GetList(
 Чтобы исправить проблему, в шаблоне компонента до вывода HTML установите код 404:
 
 ```php
-if (!$arResult['ELEMENT']) {
+if (!$arResult['ELEMENT'])
+{
     \CHTTP::SetStatus('404 Not Found');
     require $_SERVER['DOCUMENT_ROOT'].'/404.php';
     exit;

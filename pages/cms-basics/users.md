@@ -151,9 +151,12 @@ $id = $user->Add([
     "CONFIRM_PASSWORD" => "strong_password_123",
 ]);
 
-if ($id > 0) {
+if ($id > 0)
+{
     echo "Пользователь добавлен, ID: " . $id;
-} else {
+}
+else
+{
     echo "Ошибка: " . $user->LAST_ERROR;
 }
 ```
@@ -167,7 +170,8 @@ $user->Update($ID, [
     "GROUP_ID" => [2, 3, 5],
 ]);
 
-if ($user->LAST_ERROR) {
+if ($user->LAST_ERROR)
+{
     echo "Ошибка: " . $user->LAST_ERROR;
 }
 ```
@@ -182,10 +186,13 @@ global $USER;
  */
 
 $authResult = $USER->Login($login, $password, "Y");
-if ($authResult === true) {
+if ($authResult === true)
+{
     // Пользователь успешно авторизовался
     LocalRedirect("/personal/");
-} else {
+}
+else
+{
     // Вывести ошибку
     ShowMessage($authResult['MESSAGE']);
 }
@@ -225,9 +232,12 @@ global $USER;
  * @var \CUser $USER
  */
 
-if ($USER->IsAuthorized()) {
+if ($USER->IsAuthorized())
+{
     echo "Пользователь авторизован";
-} else {
+}
+else
+{
     echo "Пользователь не авторизован";
 }
 ```
@@ -266,7 +276,8 @@ $users = UserTable::query()
 /**
  * @var \Bitrix\Main\EO_User $user
  */
-foreach ($users as $user) {
+foreach ($users as $user)
+{
     $user->getName();
     $user->getEmail();
 }
@@ -283,12 +294,14 @@ $users = \Bitrix\Main\UserTable::query()
         'GROUPS.GROUP_ID' => 1,
         '=ACTIVE' => 'Y',
     ])
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 /**
  * @var \Bitrix\Main\EO_User $user
  */
-foreach ($users as $user) {
+foreach ($users as $user)
+{
     # code...
 }
 ```
@@ -299,13 +312,16 @@ foreach ($users as $user) {
 $users = \Bitrix\Main\UserTable::query()
     ->setSelect(['ID', 'GROUPS.GROUP'])
     ->setLimit(1)
-    ->fetchCollection();
+    ->fetchCollection()
+;
 
 /**
  * @var \Bitrix\Main\EO_User $user
  */
-foreach ($users as $user) {
-    foreach ($user->getGroups() as $userGroup) {
+foreach ($users as $user)
+{
+    foreach ($user->getGroups() as $userGroup)
+    {
         $activeTo = $userGroup->getDateActiveTo();
         $activeFrom = $userGroup->getDateActiveFrom();
 
@@ -329,7 +345,8 @@ global $USER;
  */
 
 $groupId = 1;
-if (in_array($groupId, $USER->GetUserGroupArray())) {
+if (in_array($groupId, $USER->GetUserGroupArray()))
+{
     # code...
 }
 ```
@@ -342,9 +359,11 @@ if (in_array($groupId, $USER->GetUserGroupArray())) {
  */
 
 $isDeleted = CUser::Delete($userId);
-if (!$isDeleted) {
+if (!$isDeleted)
+{
     $error = (string)$APPLICATION->GetException();
-    if (empty($error)) {
+    if (empty($error))
+    {
         $error = "Пользователь не найден";
     }
 }

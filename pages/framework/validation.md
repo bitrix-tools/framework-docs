@@ -12,7 +12,8 @@ description: 'Валидация. Документация по Bitrix Framework
 ```php
 public function __construct(int $userId)
 {
-    if ($userId <= 0) {
+    if ($userId <= 0)
+    {
         throw new \Exception();
     }
     $this->userId = $userId;
@@ -91,7 +92,8 @@ public function __construct(int $userId)
            $user->setPhone($phone);
            
            $result = $this->validation->validate($user);
-           if (!$result->isSuccess()) {
+           if (!$result->isSuccess())
+           {
                return $result;
            }
            
@@ -147,7 +149,8 @@ $buyer = new Buyer();
 $buyer->id = 0;
 $result1 = $validationService->validate($buyer);
 // "id: Значение поля меньше допустимого"
-foreach ($result1->getErrors() as $error) {
+foreach ($result1->getErrors() as $error)
+{
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
 }
 echo PHP_EOL;
@@ -158,7 +161,8 @@ $order->id = -1;
 $buyer->order = $order;
 $result2 = $validationService->validate($buyer);
 // "order.id: Значение поля меньше допустимого"
-foreach ($result2->getErrors() as $error) {
+foreach ($result2->getErrors() as $error)
+{
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
 }
 echo PHP_EOL;
@@ -171,7 +175,8 @@ $buyer->order->payment = $payment;
 $result3 = $validationService->validate($buyer);
 // "order.payment.status: Значение поля не может быть пустым"
 // "order.payment.systemCode: Custom message error"
-foreach ($result3->getErrors() as $error) {
+foreach ($result3->getErrors() as $error)
+{
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
 }
 ```
@@ -256,8 +261,10 @@ $article->tags = [
 ];
 
 $result = $validationService->validate($article);
-if (!$result->isSuccess()) {
-    foreach ($result->getErrors() as $error) {
+if (!$result->isSuccess())
+{
+    foreach ($result->getErrors() as $error)
+    {
         // Путь к ошибке будет включать индекс элемента, например: "tags.2.name"
         echo $error->getCode() . ': ' . $error->getMessage() . PHP_EOL;
     }
@@ -321,7 +328,8 @@ class UserController extends Controller
         $dto->passwordRepeat = (string)$this->getRequest()->get('passwordRepeat');
         
         $result = $this->validation->validate($dto);
-        if (!$result->isSuccess()) {
+        if (!$result->isSuccess())
+        {
             $this->addErrors($result->getErrors());
             
             return false;
@@ -415,7 +423,8 @@ use Bitrix\Main\Validation\Validator\EmailValidator;
 $email = 'bitrix@bitrix.ru';
 $validator = new EmailValidator();
 $result = $validator->validate($email);
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     // ...
 }
 ```
@@ -438,7 +447,8 @@ class User
 $user = new User(-150);
 /** @var \Bitrix\Main\Validation\ValidationService $service */
 $result = $service->validate($user);
-foreach ($result->getErrors() as $error) {
+foreach ($result->getErrors() as $error)
+{
     echo $error->getMessage();
 }
 // output: 'Invalid ID!'
@@ -459,7 +469,8 @@ class User
 $user = new User(-150);
 /** @var \Bitrix\Main\Validation\ValidationService $service */
 $result = $service->validate($user);
-foreach ($result->getErrors() as $error) {
+foreach ($result->getErrors() as $error)
+{
     echo $error->getMessage();
 }
 // output: 'Значение поля меньше допустимого'
@@ -471,7 +482,8 @@ foreach ($result->getErrors() as $error) {
 
 ```php
 $errors = $service->validate($dto)->getErrors();
-foreach ($errors as $error) {
+foreach ($errors as $error)
+{
     $failedValidator = $error->getFailedValidator();
     // ...
 }
@@ -575,7 +587,8 @@ final class Min implements ValidatorInterface
     public function validate(mixed $value): ValidationResult
     {
         $result = new ValidationResult();
-        if (!is_numeric($value)) {
+        if (!is_numeric($value))
+        {
             $result->addError(
                 new ValidationError(
                     Loc::getMessage('MAIN_VALIDATION_MIN_NOT_A_NUMBER'),
@@ -584,7 +597,8 @@ final class Min implements ValidatorInterface
             );
             return $result;
         }
-        if ($value < $this->min) {
+        if ($value < $this->min)
+        {
             $result->addError(
                 new ValidationError(
                     Loc::getMessage('MAIN_VALIDATION_MIN_LESS_THAN_MIN'),
@@ -618,7 +632,8 @@ class NotOne implements PropertyValidationAttributeInterface
     public function validateProperty(mixed $propertyValue): ValidationResult
     {
         $result = new ValidationResult();
-        if ($propertyValue === 1) {
+        if ($propertyValue === 1)
+        {
             $result->addError(new ValidationError('Значение не должно быть равно 1'));
         }
         return $result;
@@ -678,7 +693,8 @@ class NotOne extends AbstractClassValidationAttribute
         $result = new ValidationResult();
         $properties = (new ReflectionClass($object))->getProperties();
         
-        if (count($properties) > 2) {
+        if (count($properties) > 2)
+        {
             $result->addError(new ValidationError('Класс содержит слишком много свойств'));
         }
         return $result;

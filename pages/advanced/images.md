@@ -156,7 +156,8 @@ $orientation = $exif['Orientation'] ?? 1;
 Вызовите метод `load()`, чтобы загрузить изображение в память:
 
 ```php
-if ($image->load()) {
+if ($image->load())
+{
     // изображение успешно загружено и готово к обработке
 }
 ```
@@ -217,7 +218,8 @@ use Bitrix\Main\File\Image\Rectangle;
 
 $image = new Image('/home/bitrix/www/sticker.gif');
 
-if ($image->load()) {
+if ($image->load())
+{
     // Исходный прямоугольник по текущим размерам изображения
     $source = new Rectangle($image->getWidth(), $image->getHeight());
     
@@ -225,7 +227,8 @@ if ($image->load()) {
     $destination = new Rectangle(400, 400);
 
     // Корректируем $destination с учетом режима пропорций
-    if ($source->resize($destination, Image::RESIZE_PROPORTIONAL)) {
+    if ($source->resize($destination, Image::RESIZE_PROPORTIONAL))
+    {
         $image->resize($source, $destination);
     }
 }
@@ -249,7 +252,8 @@ use Bitrix\Main\File\Image\Mask;
 
 $image = new Image('/home/bitrix/www/sticker.gif');
 
-if ($image->load()) {
+if ($image->load())
+{
     $image->filter(Mask::createSharpen(15));
 }
 ```
@@ -266,7 +270,8 @@ use Bitrix\Main\File\Image\ImageWatermark;
 
 $image = new Image('/home/bitrix/www/sticker.gif');
 
-if ($image->load()) {
+if ($image->load())
+{
     $watermark = new ImageWatermark("/home/bitrix/www/watermark.png");
     $watermark->setAlpha(70); // прозрачность 70%
     $image->drawWatermark($watermark);
@@ -296,7 +301,8 @@ use Bitrix\Main\File\Image;
 
 $image = new Image('/home/bitrix/www/sticker.gif');
 
-if ($image->load()) {
+if ($image->load())
+{
     // ... после обработки 
     $image->saveAs("/home/bitrix/www/resized_sticker.gif", 95, Image::FORMAT_GIF);
     // Освобождаем память

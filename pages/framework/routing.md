@@ -189,7 +189,8 @@ $routes->options('/blog/post/{code}', [PostController::class, 'options']);
 ```php
 $routes
     ->any('/blog/post', [PostController::class, 'update'])
-    ->methods(['PUT', 'PATCH']);
+    ->methods(['PUT', 'PATCH'])
+;
 ```
 
 ## Параметры маршрута
@@ -234,7 +235,8 @@ class PostViewAction extends \Bitrix\Main\Engine\Action implements \Bitrix\Main\
 
 ```php
 $app = \Bitrix\Main\Application::getInstance();
-if ($app->hasCurrentRoute()) {
+if ($app->hasCurrentRoute())
+{
     $code = $app->getCurrentRoute()->getParameterValue('code');
 }
 ```
@@ -254,7 +256,8 @@ if ($app->hasCurrentRoute()) {
 ```php
 $routes
     ->get('/blog/post/{code}', [PostController::class, 'view'])
-    ->where('code', '[\w\d\-]+');
+    ->where('code', '[\w\d\-]+')
+;
 ```
 
 Теперь маршрут будет сопоставляться по регулярному выражению `/blog/post/(?<code>[\w\d\-]+)`.
@@ -266,7 +269,8 @@ $routes
 ```php
 $routes
     ->get('/blog/post/{code}/translate/{lang}', [PostController::class, 'translate'])
-    ->default('lang', 'en');
+    ->default('lang', 'en')
+;
 ```
 
 -  При переходе на `/blog/post/my-first-article/translate/` параметр `lang` получит значение `en`.
@@ -280,7 +284,8 @@ $routes
     ->get('/blog/post/{code}', static function(string $code, string $lang) {
         // ...
     })
-    ->default('lang', 'en');
+    ->default('lang', 'en')
+    ;
 ```
 
 ### Именованные маршруты
@@ -292,7 +297,8 @@ $routes
 ```php
 $routes
     ->get('/blog/post/{code}', [PostController::class, 'view'])
-    ->name('blog.post.view');
+    ->name('blog.post.view')
+;
 ```
 
 ### Группировка маршрутов
@@ -471,7 +477,8 @@ $url = \Bitrix\Main\Application::getInstance()->getRouter()->route('blog.post.vi
 ```php
 $routes
     ->get('/blog/post-{code}/', [PostController::class, 'view'])
-    ->name('blog.post.view');
+    ->name('blog.post.view')
+;
 ```
 
 Тот же код генерации будет создавать новый URL автоматически.
@@ -512,7 +519,8 @@ array(
 $routes
     ->any('/blog/{SECTION_ID}/{ELEMENT_ID}/', new PublicPageController('/blog/detail.php'))
     ->where('SECTION_ID', '\d+')
-    ->where('ELEMENT_ID', '\d+');
+    ->where('ELEMENT_ID', '\d+')
+;
 ```
 
 Контроллер `Bitrix\Main\Routing\Controllers\PublicPageController` подключит нужный физический файл. Но лучше перевести работу на контроллеры.
@@ -521,7 +529,8 @@ $routes
 $routes
     ->any('/blog/{sectionId}/{elementId}/', [BlogController::class, 'detail'])
     ->where('sectionId', '\d+')
-    ->where('elementId', '\d+');
+    ->where('elementId', '\d+')
+;
 ```
 
 ## Частые ошибки и решения

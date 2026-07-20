@@ -215,7 +215,8 @@ $fields = $db->getTableFields('my_table');
 
 ```php
 $result = $connection->query('SELECT * FROM b_user');
-foreach ($result as $row) {
+foreach ($result as $row)
+{
     $id = $row['ID'];
 }
 ```
@@ -223,7 +224,8 @@ foreach ($result as $row) {
 Читать построчно:
 
 ```php
-while ($row = $result->fetch()) {
+while ($row = $result->fetch())
+{
     $id = $row['ID'];
 }
 ```
@@ -282,7 +284,8 @@ $resultIterator->addFetchDataModifier(static function(array $row) {
 Данные после обработки:
 
 ```php
-foreach ($resultIterator as $row) {
+foreach ($resultIterator as $row)
+{
     /**
      * [ID] => 1
      * [ACTIVE] => Y

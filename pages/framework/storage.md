@@ -49,7 +49,8 @@ Bitrix Framework предлагает два решения для управл�
 
 ```php
 $storage = \Bitrix\Main\DI\ServiceLocator::getInstance()
-    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class);
+    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class)
+;
 ```
 
 {% note tip "" %}
@@ -70,7 +71,8 @@ $storage = \Bitrix\Main\DI\ServiceLocator::getInstance()
 
 ```php
 $storage = \Bitrix\Main\DI\ServiceLocator::getInstance()
-    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class);
+    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class)
+;
 
 $storage->set('mymodule.feature_processing.feature123', ['somedata' => 12345], 3600);
 
@@ -89,7 +91,8 @@ $storage->set('key', 'value', $interval);
 
 ```php
 $storage = \Bitrix\Main\DI\ServiceLocator::getInstance()
-    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class);
+    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class)
+;
 
 $value = $storage->get('mymodule.feature_processing.feature123', 'default value');
 
@@ -172,7 +175,8 @@ $storage->deleteMultiple([
 ```php
 // Получаем базовое хранилище
 $baseStorage = \Bitrix\Main\DI\ServiceLocator::getInstance()
-    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class);
+    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class)
+;
 
 // Создаем декоратор с отложенным сохранением
 $deferredStorage = new \Bitrix\Main\Data\Storage\DeferredStorageDecorator($baseStorage);
@@ -195,7 +199,8 @@ $deferredStorage->save();
 
 ```php
 $baseStorage = \Bitrix\Main\DI\ServiceLocator::getInstance()
-    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class);
+    ->get(\Bitrix\Main\Data\Storage\PersistentStorageInterface::class)
+;
 
 $deferredStorage = new \Bitrix\Main\Data\Storage\DeferredStorageDecorator($baseStorage);
 ```

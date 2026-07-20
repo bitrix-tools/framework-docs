@@ -38,7 +38,8 @@ use Bitrix\Iblock\Elements\ElementClothesTable;
 $collection = ElementClothesTable::getList()->fetchCollection();
 
 // 2. Collection: работаем с набором
-foreach ($collection as $element) {
+foreach ($collection as $element)
+{
     // 3. Object: меняем каждую запись
     $element->setSort(100);
 }
@@ -124,7 +125,8 @@ $items = ElementClothesTable::query()
         )
     )
     ->setSelect(['ID', 'NAME', 'NAME_LENGTH'])
-    ->fetchAll();
+    ->fetchAll()
+;
 ```
 
 В результате в выборке появится поле `NAME_LENGTH`. Оно действует только в этом запросе и не меняет карту класса.
@@ -154,7 +156,8 @@ $items = ElementClothesTable::query()
 ```php
 use Bitrix\Iblock\Elements\ElementClothesTable;
 
-if (ElementClothesTable::getEntity()->hasField('BRAND')) {
+if (ElementClothesTable::getEntity()->hasField('BRAND'))
+{
     // Свойство BRAND доступно в карте класса
 }
 ```

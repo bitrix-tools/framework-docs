@@ -11,10 +11,12 @@ description: 'Автозагрузка классов. Документация 
 
 ```php
 // Подключим модуль CRM, который уже установлен в системе
-if (\Bitrix\Main\Loader::includeModule('crm')) {
+if (\Bitrix\Main\Loader::includeModule('crm'))
+{
     // Теперь можно работать с классами CRM
 }
-else {
+else
+{
     // Обработка случая, когда модуль недоступен
     throw new \Exception('Модуль CRM не установлен');
 }

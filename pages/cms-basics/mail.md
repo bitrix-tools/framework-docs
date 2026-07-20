@@ -355,9 +355,12 @@ Bitrix Framework обрабатывает входящие и исходящие
 7. Проверьте работу.
 
    ```php
-   <?php if (mail("moe_mylo@mail.ru", "test subject", "test body", "From: otpravitel@bitrix.ru")) {
+   <?php if (mail("moe_mylo@mail.ru", "test subject", "test body", "From: otpravitel@bitrix.ru"))
+   {
        echo "Сообщение передано функции mail, проверьте почту в ящике.";
-   } else {
+   }
+   else
+   {
        echo "Функция mail не работает, свяжитесь с администрацией хостинга.";
    }
    ?>
@@ -674,7 +677,8 @@ $arTemplate = [
             : \Bitrix\Main\Config\Option::get('main', 'site_name', '')
     );
     
-    if (empty($companyName)) {
+    if (empty($companyName))
+    {
         $companyName = $arParams["SITE_NAME"];
     }
     
@@ -843,7 +847,8 @@ Event::send([
 ```php
 <?php
 $fileId = false;
-if (!empty($_FILES['file'])) {
+if (!empty($_FILES['file']))
+{
     $fileId = \CFile::SaveFile($_FILES['file'], 'mailatt');
 }
 
@@ -860,7 +865,8 @@ if (!empty($_FILES['file'])) {
     'FILE' => $fileId ? [$fileId] : [],
 ]);
 
-if ($fileId) {
+if ($fileId)
+{
     \CFile::Delete($fileId);
 }
 ?>

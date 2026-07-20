@@ -33,7 +33,8 @@ $tracker = \Bitrix\Main\Application::getConnection()->startTracker(true);
 ## Получить результат
 
 ```php
-foreach ($tracker->getQueries() as $query) {
+foreach ($tracker->getQueries() as $query)
+{
     print_r([
         $query->getSql(),      // текст запроса  
         $query->getTime(),     // время в секундах  

@@ -141,9 +141,11 @@ $element->save();
 
 // Получить элемент по ID
 $existingElement = $entityClass::getByPrimary($element->getId())
-    ->fetchObject();
+    ->fetchObject()
+;
 
-if ($existingElement) {
+if ($existingElement)
+{
     // Работать со свойствами элемента
     $value = $existingElement->getSomeProperty();
 }

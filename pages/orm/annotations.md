@@ -33,7 +33,8 @@ namespace Bitrix\Main {
      * @method mixed get($fieldName)
      * ...
      */
-    class EO_User extends \Bitrix\Main\ORM\Objectify\EntityObject {
+    class EO_User extends \Bitrix\Main\ORM\Objectify\EntityObject
+    {
         /* @var \Bitrix\Main\UserTable */
         static public $dataClass = '\Bitrix\Main\UserTable';
         /**

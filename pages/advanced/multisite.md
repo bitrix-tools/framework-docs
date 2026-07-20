@@ -308,32 +308,49 @@ Bitrix Framework поддерживает два режима многосайт
     $path = rtrim($_POST['path'] ?? '../site_main', "/\\");
     $strError = '';
     
-    if ($_POST['create']) {
+    if ($_POST['create'])
+    {
         // Формируем абсолютный путь
         $full_path = preg_match("#^/#", $path) ? $path : realpath($_SERVER['DOCUMENT_ROOT'].'/'.$path);
     
-        if (file_exists($_SERVER["DOCUMENT_ROOT"]."/bitrix")) {
+        if (file_exists($_SERVER["DOCUMENT_ROOT"]."/bitrix"))
+        {
             $strError = "В текущей папке уже существует папка bitrix.";
-        } elseif (is_dir($full_path)) {
-            if (is_dir($full_path."/bitrix")) {
+        }
+        elseif (is_dir($full_path))
+        {
+            if (is_dir($full_path."/bitrix"))
+            {
                 // Создаем ссылки
-                if (!symlink($path."/bitrix", $_SERVER["DOCUMENT_ROOT"]."/bitrix")) {
+                if (!symlink($path."/bitrix", $_SERVER["DOCUMENT_ROOT"]."/bitrix"))
+                {
                     $strError = 'Не удалось создать ссылку на папку bitrix.';
-                } elseif (!symlink($path."/upload", $_SERVER["DOCUMENT_ROOT"]."/upload")) {
+                }
+                elseif (!symlink($path."/upload", $_SERVER["DOCUMENT_ROOT"]."/upload"))
+                {
                     $strError = 'Не удалось создать ссылку на папку upload.';
-                } elseif (!symlink($path."/local", $_SERVER["DOCUMENT_ROOT"]."/local")) {
+                }
+                elseif (!symlink($path."/local", $_SERVER["DOCUMENT_ROOT"]."/local"))
+                {
                     $strError = 'Не удалось создать ссылку на папку local.';
-                } else {
+                }
+                else
+                {
                     echo "<font color='green'>Символические ссылки успешно созданы.</font>";
                 }
-            } else {
+            }
+            else
+            {
                 $strError = 'Указанный путь не содержит папку bitrix.';
             }
-        } else {
+        }
+        else
+        {
             $strError = 'Неверно указан путь или ошибка прав доступа.';
         }
     
-        if ($strError) {
+        if ($strError)
+        {
             echo '<font color="red">' . $strError . '</font><br>Путь: ' . htmlspecialchars($full_path);
         }
     }
@@ -684,10 +701,12 @@ setcookie("PHPSESSID", "", time() - 3600, '/', '.site.ru');
    function MyOnBeforePrologHandler()
    {
        global $USER;
-       if (!is_object($USER)) {
+       if (!is_object($USER))
+       {
            $USER = new CUser();
        }
-       if (!$USER->IsAdmin()) {
+       if (!$USER->IsAdmin())
+       {
            include($_SERVER["DOCUMENT_ROOT"] . "/coming-soon/underconstruction.html");
            die();
        }

@@ -45,7 +45,8 @@ function attachSelect(Entity\Query $query): void
     $query->addSelect('ID');
     
     // Условие для добавления поля ISBN
-    if (/* условие */) {
+    if (/* условие */)
+    {
         $query->addSelect('ISBN');
     }
 }
@@ -53,12 +54,14 @@ function attachSelect(Entity\Query $query): void
 function attachOthers(Entity\Query $query): void
 {
     // Условие для добавления фильтра
-    if (/* условие */) {
+    if (/* условие */)
+    {
         $query->setFilter(/* параметры фильтра */);
     }
     
     // Условие для добавления сортировки
-    if (/* условие */) {
+    if (/* условие */)
+    {
         $query->setOrder(/* параметры сортировки */);
     }
 }

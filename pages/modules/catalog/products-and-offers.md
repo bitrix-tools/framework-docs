@@ -42,7 +42,8 @@ $productIblockId = $iblock->Add([
     'LID'            => ['s1'],
 ]);
 
-if (!$productIblockId) {
+if (!$productIblockId)
+{
     throw new \RuntimeException($iblock->getLastError()->getMessage());
 }
 ```
@@ -77,7 +78,8 @@ $result = \CCatalog::Add([
     'SKU_PROPERTY_ID'   => 0,
 ]);
 
-if (!$result) {
+if (!$result)
+{
     throw new \RuntimeException('Не удалось создать торговый каталог');
 }
 ```
@@ -115,7 +117,8 @@ $productId = $element->Add([
     'ACTIVE'    => 'Y',
 ]);
 
-if (!$productId) {
+if (!$productId)
+{
     throw new \RuntimeException($element->LAST_ERROR);
 }
 
@@ -128,7 +131,8 @@ $result = \Bitrix\Catalog\Model\Product::add([
     'SUBSCRIBE'       => 'Y',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -163,7 +167,8 @@ $result = \Bitrix\Catalog\Model\Price::add([
     'CURRENCY'         => 'RUB',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -195,7 +200,8 @@ $serviceId = $element->Add([
     'ACTIVE'    => 'Y',
 ]);
 
-if (!$serviceId) {
+if (!$serviceId)
+{
     throw new \RuntimeException($element->LAST_ERROR);
 }
 
@@ -204,7 +210,8 @@ $productResult = \Bitrix\Catalog\Model\Product::add([
     'TYPE' => \Bitrix\Catalog\ProductTable::TYPE_SERVICE,
 ]);
 
-if (!$productResult->isSuccess()) {
+if (!$productResult->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $productResult->getErrorMessages()));
 }
 
@@ -215,7 +222,8 @@ $priceResult = \Bitrix\Catalog\Model\Price::add([
     'CURRENCY'         => 'RUB',
 ]);
 
-if (!$priceResult->isSuccess()) {
+if (!$priceResult->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $priceResult->getErrorMessages()));
 }
 ```
@@ -268,7 +276,8 @@ $productIblockId = $iblock->Add([
     'LID'            => ['s1'],           // массив кодов сайтов для привязки
 ]);
 
-if (!$productIblockId) {
+if (!$productIblockId)
+{
     throw new \RuntimeException($iblock->getLastError()->getMessage());
 }
 
@@ -281,7 +290,8 @@ $offerIblockId = $iblock->Add([
     'LID'            => ['s1'],
 ]);
 
-if (!$offerIblockId) {
+if (!$offerIblockId)
+{
     throw new \RuntimeException($iblock->getLastError()->getMessage());
 }
 ```
@@ -320,7 +330,8 @@ $skuPropertyId = $property->Add([
     'MULTIPLE'         => 'N',
 ]);
 
-if (!$skuPropertyId) {
+if (!$skuPropertyId)
+{
     throw new \RuntimeException($property->LAST_ERROR);
 }
 ```
@@ -353,7 +364,8 @@ $productCatalogCreated = \CCatalog::Add([
     'SKU_PROPERTY_ID'   => 0,
 ]);
 
-if (!$productCatalogCreated) {
+if (!$productCatalogCreated)
+{
     throw new \RuntimeException('Не удалось создать каталог товаров');
 }
 
@@ -366,7 +378,8 @@ $offerCatalogCreated = \CCatalog::Add([
     'SKU_PROPERTY_ID'   => $skuPropertyId,
 ]);
 
-if (!$offerCatalogCreated) {
+if (!$offerCatalogCreated)
+{
     throw new \RuntimeException('Не удалось создать каталог торговых предложений');
 }
 ```
@@ -386,7 +399,8 @@ $productId = $element->Add([
     'ACTIVE'    => 'Y',
 ]);
 
-if (!$productId) {
+if (!$productId)
+{
     throw new \RuntimeException($element->LAST_ERROR);
 }
 
@@ -395,7 +409,8 @@ $result = \Bitrix\Catalog\Model\Product::add([
     'TYPE' => \Bitrix\Catalog\ProductTable::TYPE_SKU,
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -428,7 +443,8 @@ $offerId = $element->Add([
     ],
 ]);
 
-if (!$offerId) {
+if (!$offerId)
+{
     throw new \RuntimeException($element->LAST_ERROR);
 }
 
@@ -441,7 +457,8 @@ $result = \Bitrix\Catalog\Model\Product::add([
     'SUBSCRIBE'       => 'Y',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -464,7 +481,8 @@ $result = \Bitrix\Catalog\Model\Price::add([
     'CURRENCY'         => 'RUB',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -503,7 +521,8 @@ $offers = $offersByProduct[$productId] ?? [];
 ```php
 $skuInfo = \CCatalogSKU::GetInfoByProductIBlock($productIblockId);
 
-if (!$skuInfo) {
+if (!$skuInfo)
+{
     throw new \RuntimeException('Инфоблок не связан с торговыми предложениями');
 }
 
@@ -519,7 +538,8 @@ $offersIterator = \CIBlockElement::GetList(
     ['ID', 'NAME']
 );
 
-while ($offer = $offersIterator->Fetch()) {
+while ($offer = $offersIterator->Fetch())
+{
     echo $offer['ID'] . ': ' . $offer['NAME'] . "\n";
 }
 ```
@@ -556,7 +576,8 @@ $updated = $element->Update($productId, [
     'ACTIVE' => 'Y',
 ]);
 
-if (!$updated) {
+if (!$updated)
+{
     throw new \RuntimeException($element->LAST_ERROR);
 }
 ```
@@ -574,7 +595,8 @@ $result = \Bitrix\Catalog\Model\Product::update($productId, [
     'SUBSCRIBE'      => 'Y',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -604,7 +626,8 @@ if (!$result->isSuccess()) {
 Для простого товара без предложений используйте `CIBlockElement::Delete()`. В метод передайте идентификатор элемента инфоблока.
 
 ```php
-if (!\CIBlockElement::Delete($productId)) {
+if (!\CIBlockElement::Delete($productId))
+{
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось удалить товар';
@@ -635,8 +658,10 @@ $offersByProduct = \CCatalogSKU::getOffersList(
 
 $offers = $offersByProduct[$productId] ?? [];
 
-foreach ($offers as $offer) {
-    if (!\CIBlockElement::Delete((int)$offer['ID'])) {
+foreach ($offers as $offer)
+{
+    if (!\CIBlockElement::Delete((int)$offer['ID']))
+    {
         global $APPLICATION;
         $exception = $APPLICATION->GetException();
         $message = $exception ? $exception->GetString() : 'Не удалось удалить торговое предложение';
@@ -645,7 +670,8 @@ foreach ($offers as $offer) {
     }
 }
 
-if (!\CIBlockElement::Delete($productId)) {
+if (!\CIBlockElement::Delete($productId))
+{
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось удалить родительский товар';

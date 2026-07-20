@@ -170,19 +170,24 @@ class LikeService
 
     private function getLikedUsersIds(): array
     {
-        try {
+        try
+        {
             $cookieValue = Context::getCurrent()->getRequest()->getCookie(self::COOKIE_NAME);
-            if (empty($cookieValue)) {
+            if (empty($cookieValue))
+            {
                 return [];
             }
 
             $value = Json::decode($cookieValue);
-            if (!is_array($value)) {
+            if (!is_array($value))
+            {
                 return [];
             }
 
             return $value;
-        } catch (ArgumentException) {
+        }
+        catch (ArgumentException)
+        {
             return [];
         }
     }
@@ -255,7 +260,8 @@ class User extends Controller
     public function likeAction(LikeService $service, int $likedUserId)
     {
         // Базовая валидация: ID должен быть положительным целым
-        if ($likedUserId < 1) {
+        if ($likedUserId < 1)
+        {
             $this->addError(new Error('Неверный ID пользователя'));
 
             return null;
@@ -263,9 +269,12 @@ class User extends Controller
 
         // Если лайка нет — добавляем, иначе удаляем
         $isLikeAction = !$service->isLiked($likedUserId);
-        if ($isLikeAction) {
+        if ($isLikeAction)
+        {
             $service->likeUser($likedUserId);
-        } else {
+        }
+        else
+        {
             $service->dislikeUser($likedUserId);
         }
 
@@ -485,18 +494,21 @@ class UserCardComponent extends CBitrixComponent
 
     public function executeComponent()
     {
-        if (!Loader::includeModule('my.module')) {
+        if (!Loader::includeModule('my.module'))
+        {
             ShowError('Модуль my.module не установлен');
 
             return;
         }
 
         // кешируем результат, чтобы не делать постоянные запросы к базе
-        if ($this->startResultCache()) {
+        if ($this->startResultCache())
+        {
            $this->initResult();
 
             // в случае если ничего не найдено, отменяем кеширование
-            if (empty($this->arResult)) {
+            if (empty($this->arResult))
+            {
                 $this->abortResultCache();
                 ShowError('Пользователь не найден');
 
@@ -514,7 +526,8 @@ class UserCardComponent extends CBitrixComponent
     private function initResult(): void
     {
         $userId = (int)$this->arParams['USER_ID'];
-        if ($userId < 1) {
+        if ($userId < 1)
+        {
             return;
         }
 
@@ -526,9 +539,11 @@ class UserCardComponent extends CBitrixComponent
                 'PERSONAL_PHOTO',
             ])
             ->where('ID', $userId)
-            ->fetch();
+            ->fetch()
+            ;
 
-        if (empty($user)) {
+        if (empty($user))
+        {
             return;
         }
 
@@ -539,7 +554,8 @@ class UserCardComponent extends CBitrixComponent
         ];
 
         // получаем путь до аватарки, в случае если она указана
-        if (!empty($user['PERSONAL_PHOTO'])) {
+        if (!empty($user['PERSONAL_PHOTO']))
+        {
             $this->arResult['PERSONAL_PHOTO_SRC'] = \CFile::GetPath($user['PERSONAL_PHOTO']);
         }
     }

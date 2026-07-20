@@ -32,7 +32,8 @@ $result = \Bitrix\Catalog\Model\Product::update($productId, [
     'TYPE' => \Bitrix\Catalog\ProductTable::TYPE_SET,
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -77,7 +78,8 @@ $setId = \CCatalogProductSet::add([
     ],
 ]);
 
-if (!$setId) {
+if (!$setId)
+{
     $errors = \CCatalogProductSet::getErrors();
     $message = $errors ? $errors[0]['text'] : 'Не удалось создать комплект';
 
@@ -124,7 +126,8 @@ $isUpdated = \CCatalogProductSet::update($setId, [
     ],
 ]);
 
-if (!$isUpdated) {
+if (!$isUpdated)
+{
     $errors = \CCatalogProductSet::getErrors();
     $message = $errors ? $errors[0]['text'] : 'Не удалось обновить комплект';
 
@@ -170,7 +173,8 @@ $groupId = \CCatalogProductSet::add([
     ],
 ]);
 
-if (!$groupId) {
+if (!$groupId)
+{
     $errors = \CCatalogProductSet::getErrors();
     $message = $errors ? $errors[0]['text'] : 'Не удалось создать набор';
 
@@ -212,7 +216,8 @@ $isUpdated = \CCatalogProductSet::update($groupId, [
     ],
 ]);
 
-if (!$isUpdated) {
+if (!$isUpdated)
+{
     $errors = \CCatalogProductSet::getErrors();
     $message = $errors ? $errors[0]['text'] : 'Не удалось обновить набор';
 
@@ -227,7 +232,8 @@ if (!$isUpdated) {
 Комплект или набор можно удалить с помощью `CCatalogProductSet::delete()`. В метод передайте идентификатор комплекта или набора. В примере удаляется комплект по `$setId`.
 
 ```php
-if (!\CCatalogProductSet::delete($setId)) {
+if (!\CCatalogProductSet::delete($setId))
+{
     $errors = \CCatalogProductSet::getErrors();
     $message = $errors ? $errors[0]['text'] : 'Не удалось удалить комплект или набор';
 
@@ -305,7 +311,8 @@ $discountId = \CCatalogDiscount::Add([
     ],
 ]);
 
-if (!$discountId) {
+if (!$discountId)
+{
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось создать скидку';
@@ -343,7 +350,8 @@ $couponResult = \Bitrix\Catalog\DiscountCouponTable::add([
     'TYPE'        => \Bitrix\Catalog\DiscountCouponTable::TYPE_ONE_ORDER,
 ]);
 
-if (!$couponResult->isSuccess()) {
+if (!$couponResult->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $couponResult->getErrorMessages()));
 }
 
@@ -365,11 +373,13 @@ if (!$couponResult->isSuccess()) {
 {% endnote %}
 
 ```php
-if (!\Bitrix\Main\Loader::includeModule('sale')) {
+if (!\Bitrix\Main\Loader::includeModule('sale'))
+{
     throw new \RuntimeException('Не удалось подключить модуль sale');
 }
 
-if (!\Bitrix\Sale\DiscountCouponsManager::add('SALE-10-PRODUCT')) {
+if (!\Bitrix\Sale\DiscountCouponsManager::add('SALE-10-PRODUCT'))
+{
     throw new \RuntimeException('Не удалось добавить купон в расчет');
 }
 ```
@@ -399,11 +409,13 @@ $discounts = \CCatalogDiscount::GetDiscountByProduct(
     SITE_ID
 );
 
-if ($discounts === false) {
+if ($discounts === false)
+{
     throw new \RuntimeException('Не удалось получить скидки товара');
 }
 
-foreach ($discounts as $discount) {
+foreach ($discounts as $discount)
+{
     echo $discount['NAME'] . "\n";
 }
 ```

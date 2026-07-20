@@ -55,7 +55,8 @@ function updateUserData(int $userId, array $fields): Result
 {
     $result = new Result();
     
-    if ($userId <= 0) {
+    if ($userId <= 0)
+    {
         $result->addError(new Error('Неверный ID пользователя', 'INVALID_USER_ID'));
         return $result;
     }
@@ -63,9 +64,12 @@ function updateUserData(int $userId, array $fields): Result
     // Обновляем данные
     $updateResult = someUpdateFunction($userId, $fields);
     
-    if ($updateResult === false) {
+    if ($updateResult === false)
+    {
         $result->addError(new Error('Ошибка при обновлении данных', 'UPDATE_FAILED'));
-    } else {
+    }
+    else
+    {
         $result->setData(['UPDATED_FIELDS' => $fields]);
     }
     
@@ -75,10 +79,13 @@ function updateUserData(int $userId, array $fields): Result
 // Используем функцию
 $result = updateUserData(123, ['NAME' => 'Иван', 'LAST_NAME' => 'Иванов']);
 
-if ($result->isSuccess()) {
+if ($result->isSuccess())
+{
     $data = $result->getData();
     echo 'Данные обновлены: ' . print_r($data, true);
-} else {
+}
+else
+{
     $errors = $result->getErrorMessages();
     echo 'Ошибки: ' . implode(', ', $errors);
 }
@@ -122,17 +129,21 @@ function updateUserInDatabase(int $userId, array $fields): array
 function updateUserWithTypedResult(int $userId, array $fields): UserUpdateResult
 {
     $result = new UserUpdateResult();
-    if ($userId <= 0) {
+    if ($userId <= 0)
+    {
         $result->addError(new Error('Invalid user ID', 100));
         return $result;
     }
-    try {
+    try
+    {
         $updatedData = updateUserInDatabase($userId, $fields);
         $result->setUpdatedData(
             $updatedData,
             new DateTime()
         );
-    } catch (Exception $e) {
+    }
+    catch (Exception $e)
+    {
         $result->addError(new Error($e->getMessage(), $e->getCode()));
     }
     return $result;
@@ -140,12 +151,14 @@ function updateUserWithTypedResult(int $userId, array $fields): UserUpdateResult
 
 $typedResult = updateUserWithTypedResult(123, ['NAME' => 'Иван']);
 
-if ($typedResult->isSuccess()) {
+if ($typedResult->isSuccess())
+{
     $fields = $typedResult->getUpdatedFields();
     $time = $typedResult->getTimestamp()->format('Y-m-d H:i:s');
     echo 'Данные обновлены. Поля: ' . print_r($fields, true) . ', Время: ' . $time;
 }
-else {
+else
+{
     echo 'Ошибки: ' . implode(', ', $typedResult->getErrorMessages());
 }
 ```
@@ -183,12 +196,14 @@ $errorCollection->setError(new Error('Третья ошибка', 'ERROR_3'));
 
 // Получаем ошибку по коду
 $error = $errorCollection->getErrorByCode('ERROR_2');
-if ($error) {
+if ($error)
+{
     echo 'Найдена ошибка: ' . $error->getMessage();
 }
 
 // Перебираем ошибки
-foreach ($errorCollection as $error) {
+foreach ($errorCollection as $error)
+{
     echo 'Код: ' . $error->getCode() . ', Сообщение: ' . $error->getMessage() . '<br>';
 }
 ```

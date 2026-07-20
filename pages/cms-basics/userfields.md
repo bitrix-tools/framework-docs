@@ -348,7 +348,8 @@ $section = \CIBlockSection::GetList([], [
     'CODE' => 'test_section',
 ])->Fetch();
 
-if (!$section) {
+if (!$section)
+{
     throw new \Exception('Секция не найдена');
 }
 
@@ -409,7 +410,8 @@ ORM автоматически добавит JOIN к таблице польз�
 После получения коллекции объектов можно работать с пользовательскими полями через геттеры и сеттеры.
 
 ```php
-foreach ($rows as $row) {
+foreach ($rows as $row)
+{
     $value = $row->getUfGratitude();
     $row->setUfGratitude($value + 50);
     $row->save();

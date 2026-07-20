@@ -28,7 +28,8 @@ description: 'Базовые настройки каталога. Модуль �
 ```php
 $basePriceType = \Bitrix\Catalog\GroupTable::getBasePriceType();
 
-if (!$basePriceType) {
+if (!$basePriceType)
+{
     throw new \RuntimeException('Базовый тип цен не найден');
 }
 
@@ -68,7 +69,8 @@ $wholesalePriceTypeId = \CCatalogGroup::Add([
     ],
 ]);
 
-if (!$wholesalePriceTypeId) {
+if (!$wholesalePriceTypeId)
+{
     global $APPLICATION;
     $exception = $APPLICATION->GetException();
     $message = $exception ? $exception->GetString() : 'Не удалось создать тип цены';
@@ -112,12 +114,15 @@ $accessRows = \Bitrix\Catalog\GroupAccessTable::getList([
     ],
 ])->fetchAll();
 
-foreach ($accessRows as $row) {
-    if ($row['ACCESS'] === 'ACCESS_VIEW') {
+foreach ($accessRows as $row)
+{
+    if ($row['ACCESS'] === 'ACCESS_VIEW')
+    {
         echo "Группа {$row['GROUP_ID']} видит цену\n";
     }
 
-    if ($row['ACCESS'] === 'ACCESS_BUY') {
+    if ($row['ACCESS'] === 'ACCESS_BUY')
+    {
         echo "Группа {$row['GROUP_ID']} может покупать по этой цене\n";
     }
 }
@@ -153,7 +158,8 @@ $result = \Bitrix\Catalog\Model\Vat::add([
     'SORT'   => 100,
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 
@@ -184,7 +190,8 @@ $result = \Bitrix\Catalog\Model\Product::update($productId, [
     'VAT_INCLUDED' => 'Y',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -228,19 +235,22 @@ $productRow = \Bitrix\Catalog\ProductTable::getList([
     'limit' => 1,
 ])->fetch();
 
-if (!$productRow) {
+if (!$productRow)
+{
     throw new \RuntimeException('Товар не найден в каталоге');
 }
 
 $vatRate = null;
-if ((int)$productRow['VAT_ID'] > 0) {
+if ((int)$productRow['VAT_ID'] > 0)
+{
     $vatRow = \Bitrix\Catalog\VatTable::getList([
         'select' => ['ID', 'NAME', 'RATE', 'ACTIVE'],
         'filter' => ['=ID' => (int)$productRow['VAT_ID']],
         'limit' => 1,
     ])->fetch();
 
-    if ($vatRow) {
+    if ($vatRow)
+    {
         $vatRate = (float)$vatRow['RATE'];
     }
 }
@@ -272,7 +282,8 @@ $result = \Bitrix\Catalog\MeasureTable::add([
     'IS_DEFAULT'    => 'N',
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 
@@ -312,7 +323,8 @@ $result = \Bitrix\Catalog\Model\Product::update($productId, [
     'MEASURE' => $measureId,
 ]);
 
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```
@@ -351,12 +363,15 @@ $ratioRow = \Bitrix\Catalog\MeasureRatioTable::getList([
 ])->fetch();
 
 // Обновляем существующий коэффициент или создаем новый
-if ($ratioRow) {
+if ($ratioRow)
+{
     // У товара есть коэффициент -- обновляем его
     $result = \Bitrix\Catalog\MeasureRatioTable::update((int)$ratioRow['ID'], [
         'RATIO' => $ratioValue,
     ]);
-} else {
+}
+else
+{
     // У товара нет коэффициента -- создаем новый
     $result = \Bitrix\Catalog\MeasureRatioTable::add([
         'PRODUCT_ID' => $productId,
@@ -366,7 +381,8 @@ if ($ratioRow) {
 }
 
 // Проверяем результат
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
 }
 ```

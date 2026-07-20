@@ -67,19 +67,29 @@ $productIblockId = (int)$IBLOCK_ID;
 $exportFile = (string)$SETUP_FILE_NAME;
 $allowedDirectory = '/upload/export/';
 
-if ($productIblockId <= 0) {
+if ($productIblockId <= 0)
+{
     $strExportErrorMessage = 'Не выбран инфоблок каталога';
-} elseif ($exportFile === '') {
+}
+elseif ($exportFile === '')
+{
     $strExportErrorMessage = 'Не указан файл экспорта';
-} elseif (strncmp($exportFile, $allowedDirectory, strlen($allowedDirectory)) !== 0) {
+}
+elseif (strncmp($exportFile, $allowedDirectory, strlen($allowedDirectory)) !== 0)
+{
     $strExportErrorMessage = 'Файл экспорта должен находиться в /upload/export/';
-} else {
+}
+else
+{
     $filePath = $_SERVER['DOCUMENT_ROOT'] . $exportFile;
     $file = fopen($filePath, 'wb');
 
-    if (!$file) {
+    if (!$file)
+    {
         $strExportErrorMessage = 'Не удалось открыть файл экспорта';
-    } else {
+    }
+    else
+    {
         fputcsv($file, ['ID', 'XML_ID', 'NAME'], ';');
 
         $elementsIterator = \CIBlockElement::GetList(
@@ -93,7 +103,8 @@ if ($productIblockId <= 0) {
             ['ID', 'XML_ID', 'NAME']
         );
 
-        while ($element = $elementsIterator->Fetch()) {
+        while ($element = $elementsIterator->Fetch())
+        {
             fputcsv(
                 $file,
                 [
@@ -133,29 +144,37 @@ if ($productIblockId <= 0) {
 ```php
 $errorMessage = '';
 
-if ($STEP > 1) {
+if ($STEP > 1)
+{
     $IBLOCK_ID = (int)$IBLOCK_ID;
 
-    if ($IBLOCK_ID <= 0) {
+    if ($IBLOCK_ID <= 0)
+    {
         $errorMessage .= 'Инфоблок не выбран.<br>';
     }
 
-    if ((string)$SETUP_FILE_NAME === '') {
+    if ((string)$SETUP_FILE_NAME === '')
+    {
         $errorMessage .= 'Не указан файл данных.<br>';
     }
 
-    if ($ACTION === 'EXPORT_SETUP' && (string)$SETUP_PROFILE_NAME === '') {
+    if ($ACTION === 'EXPORT_SETUP' && (string)$SETUP_PROFILE_NAME === '')
+    {
         $errorMessage .= 'Не указано имя профиля.<br>';
     }
 
-    if ($errorMessage !== '') {
+    if ($errorMessage !== '')
+    {
         $STEP = 1;
     }
 }
 
-if ((int)$STEP === 1) {
+if ((int)$STEP === 1)
+{
     $SETUP_FIELDS_LIST = 'IBLOCK_ID,SETUP_FILE_NAME';
-} elseif ((int)$STEP === 2) {
+}
+elseif ((int)$STEP === 2)
+{
     $FINITE = true;
 }
 ```
@@ -201,7 +220,8 @@ $exportProfileId = \CCatalogExport::Add([
     'SETUP_VARS'      => $setupVars,
 ]);
 
-if (!$exportProfileId) {
+if (!$exportProfileId)
+{
     throw new \RuntimeException('Не удалось создать профиль экспорта');
 }
 ```
@@ -217,7 +237,8 @@ if (!$exportProfileId) {
 ```php
 $agentCall = \CCatalogExport::PreGenerateExport($exportProfileId);
 
-if ($agentCall === false) {
+if ($agentCall === false)
+{
     throw new \RuntimeException('Не удалось запустить экспорт по профилю');
 }
 ```
@@ -236,7 +257,8 @@ $profilesIterator = \CCatalogExport::GetList(
     ['IN_MENU' => 'Y']
 );
 
-while ($profile = $profilesIterator->Fetch()) {
+while ($profile = $profilesIterator->Fetch())
+{
     echo $profile['ID'] . ': ' . $profile['NAME'] . "\n";
 }
 
@@ -268,7 +290,8 @@ $updatedExportProfileId = \CCatalogExport::Update($exportProfileId, [
     ]),
 ]);
 
-if (!$updatedExportProfileId) {
+if (!$updatedExportProfileId)
+{
     throw new \RuntimeException('Не удалось обновить профиль экспорта');
 }
 
@@ -302,30 +325,44 @@ $productIblockId = (int)$IBLOCK_ID;
 $dataFile = (string)$URL_DATA_FILE;
 $allowedDirectory = '/upload/import/';
 
-if ($productIblockId <= 0) {
+if ($productIblockId <= 0)
+{
     $strImportErrorMessage = 'Не выбран инфоблок каталога';
-} elseif ($dataFile === '') {
+}
+elseif ($dataFile === '')
+{
     $strImportErrorMessage = 'Не указан файл импорта';
-} elseif (strncmp($dataFile, $allowedDirectory, strlen($allowedDirectory)) !== 0) {
+}
+elseif (strncmp($dataFile, $allowedDirectory, strlen($allowedDirectory)) !== 0)
+{
     $strImportErrorMessage = 'Файл импорта должен находиться в /upload/import/';
-} elseif (!is_readable($_SERVER['DOCUMENT_ROOT'] . $dataFile)) {
+}
+elseif (!is_readable($_SERVER['DOCUMENT_ROOT'] . $dataFile))
+{
     $strImportErrorMessage = 'Файл импорта недоступен для чтения';
-} else {
+}
+else
+{
     $file = fopen($_SERVER['DOCUMENT_ROOT'] . $dataFile, 'rb');
     $element = new \CIBlockElement;
 
-    if (!$file) {
+    if (!$file)
+    {
         $strImportErrorMessage = 'Не удалось открыть файл импорта';
-    } else {
+    }
+    else
+    {
         fgetcsv($file, 0, ';'); // пропускаем строку заголовков
 
-        while (($row = fgetcsv($file, 0, ';')) !== false) {
+        while (($row = fgetcsv($file, 0, ';')) !== false)
+        {
             [$xmlId, $name] = array_pad($row, 2, '');
 
             $xmlId = trim((string)$xmlId);
             $name = trim((string)$name);
 
-            if ($xmlId === '' || $name === '') {
+            if ($xmlId === '' || $name === '')
+            {
                 $strImportErrorMessage = 'В файле импорта есть строка без XML_ID или названия';
                 break;
             }
@@ -341,11 +378,14 @@ if ($productIblockId <= 0) {
                 ['ID']
             )->Fetch();
 
-            if ($elementRow) {
+            if ($elementRow)
+            {
                 $result = $element->Update((int)$elementRow['ID'], [
                     'NAME' => $name,
                 ]);
-            } else {
+            }
+            else
+            {
                 $result = $element->Add([
                     'IBLOCK_ID' => $productIblockId,
                     'XML_ID' => $xmlId,
@@ -354,7 +394,8 @@ if ($productIblockId <= 0) {
                 ]);
             }
 
-            if (!$result) {
+            if (!$result)
+            {
                 $strImportErrorMessage = $element->LAST_ERROR ?: 'Не удалось сохранить элемент каталога';
                 break;
             }
@@ -388,29 +429,37 @@ if ($productIblockId <= 0) {
 ```php
 $errorMessage = '';
 
-if ($STEP > 1) {
+if ($STEP > 1)
+{
     $IBLOCK_ID = (int)$IBLOCK_ID;
 
-    if ($IBLOCK_ID <= 0) {
+    if ($IBLOCK_ID <= 0)
+    {
         $errorMessage .= 'Инфоблок не выбран.<br>';
     }
 
-    if ((string)$URL_DATA_FILE === '') {
+    if ((string)$URL_DATA_FILE === '')
+    {
         $errorMessage .= 'Не указан файл импорта.<br>';
     }
 
-    if ($ACTION === 'IMPORT_SETUP' && (string)$SETUP_PROFILE_NAME === '') {
+    if ($ACTION === 'IMPORT_SETUP' && (string)$SETUP_PROFILE_NAME === '')
+    {
         $errorMessage .= 'Не указано имя профиля.<br>';
     }
 
-    if ($errorMessage !== '') {
+    if ($errorMessage !== '')
+    {
         $STEP = 1;
     }
 }
 
-if ((int)$STEP === 1) {
+if ((int)$STEP === 1)
+{
     $SETUP_FIELDS_LIST = 'IBLOCK_ID,URL_DATA_FILE';
-} elseif ((int)$STEP === 2) {
+}
+elseif ((int)$STEP === 2)
+{
     $FINITE = true;
 }
 ```
@@ -436,7 +485,8 @@ $importProfileId = \CCatalogImport::Add([
     ]),
 ]);
 
-if (!$importProfileId) {
+if (!$importProfileId)
+{
     throw new \RuntimeException('Не удалось создать профиль импорта');
 }
 ```
@@ -452,7 +502,8 @@ if (!$importProfileId) {
 ```php
 $agentCall = \CCatalogImport::PreGenerateImport($importProfileId);
 
-if ($agentCall === false) {
+if ($agentCall === false)
+{
     throw new \RuntimeException('Не удалось запустить импорт по профилю');
 }
 ```
@@ -471,7 +522,8 @@ $profilesIterator = \CCatalogImport::GetList(
     ['FILE_NAME' => 'furniture_csv']
 );
 
-while ($profile = $profilesIterator->Fetch()) {
+while ($profile = $profilesIterator->Fetch())
+{
     echo $profile['ID'] . ': ' . $profile['NAME'] . "\n";
 }
 
@@ -481,7 +533,8 @@ $updatedImportProfileId = \CCatalogImport::Update($importProfileId, [
     'NAME' => 'Импорт мебели из CSV по расписанию',
 ]);
 
-if (!$updatedImportProfileId) {
+if (!$updatedImportProfileId)
+{
     throw new \RuntimeException('Не удалось обновить профиль импорта');
 }
 
@@ -531,13 +584,15 @@ if (!$updatedImportProfileId) {
 ```php
 $profile = \CCatalogExport::GetByID($exportProfileId);
 
-if (!$profile) {
+if (!$profile)
+{
     throw new \RuntimeException('Профиль экспорта не найден');
 }
 
 $exportFile = '/upload/export/furniture.csv';
 
-if (!is_readable($_SERVER['DOCUMENT_ROOT'] . $exportFile)) {
+if (!is_readable($_SERVER['DOCUMENT_ROOT'] . $exportFile))
+{
     throw new \RuntimeException('Файл экспорта не найден');
 }
 ```

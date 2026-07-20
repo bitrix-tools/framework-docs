@@ -11,7 +11,8 @@ description: 'Сессии. Документация по Bitrix Framework: пр
 
 ```php
 $session = \Bitrix\Main\Application::getInstance()->getSession();
-if (!$session->has('foo')) {
+if (!$session->has('foo'))
+{
     $session->set('foo', 'bar');            
 }
 echo $session['foo']; //bar
@@ -25,7 +26,8 @@ echo $session['foo']; //bar
 
 ```php
 $localStorage = \Bitrix\Main\Application::getInstance()->getLocalSession('someCategory');
-if (!isset($localStorage['productIds'])) {
+if (!isset($localStorage['productIds']))
+{
     $localStorage->set('productIds', [1, 2, 100]);
     $localStorage->set('price', 42);
 }

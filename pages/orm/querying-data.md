@@ -51,7 +51,8 @@ $result = BookTable::getList([
 // Получение данных построчно
 $rows = [];
 $result = BookTable::getList($parameters);
-while ($row = $result->fetch()) {
+while ($row = $result->fetch())
+{
     $rows[] = $row;
 }
 
@@ -71,7 +72,8 @@ class BookTable extends \Bitrix\Main\Entity\DataManager
         return [
             function ($data) 
             {
-                if (isset($data['PUBLISH_DATE'])) {
+                if (isset($data['PUBLISH_DATE']))
+                {
                     $data['PUBLISH_DATE'] = date('d.m.Y', strtotime($data['PUBLISH_DATE']));
                 }
                 return $data;
@@ -546,7 +548,8 @@ class UserTable
 // Использование метода withActive
 $activeUsers = UserTable::query()
     ->withActive() // Применяем фильтр для активных пользователей   
-    ->fetchCollection(); // Выполняем запрос и получаем коллекцию
+    ->fetchCollection() // Выполняем запрос и получаем коллекцию
+;
 // WHERE `ACTIVE`='Y'
 ```
 
@@ -566,14 +569,16 @@ class UserTable
     {
         $query
             ->addSelect('LOGIN') // Добавляем поле LOGIN в выборку
-            ->where('ACTIVE', $value); // Фильтр ACTIVE = $value   
+            ->where('ACTIVE', $value) // Фильтр ACTIVE = $value
+        ;
     }
 }
 
 // Использование метода withActive
 $activeUsers = UserTable::query()
     ->withActive(false) // Применяем фильтр для неактивных пользователей
-    ->fetchCollection(); // Выполняем запрос и получаем коллекцию
+    ->fetchCollection() // Выполняем запрос и получаем коллекцию
+;
     
 // SELECT `LOGIN` ... WHERE `ACTIVE`='N'
 ```
@@ -619,9 +624,12 @@ public static function getTableName()
    {
        public function quote($identifier)
        {
-           if (self::isKnownFunctionCall($identifier)) {
+           if (self::isKnownFunctionCall($identifier))
+           {
                return $identifier;
-           } else {
+           }
+           else
+           {
                return parent::quote($identifier);
            }
        }
@@ -648,7 +656,8 @@ public static function getTableName()
 $query = BookTable::query()
     ->addSelect('NAME')
     ->addSelect('AUTHORS')
-    ->setLimit(5);
+    ->setLimit(5)
+;
 $books = $query->fetchCollection();
 
 // SQL-запрос:
@@ -668,7 +677,8 @@ $query = BookTable::query()
     ->addSelect('NAME')
     ->addSelect('AUTHORS')
     ->addSelect('CATEGORIES')
-    ->addSelect('TAGS');
+    ->addSelect('TAGS')
+;
 $books = $query->fetchCollection();
 
 // SQL-запрос
@@ -721,7 +731,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->where("ID", 1)
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`ID` = 1
    ```
 
@@ -732,7 +743,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->where("ID", "<", 10)
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`ID` < 10
    ```
 
@@ -755,7 +767,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->whereNull("ID")
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`ID` IS NULL
    ```
 
@@ -768,7 +781,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->whereNotNull("ID")
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`ID` IS NOT NULL
    ```
 
@@ -779,7 +793,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->whereExpr('JSON_CONTAINS(%s, 4)', ['SOME_JSON_FIELD'])
-       ->exec();
+       ->exec()
+   ;
    // WHERE JSON_CONTAINS(`main_user`.`SOME_JSON_FIELD`, 4)
    ```
 
@@ -792,7 +807,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->whereColumn('NAME', 'LOGIN')
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`NAME` = `main_user`.`LOGIN`
    ```
 
@@ -801,7 +817,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->where('NAME', new Query\Filter\Expression\Column('LOGIN'))
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`NAME` = `main_user`.`LOGIN`
    ```
 
@@ -813,7 +830,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
            new Column('NAME'),
            new Column('LAST_NAME')
        ])
-       ->exec();
+       ->exec()
+   ;
    // WHERE `main_user`.`LOGIN` IN (`main_user`.`NAME`, `main_user`.`LAST_NAME`)
    ```
 
@@ -829,7 +847,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
     ->where('ACTIVE', true)
     ->whereNotNull('PERSONAL_BIRTHDAY')
     ->whereLike('NAME', 'A%')
-    ->exec();
+    ->exec()
+;
 // WHERE `main_user`.`ID` > 1 AND `main_user`.`ACTIVE` = 'Y' AND `main_user`.`PERSONAL_BIRTHDAY` IS NOT NULL AND `main_user`.`NAME` LIKE 'A%'
 ```
 
@@ -849,7 +868,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
         ['PERSONAL_BIRTHDAY', '<>', null],
         ['NAME', 'like', 'A%']
     ])
-    ->exec();
+    ->exec()
+;
 // WHERE `main_user`.`ID` > 1 AND `main_user`.`ACTIVE` = 'Y' AND `main_user`.`PERSONAL_BIRTHDAY` IS NOT NULL AND `main_user`.`NAME` LIKE 'A%'
 ```
 
@@ -865,7 +885,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
         ['ID', '>', 1],
         ['ACTIVE', true]
     ])
-    ->exec();
+    ->exec()
+;
 // WHERE `main_user`.`ID` > 1 AND `main_user`.`ACTIVE` = 'Y'
 ```
 
@@ -879,7 +900,8 @@ use Bitrix\Main\ORM\Query\Query;
     ->where(Query::filter()->where([
         ["ID", '>', 1],
         ['ACTIVE', true]
-    ]))->exec();
+    ]))->exec()
+;
 // WHERE `main_user`.`ID` > 1 AND `main_user`.`ACTIVE` = 'Y'
 ```
 
@@ -897,7 +919,8 @@ use Bitrix\Main\ORM\Query\Query;
             ['ID', 1],
             ['LOGIN', 'admin']
         ])
-    )->exec();
+    )->exec()
+;
 // WHERE `main_user`.`ACTIVE` = 'Y' AND (`main_user`.`ID` = 1 OR `main_user`.`LOGIN` = 'admin')
 ```
 
@@ -906,6 +929,7 @@ use Bitrix\Main\ORM\Query\Query;
 
 ```php
 use Bitrix\Main\ORM\Query\Query;
+
 \Bitrix\Main\UserTable::query()
     ->where('ACTIVE', true)
     ->where(Query::filter()
@@ -913,7 +937,8 @@ use Bitrix\Main\ORM\Query\Query;
         ->where('ID', 1)
         ->where('LOGIN', 'admin')
     )
-    ->exec();
+    ->exec()
+;
 // WHERE `main_user`.`ACTIVE` = 'Y' AND (`main_user`.`ID` = 1 OR `main_user`.`LOGIN` = 'admin')
 ```
 
@@ -926,7 +951,8 @@ use Bitrix\Main\ORM\Fields\ExpressionField;
 
 \Bitrix\Main\UserTable::query()
     ->where(new ExpressionField('LNG', 'LENGTH(%s)', 'LAST_NAME'), '>', 10)
-    ->exec();
+    ->exec()
+;
 // WHERE LENGTH(`main_user`.`LAST_NAME`) > '10'
 ```
 
@@ -936,12 +962,14 @@ use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\ORM\Query\Query;
 \Bitrix\Main\UserTable::query()
     ->where(Query::expr()->length("LAST_NAME"), '>', 10)
-    ->exec();
+    ->exec()
+;
 // WHERE LENGTH(`main_user`.`LAST_NAME`) > '10'
 
 \Bitrix\Main\UserTable::query()
     ->addSelect(Query::expr()->count("ID"), 'CNT')
-    ->exec();
+    ->exec()
+;
 // SELECT COUNT(`main_user`.`ID`) AS `CNT` FROM `b_user` `main_user`
 ```
 
@@ -1017,7 +1045,8 @@ new Entity\ReferenceField('GROUP', GroupTable::class,
 Везде, где указывается имя поля, можно указать любую цепочку переходов:
 
 ```php
-->whereColumn('this.AUTHOR.UserGroup:USER.GROUP.OWNER.ID', 'ref.ID');
+->whereColumn('this.AUTHOR.UserGroup:USER.GROUP.OWNER.ID', 'ref.ID')
+;
 ```
 
 ### Формат массива

@@ -85,7 +85,8 @@ $pagination->initFromUri();
 $records = \Bitrix\Main\UserTable::query()
     ->setLimit($pagination->getLimit())
     ->setOffset($pagination->getOffset())
-    ->fetchCollection();
+    ->fetchCollection()
+;
 ```
 
 Если нужны фильтры, добавьте их в запрос.
@@ -95,7 +96,8 @@ $records = \Bitrix\Main\UserTable::query()
     ->setFilter(['>ID' => 10])
     ->setLimit($pagination->getLimit())
     ->setOffset($pagination->getOffset())
-    ->fetchCollection();
+    ->fetchCollection()
+;
 ```
 
 Чтобы получить общее число записей, выполните отдельный запрос до основного:
@@ -103,7 +105,8 @@ $records = \Bitrix\Main\UserTable::query()
 ```php
 $totalCount = \Bitrix\Main\UserTable::query()
     ->setFilter(['>ID' => 10])
-    ->count();
+    ->count()
+;
 $pagination->setRecordCount($totalCount);
 ```
 
@@ -229,8 +232,10 @@ echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3);
         )
         ->exec()
     ;
-    foreach ($queryResult as $i => $user) {
-        if ($i === $pagination->getLimit()) {
+    foreach ($queryResult as $i => $user)
+    {
+        if ($i === $pagination->getLimit())
+        {
             break;
         }
         

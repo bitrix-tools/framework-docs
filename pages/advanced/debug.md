@@ -130,7 +130,8 @@ $connection->stopTracker();
 $queries = $tracker->getQueries();
 
 // Перебираем все запросы, которые были выполнены в отслеживаемом участке кода
-foreach ($queries as $query) {
+foreach ($queries as $query)
+{
     echo 'SQL: ' . $query->getSql() . '<br>';
     echo 'Время: ' . round($query->getTime(), 5) . ' сек.<hr>';
 }
@@ -157,7 +158,8 @@ $connection->stopTracker();
 
 $queries = $tracker->getQueries();
 
-foreach ($queries as $query) {
+foreach ($queries as $query)
+{
     echo 'SQL: ' . $query->getSql() . '<br>';
     echo 'Время: ' . round($query->getTime(), 5) . ' сек.<hr>';
 }
