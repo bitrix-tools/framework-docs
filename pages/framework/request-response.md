@@ -337,8 +337,8 @@ $result = $converter->process([
 /*
 [
     'categories' => [
-        ['id' => 1, 'name' => 'foods'],
-        ['id' => 12, 'name' => 'auto'],
+        ['id' => 1, 'name' => 'Foods'],
+        ['id' => 12, 'name' => 'Auto'],
     ],
 ]
 */
