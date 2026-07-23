@@ -170,6 +170,8 @@ items:
         href: /pages/cms-basics/properties.md
       - name: Заголовки страницы
         href: /pages/cms-basics/titles.md
+      - name: Работа со стилями
+        href: /pages/cms-basics/styles.md
       - name: Работа с почтой
         href: /pages/cms-basics/mail.md
       - name: Работа с СМС

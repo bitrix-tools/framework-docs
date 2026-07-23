@@ -347,7 +347,7 @@ if (!$result)
 После добавления найдите нужную рубрику и укажите ее `UF_XML_ID`:
 
 ```php
-// /например, у рубрики Безопасность UF_XML_ID = 'security'
+// Например, у рубрики Безопасность UF_XML_ID = 'security'
 $element->set('CATEGORY', 'security');
 ```
 
@@ -618,7 +618,14 @@ ORM позволяет работать с элементами как с пол
 
 ```php
 // News — значение поля «Символьный код API» из настроек инфоблока
-$elementClassName = \Bitrix\Iblock\IblockTable::compileEntity('News'); 
+$elementEntity = \Bitrix\Iblock\IblockTable::compileEntity('News');
+
+if (!$elementEntity)
+{
+    throw new \RuntimeException('Не удалось скомпилировать ORM-класс элементов');
+}
+
+$elementNewsClass = $elementEntity->getDataClass();
 ```
 
 В результате получите класс вида `\Bitrix\Iblock\Elements\Element{API_CODE}Table`, где `{API_CODE}` — cимвольный код API инфоблока. Например, `\Bitrix\Iblock\Elements\ElementNewsTable`.
@@ -822,9 +829,9 @@ $safeHtml = \Bitrix\Main\Text\HtmlFilter::getHtmlEncoder()->encode($userInput);
 
 #### Указать значение из Highload-блока
 
-Свойство типа Справочник хранит `UF_XML_ID` записи Highload-блоке, а не `ID`.
+Свойство типа Справочник хранит `UF_XML_ID` записи Highload-блока, а не `ID`.
 
-Например, в Highload-блоке рубрик новостей есть запись Кибербезопасность. В параметре  XML_ID задано `cybersec`.
+Например, в Highload-блоке рубрик новостей есть запись Кибербезопасность. В поле `UF_XML_ID` указано значение `cybersec`.
 
 Чтобы в элементе инфоблока указать рубрику, передайте `UF_XML_ID = 'cybersec'`.
 
@@ -837,7 +844,19 @@ $element = $elementNewsClass::createObject()
 $element->save();
 ```
 
-### Получить элемент и его свойства
+### Выбрать способ получения элементов
+
+В D7 ORM элементы можно получить через `query()` или `getList()`. Оба способа создают ORM-запрос, но принимают параметры в разном формате.
+
+| Способ | Когда использовать |
+|---|---|
+| `$elementNewsClass::query()` | Запрос строится цепочкой методов `setSelect()`, `where()`, `setOrder()` и `setLimit()`. Результат можно получить через `fetchObject()` или `fetchCollection()` |
+| `$elementNewsClass::getList()` | Параметры `select`, `filter`, `order` и `limit` передаются одним массивом. Результат запроса поддерживает `fetch()`, `fetchObject()` и `fetchCollection()` |
+| `CIBlockElement::GetList()` | Классический API с отдельным набором позиционных параметров. Используйте его в существующем коде на классическом API |
+
+Не смешивайте параметры ORM-метода `getList()` и классического метода `CIBlockElement::GetList()`. Несмотря на похожие названия, методы относятся к разным слоям API.
+
+### Получить элемент и свойства через query
 
 Чтобы прочитать элемент, выполните запрос через `query()`. Укажите `setLimit(1)`, если нужен один элемент.
 
@@ -875,7 +894,7 @@ $element = $elementNewsClass::query()
     ->setLimit(1)
     ->fetchObject();
 
-echo $element->get('AUTHOR'); // Светлана Пирогова
+echo $element->get('AUTHOR')?->getValue(); // Светлана Пирогова
 
 $source = $element->get('SOURCE');
 if ($source)
@@ -926,7 +945,7 @@ if ($photo)
 
 ```php
 // элемент со свойством GALLERY
-$element = $dataClass::query()
+$element = $elementNewsClass::query()
     ->setSelect(['ID', 'NAME', 'GALLERY'])
     ->where('CODE', 'news-image')
     ->setLimit(1)
@@ -951,27 +970,167 @@ if ($element)
 }
 ```
 
-### Получить элементы по фильтру
+### Получить список элементов через getList
 
-Для построения запроса используйте методы `setSelect()`, `where()`, `setOrder()`, `setLimit()`. Метод `fetchCollection()` возвращает коллекцию, которую можно перебрать через `foreach`.
+Метод `getList()` принимает параметры запроса в одном массиве:
+
+-  `select` — поля и свойства в результате,
+
+-  `filter` — условия отбора,
+
+-  `order` — порядок сортировки,
+
+-  `limit` — максимальное количество элементов.
+
+Метод возвращает результат ORM-запроса. Вызов `fetchCollection()` преобразует его в коллекцию объектов элементов.
 
 Для фильтрации по списку Источник укажите `SOURCE.VALUE`, а не `SOURCE`.
 
 ```php
 // выборка с фильтрацией
-$elements = $elementNewsClass::query()
-    ->setSelect(['ID', 'NAME', 'SOURCE'])
-    ->where('ACTIVE', 'Y')
-    ->where('SOURCE.VALUE', 1) // фильтр по идентификатору источника
-    ->setOrder(['DATE_ACTIVE_FROM' => 'DESC'])
-    ->setLimit(10)
-    ->fetchCollection();
+$elements =
+    $elementNewsClass::getList([
+        'select' => ['ID', 'NAME', 'SOURCE'],
+        'filter' => [
+            '=ACTIVE' => 'Y',
+            '=SOURCE.VALUE' => 1, // идентификатор значения свойства Источник
+        ],
+        'order' => ['DATE_ACTIVE_FROM' => 'DESC'],
+        'limit' => 10,
+    ])
+        ->fetchCollection()
+;
 
 foreach ($elements as $element)
 {
     echo $element->getName() . ': ' . $element->get('SOURCE')->getValue() . "\n";
 }
 ```
+
+### Получить данные из Highload-блока через getList
+
+Свойство типа Справочник хранит `UF_XML_ID` записи Highload-блока. Чтобы получить название и другие поля записи, сначала найдите Highload-блок по имени таблицы, затем скомпилируйте его ORM-класс.
+
+#### Скомпилировать ORM-класс Highload-блока
+
+Подключите модуль `highloadblock` и найдите блок, имя таблицы которого указано в настройке `TABLE_NAME` свойства.
+
+```php
+\Bitrix\Main\Loader::includeModule('highloadblock');
+
+$highloadBlock =
+    \Bitrix\Highloadblock\HighloadBlockTable::getList([
+        'select' => ['ID', 'NAME', 'TABLE_NAME'],
+        'filter' => ['=TABLE_NAME' => 'b_news_categories'],
+        'limit' => 1,
+    ])
+        ->fetch()
+;
+
+if (!$highloadBlock)
+{
+    throw new \RuntimeException('Highload-блок рубрик не найден');
+}
+
+$categoryEntity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($highloadBlock);
+$categoryDataClass = $categoryEntity->getDataClass();
+```
+
+Метод `getDataClass()` возвращает имя скомпилированного ORM-класса. Через этот класс можно вызвать `getList()` и работать с полями Highload-блока.
+
+#### Получить одну запись по UF_XML_ID
+
+Сначала получите `UF_XML_ID` из свойства `CATEGORY` элемента инфоблока. Затем передайте его в фильтр `getList()` для Highload-блока.
+
+```php
+$element =
+    $elementNewsClass::query()
+        ->setSelect(['ID', 'NAME', 'CATEGORY'])
+        ->where('CODE', 'news-cybersec')
+        ->setLimit(1)
+        ->fetchObject()
+;
+
+if ($element)
+{
+    $categoryXmlId = $element->get('CATEGORY')?->getValue();
+
+    if ($categoryXmlId)
+    {
+        $category =
+            $categoryDataClass::getList([
+                'select' => ['ID', 'UF_NAME', 'UF_XML_ID'],
+                'filter' => ['=UF_XML_ID' => $categoryXmlId],
+                'limit' => 1,
+            ])
+                ->fetch()
+        ;
+
+        if ($category)
+        {
+            echo $category['UF_NAME']; // Кибербезопасность
+        }
+    }
+}
+```
+
+`UF_XML_ID` связывает значение свойства инфоблока и запись Highload-блока. Числовой `ID` записи для этого сценария не используется.
+
+#### Получить записи для списка элементов
+
+Если нужно вывести несколько элементов, не запрашивайте Highload-блок внутри цикла. Сначала соберите уникальные `UF_XML_ID`, затем получите все записи одним запросом и создайте словарь рубрик.
+
+```php
+$elements =
+    $elementNewsClass::getList([
+        'select' => ['ID', 'NAME', 'CATEGORY'],
+        'filter' => ['=ACTIVE' => 'Y'],
+        'limit' => 10,
+    ])
+        ->fetchCollection()
+;
+
+$categoryXmlIds = [];
+foreach ($elements as $element)
+{
+    $categoryXmlId = $element->get('CATEGORY')?->getValue();
+    if ($categoryXmlId)
+    {
+        $categoryXmlIds[] = $categoryXmlId;
+    }
+}
+
+$categoryXmlIds = array_values(array_unique($categoryXmlIds));
+$categoriesByXmlId = [];
+
+if ($categoryXmlIds !== [])
+{
+    $categories = $categoryDataClass::getList([
+        'select' => ['UF_NAME', 'UF_XML_ID'],
+        'filter' => ['@UF_XML_ID' => $categoryXmlIds],
+    ]);
+
+    while ($category = $categories->fetch())
+    {
+        $categoriesByXmlId[$category['UF_XML_ID']] = $category;
+    }
+}
+
+foreach ($elements as $element)
+{
+    $categoryXmlId = $element->get('CATEGORY')?->getValue();
+    $categoryName = 'Без рубрики';
+
+    if ($categoryXmlId && isset($categoriesByXmlId[$categoryXmlId]))
+    {
+        $categoryName = $categoriesByXmlId[$categoryXmlId]['UF_NAME'];
+    }
+
+    echo $element->getName() . ': ' . $categoryName . "\n";
+}
+```
+
+Код отдельно получает элементы инфоблока и связанные записи Highload-блока. Такой порядок не создает отдельный запрос для каждого элемента.
 
 ### Обновить элемент
 
