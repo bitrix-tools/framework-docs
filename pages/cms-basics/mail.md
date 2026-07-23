@@ -577,8 +577,10 @@ define("BX_CRONTAB_SUPPORT", false);
 -  В редакторе отображаются компоненты, у которых в файле `.description.php` указан тип `"TYPE" => "mail"`.
 
    ```php
-   <?php if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+   <?php
    use Bitrix\Main\Localization\Loc;
+   
+   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
    
    $arComponentDescription = [
        'NAME' => Loc::getMessage('SBBS_DEFAULT_TEMPLATE_NAME'),

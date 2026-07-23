@@ -299,9 +299,10 @@ class User extends Controller
 -  Класс `my-user-card__like-text--liked` определяет внешний вид активного лайка.
 
 ```php
-<?php if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-
+<?php
 use Bitrix\Main\Localization\Loc;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 /**
  * @var array $arParams
@@ -464,11 +465,11 @@ BX.ready(() => {
 
 ```php
 <?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-
 use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Loader;
 use My\Module\Services\LikeService;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 class UserCardComponent extends CBitrixComponent
 {

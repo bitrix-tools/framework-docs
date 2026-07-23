@@ -149,9 +149,10 @@ $aMenuLinks = [
 
 ```php
 <?php
-if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-
 use Bitrix\Main\Loader;
+
+if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+
 global $APPLICATION;
 // Подготовим массив для дополнительных пунктов меню
 $aMenuLinksExt = [];
@@ -464,7 +465,7 @@ if ($PARAMS["SEPARATOR"] === "Y")
 Пример шаблона `.default`:
 
 ```php
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();?>
 <?php if (!empty($arResult)):?>
 <ul class="left-menu">
 <?php
@@ -536,7 +537,7 @@ foreach($arResult as $arItem):
 Права доступа могут влиять на внешний вид меню. В шаблоне можно скрывать элементы, менять стили или добавлять изображения в зависимости от пользователя.
 
 ```php
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die(); ?>
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die(); ?>
 <?php if (!empty($arResult)): ?>
 <!-- Если есть пункты меню, выводим блок -->
 <div class="blue-tabs-menu">
@@ -725,7 +726,7 @@ $aMenuLinks = [
 9. Допишите проверку включения кода из ядра:
 
    ```php
-   <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+   <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
    
    global $APPLICATION; 
    $aMenuLinksExt = $APPLICATION->IncludeComponent(…
@@ -740,7 +741,7 @@ $aMenuLinks = [
     В результате код в файле должен быть следующим:
 
     ```php
-    <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+    <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 
     global $APPLICATION; 
     $aMenuLinksExt = $APPLICATION->IncludeComponent(

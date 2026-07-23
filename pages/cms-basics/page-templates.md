@@ -193,7 +193,7 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
    ```php
    use Bitrix\Main\Localization\Loc;
    
-   $TEMPLATE["announcement.php"] = ["name" => Loc::etMessage("announcement"), "sort"=>2];
+   $TEMPLATE["announcement.php"] = ["name" => Loc::getMessage("announcement"), "sort" => 2];
    ```
 
 4. Настройте языковые файлы:
@@ -207,7 +207,7 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
    -  для английского языка в файле `/local/templates/.default/lang/en/page_templates/.content.php`.
 
    ```php
-   $MESS ['announcement'] = "Important announcement";
+   $MESS['announcement'] = "Important announcement";
    ```
 
 В результате шаблон будет доступен при создании страницы.
@@ -235,9 +235,10 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 {% cut "Код файла template.php шаблона bootstrap" %}
 
 ```php
-<?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
-
+<?php
 use Bitrix\Main\Localization\Loc;
+
+if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 CPageTemplate::IncludeLangFile(__FILE__);
 
@@ -465,9 +466,10 @@ $MESS['BT_COL_4'] = "Мозаика";
 2. Откройте файл `template.php` и внесите изменения в код.
 
    ```php
-   <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
-   
+   <?php
    use Bitrix\Main\Localization\Loc;
+   
+   if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
    
    CPageTemplate::IncludeLangFile(__FILE__);
    

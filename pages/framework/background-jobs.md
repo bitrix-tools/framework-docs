@@ -421,7 +421,7 @@ function TestAgent()
        ['user@example.com', 'Добро пожаловать!'],
    );
    
-   function sendWelcomeEmail($email, $message) 
+   function sendWelcomeEmail($email, $message)
    {
        mail($email, 'Уведомление', $message);
    }

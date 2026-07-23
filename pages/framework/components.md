@@ -619,8 +619,10 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 -  `.description.php` — содержит название и описание шаблона. Пример файла:
 
    ```php
-   <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+   <?php
    use Bitrix\Main\Localization\Loc;
+   
+   if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
    
    $arTemplateDescription = [
       "NAME" => Loc::getMessage("ADV_BANNER_NAME"),
@@ -632,10 +634,11 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 -  `.parameters.php` — описание дополнительных параметров. Пример файла:
 
    ```php
-   <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-   
+   <?php
    use Bitrix\Main\Localization\Loc;
    use Bitrix\Main\Loader;
+   
+   if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
    
    if (!Loader::includeModule("advertising"))
    {
@@ -888,7 +891,7 @@ $templateData = [
 В файле `component_epilog.php`:
 
 ```php
-<?php
+<?php 
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 // Проверяем, что $templateData определена и содержит данные
