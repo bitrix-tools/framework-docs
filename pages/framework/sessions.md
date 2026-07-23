@@ -18,7 +18,7 @@ if (!$session->has('foo'))
 echo $session['foo']; //bar
 ```
 
-Этот объект поддерживает интерфейсы `\ArrayAccess` и [\\Bitrix\\Main\\Session\\SessionInterface](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Session-SessionInterface.html).
+Этот объект поддерживает интерфейсы `\ArrayAccess` и `\Bitrix\Main\Session\SessionInterface`.
 
 ## Сессионный кеш
 

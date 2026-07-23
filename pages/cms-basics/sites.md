@@ -25,7 +25,7 @@ description: 'Сайты. Основы Bitrix CMS: ключевые объект
 
 {% note tip "" %}
 
-В Bitrix Framework можно создавать несколько сайтов на одном экземпляре продукта. Подробнее читайте в статье [Многосайтовость](./../rasshirennye-znaniya/mnogosaytovost).
+В Bitrix Framework можно создавать несколько сайтов на одном экземпляре продукта. Подробнее читайте в статье [Многосайтовость](../advanced/multisite.md).
 
 {% endnote %}
 

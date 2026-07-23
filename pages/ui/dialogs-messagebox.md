@@ -237,7 +237,7 @@ messageBox.show();
 
 Если выбран `MessageBoxButtons.NONE`, в окне нет стандартных кнопок. Обработчики `onOk`, `onCancel`, `onYes` и `onNo` не сработают при нажатии на стандартную кнопку.
 
-Если стандартного набора недостаточно, передайте массив кнопок `BX.UI.Button`.
+Если стандартного набора недостаточно, передайте массив кнопок [BX.UI.Button](./ui-buttons.md).
 
 ```js
 import { MessageBox } from 'ui.dialogs.messagebox';

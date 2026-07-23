@@ -24,6 +24,22 @@ title: Что нового
 
 - Добавили новую статью [Работа со стилями](./pages/cms-basics/styles.md).
 
+#### 2 июля
+
+- Добавили новую статью [Кнопки ui.buttons](./pages/ui/ui-buttons.md).
+
+#### 26 июня
+
+- Обновили статью [Экосистема](./pages/about/ecosystem.md)
+
+#### 25 июня
+
+- Добавили новый раздел [Миграция на PostgreSQL](./pages/database/postgresql/migration.md).
+
+#### 22 июня
+
+- Добавили новую статью [Кодировка](./pages/advanced/encoding.md).
+
 #### 19 июня
 
 - Добавили новый раздел [Торговый каталог](./pages/modules/catalog/overview.md).

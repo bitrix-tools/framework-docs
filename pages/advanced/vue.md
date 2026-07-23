@@ -584,7 +584,7 @@ export const focus = {
 
 -  `$Bitrix.Application` — связь с контроллером
 
--  `$`[`Bitrix.Data`](http://Bitrix.Data) — общие данные приложения
+-  `$Bitrix.Data` — общие данные приложения
 
 -  `$Bitrix.RestClient` — REST-клиент
 

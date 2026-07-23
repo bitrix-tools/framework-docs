@@ -66,11 +66,13 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 `\Bitrix\Main\Engine\ActionFilter\Authentication`
 
-Проверяет аутентификацию пользователя и блокирует действие, если проверка не пройдена (HTTP статус 401). Может перенаправить на страницу авторизации. Используется для защиты действий, требующих аутентификации, например, доступ к личным данным пользователя.
+Проверяет аутентификацию пользователя и блокирует действие, если проверка не пройдена. Без редиректа фильтр возвращает HTTP-статус 401. С включенным редиректом фильтр перенаправляет пользователя на страницу `/auth/?backurl=<текущий URL>` для не-AJAX-запросов.
+
+Используйте фильтр для действий, которые требуют аутентификации: личный кабинет, настройки профиля, операции с данными текущего пользователя.
 
 Аргументы:
 
--  `$enableRedirect` — включает редирект на авторизацию. По умолчанию — `false`.
+-  `$enableRedirect` — включает редирект на страницу `/auth/?backurl=<текущий URL>`. По умолчанию — `false`.
 
 Пример использования:
 
@@ -102,6 +104,57 @@ final class Entity extends \Bitrix\Main\Engine\Controller
     }
 }
 ```
+
+#### Перенаправить гостя на другую страницу
+
+Стандартный фильтр `Authentication` возвращает HTTP-статус 401 или перенаправляет неавторизованного пользователя на страницу `/auth/?backurl=<текущий URL>`. Указать другой URL в фильтре нельзя.
+
+Для перенаправления на произвольную страницу создайте собственный префильтр. В методе `onBeforeAction()` проверьте авторизацию и вызовите `LocalRedirect()` с нужным URL.
+
+```php
+use Bitrix\Main\Application;
+use Bitrix\Main\Engine\ActionFilter\Base;
+use Bitrix\Main\Event;
+
+final class RedirectGuestToLogin extends Base
+{
+    public function onBeforeAction(Event $event)
+    {
+        $isAuthorized = $this->getAction()->getController()->getCurrentUser()?->getId() > 0;
+		if ($isAuthorized)
+		{
+			return;
+		}
+
+        $requestUri = Application::getInstance()
+            ->getContext()
+            ->getRequest()
+            ->getRequestUri()
+        ;
+
+        \LocalRedirect('/login/?backurl=' . urlencode($requestUri));
+    }
+}
+```
+
+Подключите префильтр к действию:
+
+```php
+use Bitrix\Main\Engine\ActionFilter\Attribute\Rule\Prefilters;
+
+final class Entity extends \Bitrix\Main\Engine\Controller
+{
+    #[Prefilters([
+        new RedirectGuestToLogin(),
+    ])]
+    public function indexAction()
+    {
+        // ...
+    }
+}
+```
+
+Добавьте фильтр в `getDefaultPreFilters()`, если перенаправление требуется для всех действий контроллера.
 
 ### Фильтр CSRF-защиты
 
