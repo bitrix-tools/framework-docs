@@ -48,7 +48,7 @@ description: 'Cookie-файлы. Документация по Bitrix Framework:
 
    ```php
    use Bitrix\Main\Context;
-   
+
    $request = Context::getCurrent()->getRequest();
    ```
 
@@ -56,7 +56,7 @@ description: 'Cookie-файлы. Документация по Bitrix Framework:
 
    ```php
    $cookieValue = $request->getCookie("example_cookie");
-   
+
    // Проверка наличия и вывод значения
    if ($cookieValue !== null)
    {
@@ -209,9 +209,9 @@ function setCityCookie(city) {
 
 ## Шифрованные cookie
 
-Шифрованные cookie `\Bitrix\Main\Web\CryptoCookie` позволяют передавать данные пользователю без раскрытия их содержимого и без изменения. 
+Шифрованные cookie `\Bitrix\Main\Web\CryptoCookie` позволяют передавать данные пользователю без раскрытия их содержимого и без изменения.
 
-Для шифрования данных ядром необходимо указать `crypto_key` в файле настроек `/bitrix/.settings.php`. 
+Для шифрования данных ядром необходимо указать `crypto_key` в файле настроек `/bitrix/.settings.php`.
 
 {% note tip "" %}
 

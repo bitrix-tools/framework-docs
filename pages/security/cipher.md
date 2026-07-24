@@ -135,7 +135,7 @@ try
 
     // Расшифровываем данные
     $decryptedData = $cipher->decrypt($encryptedData, $cryptoKey);
-    
+
     // Результат должен совпадать с исходными данными
     echo $decryptedData; // Конфиденциальная информация
 }

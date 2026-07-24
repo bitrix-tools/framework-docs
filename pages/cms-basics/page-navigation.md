@@ -28,9 +28,9 @@ $pagination = new \Bitrix\Main\UI\PageNavigation('nav-name');
  * Конфигурируем
  */
 $pagination
-    // разрешаем показ всех записей	
-    ->allowAllRecords(true) 
-    
+    // разрешаем показ всех записей
+    ->allowAllRecords(true)
+
     // указываем, какие варианты выбора страниц есть
     ->setPageSizes([
         5,
@@ -39,7 +39,7 @@ $pagination
         50,
         100,
     ])
-    
+
     // указываем общее число записей
     ->setRecordCount($totalCount)
 ;
@@ -194,12 +194,12 @@ $pagination = new \Bitrix\Main\UI\PageNavigation('my-items');
 
 // ЧПУ-формат
 $isHumanUrl = true;
-echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3); 
+echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3);
 // https://example.ru/items/my-items/page-3/
 
 // GET-формат
 $isHumanUrl = false;
-echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3); 
+echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3);
 // https://example.ru/items/?my-items=page-3
 ```
 
@@ -222,9 +222,9 @@ echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3);
         ->setPageSize(20)
         ->initFromUri()
     ;
-    
+
     $users = [];
-    
+
     $queryResult = \Bitrix\Main\UserTable::query()
         ->setOffset($pagination->getOffset())
         ->setLimit(
@@ -238,10 +238,10 @@ echo (string)$pagination->addParams(clone $uri, $isHumanUrl, 3);
         {
             break;
         }
-        
+
         $users[] = $user;
     }
-    
+
     $pagination->setRecordCount(
         $pagination->getOffset() + $queryResult->getSelectedRowsCount()
     );

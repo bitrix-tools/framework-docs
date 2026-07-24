@@ -313,7 +313,7 @@ description: 'Конфигурация ядра. Документация по B
         // Регистрация логгера для HTTP-клиента
         'main.HttpClient' => [
             'className' => '\\Bitrix\\Main\\Diag\\FileLogger', // Класс логгера
-            'constructorParams' => ['/home/bitrix/www/log.txt'], // Путь к файлу с параметрами конструктора 
+            'constructorParams' => ['/home/bitrix/www/log.txt'], // Путь к файлу с параметрами конструктора
             'level' => \Psr\Log\LogLevel::DEBUG, // Уровень логирования: DEBUG, INFO, ERROR и так далее
             'formatter' => 'formatter.Arguments', // Опционально: ID форматтера из сервис-локатора
         ],

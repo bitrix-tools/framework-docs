@@ -155,16 +155,16 @@ class my_module extends CModule
         $this->MODULE_NAME = Loc::getMessage('MY_MODULE_MODULE_NAME');
         $this->MODULE_DESCRIPTION = Loc::getMessage('MY_MODULE_MODULE_DESCRIPTION');
     }
-    
+
     public function DoInstall()
     {
         global $USER, $APPLICATION;
-        
+
         if (!$USER->IsAdmin())
         {
             return;
         }
-        
+
         ModuleManager::registerModule($this->MODULE_ID);
 
         $this->InstallDB();
@@ -179,15 +179,15 @@ class my_module extends CModule
     public function DoUninstall()
     {
         global $USER, $APPLICATION;
-        
+
         if (!$USER->IsAdmin())
         {
             return;
         }
-        
+
         $this->UnInstallFiles();
         $this->UnInstallDB();
-        
+
         ModuleManager::unRegisterModule($this->MODULE_ID);
 
         $APPLICATION->IncludeAdminFile(
@@ -196,16 +196,16 @@ class my_module extends CModule
         );
     }
 
-    public function InstallDB() 
-    { 
-        // метод приведен для примера 
+    public function InstallDB()
+    {
+        // метод приведен для примера
         // зарегистрировать зависимости на события модулей
         $eventManager = \Bitrix\Main\EventManager::getInstance();
         $eventManager->registerEventHandler('...');
-        
+
         // добавить агенты
         \CAgent::AddAgent(...);
-        
+
         // добавить пользовательские поля
         $userType = new \CUserTypeEntity();
         $userType->Add(...);
@@ -213,13 +213,13 @@ class my_module extends CModule
 
     public function UnInstallDB()
     {
-        // метод приведен для примера 
+        // метод приведен для примера
         // удалить все зависимости на событиях
         $eventManager = \Bitrix\Main\EventManager::getInstance();
         $eventManager->unRegisterEventHandler('...');
-        
+
         // агенты можно не удалять, они будут удалены автоматически
-        
+
         // удалить пользовательские поля
         $userType = new \CUserTypeEntity();
         $userType->Delete(...);

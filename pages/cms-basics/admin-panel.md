@@ -382,7 +382,7 @@ if ($lAdmin->EditAction())
 {
     // Добавить загруженные файлы в список изменяемых полей
     $lAdmin->convertFilesToEditFields();
-    
+
     // Обработать каждое измененное поле
     foreach ($lAdmin->getEditFields() as $id => $fields)
     {
@@ -416,7 +416,7 @@ if ($itemIds = $lAdmin->GroupAction())
 {
     // Получить выбранное действие
     $actionId = $lAdmin->getAction();
-    
+
     // Пропустить если действие не выбрано
     if ($actionId === null)
     {
@@ -476,7 +476,7 @@ $APPLICATION->SetEditArea(
                 /*  [
                         ['ICON' => 'edit-icon', 'TITLE' => 'Редактировать'],
                         ['ICON' => 'delete-icon', 'TITLE' => 'Удалить']
-                    ] 
+                    ]
                 */
 );
 ```

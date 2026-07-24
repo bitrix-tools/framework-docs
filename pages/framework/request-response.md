@@ -214,7 +214,7 @@ $response->setContent('Hello, world!'); // установить контент
      Content-Type: application/json; charset=UTF-8
     "ping-pong"
     **/
-    
+
     new \Bitrix\Main\Engine\Response\Json([
         'id' => 2208,
         'type' => 'license',
@@ -249,7 +249,7 @@ $response->setContent('Hello, world!'); // установить контент
                     "js": array,
                     "string": array
                 },
-            "additionalParams": array      
+            "additionalParams": array
         },
         "errors": array
     }
@@ -282,7 +282,7 @@ $response->setContent('Hello, world!'); // установить контент
 
 ```php
 // сделать переадресацию с 302 статусом
-$response = new \Bitrix\Main\Engine\Response\Redirect('/auth');   
+$response = new \Bitrix\Main\Engine\Response\Redirect('/auth');
 
 // сделать переадресацию с 301 статусом
 $response = new \Bitrix\Main\Engine\Response\Redirect('/auth');
@@ -346,9 +346,9 @@ $result = $converter->process([
 
 // Комбинация преобразований
 $converter = new Converter(
-    Converter::TO_SNAKE_DIGIT | 
-    Converter::KEYS | 
-    Converter::VALUES | 
+    Converter::TO_SNAKE_DIGIT |
+    Converter::KEYS |
+    Converter::VALUES |
     Converter::RECURSIVE
 );
 $result = $converter->process([

@@ -249,7 +249,7 @@ $row = $result->fetch();
 $row = $result->fetchRaw();
 // [
 //    'ID' => 1,
-//    'ACTIVE' => 'Y', 
+//    'ACTIVE' => 'Y',
 //    'DATE_REGISTER' => '2021-12-29 09:50:14'
 // ]
 ```

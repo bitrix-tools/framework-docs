@@ -87,53 +87,53 @@ description: 'Меню. Основы Bitrix CMS: ключевые объекты
 <?php
 $aMenuLinks = [
     [
-        "Новости", 
-        "news/", 
-        [], 
-        [], 
-        "" 
+        "Новости",
+        "news/",
+        [],
+        [],
+        ""
     ],
     [
-        "Как купить", 
-        "about/howto/", 
-        [], 
-        [], 
-        "" 
+        "Как купить",
+        "about/howto/",
+        [],
+        [],
+        ""
     ],
     [
-        "Доставка", 
-        "about/delivery/", 
-        [], 
-        [], 
-        "" 
+        "Доставка",
+        "about/delivery/",
+        [],
+        [],
+        ""
     ],
     [
-        "О магазине", 
-        "about/", 
-        [], 
-        [], 
-        "" 
+        "О магазине",
+        "about/",
+        [],
+        [],
+        ""
     ],
     [
-        "Гарантия", 
-        "about/guaranty/", 
-        [], 
-        [], 
-        "" 
+        "Гарантия",
+        "about/guaranty/",
+        [],
+        [],
+        ""
     ],
     [
-        "Контакты", 
-        "about/contacts/", 
-        [], 
-        [], 
-        "" 
+        "Контакты",
+        "about/contacts/",
+        [],
+        [],
+        ""
     ],
     [
-        "Книги", 
-        "/books/", 
-        [], 
-        [], 
-        "" 
+        "Книги",
+        "/books/",
+        [],
+        [],
+        ""
     ]
 ];
 ?>
@@ -177,8 +177,8 @@ if(Loader::includeModule('iblock'))
         {
             // Подключаем компонент menu.sections
             $aMenuLinksExt = $APPLICATION->IncludeComponent(
-                "bitrix:menu.sections", 
-                "bootstrap_v4", 
+                "bitrix:menu.sections",
+                "bootstrap_v4",
                 [
                     "IS_SEF" => "Y",
                     "SEF_BASE_URL" => "",
@@ -188,8 +188,8 @@ if(Loader::includeModule('iblock'))
                     "IBLOCK_ID" => $arIBlock['ID'],
                     "DEPTH_LEVEL" => "3",
                     "CACHE_TYPE" => "N",
-                ], 
-                false, 
+                ],
+                false,
                 ['HIDE_ICONS' => 'Y']
             );
         }
@@ -224,32 +224,32 @@ $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
 <?php
 $aMenuLinks = [
     [
-        "Новости", 
-        "news/", 
-        [], 
-        [], 
-        "CSite::InDir('/index.php')" 
+        "Новости",
+        "news/",
+        [],
+        [],
+        "CSite::InDir('/index.php')"
     ],
     [
-        "Как купить", 
-        "about/howto/", 
-        [], 
-        [], 
-        "" 
+        "Как купить",
+        "about/howto/",
+        [],
+        [],
+        ""
     ],
     [
-        "Доставка", 
-        "about/delivery/", 
-        [], 
-        [], 
-        "CSite::InDir('/personal/')" 
+        "Доставка",
+        "about/delivery/",
+        [],
+        [],
+        "CSite::InDir('/personal/')"
     ],
     [
-        "Гарантия", 
-        "about/guaranty/", 
-        [], 
-        [], 
-        "CSite::InGroup(array(1,6))" 
+        "Гарантия",
+        "about/guaranty/",
+        [],
+        [],
+        "CSite::InGroup(array(1,6))"
     ],
 ];
 ?>
@@ -470,7 +470,7 @@ if ($PARAMS["SEPARATOR"] === "Y")
 <ul class="left-menu">
 <?php
 foreach($arResult as $arItem):
-    if($arParams["MAX_LEVEL"] == 1 && $arItem["DEPTH_LEVEL"] > 1) 
+    if($arParams["MAX_LEVEL"] == 1 && $arItem["DEPTH_LEVEL"] > 1)
         continue;
 ?>
     <?php if($arItem["SELECTED"]): ?>
@@ -478,7 +478,7 @@ foreach($arResult as $arItem):
     <?php else: ?>
         <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
     <?php endif; ?>
-    
+
 <?php endforeach; ?>
 </ul>
 <?php endif; ?>
@@ -614,18 +614,18 @@ foreach($arResult as $arItem):
 <?php
 $aMenuLinks = [
     [
-        "Новая страница 1", 
-        "/test-menu/new-page-1.php", 
-        [], 
-        [], 
-        "" 
+        "Новая страница 1",
+        "/test-menu/new-page-1.php",
+        [],
+        [],
+        ""
     ],
     [
-        "Новая страница 2", 
-        "/test-menu/new-page-2.php", 
-        [], 
-        [], 
-        "" 
+        "Новая страница 2",
+        "/test-menu/new-page-2.php",
+        [],
+        [],
+        ""
     ]
 ];
 ?>
@@ -727,8 +727,8 @@ $aMenuLinks = [
 
    ```php
    <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-   
-   global $APPLICATION; 
+
+   global $APPLICATION;
    $aMenuLinksExt = $APPLICATION->IncludeComponent(…
    ```
 
@@ -743,7 +743,7 @@ $aMenuLinks = [
     ```php
     <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 
-    global $APPLICATION; 
+    global $APPLICATION;
     $aMenuLinksExt = $APPLICATION->IncludeComponent(
         "bitrix:menu.sections",
         "",
@@ -838,7 +838,7 @@ $aMenuLinks = [
         <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
     <?php else:?>
         <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
-    <?php endif ?>
+    <?php endif; ?>
     ```
 
 12. Замените его на код:
@@ -856,7 +856,7 @@ $aMenuLinks = [
                 <img src="<?= (array_key_exists("NOACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["NOACT"]) ? $arItem["PARAMS"]["NOACT"] : "/images/menu/default.png") ?>" />
             </a>
         </li>
-    <?php endif?>
+    <?php endif; ?>
     ```
 
 13. Сохраните шаблон.
@@ -1046,7 +1046,7 @@ else
 
 ```php
 <?php if (!empty($arResult)): ?>
-<?php 
+<?php
 // Определяем, какие пункты меню должны быть открыты для дерева
 $lastLevel = 0;
 $selected = false;
@@ -1068,7 +1068,7 @@ foreach(array_reverse($arResult) as $arItem)
 ?>
 <div class="menu-sitemap-tree">
 <ul>
-<?php 
+<?php
 $previousLevel = 0;
 foreach($arResult as $arItem): ?>
 ```

@@ -66,7 +66,7 @@ return [
             'mode' => 'default',
             'handlers' => [
                 'general' => [
-                    'type' => 'redis',   
+                    'type' => 'redis',
                     'servers' => [
                         [
                             'port' => 6379,
@@ -89,7 +89,7 @@ return [
                 ],
             ],
         ]
-    ] 
+    ]
 ];
 ```
 
@@ -144,7 +144,7 @@ $connection->get('foo');
 
 /**
  * Можно получить объект подключения напрямую
- * 
+ *
  * @var \Redis
  */
 $resource = $connection->getResource();
@@ -200,12 +200,12 @@ $resource->setnx('foo', 'bar');
                 [
                     'port' => 11211,
                     'host' => '127.0.0.1',
-                    'weight' => 1,  
+                    'weight' => 1,
                 ],
                 [
                     'port' => 11211,
                     'host' => '127.0.0.2',
-                    'weight' => 1, 
+                    'weight' => 1,
                 ],
             ],
         ],
@@ -228,7 +228,7 @@ $connection->get('foo');
 
 /**
  * Можно получить объект подключения напрямую
- * 
+ *
  * @var \Memcached
  */
 $resource = $connection->getResource();

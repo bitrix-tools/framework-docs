@@ -321,7 +321,7 @@ description: 'Проактивная защита. Руководство по �
 
    ```
    <Directory /home/bitrix/www/upload/support/not_image> AllowOverride none Order allow,deny Deny from all </Directory> <Directory /home/bitrix/www/upload> AllowOverride none AddType text/plain php .php3 .php4 .php5 .php6 .phtml .pl .asp .aspx .cgi .dll .exe .ico .shtm .shtml .fcg .fcgi .fpl .asmx .pht .py .psp php_value engine off </Directory>
-       
+
    ```
 
 {% endcut %}

@@ -79,7 +79,7 @@ use Bitrix\Main\Event;
 
 final class TicketClosedEvent extends Event
 {
-    public function __construct( 
+    public function __construct(
         public readonly int $ticketId,
         public readonly ?string $closeReason,
     )

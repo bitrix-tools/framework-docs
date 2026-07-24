@@ -144,11 +144,11 @@ $helper->formatDate('DD.MM.YYYY HH:MI'); // %d.%m.%Y %H:%i
 
 ```php
 // Форматирование столбца
-$helper->formatDate('DD.MM.YYYY HH:MI', $helper->quote('column_name')); 
+$helper->formatDate('DD.MM.YYYY HH:MI', $helper->quote('column_name'));
 // DATE_FORMAT(`column_name`, '%d.%m.%Y %H:%i')
 
 // Форматирование конкретного значения
-$helper->formatDate('DD.MM.YYYY HH:MI', $helper->convertToDb('2024-01-01')); 
+$helper->formatDate('DD.MM.YYYY HH:MI', $helper->convertToDb('2024-01-01'));
 // DATE_FORMAT('2024-01-01', '%d.%m.%Y %H:%i')
 ```
 
@@ -159,11 +159,11 @@ $helper->formatDate('DD.MM.YYYY HH:MI', $helper->convertToDb('2024-01-01'));
 $helper->addSecondsToDateTime(60); // DATE_ADD(NOW(), INTERVAL 60 SECOND)
 
 // К значению столбца
-$helper->addSecondsToDateTime(60, $helper->quote('column')); 
+$helper->addSecondsToDateTime(60, $helper->quote('column'));
 // DATE_ADD(`column`, INTERVAL 60 SECOND)
 
 // К конкретной дате
-$helper->addSecondsToDateTime(60, $helper->convertToDb('2024-01-01')); 
+$helper->addSecondsToDateTime(60, $helper->convertToDb('2024-01-01'));
 // DATE_ADD('2024-01-01', INTERVAL 60 SECOND)
 ```
 
@@ -174,11 +174,11 @@ $helper->addSecondsToDateTime(60, $helper->convertToDb('2024-01-01'));
 $helper->addDaysToDateTime(60); // DATE_ADD(NOW(), INTERVAL 60 DAY)
 
 // К значению столбца
-$helper->addDaysToDateTime(60, $helper->quote('column')); 
+$helper->addDaysToDateTime(60, $helper->quote('column'));
 // DATE_ADD(`column`, INTERVAL 60 DAY)
 
 // К конкретной дате
-$helper->addDaysToDateTime(60, $helper->convertToDb('2024-01-01')); 
+$helper->addDaysToDateTime(60, $helper->convertToDb('2024-01-01'));
 // DATE_ADD('2024-01-01', INTERVAL 60 DAY)
 ```
 
@@ -252,7 +252,7 @@ $helper->getSha1Function($helper->quote('column_name')); // sha1(`column_name`)
 Найти совпадения в тексте:
 
 ```php
-$helper->getMatchFunction($helper->quote('column_name'), $helper->convertToDb('value')); 
+$helper->getMatchFunction($helper->quote('column_name'), $helper->convertToDb('value'));
 // MATCH (`column_name`) AGAINST ('value' IN BOOLEAN MODE)
 ```
 

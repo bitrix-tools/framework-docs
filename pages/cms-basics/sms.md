@@ -233,14 +233,14 @@ EventManager::getInstance()->addEventHandler(
     function(\Bitrix\Main\Event $event) {
         // Получаем объект сообщения
         $msg = $event->getParameter('message');
-        
+
         // Проверяем формат номера телефона
         if (!preg_match('/^\+?[1-9]\d{7,14}$/', $msg->getTo()))
         {
             // Если номер невалидный — отменяем отправку
             return new EventResult(EventResult::ERROR);
         }
-        
+
         // Если все проверки пройдены, сообщение будет отправлено
     }
 );
@@ -332,7 +332,7 @@ $sender = \Bitrix\MessageService\Sender\SmsManager::getSenderById(
 -  зарегистрируйте класс через событие.
 
 ```php
-$eventManager = \Bitrix\Main\EventManager::getInstance(); 
+$eventManager = \Bitrix\Main\EventManager::getInstance();
 $eventManager->registerEventHandler(
     'messageservice',
     'onGetSmsSenders',
@@ -493,7 +493,7 @@ EventManager::getInstance()->addEventHandler(
     'OnMessageSuccessfullySent',
     function(Event $event) {
         $messageId = $event->getParameter('ID');
-        
+
         // Запишем успешную отправку сообщения
         AddMessage2Log("СМС отправлено. ID: {$messageId}", 'messageservice');
     }

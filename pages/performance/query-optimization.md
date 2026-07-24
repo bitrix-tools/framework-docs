@@ -28,7 +28,7 @@ description: 'Как оптимизировать запросы к базе д�
    ```php
    // Создаем массив для хранения ID товаров
    $arIDs = array();
-   
+
    // Перебираем заказы и товары в корзине
    foreach($arResult["ORDERS"] as $key => $val)
    {
@@ -38,7 +38,7 @@ description: 'Как оптимизировать запросы к базе д�
            $arIDs[] = $vvval["PRODUCT_ID"];
        }
    }
-   
+
    // Если массив не пустой, выполняем один запрос
    if (!empty($arIDs))
    {
@@ -49,7 +49,7 @@ description: 'Как оптимизировать запросы к базе д�
            false,
            ["ID", "NAME"]
        );
-   
+
    // Наполняем данные, используя ID
    foreach($arResult["ORDERS"] as $key => $val)
    {

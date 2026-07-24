@@ -579,9 +579,9 @@ define("BX_CRONTAB_SUPPORT", false);
    ```php
    <?php
    use Bitrix\Main\Localization\Loc;
-   
+
    if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-   
+
    $arComponentDescription = [
        'NAME' => Loc::getMessage('SBBS_DEFAULT_TEMPLATE_NAME'),
        'TYPE' => 'mail',
@@ -672,24 +672,24 @@ $arTemplate = [
 <div style="padding: 41px 0 24px;max-width: 732px;margin: 0 auto;">
 <?php
     $str24 = '<span style="color: #c2d1d6;">24</span>';
-    
+
     $companyName = (
         IsModuleInstalled('bitrix24')
             ? \Bitrix\Main\Config\Option::get('bitrix24', 'site_title', '')
             : \Bitrix\Main\Config\Option::get('main', 'site_name', '')
     );
-    
+
     if (empty($companyName))
     {
         $companyName = $arParams["SITE_NAME"];
     }
-    
+
     $companyName .= (
         IsModuleInstalled('bitrix24')
             ? (\Bitrix\Main\Config\Option::get("bitrix24", "logo24show", "Y") == "Y" ? $str24 : '')
             : $str24
     );
-    
+
     ?>
     <h1 style="color: #ffffff;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 35px;font-weight: bold;margin: 0;padding: 0;"><?= $companyName ?></h1>
 </div>

@@ -54,16 +54,16 @@ use Bitrix\Main\Error;
 function updateUserData(int $userId, array $fields): Result
 {
     $result = new Result();
-    
+
     if ($userId <= 0)
     {
         $result->addError(new Error('Неверный ID пользователя', 'INVALID_USER_ID'));
         return $result;
     }
-    
+
     // Обновляем данные
     $updateResult = someUpdateFunction($userId, $fields);
-    
+
     if ($updateResult === false)
     {
         $result->addError(new Error('Ошибка при обновлении данных', 'UPDATE_FAILED'));
@@ -72,7 +72,7 @@ function updateUserData(int $userId, array $fields): Result
     {
         $result->setData(['UPDATED_FIELDS' => $fields]);
     }
-    
+
     return $result;
 }
 

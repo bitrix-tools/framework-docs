@@ -16,7 +16,7 @@ description: 'Отладка запросов. Работа с базой дан
 Метод `startTracker` запускает трекинг.
 
 ```php
-$tracker = \Bitrix\Main\Application::getConnection()->startTracker(true);  
+$tracker = \Bitrix\Main\Application::getConnection()->startTracker(true);
 ```
 
 -  `true` — начинает новый трекинг и прерывает предыдущий.
@@ -26,8 +26,8 @@ $tracker = \Bitrix\Main\Application::getConnection()->startTracker(true);
 ## Выполнить запрос
 
 ```php
-// Пример явного SQL-запроса  
-\Bitrix\Main\Application::getConnection()->query("UPDATE b_user SET NAME='Test' WHERE ID=1");  
+// Пример явного SQL-запроса
+\Bitrix\Main\Application::getConnection()->query("UPDATE b_user SET NAME='Test' WHERE ID=1");
 ```
 
 ## Получить результат
@@ -36,10 +36,10 @@ $tracker = \Bitrix\Main\Application::getConnection()->startTracker(true);
 foreach ($tracker->getQueries() as $query)
 {
     print_r([
-        $query->getSql(),      // текст запроса  
-        $query->getTime(),     // время в секундах  
-        $query->getTrace(),   // стек вызовов  
-        $query->getNode(),    // ID ноды кластера или null  
+        $query->getSql(),      // текст запроса
+        $query->getTime(),     // время в секундах
+        $query->getTrace(),   // стек вызовов
+        $query->getNode(),    // ID ноды кластера или null
         $query->getBinds(),  // параметры запроса
     ]);
 }

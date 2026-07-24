@@ -161,7 +161,7 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
    <tbody>
    <tr>
        <td>
-             <img width="131" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCg0KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIiBbDQoJPCFFTlRJVFkgbnNfZXh0ZW5kICJodHRwOi8vbnMuYWRvYmUuY29tL0V4dGVuc2liaWxpdHkvMS4wLyI+DQoJPCFFTlRJVFkgbnNfYWkgImh0dHA6Ly9ucy5hZG9iZS5jb20vQWRvYmVJbGx1c3RyYXRvci8xMC4wLyI+DQoJPCFFTlRJVFkgbnNfZ3JhcGhzICJodHRwOi8vbnMuYWRvYmUuY29tL0dyYXBocy8xLjAvIj4NCgk8IUVOVElUWSBuc192YXJzICJodHRwOi8vbnMuYWRvYmUuY29tL1ZhcmlhYmxlcy8xLjAvIj4NCgk8IUVOVElUWSBuc19pbXJlcCAiaHR0cDovL25zLmFkb2JlLmNvbS9JbWFnZVJlcGxhY2VtZW50LzEuMC8iPg0KCTwhRU5USVRZIG5zX3NmdyAiaHR0cDovL25zLmFkb2JlLmNvbS9TYXZlRm9yV2ViLzEuMC8iPg0KCTwhRU5USVRZIG5zX2N1c3RvbSAiaHR0cDovL25zLmFkb2JlLmNvbS9HZW5lcmljQ3VzdG9tTmFtZXNwYWNlLzEuMC8iPg0KCTwhRU5USVRZIG5zX2Fkb2JlX3hwYXRoICJodHRwOi8vbnMuYWRvYmUuY29tL1hQYXRoLzEuMC8iPg0KXT4NCjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+CjxzdmcgZmlsbD0iIzAwMDAwMCIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM6eD0iJm5zX2V4dGVuZDsiIHhtbG5zOmk9IiZuc19haTsiIHhtbG5zOmdyYXBoPSImbnNfZ3JhcGhzOyINCgkgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCINCgkgdmlld0JveD0iMCAwIDI0IDI0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8bWV0YWRhdGE+DQoJPHNmdyAgeG1sbnM9IiZuc19zZnc7Ij4NCgkJPHNsaWNlcz4KDTwvc2xpY2VzPg0KCQk8c2xpY2VTb3VyY2VCb3VuZHMgIHdpZHRoPSI1MDUiIGhlaWdodD0iOTg0IiBib3R0b21MZWZ0T3JpZ2luPSJ0cnVlIiB4PSIwIiB5PSItNTUyIj4KDTwvc2xpY2VTb3VyY2VCb3VuZHM+DQoJPC9zZnc+DQo8L21ldGFkYXRhPg0KPGc+DQoJPGc+DQoJCTxnPg0KCQkJPHBhdGggZD0iTTIzLDIzSDFjLTAuNCwwLTAuNy0wLjItMC45LTAuNWMtMC4yLTAuMy0wLjItMC43LDAtMWwxMS0yMGMwLjQtMC42LDEuNC0wLjYsMS44LDBsMTEsMjBjMC4yLDAuMywwLjIsMC43LDAsMQ0KCQkJCUMyMy43LDIyLjgsMjMuNCwyMywyMywyM3ogTTIuNywyMWgxOC42TDEyLDQuMUwyLjcsMjF6Ii8+DQoJCTwvZz4NCgk8L2c+DQoJPGc+DQoJCTxnPg0KCQkJPHBhdGggZD0iTTEyLDE2Yy0wLjYsMC0xLTAuNC0xLTF2LTVjMC0wLjYsMC40LTEsMS0xczEsMC40LDEsMXY1QzEzLDE1LjYsMTIuNiwxNiwxMiwxNnoiLz4NCgkJPC9nPg0KCTwvZz4NCgk8Zz4NCgkJPGc+DQoJCQk8Y2lyY2xlIGN4PSIxMiIgY3k9IjE4IiByPSIxIi8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8cGF0aCBkPSJNMTIsMTkuNWMtMC44LDAtMS41LTAuNy0xLjUtMS41czAuNy0xLjUsMS41LTEuNXMxLjUsMC43LDEuNSwxLjVTMTIuOCwxOS41LDEyLDE5LjV6IE0xMiwxNy41Yy0wLjMsMC0wLjUsMC4yLTAuNSwwLjUNCgkJCQlzMC4yLDAuNSwwLjUsMC41czAuNS0wLjIsMC41LTAuNVMxMi4zLDE3LjUsMTIsMTcuNXoiLz4NCgkJPC9nPg0KCTwvZz4NCjwvZz4NCjwvc3ZnPg==" height="157"> 
+             <img width="131" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCg0KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIiBbDQoJPCFFTlRJVFkgbnNfZXh0ZW5kICJodHRwOi8vbnMuYWRvYmUuY29tL0V4dGVuc2liaWxpdHkvMS4wLyI+DQoJPCFFTlRJVFkgbnNfYWkgImh0dHA6Ly9ucy5hZG9iZS5jb20vQWRvYmVJbGx1c3RyYXRvci8xMC4wLyI+DQoJPCFFTlRJVFkgbnNfZ3JhcGhzICJodHRwOi8vbnMuYWRvYmUuY29tL0dyYXBocy8xLjAvIj4NCgk8IUVOVElUWSBuc192YXJzICJodHRwOi8vbnMuYWRvYmUuY29tL1ZhcmlhYmxlcy8xLjAvIj4NCgk8IUVOVElUWSBuc19pbXJlcCAiaHR0cDovL25zLmFkb2JlLmNvbS9JbWFnZVJlcGxhY2VtZW50LzEuMC8iPg0KCTwhRU5USVRZIG5zX3NmdyAiaHR0cDovL25zLmFkb2JlLmNvbS9TYXZlRm9yV2ViLzEuMC8iPg0KCTwhRU5USVRZIG5zX2N1c3RvbSAiaHR0cDovL25zLmFkb2JlLmNvbS9HZW5lcmljQ3VzdG9tTmFtZXNwYWNlLzEuMC8iPg0KCTwhRU5USVRZIG5zX2Fkb2JlX3hwYXRoICJodHRwOi8vbnMuYWRvYmUuY29tL1hQYXRoLzEuMC8iPg0KXT4NCjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+CjxzdmcgZmlsbD0iIzAwMDAwMCIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM6eD0iJm5zX2V4dGVuZDsiIHhtbG5zOmk9IiZuc19haTsiIHhtbG5zOmdyYXBoPSImbnNfZ3JhcGhzOyINCgkgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCINCgkgdmlld0JveD0iMCAwIDI0IDI0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8bWV0YWRhdGE+DQoJPHNmdyAgeG1sbnM9IiZuc19zZnc7Ij4NCgkJPHNsaWNlcz4KDTwvc2xpY2VzPg0KCQk8c2xpY2VTb3VyY2VCb3VuZHMgIHdpZHRoPSI1MDUiIGhlaWdodD0iOTg0IiBib3R0b21MZWZ0T3JpZ2luPSJ0cnVlIiB4PSIwIiB5PSItNTUyIj4KDTwvc2xpY2VTb3VyY2VCb3VuZHM+DQoJPC9zZnc+DQo8L21ldGFkYXRhPg0KPGc+DQoJPGc+DQoJCTxnPg0KCQkJPHBhdGggZD0iTTIzLDIzSDFjLTAuNCwwLTAuNy0wLjItMC45LTAuNWMtMC4yLTAuMy0wLjItMC43LDAtMWwxMS0yMGMwLjQtMC42LDEuNC0wLjYsMS44LDBsMTEsMjBjMC4yLDAuMywwLjIsMC43LDAsMQ0KCQkJCUMyMy43LDIyLjgsMjMuNCwyMywyMywyM3ogTTIuNywyMWgxOC42TDEyLDQuMUwyLjcsMjF6Ii8+DQoJCTwvZz4NCgk8L2c+DQoJPGc+DQoJCTxnPg0KCQkJPHBhdGggZD0iTTEyLDE2Yy0wLjYsMC0xLTAuNC0xLTF2LTVjMC0wLjYsMC40LTEsMS0xczEsMC40LDEsMXY1QzEzLDE1LjYsMTIuNiwxNiwxMiwxNnoiLz4NCgkJPC9nPg0KCTwvZz4NCgk8Zz4NCgkJPGc+DQoJCQk8Y2lyY2xlIGN4PSIxMiIgY3k9IjE4IiByPSIxIi8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8cGF0aCBkPSJNMTIsMTkuNWMtMC44LDAtMS41LTAuNy0xLjUtMS41czAuNy0xLjUsMS41LTEuNXMxLjUsMC43LDEuNSwxLjVTMTIuOCwxOS41LDEyLDE5LjV6IE0xMiwxNy41Yy0wLjMsMC0wLjUsMC4yLTAuNSwwLjUNCgkJCQlzMC4yLDAuNSwwLjUsMC41czAuNS0wLjIsMC41LTAuNVMxMi4zLDE3LjUsMTIsMTcuNXoiLz4NCgkJPC9nPg0KCTwvZz4NCjwvZz4NCjwvc3ZnPg==" height="157">
        </td>
        <td>
             Внимание! Важная информация о [<i>внесите нужную информацию</i>].<br>
@@ -192,7 +192,7 @@ $MESS['sect_inc'] = "Включаемая область для раздела";
 
    ```php
    use Bitrix\Main\Localization\Loc;
-   
+
    $TEMPLATE["announcement.php"] = ["name" => Loc::getMessage("announcement"), "sort" => 2];
    ```
 
@@ -468,11 +468,11 @@ $MESS['BT_COL_4'] = "Мозаика";
    ```php
    <?php
    use Bitrix\Main\Localization\Loc;
-   
+
    if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
-   
+
    CPageTemplate::IncludeLangFile(__FILE__);
-   
+
    class CMyNewPageTemplate
    {
        function GetDescription()
@@ -482,18 +482,18 @@ $MESS['BT_COL_4'] = "Мозаика";
                "description" => Loc::getMessage("bt_wizard_title"),
            );
        }
-   
+
    // Описываем новый шаг мастера создания страницы
        function GetFormHtml()
        {
-   
+
    // Первый вопрос
            $s = '
    <tr class="section">
        <td>'.Loc::getMessage("BT_TYPE_1").'</td>
    </tr>
    ';
-   
+
    // Варианты ответа на первый вопрос
            $s .= '
    <tr>
@@ -509,14 +509,14 @@ $MESS['BT_COL_4'] = "Мозаика";
        </td>
    </tr>
    ';
-   
+
    // Второй вопрос
            $s .= '
    <tr class="section">
        <td>'.Loc::getMessage("BT_TYPE_2").'</td>
    </tr>
    ';
-   
+
    // Варианты ответа на второй вопрос
            $s .= '
    <tr>
@@ -532,14 +532,14 @@ $MESS['BT_COL_4'] = "Мозаика";
        </td>
    </tr>
    ';
-   
+
            return $s;
        }
-   
+
    // Описываем шаблон в зависимости от выбранных вариантов
        function GetContent($arParams)
        {
-   
+
    // Начало шаблона Объявление
            $myNewHtml = '
    <h3>Объявление!</h3>
@@ -549,7 +549,7 @@ $MESS['BT_COL_4'] = "Мозаика";
    <tbody>
    <tr>
        <td>';
-   
+
    // Изменение шаблона в зависимости от ответа на первой вопрос об изображении
            if (isset($_POST['BT_COL_1']))
            {
@@ -569,8 +569,8 @@ $MESS['BT_COL_4'] = "Мозаика";
                    }
                }
            }
-   
-   
+
+
    // Продолжение шаблона
            $myNewHtml .= '
        </td>
@@ -582,7 +582,7 @@ $MESS['BT_COL_4'] = "Мозаика";
    </tbody>
    </table>
     <br>';
-   
+
    // Изменение шаблона в зависимости от ответа на второй вопрос об обратной связи
            if (isset($_POST['BT_COL_2']))
            {
@@ -618,7 +618,7 @@ $MESS['BT_COL_4'] = "Мозаика";
            $myNewHtml.= '
    </div>
    ';
-   
+
    // Формируем готовый шаблон
            $s = '<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>';
            $s.= $myNewHtml;
@@ -626,7 +626,7 @@ $MESS['BT_COL_4'] = "Мозаика";
            return $s;
        }
    }
-   
+
    $pageTemplate = new CMyNewPageTemplate;
    ?>
    ```

@@ -70,7 +70,7 @@ class BookTable extends \Bitrix\Main\Entity\DataManager
     public static function fetchDataModification(): array
     {
         return [
-            function ($data) 
+            function ($data)
             {
                 if (isset($data['PUBLISH_DATE']))
                 {
@@ -538,7 +538,7 @@ use Bitrix\Main\ORM\Query\Query;
 
 class UserTable
 {
-    // Метод withActive добавляет условие фильтрации по полю ACTIVE   
+    // Метод withActive добавляет условие фильтрации по полю ACTIVE
     public static function withActive(Query $query)
     {
         $query->where('ACTIVE', true); // Фильтр ACTIVE = true
@@ -547,7 +547,7 @@ class UserTable
 
 // Использование метода withActive
 $activeUsers = UserTable::query()
-    ->withActive() // Применяем фильтр для активных пользователей   
+    ->withActive() // Применяем фильтр для активных пользователей
     ->fetchCollection() // Выполняем запрос и получаем коллекцию
 ;
 // WHERE `ACTIVE`='Y'
@@ -579,7 +579,7 @@ $activeUsers = UserTable::query()
     ->withActive(false) // Применяем фильтр для неактивных пользователей
     ->fetchCollection() // Выполняем запрос и получаем коллекцию
 ;
-    
+
 // SELECT `LOGIN` ... WHERE `ACTIVE`='N'
 ```
 
@@ -664,7 +664,7 @@ $books = $query->fetchCollection();
 /*
 SELECT ... FROM `b_books`
 LEFT JOIN `b_books_authors` ...
-LIMIT 5 
+LIMIT 5
 */
 ```
 

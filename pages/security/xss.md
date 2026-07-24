@@ -109,9 +109,9 @@ $someData = htmlspecialcharsbx($someData);
 -  добавляет Unicode-экранирование.
 
 ```php
-<?php 
+<?php
 // Массив с пользовательскими данными
-$foo = ['key' => $userInput]; 
+$foo = ['key' => $userInput];
 ?>
 <script>
   // Безопасный вывод: <script> и другие спецсимволы экранированы

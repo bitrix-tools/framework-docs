@@ -113,7 +113,7 @@ BitrixVue.createApp({...}).mount('#application');
 
    ```javascript
    import {BitrixVue} from 'ui.vue3';
-   
+
    const app = BitrixVue.createApp({
        name: 'MyApp', // Имя для отладки в Vue DevTools
        data() {
@@ -123,7 +123,7 @@ BitrixVue.createApp({...}).mount('#application');
            <div>{{ message }}</div>
        `
    });
-   
+
    app.mount('#my-app');
    ```
 
@@ -259,7 +259,7 @@ BitrixVue поддерживает два типа компонентов.
 
    ```javascript
    import {BitrixVue} from 'ui.vue3';
-   
+
    // Имя компонента должно быть в формате 'модуль-компонент'
    export const MyWidget = BitrixVue.mutableComponent('mymodule-widget', {
        name: 'MyWidget',
@@ -292,7 +292,7 @@ BitrixVue поддерживает два типа компонентов.
 import {BitrixVue} from 'ui.vue3';
 
 export const MyComponent = {
-    
+
     emits: ['buttonClicked'], // Локальные события Vue
 
     props: {
@@ -729,7 +729,7 @@ created() {
     rest.callMethod('user.get', { ID: 1 }).then(response => {
         console.log(response.data());
     });
-    
+
     const pull = this.$Bitrix.PullClient.get();
     pull.subscribe({
         moduleId: 'im',
@@ -765,7 +765,7 @@ created() {
    ```javascript
    // Дочерний компонент
    this.$emit('update', data);
-   
+
    // Родительский компонент
    <ChildComponent @update="handleUpdate" />
    ```
@@ -775,7 +775,7 @@ created() {
    ```javascript
    // Отправка
    this.$Bitrix.eventEmitter.emit('module:component:action', data);
-   
+
    // Подписка
    this.$Bitrix.eventEmitter.subscribe('module:component:action', handler);
    ```
@@ -784,10 +784,10 @@ created() {
 
    ```javascript
    import {EventEmitter} from 'main.core.events';
-   
+
    // Отправка
    EventEmitter.emit('global:event', data);
-   
+
    // Подписка
    EventEmitter.subscribe('global:event', handler);
    ```
@@ -963,7 +963,7 @@ const DBItems = {
             db,
             // Реактивный запрос: выбираем элементы, имена которых начинаются на 'A'
             items: useObservable(
-                liveQuery(() => 
+                liveQuery(() =>
                     db.items
                         .where('name')
                         .startsWithAnyOf('A', 'a')
@@ -1027,7 +1027,7 @@ BitrixVue.createApp({
         <div style="border: 1px solid green; padding: 10px;">
             <div>Контент внутри Vue-приложения</div>
             <button @click="showModal = true">Открыть модальное окно</button>
-            
+
             <teleport to="#modal-container" :disabled="!showModal">
                 <div v-if="showModal" class="modal" style="border: 2px solid blue; padding: 20px;">
                     <p>Содержимое модального окна, отрендеренное через teleport</p>

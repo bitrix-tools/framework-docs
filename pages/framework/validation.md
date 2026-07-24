@@ -38,7 +38,7 @@ public function __construct(int $userId)
        private ?int $id;
        private ?string $email;
        private ?string $phone;
-        
+
        // getters & setters ...
    }
    ```
@@ -50,19 +50,19 @@ public function __construct(int $userId)
    use Bitrix\Main\Validation\Rule\Email;
    use Bitrix\Main\Validation\Rule\Phone;
    use Bitrix\Main\Validation\Rule\PositiveNumber;
-   
+
    #[AtLeastOnePropertyNotEmpty(['email', 'phone'])]
    final class User
    {
        #[PositiveNumber]
        private ?int $id;
-       
+
        #[Email]
        private ?string $email;
-    
+
        #[Phone]
        private ?string $phone;
-    
+
        // getters & setters...
    }
    ```
@@ -75,28 +75,28 @@ public function __construct(int $userId)
    use Bitrix\Main\DI\ServiceLocator;
    use Bitrix\Main\Result;
    use Bitrix\Main\Validation\ValidationService;
-   
+
    class UserService
    {
        private ValidationService $validation;
-       
+
        public function __construct()
        {
            $this->validation = ServiceLocator::getInstance()->get('main.validation.service');
        }
-       
+
        public function create(?string $email, ?string $phone): Result
        {
            $user = new User();
            $user->setEmail($email);
            $user->setPhone($phone);
-           
+
            $result = $this->validation->validate($user);
            if (!$result->isSuccess())
            {
                return $result;
            }
-           
+
            // save logic ...
        }
    }
@@ -206,7 +206,7 @@ final class UserSettingsDto
         // Все элементы массива должны быть целыми числами
         #[ElementsType(Type::Integer)] // Используем элемент перечисления
         public array $favoriteIds = []
-    ) 
+    )
     {}
 }
 
@@ -290,10 +290,10 @@ final class CreateUserDto
     public function __construct(
         #[PhoneOrEmail]
         public ?string $login,
-        
+
         #[NotEmpty]
         public ?string $password,
-        
+
         #[NotEmpty]
         public ?string $passwordRepeat,
     )
@@ -312,29 +312,29 @@ use Bitrix\Main\Validation\ValidationService;
 class UserController extends Controller
 {
     private ValidationService $validation;
-    
+
     protected function init()
     {
         parent::init();
-        
+
         $this->validation = ServiceLocator::getInstance()->get('main.validation.service');
     }
-    
+
     public function createAction(): Result
     {
         $dto = new CreateUserDto();
         $dto->login = (string)$this->getRequest()->get('login');
         $dto->password = (string)$this->getRequest()->get('password');
         $dto->passwordRepeat = (string)$this->getRequest()->get('passwordRepeat');
-        
+
         $result = $this->validation->validate($dto);
         if (!$result->isSuccess())
         {
             $this->addErrors($result->getErrors());
-            
+
             return false;
         }
-        
+
         // create logic ...
     }
 }
@@ -352,15 +352,15 @@ final class CreateUserDto
     public function __construct(
         #[PhoneOrEmail]
         public ?string $login = null,
-        
+
         #[NotEmpty]
         public ?string $password = null,
-        
+
         #[NotEmpty]
         public ?string $passwordRepeat = null,
     )
     {}
-    
+
     public static function createFromRequest(\Bitrix\Main\HttpRequest $request): self
     {
         return new static(
@@ -389,7 +389,7 @@ class UserController extends Controller
             ),
         ];
     }
-    
+
     public function createAction(CreateUserDto $dto): Result
     {
         // create logic ...
@@ -692,7 +692,7 @@ class NotOne extends AbstractClassValidationAttribute
     {
         $result = new ValidationResult();
         $properties = (new ReflectionClass($object))->getProperties();
-        
+
         if (count($properties) > 2)
         {
             $result->addError(new ValidationError('Класс содержит слишком много свойств'));

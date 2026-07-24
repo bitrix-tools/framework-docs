@@ -144,7 +144,7 @@ final class Post extends Controller
    ```php
    use Bitrix\Main\Routing\RoutingConfigurator;
    use My\Blog\Infrastructure\Controller\Post;
-   
+
    return static function (RoutingConfigurator $routes) {
        $routes
            ->prefix('blog')
@@ -376,7 +376,7 @@ GET /bitrix/services/main/ajax.php?action=my:blog.Post.get&code=my-first-blog
    ```php
    use Bitrix\Main\Routing\RoutingConfigurator;
    use My\Blog\Infrastructure\Controller\Web\Post;
-   
+
    return static function (RoutingConfigurator $routes) {
        $routes
            ->prefix('blog')

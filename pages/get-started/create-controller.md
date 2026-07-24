@@ -325,12 +325,12 @@ $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text
         >
     </div>
     <?php endif; ?>
-    
+
     <div class="my-user-card__info">
         <h2 class="my-user-card__name">
             <?= $arResult['NAME'] ?>
         </h2>
-        
+
         <?php if ($arParams['SHOW_EMAIL'] === 'Y'): ?>
         <p class="my-user-card__email">
             <span><?= Loc::getMessage('USER_CARD_EMAIL_LABEL') ?></span>
@@ -340,7 +340,7 @@ $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text
     </div>
     <?php if ($USER->IsAuthorized()): ?>
     <div class="my-user-card__like-container">
-        <span 
+        <span
             class="my-user-card__like-text js-my-user-card-like <?= $additionalUserCardContainers ?>"
             data-user-id="<?= $arParams['USER_ID'] ?>"
         >
@@ -368,7 +368,7 @@ BX.ready(() => {
     document.querySelectorAll('.js-my-user-card-like').forEach((element) => {
         BX.Event.bind(element, 'click', (e) => {
             const userId = element.dataset.userId;
-            
+
             // Отправляем AJAX-запрос к контроллеру
             BX.ajax.runAction(
                 'my:module.user.like',

@@ -235,9 +235,9 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
             src="<?= $arResult['PERSONAL_PHOTO_SRC'] ?>"
             alt="<?= $arResult['NAME'] ?>"
         >
-    </div>    
+    </div>
     <?php endif; ?>
-    
+
     <div class="my-user-card__info">
         <h2 class="my-user-card__name">
             <?= $arResult['NAME'] ?>

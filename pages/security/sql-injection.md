@@ -20,7 +20,7 @@ SQL-инъекция — уязвимость, которая позволяет
    ```php
    // Опасный SQL запрос
    SELECT * FROM b_user WHERE id=$_REQUEST['id'];
-   
+
    // Безопасный вариант
    $id = intval($_REQUEST['id']);
    $res = $DB->Query("SELECT * FROM b_user WHERE id=$id");
@@ -32,7 +32,7 @@ SQL-инъекция — уязвимость, которая позволяет
    // Опасный запрос
    $login = $_REQUEST['login'];
    $res = $DB->Query("SELECT * FROM b_user WHERE LOGIN='$login'");
-   
+
    // Безопасный запрос
    $login = $DB->ForSql($_REQUEST['login']);
    $res = $DB->Query("SELECT * FROM b_user WHERE LOGIN='$login'");
@@ -157,11 +157,11 @@ $result = \Bitrix\Main\UserTable::getList([
 ```php
 $filterIds = [1, 2, 3, $_GET['id']]; // $_GET['id'] содержит вредоносный код
 
-//$_GET['id'] = (select * from b_user where login="admin") 
+// $_GET['id'] = (select * from b_user where login="admin")
 
 $filterList = \Bitrix\Disk\Internals\VolumeTable::getList([
    'filter' => [
-      '@ID' => new \Bitrix\Main\DB\SqlExpression(implode(', ', $filterIds)), 
+      '@ID' => new \Bitrix\Main\DB\SqlExpression(implode(', ', $filterIds)),
       // Может привести к выполнению произвольного SQL-кода
    ],
 ]);.

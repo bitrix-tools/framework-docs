@@ -129,19 +129,19 @@ return static function (RoutingConfigurator $routes) {
            ];
        }
    }
-   
+
    class BlogIndexAction extends \Bitrix\Main\Engine\Action implements \Bitrix\Main\Engine\Contract\RoutableAction
    {
        public static function getControllerClass()
        {
            return BlogController::class;
        }
-   
+
        public static function getDefaultName()
        {
            return 'view';
        }
-   
+
        public function run()
        {
            // ...

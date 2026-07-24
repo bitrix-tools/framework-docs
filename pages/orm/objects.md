@@ -466,7 +466,7 @@ echo $book->remindActualTitle(); // "New title"
    $newBook = new \Bitrix\Main\Test\Typography\Book;
    $newBook->setTitle('New title');
    $newBook->save();
-   
+
    $newAuthor = new \Bitrix\Main\Test\Typography\EO_Author;
    $newAuthor->setName('Some name');
    $newAuthor->save();
@@ -669,7 +669,7 @@ $publisher->save();
 $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253)
     ->fetchObject()
 ;
-    
+
 // Удаление всех книг издателя
 $publisher->removeAllBooks();
 // Сохранение

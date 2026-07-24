@@ -573,8 +573,8 @@ $frame->end(); // Завершение динамической зоны
    ```javascript
    BX.localStorage.set("cart_count", 5); // Сохранение данных
    var count = BX.localStorage.get("cart_count"); // Получение данных
-   
-   /* 
+
+   /*
    События localStorage:
     onLocalStorageSet — при сохранении данных.
    onLocalStorageRemove — при удалении данных.
@@ -605,15 +605,15 @@ $frame->setAutoUpdate(false);
 1. `onFrameDataReceivedBefore` — происходит перед началом цикла вставки динамических блоков.
 
    ```javascript
-   BX.addCustomEvent("onFrameDataReceivedBefore", [json]); 
+   BX.addCustomEvent("onFrameDataReceivedBefore", [json]);
    // json — все данные, полученные в композитном AJAX-запросе.
    ```
 
 2. `onBeforeDynamicBlockUpdate` — происходит перед вставкой каждого блока.
 
    ```javascript
-   BX.addCustomEvent("onBeforeDynamicBlockUpdate", [block, fromCache]); 
-   /* 
+   BX.addCustomEvent("onBeforeDynamicBlockUpdate", [block, fromCache]);
+   /*
    block — данные конкретного блока: id, контент и другие параметры.
    fromCache — равен true, если данные вставляются из локальной SQL-базы.
    */

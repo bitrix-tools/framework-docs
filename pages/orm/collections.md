@@ -94,7 +94,7 @@ echo $bookObjects[0]->getId();
 Если нужно получить не сами объекты, а их данные в виде массива, следует использовать метод `collectValues`. Метод преобразует коллекцию в ассоциативный массив, где ключами являются первичные ключи объектов, а значениями — массивы данных, полученные из каждого объекта. Если элементы коллекции имеют составной первичный ключ, он будет преобразован в строку с использованием правил `\Bitrix\Main\ORM\Objectify\Collection::sysGetPrimaryKey`.
 
 ```php
-$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList()->fetchCollection(); 
+$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList()->fetchCollection();
 $books = $bookCollection->collectValues();
 ```
 
@@ -289,7 +289,8 @@ $books->fill(\Bitrix\Main\ORM\Fields\FieldTypeMask::FLAT);
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
     ->fetchCollection()
 ;
-$books->walk(static function($book) {
+$books->walk(static function($book)
+{
     if ($book->getPrice() > 1000)
     {
         $book->setActive(false);
@@ -306,7 +307,8 @@ $saveResult = \Bitrix\Main\Test\Typography\BookTable::query()
     ->addSelect('*')
     ->where('> PRICE', 1000)
     ->fetchCollection()
-    ->walk(static function($book) {
+    ->walk(static function($book)
+    {
         $book->setActive(false);
     })
     ->save()

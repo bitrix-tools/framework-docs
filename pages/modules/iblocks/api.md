@@ -180,9 +180,9 @@ $authorProp = new \CIBlockProperty;
 $result = $authorProp->Add([
     'IBLOCK_ID'     => $iblockId,
     'NAME'          => 'Автор',
-    'CODE'          => 'AUTHOR',      
+    'CODE'          => 'AUTHOR',
     'PROPERTY_TYPE' => 'S',       // строка
-    'MULTIPLE'      => 'N',       // одно значение 
+    'MULTIPLE'      => 'N',       // одно значение
 ]);
 
 if (!$result)
@@ -197,7 +197,7 @@ $result = $tagsProp->Add([
     'IBLOCK_ID'     => $iblockId,
     'NAME'          => 'Теги',
     'CODE'          => 'TAGS',
-    'PROPERTY_TYPE' => 'S',     
+    'PROPERTY_TYPE' => 'S',
     'MULTIPLE'      => 'Y',       // несколько значений
 ]);
 
@@ -292,7 +292,7 @@ $property = new \CIBlockProperty;
 $result = $property->Add([
     'IBLOCK_ID'         => $iblockId,
     'NAME'              => 'Итог',
-    'CODE'              => 'SUMMARY',      
+    'CODE'              => 'SUMMARY',
     'PROPERTY_TYPE'     => 'S',       // строка
     'USER_TYPE'         => 'HTML',    // специальное поле для редактирования текста или кода HTML
     'MULTIPLE'          => 'N',
@@ -367,7 +367,7 @@ ORM позволяет работать с разделами как с полн
 
 ```php
 // News — значение поля «Символьный код API» из настроек инфоблока
-$sectionNewsClass = \Bitrix\Iblock\Model\Section::compileEntityByIblock('News'); 
+$sectionNewsClass = \Bitrix\Iblock\Model\Section::compileEntityByIblock('News');
 ```
 
 В результате получите класс вида `\Bitrix\Iblock\Section{ID}Table`, где `{ID}` — числовой идентификатор инфоблока. Например, `\Bitrix\Iblock\Section10Table`.
@@ -595,7 +595,7 @@ if ($conferenceSection)
 
 ```php
 // удаляем раздел Выставки
-\CIBlockSection::Delete($exhibitionSectionId); 
+\CIBlockSection::Delete($exhibitionSectionId);
 ```
 
 ORM-метод `$section->delete()` применяйте для специфических сценариев, когда требуется самостоятельная обработка дочерних данных.
@@ -979,7 +979,7 @@ $element = $elementNewsClass::query()
 if ($element)
 {
     $gallery = $element->get('GALLERY');
-    
+
     if ($gallery)
     {
         // коллекция PropertyValueCollection
@@ -987,7 +987,7 @@ if ($element)
         {
             $fileId = $other->getValue();
             $description = $other->getDescription();
-            
+
             $fileArray = \CFile::GetFileArray($fileId);
             echo $fileArray['SRC'] . ' — ' . $description . "\n";
         }
@@ -1199,7 +1199,7 @@ if ($element)
 
 ```php
 $element = $elementNewsClass::query()
-    ->where('CODE', 'security-update') // символьный код элемента Обновление системы безопасности 
+    ->where('CODE', 'security-update') // символьный код элемента Обновление системы безопасности
     ->fetchObject()
 ;
 
@@ -1296,7 +1296,7 @@ $templates->set(['ELEMENT_META_TITLE' => '']);
 $values = new InheritedProperty\ElementValues($iblockId, $elementId);
 $seo = $values->getValues();
 
-echo $seo['ELEMENT_META_TITLE']; 
+echo $seo['ELEMENT_META_TITLE'];
 // Мероприятие: Конференция по кибербезопасности — из шаблона раздела
 ```
 
@@ -1381,16 +1381,16 @@ $news = $elementNewsClass::query()
     ->setOrder(['DATE_ACTIVE_FROM' => 'DESC'])
     ->setLimit(10)
     ->fetchCollection()
-    ;
+;
 
 foreach ($news as $item)
 {
     $arResult['NEWS'][] = [
-        'ID'     => $item->getId(),
-        'NAME'   => $item->getName(),
-        'AUTHOR' => $item->get('AUTHOR') ?: '—',
-        'SOURCE' => $item->get('SOURCE')?->getItem()?->getValue() ?: '—',
-        'DATE'   => $item->getDateActiveFrom()?->format('d.m.Y'),
+        'ID'      => $item->getId(),
+        'NAME'    => $item->getName(),
+        'AUTHOR'  => $item->get('AUTHOR') ?: '—',
+        'SOURCE'  => $item->get('SOURCE')?->getItem()?->getValue() ?: '—',
+        'DATE'    => $item->getDateActiveFrom()?->format('d.m.Y'),
         'SECTION' => $item->getIblockSection()?->getName() ?: 'Без раздела',
     ];
 }
@@ -1406,21 +1406,21 @@ foreach ($news as $item)
 $element = $elementNewsClass::query()
     ->setSelect([
         'ID', 'NAME', 'AUTHOR',
-        'PHOTO.VALUE', 'PHOTO.DESCRIPTION', 
+        'PHOTO.VALUE', 'PHOTO.DESCRIPTION',
         'SUMMARY', // HTML-свойство
-        'SECTION_' => 'IBLOCK_SECTION',     
+        'SECTION_' => 'IBLOCK_SECTION',
     ])
     ->where('CODE', $arParams['ELEMENT_CODE'] ?? '')
     ->setLimit(1)
     ->fetchObject()
-    ;
+;
 
 if ($element)
 {
     $arResult['ITEM'] = [
-        'ID'     => $element->getId(),
-        'NAME'   => $element->getName(),
-        'AUTHOR' => $element->get('AUTHOR'),
+        'ID'           => $element->getId(),
+        'NAME'         => $element->getName(),
+        'AUTHOR'       => $element->get('AUTHOR'),
         'SUMMARY_HTML' => $element->get('SUMMARY'), // передаем в шаблон
     ];
 

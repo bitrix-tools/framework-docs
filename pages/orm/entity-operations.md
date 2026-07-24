@@ -144,7 +144,7 @@ class BookTable extends Entity\DataManager
 
         return $result;
     }
-    
+
     // ...
 }
 ```
@@ -217,9 +217,9 @@ public static function onBeforeUpdate(Entity\Event $event)
     if (isset($data['ISBN']))
     {
         // Получает объект поля ISBN и выдает сообщение об ошибке
-        $result->addError(new Entity\FieldError( 
-            $event->getEntity()->getField('ISBN'), 
-            'Запрещено менять ISBN код у существующих книг' 
+        $result->addError(new Entity\FieldError(
+            $event->getEntity()->getField('ISBN'),
+            'Запрещено менять ISBN код у существующих книг'
         ));
     }
 
@@ -235,9 +235,10 @@ public static function onBeforeUpdate(Entity\Event $event)
     $result = new Entity\EventResult;
     $data = $event->getParameter("fields");
 
-    if (...) { // Здесь должна быть ваша логика комплексной проверки данных
+    if (...) // Здесь должна быть ваша логика комплексной проверки данных
+    {
         $result->addError(new Entity\EntityError(
-            'Невозможно обновить запись' 
+            'Невозможно обновить запись'
         ));
     }
 
@@ -336,7 +337,8 @@ BookTable::update($id, [ // Обновление записи в таблице 
 ```php
 // Вызов с проверкой успешности выполнения запроса
 $result = BookTable::update(...); // Выполнение обновления и сохранение результата
-if (!$result->isSuccess()) { // Проверка успешности выполнения
+if (!$result->isSuccess()) // Проверка успешности выполнения
+{
     // обработка ошибки
     // Здесь можно добавить код для обработки ошибок, например, логирование или уведомление пользователя
 }
@@ -414,7 +416,8 @@ class BookTable extends Entity\DataManager // Класс BookTable наслед�
     {
         $result = new Entity\EventResult; // Создание объекта для результата события
         $data = $event->getParameter("fields"); // Получение данных полей из события
-        if (isset($data['ISBN'])) { // Проверка наличия поля ISBN
+        if (isset($data['ISBN'])) // Проверка наличия поля ISBN
+        {
             $cleanIsbn = str_replace('-', '', $data['ISBN']); // Удаление дефисов из ISBN
             $result->modifyFields(array('ISBN' => $cleanIsbn)); // Модификация поля ISBN
         }

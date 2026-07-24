@@ -311,7 +311,7 @@ return [
                     'handler' => MyReceiver::class,
                     'retry_strategy' => [
                         'max_retries' => 10,
-                        'delay' => 5,       // базовая задержка — пять секунд 
+                        'delay' => 5,       // базовая задержка — пять секунд
                         'multiplier' => 2,  // удваиваем с каждой попыткой
                         'max_delay' => 300  // максимум пять минут между попытками
                     ],
@@ -339,7 +339,7 @@ return [
 
    ```php
    use Bitrix\Main\Messenger\Internals\Storage\Db\Model\MessengerMessageTable;
-   
+
    class CalendarMessagesTable extends MessengerMessageTable
    {
        public static function getTableName(): string
@@ -485,10 +485,10 @@ interface ReceiverInterface
      * @throws ReceiverException
      */
     public function run(): void;
-    
+
     // Установка лимита сообщений за одну итерацию
     public function setLimit(int $limit): self;
-    
+
     // Назначение очереди
     public function setQueueId(string $queueId): self;
 

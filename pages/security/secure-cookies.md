@@ -21,7 +21,7 @@ description: 'Защищенные cookie. Руководство по безо�
 <?php
 return [
     // ...
-    'crypto' => [ 
+    'crypto' => [
         'value' => [
             'crypto_key' => 'mysupersecretphrase',
         ],

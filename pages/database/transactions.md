@@ -133,10 +133,10 @@ $db = Application::getConnection();
 try
 {
     $db->startTransaction();
-    
+
     updateOrders($userId, $db);    // Вложенная транзакция
     updateAccounts($userId, $db);  // Вложенная транзакция
-    
+
     $db->commitTransaction();
 }
 catch (TransactionException $e)

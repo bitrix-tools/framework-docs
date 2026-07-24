@@ -425,7 +425,7 @@ class BookTable extends Entity\DataManager
     {
         return 'MY_BOOK';
     }
-    
+
     // ...
 }
 ```
@@ -644,7 +644,7 @@ if (!$result->isSuccess())
 {
     // Получаем список ошибок
     $errors = $result->getErrors();
-    
+
     foreach ($errors as $error)
     {
         if ($error->getCode() == 'MY_ISBN_CHECKSUM')
@@ -688,7 +688,7 @@ class BookTable extends Entity\DataManager
     {
         return 'my_book'; // Возвращает имя таблицы 'my_book'
     }
-    
+
     public static function getUfId(): string
     {
         return 'MY_BOOK'; // Возвращает идентификатор 'MY_BOOK'

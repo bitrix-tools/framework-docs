@@ -349,7 +349,7 @@ beforeCreate()
 {
     // Установить одну фразу
     this.$bitrix.Loc.setMessage('DEMO_COUNTER', 'Счетчик: #COUNTER#');
-    
+
     // Установить несколько фраз
     this.$bitrix.Loc.setMessage({
         DEMO_COUNTER: 'Счетчик: #COUNTER#',

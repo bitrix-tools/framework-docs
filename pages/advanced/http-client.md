@@ -181,11 +181,11 @@ $url = "http://www.example.ru";
 $url2 = "http://www.example.ru/form_request";
 $post = "val1=true&val2=false";
 
-$httpClient = new HttpClient(); 
+$httpClient = new HttpClient();
 $httpClient->query('GET', $url);
 $cookie = $httpClient->getCookies()->toArray();
 
-$httpClient->setHeader('Content-Type', 'application/x-www-form-urlencoded'); 
+$httpClient->setHeader('Content-Type', 'application/x-www-form-urlencoded');
 $httpClient->setCookies($cookie);
 $response = $httpClient->post($url2, $post);
 ```
@@ -201,7 +201,7 @@ $response = $httpClient->post($url2, $post);
 ```php
 use Bitrix\Main\Web\HttpClient;
 use Bitrix\Main\Web\Http\Response;
-use Psr\Http\Message\RequestInterface; 
+use Psr\Http\Message\RequestInterface;
 
 $http = new HttpClient();
 
@@ -287,7 +287,7 @@ $request = new Request(Method::POST, $uri, [], $body);
 try
 {
     $response = $http->sendRequest($request);
-    
+
     var_dump($response->getStatusCode());
     var_dump($response->getHeaders());
     var_dump((string)$response->getBody());
@@ -353,7 +353,7 @@ fclose($res);
 try
 {
     $response = $http->sendRequest($request);
-    
+
     var_dump($response->getStatusCode());
     var_dump($response->getHeaders());
     var_dump((string)$response->getBody());
@@ -394,13 +394,14 @@ try
     do
     {
         $response = $http->sendRequest($request);
-        
+
         if ($response->hasHeader('Location'))
         {
             $location = $response->getHeader('Location')[0];
             $request = $request->withUri(new Uri($location));
         }
-    } while ($response->hasHeader('Location'));
+    }
+    while ($response->hasHeader('Location'));
 }
 catch (ClientException $e)
 {
@@ -617,7 +618,7 @@ return [
     'loggers' => [
         'value' => [
             'main.HttpClient' => [
-                'constructor' => function (\Bitrix\Main\Web\Http\DebugInterface $debug, \Psr\Http\Message\RequestInterface $request) { 
+                'constructor' => function (\Bitrix\Main\Web\Http\DebugInterface $debug, \Psr\Http\Message\RequestInterface $request) {
                     $debug->setDebugLevel(\Bitrix\Main\Web\HttpDebug::ALL);
                     return new \Bitrix\Main\Diag\FileLogger('/home/bitrix/www/httplog'. spl_object_hash($request) . '.log');
                 },
@@ -643,7 +644,7 @@ return [
                     $logger = new \Bitrix\Main\Diag\FileLogger($_SERVER['DOCUMENT_ROOT'] . '/http.log');
 
                     $logger->setFormatter(
-                        new class($request) implements \Bitrix\Main\Diag\LogFormatterInterface 
+                        new class($request) implements \Bitrix\Main\Diag\LogFormatterInterface
                         {
                             public function __construct(public \Psr\Http\Message\RequestInterface $request) {}
 

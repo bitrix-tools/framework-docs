@@ -64,9 +64,9 @@ description: 'Компоненты. Документация по Bitrix Framewo
 ```php
 <?php
 $APPLICATION->IncludeComponent(
-    $componentName,         
-    $componentTemplate,     
-    $arParams = array(),    
+    $componentName,
+    $componentTemplate,
+    $arParams = array(),
     $parentComponent = null,
     $arFunctionParams = array()
 );
@@ -91,10 +91,10 @@ $APPLICATION->IncludeComponent(
     "bitrix:menu",
     "horizontal_multilevel",
     [
-        "ROOT_MENU_TYPE" => "top", 
-        "MAX_LEVEL" => "3", 
-        "CHILD_MENU_TYPE" => "left", 
-        "USE_EXT" => "Y", 
+        "ROOT_MENU_TYPE" => "top",
+        "MAX_LEVEL" => "3",
+        "CHILD_MENU_TYPE" => "left",
+        "USE_EXT" => "Y",
         "MENU_CACHE_TYPE" => "A",
         "MENU_CACHE_TIME" => "3600",
         "MENU_CACHE_USE_GROUPS" => "Y",
@@ -132,7 +132,7 @@ class MyComponent extends CBitrixComponent
             $this->includeComponentTemplate();
         }
     }
-    
+
     private function initResult(): void
     {
         $this->arResult['KEY'] = 'value';
@@ -484,9 +484,9 @@ function JCEditorOpener(arParams)
     this.arParams = arParams;
     var obButton = document.createElement('BUTTON');     //создать кнопку
     this.arParams.oCont.appendChild(obButton);           // добавить в контейнер
-   
+
     obButton.innerHTML = this.jsOptions[1];              //текст из JS_DATA
-   
+
     obButton.onclick = BX.delegate(this.btnClick, this); // callback
     this.saveData = BX.delegate(this.__saveData, this);
 }
@@ -502,8 +502,8 @@ use Bitrix\Main\Localization\Loc;
 $obJSPopup->ShowTitlebar();
 $obJSPopup->StartDescription('bx-edit-menu');
 ?>
-    <p><b><?= Loc::getMessage('MYMV_SET_POPUP_WINDOW_TITLE') ?></b></p>             
-    <p class="note"><?= Loc::getMessage('MYMV_SET_POPUP_WINDOW_DESCRIPTION') ?></p> 
+    <p><b><?= Loc::getMessage('MYMV_SET_POPUP_WINDOW_TITLE') ?></b></p>
+    <p class="note"><?= Loc::getMessage('MYMV_SET_POPUP_WINDOW_DESCRIPTION') ?></p>
 
 <!-- Блок контента  -->
 <?php
@@ -621,9 +621,9 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
    ```php
    <?php
    use Bitrix\Main\Localization\Loc;
-   
+
    if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-   
+
    $arTemplateDescription = [
       "NAME" => Loc::getMessage("ADV_BANNER_NAME"),
       "DESCRIPTION" => Loc::getMessage("ADV_BANNER_DESC"),
@@ -637,22 +637,22 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
    <?php
    use Bitrix\Main\Localization\Loc;
    use Bitrix\Main\Loader;
-   
+
    if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-   
+
    if (!Loader::includeModule("advertising"))
    {
       return;
    }
-   
+
    $arTypeFields = ["-" => Loc::getMessage("ADV_SELECT_DEFAULT")];
    $res = CAdvType::GetList($by, $order, Array("ACTIVE" => "Y"),$is_filtered, "Y");
-   
+
    while (is_object($res) && $ar = $res->GetNext())
    {
       $arTypeFields[$ar["SID"]] = "[".$ar["SID"]."] ".$ar["NAME"];
    }
-   
+
    $arTemplateParameters = [
       "TYPE" => [
          "NAME" => Loc::getMessage("ADV_TYPE"),
@@ -676,12 +676,12 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
       ],
       "CACHE_TIME" => ["DEFAULT"=>"0"],
    ];
-   
+
    if ($templateProperties['NEED_TEMPLATE'] == 'Y')
    {
       $templates = ['-' => Loc::getMessage("ADV_NOT_SELECTED")];
       $arTemplates = CComponentUtil::GetTemplatesList('bitrix:advertising.banner.view');
-   
+
       if (is_array($arTemplates) && !empty($arTemplates))
       {
          foreach ($arTemplates as $template)
@@ -689,7 +689,7 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
                $templates[$template['NAME']] = $template['NAME'];
          }
       }
-   
+
       $arTemplateParameters['DEFAULT_TEMPLATE'] = [
          "NAME" => Loc::getMessage("ADV_DEFAULT_TEMPLATE"),
          "PARENT" => "BASE",
@@ -698,7 +698,7 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
          "DEFAULT" => '',
          "ADDITIONAL_VALUES" => "N",
       ];
-   
+
       unset($templateProperties['NEED_TEMPLATE']);
    }
    ```
@@ -891,7 +891,7 @@ $templateData = [
 В файле `component_epilog.php`:
 
 ```php
-<?php 
+<?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 // Проверяем, что $templateData определена и содержит данные

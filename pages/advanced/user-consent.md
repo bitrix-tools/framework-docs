@@ -206,7 +206,7 @@ BX.ready(() => {
        $arParams['USER_CONSENT_ID']  // идентификатор соглашения
    );
    ```
-   
+
    {% note warning "" %}
 
    Минимальный вызов сохраняет только факт согласия. Чтобы указать источник и пункты, передайте дополнительные параметры. Подробнее читайте ниже в разделе Добавить согласие через API.
@@ -253,7 +253,6 @@ php bitrix.php make:eventhandler --handler-module=my.module --event-module=main 
 
 ```php
 <?php
-
 namespace My\Module\Internals\Integration\Main\EventHandler;
 
 use Bitrix\Main\Event;

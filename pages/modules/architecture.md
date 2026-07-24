@@ -136,7 +136,7 @@ Loader::requireModule('module_name');
    <?php
    // Файл: /local/modules/company.module/lib/myservice.php
    namespace Company\Module;
-   
+
    class MyService
    {
        // Логика класса
@@ -148,7 +148,7 @@ Loader::requireModule('module_name');
    ```php
    <?php
    use Bitrix\Main\Loader;
-   
+
    if (Loader::includeModule('company.module'))
    {
        // Теперь можно использовать классы модуля
@@ -637,7 +637,7 @@ $apiKey = \Bitrix\Main\Config\Option::get('my.module', 'api_key', 'default_value
 
 // Удалить параметр только для конкретного сайта
 \Bitrix\Main\Config\Option::delete('my.module', [
-    'name' => 'api_key', 
+    'name' => 'api_key',
     'site_id' => 's1'
 ]);
 
