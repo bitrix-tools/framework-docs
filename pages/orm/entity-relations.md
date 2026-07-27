@@ -127,7 +127,7 @@ echo $book->getPublisher()->getTitle(); // Вывод названия изда�
 
 ```php
 // Инициализация объекта издательства
-$publisher = \Bitrix\Main\Test\Typography\PublisherTable::wakeUpObject(253); 
+$publisher = \Bitrix\Main\Test\Typography\PublisherTable::wakeUpObject(253);
 // Метод wakeUpObject создает объект с заданным первичным ключом без загрузки данных из базы
 
 // Инициализация объекта книги
@@ -198,7 +198,8 @@ Array (
 Создадим класс `PublisherTable`, который представляет собой таблицу издательств в базе данных. Этот класс наследуется от `DataManager` — основного класса для работы с данными в Bitrix Framework.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
+
 use Bitrix\Main\ORM\Data\DataManager; // Импорт класса DataManager для работы с данными
 use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связей «один ко многим»
 
@@ -230,7 +231,8 @@ $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253, [
 ])->fetchObject();
 
 // Перебор всех книг, связанных с издательством
-foreach ($publisher->getBooks() as $book) {
+foreach ($publisher->getBooks() as $book)
+{
     echo $book->getTitle(); // Вывод названия каждой книги
 }
 // Цикл выведет "Title 1" и "Title 2"
@@ -249,24 +251,24 @@ $data = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253, [
 
 // Вернет
 Array (
-	[0] => Array (
-		[ID] => 253
-		[TITLE] => Publisher Title 253
-		[BOOK_ID] => 2
-		[BOOK_TITLE] => Title 2
-		[BOOK_PUBLISHER_ID] => 253
-		[BOOK_ISBN] => 456-1-05-586920-1
-		[BOOK_IS_ARCHIVED] => N 
-	) 
-	[1] => Array (
-		[ID] => 253
-		[TITLE] => Publisher Title 253
-		[BOOK_ID] => 1
-		[BOOK_TITLE] => Title 1
-		[BOOK_PUBLISHER_ID] => 253
-		[BOOK_ISBN] => 978-3-16-148410-0
-		[BOOK_IS_ARCHIVED] => Y
-	)
+    [0] => Array (
+        [ID] => 253
+        [TITLE] => Publisher Title 253
+        [BOOK_ID] => 2
+        [BOOK_TITLE] => Title 2
+        [BOOK_PUBLISHER_ID] => 253
+        [BOOK_ISBN] => 456-1-05-586920-1
+        [BOOK_IS_ARCHIVED] => N
+    )
+    [1] => Array (
+        [ID] => 253
+        [TITLE] => Publisher Title 253
+        [BOOK_ID] => 1
+        [BOOK_TITLE] => Title 1
+        [BOOK_PUBLISHER_ID] => 253
+        [BOOK_ISBN] => 978-3-16-148410-0
+        [BOOK_IS_ARCHIVED] => Y
+    )
 )
 ```
 
@@ -277,12 +279,14 @@ Array (
 ```php
 // Инициализация объекта издательства
 $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Метод getByPrimary загружает объект издательства с первичным ключом 253 из базы данных
 
 // Инициализация объекта книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(2)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Метод getByPrimary загружает объект книги с первичным ключом 2 из базы данных
 
 // Добавление книги в коллекцию книг издательства
@@ -376,11 +380,11 @@ $publisher->save();
 -  `COVER_ID` — целое число, которое будет использоваться для связи с таблицей обложек `CoverTable`.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
-use Bitrix\Main\ORM\Data\DataManager; 
-use Bitrix\Main\ORM\Fields\IntegerField; 
-use Bitrix\Main\ORM\Fields\StringField; 
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\StringField;
 
 class BookTable extends DataManager // Класс BookTable наследует DataManager для работы с данными
 {
@@ -420,11 +424,11 @@ class BookTable extends DataManager // Класс BookTable наследует D
 -  `IMAGE_URL` — строка, содержащая URL изображения обложки.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
-use Bitrix\Main\ORM\Data\DataManager; 
-use Bitrix\Main\ORM\Fields\IntegerField; 
-use Bitrix\Main\ORM\Fields\StringField; 
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\StringField;
 
 class CoverTable extends DataManager // Класс CoverTable наследует DataManager для работы с данными
 {
@@ -456,7 +460,8 @@ class CoverTable extends DataManager // Класс CoverTable наследует
 Для связи «один к одному» между таблицами `BookTable` и `CoverTable` используется поле `Reference`. Это поле позволяет создать связь между таблицами через указанные условия соединения.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
+
 use Bitrix\Main\ORM\Fields\Relations\Reference; // Импорт класса Reference для создания связей между таблицами
 use Bitrix\Main\ORM\Query\Join; // Импорт класса Join для определения условий соединения
 
@@ -516,8 +521,7 @@ class BookTable extends DataManager // Класс BookTable наследует D
 
 ```php
 //Файл bitrix/modules/main/lib/test/typography/booktable.php
-
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
 
@@ -547,8 +551,7 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager // Класс BookTabl
 
 ```php
 //Файл bitrix/modules/main/lib/test/typography/authortable.php
-
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
 
@@ -628,7 +631,7 @@ new Reference('AUTHOR') - snake_case от Author
 
 ```php
 //Файл bitrix/modules/main/lib/test/typography/booktable.php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
 
@@ -654,7 +657,7 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager // Класс BookTabl
 
 ```php
 //Файл bitrix/modules/main/lib/test/typography/authortable.php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
 
@@ -733,10 +736,12 @@ class ... extends \Bitrix\Main\ORM\Data\DataManager
 
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::getByPrimary(17)
-    ->fetchObject(); // Получаем объект автора с ID 17
+    ->fetchObject() // Получаем объект автора с ID 17
+;
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject(); // Получаем объект книги с ID 1
+    ->fetchObject() // Получаем объект книги с ID 1
+;
 
 $author->addToBooks($book); // Добавляем книгу к автору
 $author->save(); // Сохраняем изменения
@@ -753,7 +758,8 @@ $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(2, [
     'select' => ['*', 'AUTHORS'] // Выбираем все поля книги и связанных авторов
 ])->fetchObject();
 
-foreach ($book->getAuthors() as $author) {
+foreach ($book->getAuthors() as $author)
+{
     echo $author->getLastName(); // Выводим фамилию каждого автора
 }
 // Цикл выведет "Last name 17" и "Last name 18"
@@ -765,10 +771,12 @@ foreach ($book->getAuthors() as $author) {
 
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::getByPrimary(17)
-    ->fetchObject(); // Получаем объект автора с ID 17
+    ->fetchObject() // Получаем объект автора с ID 17
+;
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject(); // Получаем объект книги с ID 1
+    ->fetchObject() // Получаем объект книги с ID 1
+;
 
 $author->addToBooks($book); // Добавляем книгу к автору
 $author->save(); // Сохраняем изменения
@@ -778,10 +786,12 @@ $author->save(); // Сохраняем изменения
 
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::getByPrimary(17)
-    ->fetchObject(); // Получаем объект автора с ID 17
+    ->fetchObject() // Получаем объект автора с ID 17
+;
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject(); // Получаем объект книги с ID 1
+    ->fetchObject() // Получаем объект книги с ID 1
+;
 
 $book->addToAuthors($author); // Добавляем автора к книге
 $book->save(); // Сохраняем изменения
@@ -800,15 +810,15 @@ $book->save(); // Сохраняем изменения
 -  `QUANTITY` — дополнительное поле для хранения количества книг.
 
 ```php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
-use Bitrix\Main\ORM\Data\DataManager; 
-use Bitrix\Main\ORM\Fields\IntegerField; 
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\Relations\Reference; // Импорт класса Reference для создания ссылок на другие таблицы
 use Bitrix\Main\ORM\Query\Join; // Импорт класса Join для определения условий соединения
 
 // Класс StoreBookTable наследует DataManager для работы с данными
-class StoreBookTable extends DataManager 
+class StoreBookTable extends DataManager
 {
     // Метод для получения имени таблицы
     public static function getTableName()
@@ -855,15 +865,18 @@ class StoreBookTable extends DataManager
 ```php
 // Объект книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-	->fetchObject();
+    ->fetchObject()
+;
 // Объект магазина
 $store = \Bitrix\Main\Test\Typography\StoreTable::getByPrimary(34)
-	->fetchObject();
+    ->fetchObject()
+;
 // Новый объект связи книги с магазином
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::createObject()
-	->setBook($book)
-	->setStore($store)
-	->setQuantity(5);
+    ->setBook($book)
+    ->setStore($store)
+    ->setQuantity(5)
+;
 // Сохранение
 $item->save();
 ```
@@ -873,7 +886,8 @@ $item->save();
 ```php
 // Объект существующей связи
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::getByPrimary([
-	'STORE_ID' => 33, 'BOOK_ID' => 2
+    'STORE_ID' => 33,
+    'BOOK_ID' => 2,
 ])->fetchObject();
 // Обновление количества
 $item->setQuantity(12);
@@ -886,7 +900,8 @@ $item->save();
 ```php
 // Объект существующей связи
 $item = \Bitrix\Main\Test\Typography\StoreBookTable::getByPrimary([
-	'STORE_ID' => 33, 'BOOK_ID' => 2
+    'STORE_ID' => 33,
+    'BOOK_ID' => 2,
 ])->fetchObject();
 // Удаление
 $item->delete();
@@ -897,16 +912,18 @@ $item->delete();
 ```php
 // Добавление записи
 \Bitrix\Main\Test\Typography\StoreBookTable::add([
-	'STORE_ID' => 34, 'BOOK_ID' => 1, 'QUANTITY' => 5
+    'STORE_ID' => 34,
+    'BOOK_ID' => 1,
+    'QUANTITY' => 5,
 ]);
 // Обновление записи
 \Bitrix\Main\Test\Typography\StoreBookTable::update(
-	['STORE_ID' => 34, 'BOOK_ID' => 1],
-	['QUANTITY' => 12]
+    ['STORE_ID' => 34, 'BOOK_ID' => 1],
+    ['QUANTITY' => 12]
 );
 // Удаление записи
 \Bitrix\Main\Test\Typography\StoreBookTable::delete(
-	['STORE_ID' => 34, 'BOOK_ID' => 1]
+    ['STORE_ID' => 34, 'BOOK_ID' => 1]
 );
 ```
 
@@ -914,12 +931,12 @@ $item->delete();
 
 ```php
 //Файл bitrix/modules/main/lib/test/typography/booktable.php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
 use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связи «один ко многим»
 
 // Класс BookTable наследует DataManager для работы с данными
-class BookTable extends \Bitrix\Main\ORM\Data\DataManager 
+class BookTable extends \Bitrix\Main\ORM\Data\DataManager
 {
     public static function getMap() // Метод определяет карту полей таблицы
     {
@@ -938,12 +955,12 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager
 
 ```php
 //Файл bitrix/modules/main/lib/test/typography/storetable.php
-namespace Bitrix\Main\Test\Typography; 
+namespace Bitrix\Main\Test\Typography;
 
 use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связи «один ко многим»
 
 // Класс StoreTable наследует DataManager для работы с данными
-class StoreTable extends \Bitrix\Main\ORM\Data\DataManager 
+class StoreTable extends \Bitrix\Main\ORM\Data\DataManager
 {
     public static function getMap() // Метод определяет карты полей таблицы
     {

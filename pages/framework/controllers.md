@@ -144,7 +144,7 @@ final class Post extends Controller
    ```php
    use Bitrix\Main\Routing\RoutingConfigurator;
    use My\Blog\Infrastructure\Controller\Post;
-   
+
    return static function (RoutingConfigurator $routes) {
        $routes
            ->prefix('blog')
@@ -376,7 +376,7 @@ GET /bitrix/services/main/ajax.php?action=my:blog.Post.get&code=my-first-blog
    ```php
    use Bitrix\Main\Routing\RoutingConfigurator;
    use My\Blog\Infrastructure\Controller\Web\Post;
-   
+
    return static function (RoutingConfigurator $routes) {
        $routes
            ->prefix('blog')
@@ -902,19 +902,19 @@ public function viewAction(string $code): \Bitrix\Main\Engine\Response\Component
 
 ```json
 {
-	"html": "HTML код компонента",
-	"assets": {
-		// списки используемых ресурсов
-		"js": [],
-		"css": [],
-		"strings": [],
-	},
-	"additionalParams": {
-		// дополнительные параметры респонса, если указан аргумент $additionalResponseParams
-	},
-	"componentResult": {
-		// результат работы компонента, если указан аргумент $dataKeys
-	}
+    "html": "HTML код компонента",
+    "assets": {
+        // списки используемых ресурсов
+        "js": [],
+        "css": [],
+        "strings": [],
+    },
+    "additionalParams": {
+        // дополнительные параметры респонса, если указан аргумент $additionalResponseParams
+    },
+    "componentResult": {
+        // результат работы компонента, если указан аргумент $dataKeys
+    }
 }
 ```
 
@@ -961,7 +961,8 @@ use Bitrix\Main\Error;
 public function deleteAction(string $code)
 {
     $blog = Blog::getByCode($code);
-    if (!$blog) {
+    if (!$blog)
+    {
         $this->addError(new Error('Блог не найден', 'BLOG_NOT_FOUND'));
         return null;
     }

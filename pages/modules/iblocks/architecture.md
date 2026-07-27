@@ -125,7 +125,8 @@ $items = ElementClothesTable::query()
         )
     )
     ->setSelect(['ID', 'NAME', 'NAME_LENGTH'])
-    ->fetchAll();
+    ->fetchAll()
+;
 ```
 
 В результате в выборке появится поле `NAME_LENGTH`. Оно действует только в этом запросе и не меняет карту класса.
@@ -207,7 +208,7 @@ Array
     [ID] => Bitrix\Main\ORM\Fields\IntegerField Object
         (
             [name:protected] => ID
-            [dataType:protected] => 
+            [dataType:protected] =>
             [initialParameters:protected] => Array
                 (
                     [primary] => 1
@@ -216,32 +217,32 @@ Array
                 )
 
             [title:protected] => Идентификатор
-            [validation:protected] => 
-            [validators:protected] => 
+            [validation:protected] =>
+            [validators:protected] =>
             [additionalValidators:protected] => Array()
 
-            [fetchDataModification:protected] => 
-            [fetchDataModifiers:protected] => 
+            [fetchDataModification:protected] =>
+            [fetchDataModifiers:protected] =>
             [additionalFetchDataModifiers:protected] => Array()
 
-            [saveDataModification:protected] => 
-            [saveDataModifiers:protected] => 
+            [saveDataModification:protected] =>
+            [saveDataModifiers:protected] =>
             [additionalSaveDataModifiers:protected] => Array()
 
-            [isSerialized:protected] => 
-            [parentField:protected] => 
-            [entity:protected] => 
-            [connection:protected] => 
+            [isSerialized:protected] =>
+            [parentField:protected] =>
+            [entity:protected] =>
+            [connection:protected] =>
             [is_primary:protected] => 1
-            [is_unique:protected] => 
-            [is_required:protected] => 
+            [is_unique:protected] =>
+            [is_required:protected] =>
             [is_autocomplete:protected] => 1
-            [is_private:protected] => 
-            [is_nullable:protected] => 
-            [is_binary:protected] => 
-            [is_fulltext:protected] => 
+            [is_private:protected] =>
+            [is_nullable:protected] =>
+            [is_binary:protected] =>
+            [is_fulltext:protected] =>
             [column_name:protected] => ID
-            [default_value:protected] => 
+            [default_value:protected] =>
             [size:protected] => 4
         )
 
@@ -381,7 +382,7 @@ Array
 -  `Y` — индекс включен,
 
 -  `I` — индекс нужно обновить. ||
-|| `VERSION`\* 
+|| `VERSION`\*
 
 {% note warning "" %}
 

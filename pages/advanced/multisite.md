@@ -301,18 +301,18 @@ Bitrix Framework поддерживает два режима многосайт
     <html>
     <head><title>Создание символических ссылок</title></head>
     <body>
-    <?
+    <?php
     error_reporting(E_ALL & ~E_NOTICE);
     @ini_set("display_errors", 1);
-    
+
     $path = rtrim($_POST['path'] ?? '../site_main', "/\\");
     $strError = '';
-    
+
     if ($_POST['create'])
     {
         // Формируем абсолютный путь
         $full_path = preg_match("#^/#", $path) ? $path : realpath($_SERVER['DOCUMENT_ROOT'].'/'.$path);
-    
+
         if (file_exists($_SERVER["DOCUMENT_ROOT"]."/bitrix"))
         {
             $strError = "В текущей папке уже существует папка bitrix.";
@@ -348,7 +348,7 @@ Bitrix Framework поддерживает два режима многосайт
         {
             $strError = 'Неверно указан путь или ошибка прав доступа.';
         }
-    
+
         if ($strError)
         {
             echo '<font color="red">' . $strError . '</font><br>Путь: ' . htmlspecialchars($full_path);
@@ -357,7 +357,7 @@ Bitrix Framework поддерживает два режима многосайт
     ?>
     <form method="post">
         Путь к папке с ядром:<br>
-        <input type="text" name="path" value="<?=htmlspecialchars($path)?>" size="50"><br><br>
+        <input type="text" name="path" value="<?= htmlspecialchars($path) ?>" size="50"><br><br>
         <input type="submit" value="Создать ссылки" name="create">
     </form>
     </body>
@@ -383,7 +383,7 @@ Bitrix Framework поддерживает два режима многосайт
 -  `.access.php` — ограничивает доступ к публичной части сайта. Добавьте файл, если он есть на основном сайте. Файл содержит строку, которая разрешает всем пользователям просматривать корень сайта.
 
    ```php
-   <? $PERM["/"]["*"]="R"; ?>
+   <?php $PERM["/"]["*"]="R"; ?>
    ```
 
 #### Настроить виртуальные хосты

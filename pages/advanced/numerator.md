@@ -48,7 +48,7 @@ $templateWords = Numerator::getTemplateWordsForType('DOCUMENT');
 #|
 || **Генератор** | **Служебные слова** ||
 || `RandomNumberGenerator` |`{RANDOM}` — случайная строка из заглавных латинских букв и цифр ||
-|| `DateNumberGenerator` |`{DAY}` — день месяца в момент генерации номера с ведущим нулем: `01`, `23` 
+|| `DateNumberGenerator` |`{DAY}` — день месяца в момент генерации номера с ведущим нулем: `01`, `23`
 `{MONTH}` — месяц в момент генерации номера с ведущим нулем: `03`, `11`
 `{YEAR}` — текущий год на момент генерации кода ||
 || `SequentNumberGenerator` | `{NUMBER}` — уникальный последовательный номер ||
@@ -117,9 +117,9 @@ $settings = Numerator::getSettingsFields('DOCUMENT');
                 ['settingName' => 'year', 'value' => 'year', 'title' => 'В пределах года',],],
             ],
             ['settingName' => 'timezone', 'type' => 'array', 'values' => [...]],
-            ...,
+            // ...,
         ],
-        ...,
+        // ...,
     ],
     'settingsWords' => [
         'Bitrix_Main_Numerator_Generator_SequentNumberGenerator' => ['{NUMBER}' => 'Последовательный номер',],
@@ -346,7 +346,7 @@ $numerators = Numerator::getListByType('CRM_INVOICE');
 ### Получить следующий номер
 
 ```php
-$number = $numerator->getNext(); 
+$number = $numerator->getNext();
 ```
 
 ## Изменить настройки нумератора
@@ -449,7 +449,7 @@ echo $numerator->getNext('A') . PHP_EOL;
 
    ```php
    use Bitrix\Main\Numerator\Numerator;
-   
+
    Numerator::load($numeratorId, $hashable);
    ```
 

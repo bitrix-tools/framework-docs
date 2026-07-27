@@ -141,7 +141,8 @@ $element->save();
 
 // Получить элемент по ID
 $existingElement = $entityClass::getByPrimary($element->getId())
-    ->fetchObject();
+    ->fetchObject()
+;
 
 if ($existingElement)
 {

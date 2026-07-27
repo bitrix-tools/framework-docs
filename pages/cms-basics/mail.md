@@ -355,11 +355,14 @@ Bitrix Framework обрабатывает входящие и исходящие
 7. Проверьте работу.
 
    ```php
-   <?
-   if (mail("moe_mylo@mail.ru", "test subject", "test body", "From: otpravitel@bitrix.ru"))
+   <?php if (mail("moe_mylo@mail.ru", "test subject", "test body", "From: otpravitel@bitrix.ru"))
+   {
        echo "Сообщение передано функции mail, проверьте почту в ящике.";
+   }
    else
+   {
        echo "Функция mail не работает, свяжитесь с администрацией хостинга.";
+   }
    ?>
    ```
 
@@ -532,11 +535,11 @@ define("BX_CRONTAB_SUPPORT", false);
 Макросы описания типа можно взять из массива метода `CEventType::Add`*.* Например, для массива
 
 ```php
-array(
+[
     'ORDER_ID' => 123,
     'ORDER_PAID' => 'Y',
     'BUYER_NAME' => 'Андрей'
-)
+]
 ```
 
 в шаблоне можно использовать:
@@ -546,9 +549,9 @@ array(
 -  параметры через переменную `$arParams`.
 
    ```php
-   <?=$arParams['ORDER_ID']?>
-   <?=$arParams['ORDER_PAID']?>
-   <?=$arParams['BUYER_NAME']?>
+   <?= $arParams['ORDER_ID'] ?>
+   <?= $arParams['ORDER_PAID'] ?>
+   <?= $arParams['BUYER_NAME'] ?>
    ```
 
 #### Компоненты
@@ -575,20 +578,20 @@ array(
 
    ```php
    <?php
-   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
-       die();
-   }
-   
+   use Bitrix\Main\Localization\Loc;
+
+   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+
    $arComponentDescription = [
-       'NAME' => GetMessage('SBBS_DEFAULT_TEMPLATE_NAME'),
+       'NAME' => Loc::getMessage('SBBS_DEFAULT_TEMPLATE_NAME'),
        'TYPE' => 'mail',
-       'DESCRIPTION' => GetMessage('SBBS_DEFAULT_TEMPLATE_DESCRIPTION'),
+       'DESCRIPTION' => Loc::getMessage('SBBS_DEFAULT_TEMPLATE_DESCRIPTION'),
        'ICON' => '/images/sale_basket.gif',
        'PATH' => [
            'ID' => 'e-store',
            'CHILD' => [
                'ID' => 'sale_basket',
-               'NAME' => GetMessage('SBBS_NAME'),
+               'NAME' => Loc::getMessage('SBBS_NAME'),
            ],
        ],
    ];
@@ -642,10 +645,10 @@ array(
 ```php
 <?php
 $arTemplate = [
-    'NAME'        => 'Тестовая тема оформления',
+    'NAME' => 'Тестовая тема оформления',
     'DESCRIPTION' => 'Тестовая тема оформления',
-    'SORT'        => '',
-    'TYPE'        => 'mail',
+    'SORT' => '',
+    'TYPE' => 'mail',
 ];
 ?>
 ```
@@ -665,28 +668,30 @@ $arTemplate = [
 
 Тема оформления, как и шаблон сайта, может содержать PHP-код.
 
-```html
-<div style="padding: 41px 0 24px;max-width: 732px;margin: 0 auto;"><?
+```php
+<div style="padding: 41px 0 24px;max-width: 732px;margin: 0 auto;">
+<?php
     $str24 = '<span style="color: #c2d1d6;">24</span>';
-    
+
     $companyName = (
         IsModuleInstalled('bitrix24')
-            ? COption::getOptionString('bitrix24', 'site_title', '')
-            : COption::getOptionString('main', 'site_name', '')
+            ? \Bitrix\Main\Config\Option::get('bitrix24', 'site_title', '')
+            : \Bitrix\Main\Config\Option::get('main', 'site_name', '')
     );
-    
+
     if (empty($companyName))
     {
         $companyName = $arParams["SITE_NAME"];
     }
-    
+
     $companyName .= (
         IsModuleInstalled('bitrix24')
-            ? (COption::GetOptionString("bitrix24", "logo24show", "Y") == "Y" ? $str24 : '')
+            ? (\Bitrix\Main\Config\Option::get("bitrix24", "logo24show", "Y") == "Y" ? $str24 : '')
             : $str24
     );
-    
-    ?><h1 style="color: #ffffff;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 35px;font-weight: bold;margin: 0;padding: 0;"><?=$companyName?></h1>
+
+    ?>
+    <h1 style="color: #ffffff;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 35px;font-weight: bold;margin: 0;padding: 0;"><?= $companyName ?></h1>
 </div>
 ```
 
@@ -844,9 +849,11 @@ Event::send([
 ```php
 <?php
 $fileId = false;
-if (!empty($_FILES['file'])) {
+if (!empty($_FILES['file']))
+{
     $fileId = \CFile::SaveFile($_FILES['file'], 'mailatt');
 }
+
 \Bitrix\Main\Mail\Event::send([
     'EVENT_NAME' => 'VM_SERVICE_REQUEST',
     'LID'        => 's2',
@@ -859,7 +866,9 @@ if (!empty($_FILES['file'])) {
     ],
     'FILE' => $fileId ? [$fileId] : [],
 ]);
-if ($fileId) {
+
+if ($fileId)
+{
     \CFile::Delete($fileId);
 }
 ?>

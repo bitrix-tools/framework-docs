@@ -9,7 +9,8 @@ description: 'Объекты. ORM Bitrix Framework: ключевые конце�
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 ```
 
 Теперь `$book` — это объект сущности `Book`, который предоставляет методы для работы с данными книги и ее связями с другими сущностями. Методы объекта можно использовать для получения и изменения данных, например, `$book->getTitle()` для получения названия книги или `$book->setTitle('New Title')` для его изменения.
@@ -46,7 +47,7 @@ class BookTable extends Bitrix\Main\ORM\Data\DataManager
     {
         return Book::class;
     }
-    //...
+    // ...
 }
 ```
 
@@ -113,7 +114,8 @@ class Book extends EO_Book
 }
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 
 echo $book->getTitle(); // 'custom title'
 echo $book->get('TITLE'); // 'custom title'
@@ -133,7 +135,8 @@ echo $book->get('TITLE'); // 'custom title'
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 var_dump($book->getId()); // int 1
 var_dump($book->getTitle()); // string 'Title 1' (length=7)
 ```
@@ -145,7 +148,8 @@ var_dump($book->getTitle()); // string 'Title 1' (length=7)
 //     ->configureValues('N', 'Y'),
 
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 var_dump($book->getIsArchived()); // boolean true
 
 // При установке значений также ожидается boolean
@@ -162,7 +166,8 @@ $book->setIsArchived(false);
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $title = $book->getTitle();
 ```
 
@@ -172,7 +177,8 @@ $title = $book->getTitle();
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $title = $book->requireTitle();
 ```
 
@@ -180,7 +186,8 @@ $title = $book->requireTitle();
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1, ['select' => ['ID', 'PUBLISHER_ID', 'ISBN']])
-    ->fetchObject();
+    ->fetchObject()
+;
 $title = $book->requireTitle();
 // SystemException: "TITLE value is required for further operations"
 ```
@@ -191,7 +198,8 @@ $title = $book->requireTitle();
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 echo $book->getTitle(); // "Title 1"
 $book->setTitle("New title");
 echo $book->getTitle(); // "New title"
@@ -213,7 +221,8 @@ $title = $book->remindActual($fieldName);
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $primary = $book->primary; // ['ID' => 1]
 $id = $book->getId(); // 1
 ```
@@ -224,7 +233,8 @@ $id = $book->getId(); // 1
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $values = $book->collectValues();
 ```
 
@@ -263,7 +273,8 @@ $author = \Bitrix\Main\Test\Typography\AuthorTable::query()
     ->addSelect('ID')
     ->addSelect('FULL_NAME')
     ->where('ID', 17)
-    ->fetchObject();
+    ->fetchObject()
+;
 echo $author->get('FULL_NAME'); // 'Name 17 Last name 17'
 ```
 
@@ -279,7 +290,8 @@ echo $author->get('FULL_NAME'); // 'Name 17 Last name 17'
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $book->setTitle("New title");
 ```
 
@@ -300,7 +312,8 @@ $book->remindActualTitle(); // актуальное значение
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 echo $book->getTitle(); // "Title 1"
 $book->setTitle("New title");
 echo $book->getTitle(); // "New title"
@@ -314,7 +327,8 @@ echo $book->getTitle(); // "Title 1"
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 echo $book->getTitle(); // "Title 1"
 $book->unsetTitle();
 echo $book->getTitle(); // null
@@ -340,7 +354,7 @@ $book->unset($fieldName);
 Метод `isFilled` проверяет, содержит ли объект актуальное значение из базы данных.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Book;
 // актуальными считаются значения из методов fetch* и wakeUp
 // в примере при инициализации объекта передается только первичный ключ
 $book = Book::wakeUp(1);
@@ -354,7 +368,7 @@ var_dump($book->isTitleFilled()); // true
 Метод `isChanged` определяет, было ли установлено новое значение в течение сеанса.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Book;
 // объект может иметь исходное значение, а может и не иметь
 // это не повлияет на дальнейшее поведение
 $book = Book::wakeUp(['ID' => 1, 'TITLE' => 'Title 1']);
@@ -370,7 +384,7 @@ var_dump($book->isTitleChanged()); // true
 Метод `has` проверяет, есть ли в объекте какое-либо значение поля — актуальное из базы данных или установленное в сеансе. Это эквивалентно `isFilled() || isChanged()`.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Book;
 
 $book = Book::wakeUp(['ID' => 1, 'TITLE' => 'Title 1']);
 $book->setIsArchived(true);
@@ -394,8 +408,8 @@ var_dump($book->hasIsbn()); // false
 Переход между состояниями происходит автоматически на основе изменений данных. Состояние объекта можно проверить с помощью публичного read-only свойства `state` и констант класса `\Bitrix\Main\ORM\Objectify\State`.
 
 ```php
-use \Bitrix\Main\Test\Typography\Book;
-use \Bitrix\Main\ORM\Objectify\State;
+use Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\ORM\Objectify\State;
 
 $book = new Book;
 $book->setTitle('New title');
@@ -417,7 +431,8 @@ var_dump($book->state === State::DELETED); // true
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $book->setTitle("New title");
 $book->save();
 ```
@@ -432,7 +447,8 @@ $book->save();
 
 ```php
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 echo $book->remindActualTitle(); // "Title 1"
 $book->setTitle("New title");
 echo $book->remindActualTitle(); // "Title 1"
@@ -450,7 +466,7 @@ echo $book->remindActualTitle(); // "New title"
    $newBook = new \Bitrix\Main\Test\Typography\Book;
    $newBook->setTitle('New title');
    $newBook->save();
-   
+
    $newAuthor = new \Bitrix\Main\Test\Typography\EO_Author;
    $newAuthor->setName('Some name');
    $newAuthor->save();
@@ -482,7 +498,8 @@ echo $book->remindActualTitle(); // "New title"
 ```php
 // Удаление записи
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(1)
-    ->fetchObject();
+    ->fetchObject()
+;
 $book->delete();
 
 // Удаление по primary ключу
@@ -608,10 +625,12 @@ $author->fill(
 ```php
 // Инициализация издателя
 $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Инициализация книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(2)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Добавление книги в коллекцию отношения
 $publisher->addToBooks($book);
 // Сохранение
@@ -627,10 +646,12 @@ $publisher->save();
 ```php
 // Инициализация издателя
 $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Инициализация книги
 $book = \Bitrix\Main\Test\Typography\BookTable::getByPrimary(2)
-    ->fetchObject();
+    ->fetchObject()
+;
 // Удаление одной конкретной книги издателя
 $publisher->removeFromBooks($book);
 // Сохранение
@@ -646,8 +667,9 @@ $publisher->save();
 ```php
 // Инициализация издателя
 $publisher = \Bitrix\Main\Test\Typography\PublisherTable::getByPrimary(253)
-    ->fetchObject();
-    
+    ->fetchObject()
+;
+
 // Удаление всех книг издателя
 $publisher->removeAllBooks();
 // Сохранение
@@ -697,7 +719,8 @@ $author = \Bitrix\Main\Test\Typography\AuthorTable::query()
     ->addSelect('ID')
     ->addSelect('FULL_NAME')
     ->where('ID', 17)
-    ->fetchObject();
+    ->fetchObject()
+;
 
 echo $author['FULL_NAME'];
 // Аналогично вызову метода $author->get('FULL_NAME')

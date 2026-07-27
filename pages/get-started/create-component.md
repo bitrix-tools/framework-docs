@@ -31,10 +31,10 @@ description: 'Создание компонента. Пошаговое руко
 ├── .parameters.php         // Параметры компонента
 ├── class.php               // Логика компонента
 ├── templates/
-│ ├── .default/
-│ │ ├── template.php        // Шаблон вывода
-│ │ ├── script.js           // Логика для карточки
-│ │ └── style.css           // Стили карточки
+│   └── .default/
+│       ├── template.php    // Шаблон вывода
+│       ├── script.js       // Логика для карточки
+│       └── style.css       // Стили карточки
 └── lang/
     └── ru/
         └── messages.php    // Локализация
@@ -178,6 +178,7 @@ class UserCardComponent extends CBitrixComponent
             ->where('ID', $userId)
             ->fetch()
         ;
+
         if (empty($user))
         {
             return;
@@ -213,10 +214,9 @@ class UserCardComponent extends CBitrixComponent
 
 ```php
 <?php
+use Bitrix\Main\Localization\Loc;
 
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-
-use Bitrix\Main\Localization\Loc;
 
 /**
  * @var array $arParams
@@ -235,9 +235,9 @@ use Bitrix\Main\Localization\Loc;
             src="<?= $arResult['PERSONAL_PHOTO_SRC'] ?>"
             alt="<?= $arResult['NAME'] ?>"
         >
-    </div>    
+    </div>
     <?php endif; ?>
-    
+
     <div class="my-user-card__info">
         <h2 class="my-user-card__name">
             <?= $arResult['NAME'] ?>
@@ -344,19 +344,16 @@ $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 
 ```php
 <?php
-
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
 $APPLICATION->SetTitle('');
-?>
-<?php
 
 $APPLICATION->IncludeComponent(
     "my:user.card",
     "",
-    Array(
+    [
         "SHOW_EMAIL" => "Y",
         "USER_ID" => "1"  /* или "USER_ID" => $USER->GetID() для текущего пользователя */
-    )
+    ]
 );
 
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');

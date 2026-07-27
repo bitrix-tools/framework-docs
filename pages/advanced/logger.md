@@ -180,7 +180,7 @@ $logger->setFormatter($formatter);
 use Bitrix\Main\Diag\Helper;
 
 $logger->debug(
-    "{date} - {host}\n{trace}{delimiter}\n", 
+    "{date} - {host}\n{trace}{delimiter}\n",
     [
         'trace' => Diag\Helper::getBackTrace(6, DEBUG_BACKTRACE_IGNORE_ARGS, 3)
     ]
@@ -222,7 +222,7 @@ use Psr\Log;
 class MyClass implements Log\LoggerAwareInterface
 {
     use Log\LoggerAwareTrait;
-    
+
     public function doSomething()
     {
         if ($this->logger)
@@ -253,7 +253,7 @@ use Psr\Log;
 class MyClass implements Log\LoggerAwareInterface
 {
     use Log\LoggerAwareTrait;
-    
+
     public function doSomething()
     {
         if ($logger = $this->getLogger())
@@ -376,7 +376,7 @@ return [
         'value' => [
             'main.HttpClient' => [
                 'constructor' => function (\Bitrix\Main\Web\HttpClient $http, $method, $url)
-                { 
+                {
                     $http->setDebugLevel(\Bitrix\Main\Web\HttpDebug::ALL);
                     return new \Bitrix\Main\Diag\FileLogger('/home/bitrix/www/log.txt');
                 },
@@ -428,8 +428,8 @@ return [
         'value' => [
             'main.HttpClient' => [
                 'constructor' => function (\Bitrix\Main\Web\Http\DebugInterface $debug, \Psr\Http\Message\RequestInterface $request)
-                { 
-                    // Включаем полную отладку HTTP-клиента                    
+                {
+                    // Включаем полную отладку HTTP-клиента
                     $debug->setDebugLevel(\Bitrix\Main\Web\HttpDebug::ALL);
                     // Генерируем уникальное имя файла на основе хеша объекта запроса
                     // Создаем отдельный файловый логгер для текущего запроса
@@ -454,18 +454,18 @@ return [
             'main.HttpClient' => [
                 'constructor' => function (\Bitrix\Main\Web\Http\DebugInterface $debug, \Psr\Http\Message\RequestInterface $request)
                 {
-                    // Включаем только логирование заголовков запроса                    
+                    // Включаем только логирование заголовков запроса
                     $debug->setDebugLevel(\Bitrix\Main\Web\HttpDebug::REQUEST_HEADERS);
-    
+
                     // Единый файл для всех внешних вызовов
                     $logger = new \Bitrix\Main\Diag\FileLogger($_SERVER['DOCUMENT_ROOT'] . '/http.txt');
-    
+
                     // Назначаем анонимный форматтер
                     $logger->setFormatter(
-                        new class($request) implements \Bitrix\Main\Diag\LogFormatterInterface 
+                        new class($request) implements \Bitrix\Main\Diag\LogFormatterInterface
                         {
                             public function __construct(public \Psr\Http\Message\RequestInterface $request) {}
-    
+
                             public function format($message, array $context = []): string
                             {
                                 // Игнорируем запросы к push-серверу
@@ -473,12 +473,12 @@ return [
                                 {
                                     return '';
                                 }
-    
+
                                 return $this->request->getUri() . " \t" . $_SERVER['REQUEST_URI'] . "\n";
                             }
                         }
                     );
-    
+
                     return $logger;
                 },
                 'level' => \Psr\Log\LogLevel::DEBUG,

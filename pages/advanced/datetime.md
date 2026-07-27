@@ -245,7 +245,7 @@ if (Date::isCorrect('31.02.2025', 'd.m.Y'))
 Конструктор создает объект даты со временем.
 
 ```php
-new DateTime(?string $time = null, ?string $format = null, ?DateTimeZone $timezone = null) 
+new DateTime(?string $time = null, ?string $format = null, ?DateTimeZone $timezone = null)
 ```
 
 -  `$time` — строка с датой и временем. По умолчанию — текущее время.

@@ -65,10 +65,10 @@ MessageBox.alert(message, title, onOk, okCaption);
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 MessageBox.alert(
-	'Проверьте параметры перед продолжением.',
-	'Параметры задачи',
-	() => true,
-	'Понятно',
+    'Проверьте параметры перед продолжением.',
+    'Параметры задачи',
+    () => true,
+    'Понятно',
 );
 ```
 
@@ -86,15 +86,15 @@ MessageBox.alert(
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 MessageBox.confirm(
-	'Удалить элемент?',
-	(messageBox) => {
-		return BX.ajax.runAction('example.Item.delete', {
-			data: {
-				id: 42,
-			},
-		});
-	},
-	'Удалить',
+    'Удалить элемент?',
+    (messageBox) => {
+        return BX.ajax.runAction('example.Item.delete', {
+            data: {
+                id: 42,
+            },
+        });
+    },
+    'Удалить',
 );
 ```
 
@@ -132,13 +132,13 @@ MessageBox.confirm(message, title, onOk, okCaption, onCancel, cancelCaption, use
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 MessageBox.confirm(
-	'Отменить изменения в форме?',
-	'Несохраненные данные',
-	() => true,
-	'Отменить изменения',
-	() => false,
-	'Вернуться',
-	true,
+    'Отменить изменения в форме?',
+    'Несохраненные данные',
+    () => true,
+    'Отменить изменения',
+    () => false,
+    'Вернуться',
+    true,
 );
 ```
 
@@ -152,10 +152,10 @@ MessageBox.confirm(
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 MessageBox.show({
-	title: 'Заявка отправлена',
-	message: 'Ответственный получит уведомление.',
-	modal: true,
-	buttons: BX.UI.Dialogs.MessageBoxButtons.OK,
+    title: 'Заявка отправлена',
+    message: 'Ответственный получит уведомление.',
+    modal: true,
+    buttons: BX.UI.Dialogs.MessageBoxButtons.OK,
 });
 ```
 
@@ -169,15 +169,15 @@ MessageBox.show({
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
-	title: 'Удалить контакт',
-	message: 'Контакт будет удален из адресной книги.',
-	buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
-	okCaption: 'Удалить',
-	cancelCaption: 'Отмена',
-	onOk: () => {
-		messageBox.close();
-		return false;
-	},
+    title: 'Удалить контакт',
+    message: 'Контакт будет удален из адресной книги.',
+    buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
+    okCaption: 'Удалить',
+    cancelCaption: 'Отмена',
+    onOk: () => {
+        messageBox.close();
+        return false;
+    },
 });
 
 messageBox.show();
@@ -243,16 +243,16 @@ messageBox.show();
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
-	message: 'Выберите действие.',
-	buttons: [
-		new BX.UI.Button({
-			text: 'Архивировать',
-			color: BX.UI.Button.Color.PRIMARY,
-			events: {
-				click: () => messageBox.close(),
-			},
-		}),
-	],
+    message: 'Выберите действие.',
+    buttons: [
+        new BX.UI.Button({
+            text: 'Архивировать',
+            color: BX.UI.Button.Color.PRIMARY,
+            events: {
+                click: () => messageBox.close(),
+            },
+        }),
+    ],
 });
 
 messageBox.show();
@@ -280,16 +280,16 @@ messageBox.show();
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
-	message: 'Удалить элемент?',
-	buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
-	onOk: (box, button, event) => {
-		return BX.ajax.runAction('example.Item.delete', {
-			data: {
-				id: 42,
-			},
-		});
-	},
-	onCancel: () => true,
+    message: 'Удалить элемент?',
+    buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
+    onOk: (box, button, event) => {
+        return BX.ajax.runAction('example.Item.delete', {
+            data: {
+                id: 42,
+            },
+        });
+    },
+    onCancel: () => true,
 });
 
 messageBox.show();
@@ -317,8 +317,8 @@ messageBox.show();
 import { MessageBox } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
-	message: 'Идет проверка данных.',
-	buttons: BX.UI.Dialogs.MessageBoxButtons.OK,
+    message: 'Идет проверка данных.',
+    buttons: BX.UI.Dialogs.MessageBoxButtons.OK,
 });
 
 messageBox.show();

@@ -50,7 +50,7 @@ Bitrix Framework — PHP-платформа для разработки веб-�
 Чтобы изучить связанные темы, перейдите к статьям:
 - [Архитектура](../framework/architecture.md),
 - [Жизненный цикл запроса](../framework/request-lifecycle.md),
-- [Роутинг](../framework/routing.md). 
+- [Роутинг](../framework/routing.md).
 
 Если нужно сравнить платформу с другими решениями, используйте статьи:
 - [Отличия от других CMS](./cms-comparison.md),

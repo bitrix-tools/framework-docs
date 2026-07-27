@@ -116,11 +116,13 @@ $accessRows = \Bitrix\Catalog\GroupAccessTable::getList([
 
 foreach ($accessRows as $row)
 {
-    if ($row['ACCESS'] === 'ACCESS_VIEW') {
+    if ($row['ACCESS'] === 'ACCESS_VIEW')
+    {
         echo "Группа {$row['GROUP_ID']} видит цену\n";
     }
 
-    if ($row['ACCESS'] === 'ACCESS_BUY') {
+    if ($row['ACCESS'] === 'ACCESS_BUY')
+    {
         echo "Группа {$row['GROUP_ID']} может покупать по этой цене\n";
     }
 }

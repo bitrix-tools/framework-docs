@@ -181,15 +181,15 @@ description: 'Включаемые области. Основы Bitrix CMS: кл
 
 ```php
 <div id="header">
-    <?$APPLICATION->IncludeComponent(
+    <?php $APPLICATION->IncludeComponent(
         "bitrix:main.include",
         ".default",
-        array(
+        [
             "AREA_FILE_SHOW" => "sect", // Показывать включаемую область
             "AREA_FILE_SUFFIX" => "headerinc", // Суффикс имени файла включаемой области
             "AREA_FILE_RECURSIVE" => "Y", // Рекурсивное подключение включаемых областей разделов
             "EDIT_TEMPLATE" => "sect_headerinc.php" // Шаблон области по умолчанию
-        ),
+        ],
         false
     );?>
 </div>

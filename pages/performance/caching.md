@@ -82,7 +82,7 @@ if ($cache->initCache(
 }
 elseif ($cache->startDataCache())
 {
-    $result = array();
+    $result = [];
     // Если данные недействительны, отменяем кеширование
     if ($isInvalid)
     {
