@@ -23,6 +23,7 @@ title: Что нового
 #### 28 июля
 
 - Обновили статью [Контроллеры](./pages/framework/controllers.md).
+- Добавили новый раздел [Диалог выбора объектов ui.entity-selector](./pages/ui/entity-selector/index.md).
 
 #### 23 июля
 

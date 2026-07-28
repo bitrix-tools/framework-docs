@@ -316,6 +316,20 @@ items:
         href: /pages/ui/hint.md
       - name: Всплывающие окна и меню main.popup
         href: /pages/ui/main-popup.md
+      - name: Диалог выбора объектов ui.entity-selector
+        items:
+          - name: Обзор
+            href: /pages/ui/entity-selector/index.md
+          - name: Dialog
+            href: /pages/ui/entity-selector/dialog.md
+          - name: TagSelector
+            href: /pages/ui/entity-selector/tag-selector.md
+          - name: Провайдеры данных
+            href: /pages/ui/entity-selector/data-providers.md
+          - name: Стандартные провайдеры
+            href: /pages/ui/entity-selector/standard-providers.md
+          - name: Общие параметры
+            href: /pages/ui/entity-selector/options.md
       - name: Боковая панель main.sidepanel
         href: /pages/ui/main-sidepanel.md
       - name: Менеджер уведомлений
