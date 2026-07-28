@@ -53,23 +53,23 @@ use Bitrix\Main\Messenger\Entity\MessageInterface;
 
 class MyMessage extends AbstractMessage
 {
-	public function __construct(
-		public readonly string $text,  // string — допустимый тип, сериализуется автоматически
-		public readonly int $superId   // int — допустимый тип, сериализуется автоматически
-	) {}
+    public function __construct(
+        public readonly string $text,  // string — допустимый тип, сериализуется автоматически
+        public readonly int $superId   // int — допустимый тип, сериализуется автоматически
+    ) {}
 
-	public function jsonSerialize(): mixed // метод вернет массив простых типов
-	{
-		return [
-			'text' => $this->text,
-			'superId' => $this->superId,
-		];
-	}
+    public function jsonSerialize(): mixed // метод вернет массив простых типов
+    {
+        return [
+            'text' => $this->text,
+            'superId' => $this->superId,
+        ];
+    }
 
-	public static function createFromData(array $data): MessageInterface
-	{
-		return new static(...$data);
-	}
+    public static function createFromData(array $data): MessageInterface
+    {
+        return new static(...$data);
+    }
 }
 ```
 
@@ -83,13 +83,13 @@ use Bitrix\Main\Messenger\Receiver\AbstractReceiver;
 
 class MyReceiver extends AbstractReceiver
 {
-	/**
-	 * @param MyMessage $message
-	 */
-	protected function process(MessageInterface $message): void
-	{
-		$this->superNotifier->send($message->text);
-	}
+    /**
+     * @param MyMessage $message
+     */
+    protected function process(MessageInterface $message): void
+    {
+        $this->superNotifier->send($message->text);
+    }
 }
 ```
 
@@ -101,17 +101,17 @@ class MyReceiver extends AbstractReceiver
 <?php
 
 return [
-	... // другие настройки, в том числе брокеров
-	'messenger' => [
-		'value' => [
-			'queues' => [ // список очередей
-				'first_queue' => [ // очередь с именем 'first_queue'
-					'handler' => \Bitrix\MyModule\Internals\Messenger\Receiver\MyReceiver::class,
-				],
-			],
-		],
-		'readonly' => true, // защита от перезаписи настроек через API
-	],
+    ... // другие настройки, в том числе брокеров
+    'messenger' => [
+        'value' => [
+            'queues' => [ // список очередей
+                'first_queue' => [ // очередь с именем 'first_queue'
+                    'handler' => \Bitrix\MyModule\Internals\Messenger\Receiver\MyReceiver::class,
+                ],
+            ],
+        ],
+        'readonly' => true, // защита от перезаписи настроек через API
+    ],
 ];
 ```
 
@@ -148,35 +148,35 @@ $message->send('first_queue');
 
 ```php
 return [
-	'messenger' => [
-		'value' => [
-			'run_mode' => 'web', // web, cli
-			'brokers' => [
-				'default' => [
-					'type' => DbBroker::TYPE_CODE, // сейчас один тип — db
-					'params' => [
-						'table' => MessengerMessageTable::class,
-					]
-				],
-				'db_calendar' => [
-					'type' => 'db',
-					'params' => [
-						'table' => 'b_calendar_messages',
-						'module' => 'calendar',
-					],
-				],
-			],
-			'queues' => [
-				'first_queue' => [
-					'handler' => MyReceiver::class,
-				],
-				'google_section_sync' => [
-					'broker' => 'db_calendar',
-					'handler' => GoogleSectionReceiver::class,
-				],
-			],
-		],
-		'readonly' => true,
+    'messenger' => [
+        'value' => [
+            'run_mode' => 'web', // web, cli
+            'brokers' => [
+                'default' => [
+                    'type' => DbBroker::TYPE_CODE, // сейчас один тип — db
+                    'params' => [
+                        'table' => MessengerMessageTable::class,
+                    ]
+                ],
+                'db_calendar' => [
+                    'type' => 'db',
+                    'params' => [
+                        'table' => 'b_calendar_messages',
+                        'module' => 'calendar',
+                    ],
+                ],
+            ],
+            'queues' => [
+                'first_queue' => [
+                    'handler' => MyReceiver::class,
+                ],
+                'google_section_sync' => [
+                    'broker' => 'db_calendar',
+                    'handler' => GoogleSectionReceiver::class,
+                ],
+            ],
+        ],
+        'readonly' => true,
 ];
 ```
 
@@ -218,7 +218,7 @@ php bitrix.php messenger:consume
 
 ```php
 return [
-	...
+    ...
     'messenger' => [
         'value' => [
             'queues' => [
@@ -311,7 +311,7 @@ return [
                     'handler' => MyReceiver::class,
                     'retry_strategy' => [
                         'max_retries' => 10,
-                        'delay' => 5,       // базовая задержка — пять секунд 
+                        'delay' => 5,       // базовая задержка — пять секунд
                         'multiplier' => 2,  // удваиваем с каждой попыткой
                         'max_delay' => 300  // максимум пять минут между попытками
                     ],
@@ -339,7 +339,7 @@ return [
 
    ```php
    use Bitrix\Main\Messenger\Internals\Storage\Db\Model\MessengerMessageTable;
-   
+
    class CalendarMessagesTable extends MessengerMessageTable
    {
        public static function getTableName(): string
@@ -431,7 +431,8 @@ class SomeReceiver extends AbstractReceiver
 {
     protected function process(MessageInterface $message): void
     {
-        if ($message instanceof SectionMessage) {
+        if ($message instanceof SectionMessage)
+        {
             $section = $this->sectionRepository->getById($message->getSectionId());
             (new SendSectionCommand($section))->run();
             return;
@@ -484,10 +485,10 @@ interface ReceiverInterface
      * @throws ReceiverException
      */
     public function run(): void;
-    
+
     // Установка лимита сообщений за одну итерацию
     public function setLimit(int $limit): self;
-    
+
     // Назначение очереди
     public function setQueueId(string $queueId): self;
 
@@ -588,7 +589,7 @@ interface ProcessingParamInterface
 ```php
 $message->setData([
     'task_id' => 123,
-    'external_id' => 'trk-042'
+    'external_id' => 'trk-042',
 ]);
 ```
 

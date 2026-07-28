@@ -137,8 +137,10 @@ $result = $event->send(false);
 Метод возвращает объект `\Bitrix\Main\Result`. Получить список ошибок можно кодом:
 
 ```php
-if (!$result->isSuccess()) {
-    foreach ($result->getErrorMessages() as $msg) {
+if (!$result->isSuccess())
+{
+    foreach ($result->getErrorMessages() as $msg)
+    {
         echo $msg;
     }
 }
@@ -151,7 +153,8 @@ if (!$result->isSuccess()) {
 ```php
 $result = $event->createMessageList();
 
-if ($result->isSuccess()) {
+if ($result->isSuccess())
+{
     $messages = $result->getData();
 }
 ```
@@ -177,11 +180,14 @@ $event = new Event('USER_CONFIRM_PHONE', [
 $result = $event
     ->setSite('s1')        // Указываем сайт для поиска шаблона
     ->setLanguage('ru')    // Указываем язык шаблона
-    ->send(false);         // false — отправка через очередь
+    ->send(false) // false — отправка через очередь
+;
 
 // Проверяем результат отправки
-if (!$result->isSuccess()) {
-    foreach ($result->getErrorMessages() as $msg) {
+if (!$result->isSuccess())
+{
+    foreach ($result->getErrorMessages() as $msg)
+    {
         echo $msg;
     }
 }
@@ -195,7 +201,8 @@ if (!$result->isSuccess()) {
 // Создаем и отправляем событие в одной строке
 $result = (new Event('PASSWORD_RESTORE', $fields)) // $fields — массив данных для шаблона
     ->setSite('s1')    // Указываем сайт
-    ->send(true);      // true — немедленная отправка без очереди
+    ->send(true) // true — немедленная отправка без очереди
+;
 ```
 
 #### Отправить сообщение по ID шаблона
@@ -207,7 +214,8 @@ $result = (new Event('PASSWORD_RESTORE', $fields)) // $fields — массив �
 $result = (new Event('IGNORED_EVENT', $fields)) // Имя события игнорируется
     ->setSite('s1')
     ->setTemplate(105) // Используем шаблон с ID 105
-    ->send();          // Отправляем сообщение
+    ->send() // Отправляем сообщение
+;
 ```
 
 ### Событие onBeforeSendSms
@@ -225,13 +233,14 @@ EventManager::getInstance()->addEventHandler(
     function(\Bitrix\Main\Event $event) {
         // Получаем объект сообщения
         $msg = $event->getParameter('message');
-        
+
         // Проверяем формат номера телефона
-        if (!preg_match('/^\+?[1-9]\d{7,14}$/', $msg->getTo())) {
+        if (!preg_match('/^\+?[1-9]\d{7,14}$/', $msg->getTo()))
+        {
             // Если номер невалидный — отменяем отправку
             return new EventResult(EventResult::ERROR);
         }
-        
+
         // Если все проверки пройдены, сообщение будет отправлено
     }
 );
@@ -323,7 +332,7 @@ $sender = \Bitrix\MessageService\Sender\SmsManager::getSenderById(
 -  зарегистрируйте класс через событие.
 
 ```php
-$eventManager = \Bitrix\Main\EventManager::getInstance(); 
+$eventManager = \Bitrix\Main\EventManager::getInstance();
 $eventManager->registerEventHandler(
     'messageservice',
     'onGetSmsSenders',
@@ -419,7 +428,8 @@ $messages = \Bitrix\MessageService\Sender\SmsManager::createMessageListByTemplat
 );
 
 // Отправляем все созданные сообщения
-foreach ($messages as $message) {
+foreach ($messages as $message)
+{
     $message->send();
 }
 ```
@@ -432,11 +442,14 @@ foreach ($messages as $message) {
 // Получаем статус сообщения по его ID
 $status = \Bitrix\MessageService\Sender\SmsManager::getMessageStatus($messageId);
 
-if ($status->isSuccess()) {
+if ($status->isSuccess())
+{
     // Сообщение успешно обработано
     $statusCode = $status->getExternalStatus();  // Код статуса от провайдера
     $statusText = $status->getStatusText();      // Текстовое описание статуса
-} else {
+}
+else
+{
     // Произошла ошибка
     $errors = $status->getErrorMessages();       // Массив ошибок
 }
@@ -457,8 +470,10 @@ if ($status->isSuccess()) {
 
 ```php
 $result = \Bitrix\MessageService\Sender\SmsManager::sendMessage($messageFields);
-if (!$result->isSuccess()) {
-    foreach ($result->getErrorMessages() as $error) {
+if (!$result->isSuccess())
+{
+    foreach ($result->getErrorMessages() as $error)
+    {
         // Обработка ошибки
     }
 }
@@ -478,7 +493,7 @@ EventManager::getInstance()->addEventHandler(
     'OnMessageSuccessfullySent',
     function(Event $event) {
         $messageId = $event->getParameter('ID');
-        
+
         // Запишем успешную отправку сообщения
         AddMessage2Log("СМС отправлено. ID: {$messageId}", 'messageservice');
     }

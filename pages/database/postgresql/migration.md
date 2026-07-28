@@ -25,9 +25,10 @@ BitrixVM версии 9.0.8 и выше включает PostgreSQL 13.x по у
 
 ## Как выполнить миграцию
 
+- Перед началом убедитесь, что срок действия вашей текущей лицензии покрывает период тестирования (до 6 месяцев) и момент финального перехода. Если лицензия истекает раньше, продлите ее до начала работ.
 - Перейдите на лицензию «Энтерпрайз для Постгрес». После приобретения перехода вы получите:
   - купон для перехода на лицензию «Энтерпрайз для Постгрес». Активируйте купон после тестирования миграции,
-  - ключ для тестирования миграции работающего сайта на отдельной установке продукта. Максимальный срок тестирования — 6 месяцев с момента приобретения лицензии.
+  - ключ для тестирования миграции работающего сайта на отдельной установке продукта. Максимальный срок тестирования — 6 месяцев с момента приобретения лицензии. В течение этих 6 месяцев основной рабочий сайт продолжает работать на MySQL с вашей текущей действующей лицензией. Тестовый ключ используется только на тестовом контуре.
 - Перед миграцией установите и обновите модуль *Монитор производительности* до версии 24.0.0.
 - Проект должен использовать кодировку UTF-8. Подробнее в статье [Кодировка](../../advanced/encoding.md#conversion-wizard).
 - На время миграции закройте доступ к сайту для посетителей, чтобы избежать изменений в данных в процессе копирования.
@@ -95,35 +96,31 @@ done
    ![](./_images/psg_5.png)
 
    ```php
-    'connections' => 
-    array (
-        'value' => 
-        array (
-            'default' => 
-            array (
-            'className' => '\\Bitrix\\Main\\DB\\MysqliConnection',
-            'host' => 'localhost',
-            'database' => 'cp',
-            'login' => 'cp',
-            'password' => 'cp',
-            'options' => 2,
-            'charset' => 'utf8',
-            'include_after_connected' => '',
-        ),
-        'default_pgsql' =>
-        array (
-            'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
-            'host' => 'localhost',
-            'database' => 'portal',
-            'login' => 'bitrix',
-            'password' => 'passwd',
-            'options' => 2,
-            'charset' => 'utf-8',
-            'include_after_connected' => '',
-        ),
-    ),
-    'readonly' => true,
-    ),
+   'connections' => [
+       'value' => [
+           'default' => [
+               'className' => '\\Bitrix\\Main\\DB\\MysqliConnection',
+               'host' => 'localhost',
+               'database' => 'cp',
+               'login' => 'cp',
+               'password' => 'cp',
+               'options' => 2,
+               'charset' => 'utf8',
+               'include_after_connected' => '',
+           ],
+           'default_pgsql' => [
+               'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
+               'host' => 'localhost',
+               'database' => 'portal',
+               'login' => 'bitrix',
+               'password' => 'passwd',
+               'options' => 2,
+               'charset' => 'utf-8',
+               'include_after_connected' => '',
+           ],
+       ],
+       'readonly' => true,
+   ]
    ```
 5. На следующем шаге мастера выберите добавленное подключение.
 
@@ -160,21 +157,21 @@ done
 1. Создайте пользователя и базу PostgreSQL.
 
    ```bash
-   root@cp:/var/www/html# sudo -u postgres createuser bitrix 
-   root@cp:/var/www/html# sudo -u postgres psql -c 'grant create on schema public to "bitrix"' 
-   GRANT 
-   root@cp:/var/www/html# sudo -u postgres createdb portaldb --owner bitrix --lc-ctype C.UTF-8 --template=template0 
-   root@cp:/var/www/html# sudo -u postgres psql -d portaldb -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto' 
-   CREATE EXTENSION 
-   root@cp:/var/www/html# sudo -u postgres psql -d portaldb -c 'ALTER USER "bitrix" WITH PASSWORD '\''passwd'\'''  
+   root@cp:/var/www/html# sudo -u postgres createuser bitrix
+   root@cp:/var/www/html# sudo -u postgres psql -c 'grant create on schema public to "bitrix"'
+   GRANT
+   root@cp:/var/www/html# sudo -u postgres createdb portaldb --owner bitrix --lc-ctype C.UTF-8 --template=template0
+   root@cp:/var/www/html# sudo -u postgres psql -d portaldb -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto'
+   CREATE EXTENSION
+   root@cp:/var/www/html# sudo -u postgres psql -d portaldb -c 'ALTER USER "bitrix" WITH PASSWORD '\''passwd'\'''
    ALTER ROLE
    ```
 2. Остановите cron и веб-сервер, чтобы данные не изменялись во время переноса.
 
    ```bash
-   root@cp:/var/www/html# systemctl stop cron 
-   root@cp:/var/www/html# systemctl stop apache2 
-   root@cp:/var/www/html# systemctl stop php-fpm 
+   root@cp:/var/www/html# systemctl stop cron
+   root@cp:/var/www/html# systemctl stop apache2
+   root@cp:/var/www/html# systemctl stop php-fpm
    root@cp:/var/www/html# systemctl stop nginx
    ```
 3. Сделайте дамп базы данных MySQL.
@@ -204,34 +201,34 @@ done
    ```
 8. Отредактируйте файл [.settings.php](../../framework/settings.md).
 
-   ```text
+   ```bash
    root@cp:/var/www/html# vi bitrix/.settings.php
-   'connections' =>
-    array (
-        'value' => 
-        array (
-            'default' =>
-            array (
-                'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
-                'host' => 'localhost',
-                'database' => 'portaldb',
-                'login' => 'bitrix',
-                'password' => 'passwd',
-                'options' => 2,
-                'charset' => 'utf-8',
-                'include_after_connected' => '',
-            ),
-        ),
+   ```
+   ```php
+   'connections' => [
+       'value' => [
+           'default' => [
+               'className' => '\\Bitrix\\Main\\DB\\PgsqlConnection',
+               'host' => 'localhost',
+               'database' => 'portaldb',
+               'login' => 'bitrix',
+               'password' => 'passwd',
+               'options' => 2,
+               'charset' => 'utf-8',
+               'include_after_connected' => '',
+           ],
+       ],
+   ],
    ```
 9. Удалите модули без поддержки PostgreSQL.
 
    ```text
-   root@cp:/home/max/sites/php74cp1251.cp/html# for mysql in `ls bitrix/modules/*/install/mysql/install.sql bitrix/modules/*/install/db/mysql/install.sql`; 
-   do 
-   pgsql=`echo $mysql|sed 's#/mysql/#/pgsql/#'`; 
-   test -e $pgsql || sudo -u postgres psql -d portaldb -a -c "delete from b_module where id='`echo $pgsql|cut -d '/' -f 3`'"; 
-   done 
-    
+   root@cp:/home/max/sites/php74cp1251.cp/html# for mysql in `ls bitrix/modules/*/install/mysql/install.sql bitrix/modules/*/install/db/mysql/install.sql`;
+   do
+   pgsql=`echo $mysql|sed 's#/mysql/#/pgsql/#'`;
+   test -e $pgsql || sudo -u postgres psql -d portaldb -a -c "delete from b_module where id='`echo $pgsql|cut -d '/' -f 3`'";
+   done
+
    delete from b_module where id='abtest'
    DELETE 0
    delete from b_module where id='advertising'

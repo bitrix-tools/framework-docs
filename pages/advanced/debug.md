@@ -188,10 +188,10 @@ foreach ($queries as $query)
 
    ```php
    use Bitrix\Main\Diag\Debug;
-   
+
    // Запись в файл по умолчанию
    Debug::writeToFile($_SERVER, 'Данные сервера');
-   
+
    // Запись в указанный файл
    Debug::writeToFile($myArray, 'Мой массив', 'local/test_log.txt');
    ```
@@ -225,7 +225,7 @@ foreach ($queries as $query)
 
    ```php
    use Bitrix\Main\Diag\Debug;
-   
+
    // Запись структурированных данных в файл
    Debug::dumpToFile($_SESSION, 'Текущая сессия', 'local/logs/session_dump.log');
    ```

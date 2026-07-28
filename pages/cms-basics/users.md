@@ -170,7 +170,8 @@ $user->Update($ID, [
     "GROUP_ID" => [2, 3, 5],
 ]);
 
-if ($user->LAST_ERROR) {
+if ($user->LAST_ERROR)
+{
     echo "Ошибка: " . $user->LAST_ERROR;
 }
 ```
@@ -190,7 +191,8 @@ if ($authResult === true)
     // Пользователь успешно авторизовался
     LocalRedirect("/personal/");
 }
-else {
+else
+{
     // Вывести ошибку
     ShowMessage($authResult['MESSAGE']);
 }
@@ -217,9 +219,9 @@ $USER->Authorize($userId);
 class Example extends Controller
 {
     public function saveAction(CurrentUser $user)
-   {
-       $isAuthorized = $user->getId() > 0;
-   }
+    {
+        $isAuthorized = $user->getId() > 0;
+    }
 }
 ```
 
@@ -247,7 +249,7 @@ class Example extends Controller
 {
     #[Authentication]
     public function saveAction(CurrentUser $user)
-   {
+    {
         $login = $user->getLogin();
         $name  = $user->getName();
 
@@ -290,10 +292,11 @@ $users = \Bitrix\Main\UserTable::query()
     ->setSelect(['ID', 'NAME', 'EMAIL'])
     ->setFilter([
         'GROUPS.GROUP_ID' => 1,
-        '=ACTIVE' => 'Y'
+        '=ACTIVE' => 'Y',
     ])
     ->fetchCollection()
 ;
+
 /**
  * @var \Bitrix\Main\EO_User $user
  */
@@ -311,6 +314,7 @@ $users = \Bitrix\Main\UserTable::query()
     ->setLimit(1)
     ->fetchCollection()
 ;
+
 /**
  * @var \Bitrix\Main\EO_User $user
  */

@@ -69,10 +69,10 @@ Bitrix Framework включает готовые команды для разр�
    ```bash
    # Создать компонент внутри модуля
    php bitrix.php make:component MyNamespace:MyComponent --module=my.module
-   
+
    # Создать компонент в общей папке /bitrix/components/
    php bitrix.php make:component MyNamespace:MyComponent --no-module
-   
+
    # Создать компонент в папке /local/components/
    php bitrix.php make:component MyNamespace:MyComponent --local -n
    ```
@@ -82,7 +82,7 @@ Bitrix Framework включает готовые команды для разр�
    ```bash
    # Создать контроллер с CRUD-действиями
    php bitrix.php make:controller Post -m my.module --actions=crud -n
-   
+
    # Создать контроллер с конкретными действиями
    php bitrix.php make:controller Post -m my.module --actions=list,get -n
    ```
@@ -221,7 +221,7 @@ php bitrix.php translate:index --path=/local/modules/my.module
    ```bash
    # Обновить все модули
    php bitrix.php update:modules
-   
+
    # Обновить конкретные модули
    php bitrix.php update:modules -m main,iblock,ui
    ```
@@ -237,7 +237,7 @@ php bitrix.php translate:index --path=/local/modules/my.module
    ```
    # Обновить все языковые пакеты
    php bitrix.php update:languages
-   
+
    # Обновить конкретные языки
    php bitrix.php update:languages -l it,br,tr
    ```

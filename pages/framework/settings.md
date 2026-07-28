@@ -313,14 +313,14 @@ description: 'Конфигурация ядра. Документация по B
         // Регистрация логгера для HTTP-клиента
         'main.HttpClient' => [
             'className' => '\\Bitrix\\Main\\Diag\\FileLogger', // Класс логгера
-            'constructorParams' => ['/home/bitrix/www/log.txt'], // Путь к файлу с параметрами конструктора 
+            'constructorParams' => ['/home/bitrix/www/log.txt'], // Путь к файлу с параметрами конструктора
             'level' => \Psr\Log\LogLevel::DEBUG, // Уровень логирования: DEBUG, INFO, ERROR и так далее
-			'formatter' => 'formatter.Arguments', // Опционально: ID форматтера из сервис-локатора
+            'formatter' => 'formatter.Arguments', // Опционально: ID форматтера из сервис-локатора
         ],
         // Здесь можно добавить другие логгеры
         // 'my.component' => [
-      			...
-		 	],
+        //     ...
+        // ],
     ],
     'readonly' => true, // Защищает настройки от изменений во время выполнения
 ],
@@ -337,7 +337,7 @@ description: 'Конфигурация ядра. Документация по B
     'value' => [
         'config' => ['web.php'], // Можно добавить другие файлы: 'api.php', 'admin.php'
     ],
-        'readonly' => true, // Защищает настройки от изменений
+    'readonly' => true, // Защищает настройки от изменений
 ],
 ```
 
@@ -350,18 +350,18 @@ description: 'Конфигурация ядра. Документация по B
 Пример конфигурации для `memcache`:
 
 ```php
-    'session' => [
-        'value' => [
-            'mode' => 'default', // Режим работы с сессиями
-            'handlers' => [
-                'general' => [
-                    'type' => 'memcache', // Тип хранилища
-                    'port' => '11211', // Порт сервера
-                    'host' => '127.0.0.1', // Хост сервера
-                ],
+'session' => [
+    'value' => [
+        'mode' => 'default', // Режим работы с сессиями
+        'handlers' => [
+            'general' => [
+                'type' => 'memcache', // Тип хранилища
+                'port' => '11211', // Порт сервера
+                'host' => '127.0.0.1', // Хост сервера
             ],
-        ]
+        ],
     ]
+]
 ```
 
 Подробнее в статье [Сессии](./sessions#%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D1%85%D1%80%D0%B0%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85).
@@ -371,12 +371,12 @@ description: 'Конфигурация ядра. Документация по B
 Секция `crypto` хранит ключ для шифрования конфиденциальных данных. Всегда используйте уникальный ключ.
 
 ```php
-    'crypto' => [
-        'value' => [
-            'crypto_key' => 'mysupersecretphrase', // Рекомендуется использовать 32-символьную строку из a-z0-9
-        ],
-        'readonly' => true,
-    ]
+'crypto' => [
+    'value' => [
+        'crypto_key' => 'mysupersecretphrase', // Рекомендуется использовать 32-символьную строку из a-z0-9
+    ],
+    'readonly' => true,
+]
 ```
 
 Подробнее в статье [Cookie-файлы](./cookies#%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B%D0%B5-cookie).

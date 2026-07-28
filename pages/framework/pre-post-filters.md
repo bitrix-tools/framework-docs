@@ -121,10 +121,10 @@ final class RedirectGuestToLogin extends Base
     public function onBeforeAction(Event $event)
     {
         $isAuthorized = $this->getAction()->getController()->getCurrentUser()?->getId() > 0;
-		if ($isAuthorized)
-		{
-			return;
-		}
+        if ($isAuthorized)
+        {
+            return;
+        }
 
         $requestUri = Application::getInstance()
             ->getContext()
@@ -389,7 +389,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             ],
         ];
     }
-    
+
     public function indexAction()
     {
         // ...
@@ -438,14 +438,14 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             new Authentication(),
         ];
     }
-    
+
     protected function getDefaultPostFilters()
     {
         return [
             new Cors(),
         ];
     }
-    
+
     public function indexAction()
     {
         // ...
@@ -488,7 +488,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             new Csrf(),
         ];
     }
-    
+
     public function configureActions()
     {
         return [
@@ -503,7 +503,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             ],
         ];
     }
-    
+
     public function indexAction()
     {
         // ...
@@ -529,7 +529,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             new Csrf(),
         ];
     }
-    
+
     #[EnablePrefilters([
         new CloseSession(),
     ])]
@@ -558,7 +558,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             new Cors(),
         ];
     }
-    
+
     public function configureActions()
     {
         return [
@@ -573,12 +573,12 @@ final class Entity extends \Bitrix\Main\Engine\Controller
             ],
         ];
     }
-    
+
     public function indexAction()
     {
         // ...
     }
-    
+
     #[EnablePostfilters([
         new AnotherPostFilter(),
     ])]
@@ -624,7 +624,7 @@ class CustomFilter extends \Bitrix\Main\Engine\ActionFilter\Base
         // Иначе результат обернут в стандартный JSON
 
         $customResponse = new \Bitrix\Main\HttpResponse();
-        
+
         $event->setParameter('result', $customResponse);
     }
 }

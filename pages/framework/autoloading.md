@@ -11,10 +11,12 @@ description: 'Автозагрузка классов. Документация 
 
 ```php
 // Подключим модуль CRM, который уже установлен в системе
-if (\Bitrix\Main\Loader::includeModule('crm')) {
+if (\Bitrix\Main\Loader::includeModule('crm'))
+{
     // Теперь можно работать с классами CRM
 }
-else {
+else
+{
     // Обработка случая, когда модуль недоступен
     throw new \Exception('Модуль CRM не установлен');
 }
@@ -32,13 +34,13 @@ else {
 
 Добавить классы в автозагрузку можно в файле `/local/modules/[ваш_модуль]/include.php`, который система автоматически подключает при первом обращении к модулю.
 
-```Plain text
+```
 /local/modules/mymodule/
-    ├── include.php    // регистрируйте классы в файле include.php
-    ├── lib/           // основные классы в папке lib
-    │   └── main.php
-    └── classes/      // дополнительные классы в папке classes
-        └── tools
+├── include.php       // регистрируйте классы в файле include.php
+├── lib/              // основные классы в папке lib
+│   └── main.php
+└── classes/          // дополнительные классы в папке classes
+    └── tools.php
 ```
 
 {% note info "" %}

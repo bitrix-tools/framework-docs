@@ -76,7 +76,9 @@ function updateActiveElementsStat()
     if ($cache->InitCache(3600, 'active_elements_count', '/stats/'))
     {
         $count = $cache->GetVars()['count'];
-    } else {
+    }
+    else
+    {
         if ($cache->StartDataCache())
         {
             // Выбираем только ID и дату начала активности
@@ -217,7 +219,8 @@ CIBlockElement::GetList([], [
 // query() автоматически использует %=
 \Bitrix\Iblock\ElementTable::query()
     ->where('CODE', 'news')
-    ->exec();
+    ->exec()
+;
 ```
 
 ### Проанализировать SQL-запросы
@@ -318,7 +321,8 @@ $res = CIBlockElement::GetList([], $filter, false, false, $arSelect);
 ```php
 $element = \Bitrix\Iblock\Elements\ElementNewsTable::createObject()
     ->setName('Новость')
-    ->set('SOURCE', 105); // 105 — ID варианта в b_iblock_property_enum
+    ->set('SOURCE', 105) // 105 — ID варианта в b_iblock_property_enum
+;
 
 $element->save();
 ```
@@ -331,7 +335,8 @@ $element->save();
 $element = \Bitrix\Iblock\Elements\ElementNewsTable::createObject()
     ->setName('Обзор товара')
     // RELATED_ITEM — код свойства типа Привязка к элементу
-    ->set('RELATED_ITEM', 789); // 789 — ID элемента в инфоблоке Товары
+    ->set('RELATED_ITEM', 789) // 789 — ID элемента в инфоблоке Товары
+;
 $element->save();
 ```
 
@@ -340,7 +345,8 @@ $element->save();
 ```php
 $element = \Bitrix\Iblock\Elements\ElementNewsTable::createObject()
     ->setName('Обзор')
-    ->set('RELATED_ITEM', 'product-2026'); // XML_ID из инфоблока Товары
+    ->set('RELATED_ITEM', 'product-2026') // XML_ID из инфоблока Товары
+;
 
 $element->save();
 ```

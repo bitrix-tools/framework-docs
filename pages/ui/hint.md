@@ -76,8 +76,8 @@ import { Dom, Tag } from 'main.core';
 const container = document.getElementById('settings-container');
 
 Dom.append(
-	Tag.render`<span data-hint="Настройка применяется к новым задачам."></span>`,
-	container,
+    Tag.render`<span data-hint="Настройка применяется к новым задачам."></span>`,
+    container,
 );
 
 BX.UI.Hint.init(container);
@@ -190,7 +190,7 @@ export const ExampleComponent = {
 
 Для стандартной иконки подсказки используйте компонент `Hint` из расширения `ui.vue3.components.hint`.
 
-Компонент принимает параметры `text`, `html`, `position`, `size`, `outline`, `icon`, `iconName` и `popupOptions`. 
+Компонент принимает параметры `text`, `html`, `position`, `size`, `outline`, `icon`, `iconName` и `popupOptions`.
 
 По умолчанию `text` и `html` — пустые строки, `position` — `bottom`, `size` и `iconName` — `null`, `outline` — `false`, `icon` — `true`, `popupOptions` — пустой объект.
 

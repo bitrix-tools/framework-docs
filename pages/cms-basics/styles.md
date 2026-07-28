@@ -159,7 +159,8 @@ return [
 
 ```php
 <?php
-return [
+$arTemplate = [
+    'NAME' => 'Название шаблона',
     'EDITOR_STYLES' => [
         '/bitrix/css/main/bootstrap.css',
         '/bitrix/css/main/font-awesome.css',
@@ -209,9 +210,9 @@ return [
 
 ```text
 cards/
-  template.php
-  style.css
-  script.js
+├── template.php
+├── style.css
+└── script.js
 ```
 
 Имя папки шаблона связано со вторым параметром `IncludeComponent()`. Если компонент подключен с шаблоном `cards`, система использует папку `cards/`.
@@ -279,14 +280,14 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 ```text
 /local/js/demo/product-card/
-  src/
-    index.js
-    style.css
-  dist/
-    product-card.bundle.js
-    product-card.bundle.css
-  bundle.config.js
-  config.php
+├── src/
+│   ├── index.js
+│   └── style.css
+├── dist/
+│   ├── product-card.bundle.js
+│   └── product-card.bundle.css
+├── bundle.config.js
+└── config.php
 ```
 
 Укажите точку входа и файл результата в `bundle.config.js`.

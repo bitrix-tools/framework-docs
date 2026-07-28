@@ -573,8 +573,8 @@ $frame->end(); // Завершение динамической зоны
    ```javascript
    BX.localStorage.set("cart_count", 5); // Сохранение данных
    var count = BX.localStorage.get("cart_count"); // Получение данных
-   
-   /* 
+
+   /*
    События localStorage:
     onLocalStorageSet — при сохранении данных.
    onLocalStorageRemove — при удалении данных.
@@ -605,15 +605,15 @@ $frame->setAutoUpdate(false);
 1. `onFrameDataReceivedBefore` — происходит перед началом цикла вставки динамических блоков.
 
    ```javascript
-   BX.addCustomEvent("onFrameDataReceivedBefore", [json]); 
+   BX.addCustomEvent("onFrameDataReceivedBefore", [json]);
    // json — все данные, полученные в композитном AJAX-запросе.
    ```
 
 2. `onBeforeDynamicBlockUpdate` — происходит перед вставкой каждого блока.
 
    ```javascript
-   BX.addCustomEvent("onBeforeDynamicBlockUpdate", [block, fromCache]); 
-   /* 
+   BX.addCustomEvent("onBeforeDynamicBlockUpdate", [block, fromCache]);
+   /*
    block — данные конкретного блока: id, контент и другие параметры.
    fromCache — равен true, если данные вставляются из локальной SQL-базы.
    */
@@ -737,7 +737,7 @@ BX.addCustomEvent("onFrameDataRequestFail", function(response) {
 
 -  `AssetMode::NO_ASSETS` — ресурсы не добавляются в `<head>`.
 
-```javascript
+```php
 $dynamicArea = new \Bitrix\Main\Page\FrameStatic("workarea");
 
 $dynamicArea->setAssetMode(AssetMode::STANDARD); // Устанавливает режим добавления ресурсов
@@ -822,7 +822,7 @@ $id = $this->randString(); // Генерация стабильного иден
 
 Для хранения данных в локальном хранилище браузера используйте метод `setBrowserStorage(true)`.
 
-```javascript
+```php
 $frame = $this->createFrame()->begin(); // Создание динамической зоны
 $frame->setBrowserStorage(true); // Включает использование локального хранилища браузера
 // Здесь размещается динамический контент
@@ -833,7 +833,7 @@ $frame->end(); // Завершение динамической зоны
 
 Если нужно кешировать весь контент шаблона и обновлять его на втором хите, поместите код шаблона в `createFrame()->begin()`.
 
-```javascript
+```php
 $frame = $this->createFrame()->begin(); // Начало динамической зоны для всего шаблона
    // Весь контент шаблона
 $frame->end(); // Завершение динамической зоны

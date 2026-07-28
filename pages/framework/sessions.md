@@ -13,7 +13,7 @@ description: 'Сессии. Документация по Bitrix Framework: пр
 $session = \Bitrix\Main\Application::getInstance()->getSession();
 if (!$session->has('foo'))
 {
-	$session->set('foo', 'bar');            
+    $session->set('foo', 'bar');
 }
 echo $session['foo']; //bar
 ```
@@ -26,7 +26,8 @@ echo $session['foo']; //bar
 
 ```php
 $localStorage = \Bitrix\Main\Application::getInstance()->getLocalSession('someCategory');
-if (!isset($localStorage['productIds'])) {
+if (!isset($localStorage['productIds']))
+{
     $localStorage->set('productIds', [1, 2, 100]);
     $localStorage->set('price', 42);
 }
@@ -95,7 +96,7 @@ define('BX_SECURITY_SESSION_VIRTUAL', true);
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -114,6 +115,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -136,7 +138,7 @@ return [
    ```php
    // bitrix/.settings.php
    return [
-       //...
+       // ...
        'session' => [
            'value' => [
                'mode' => 'default',
@@ -174,6 +176,7 @@ return [
    ```php
    // bitrix/.settings.php
    return [
+       // ...
        'session' => [
            'value' => [
                'mode' => 'default',
@@ -198,7 +201,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -219,7 +222,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -251,7 +254,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
@@ -272,7 +275,7 @@ return [
 ```php
 // bitrix/.settings.php
 return [
-//...        
+    // ...
     'session' => [
         'value' => [
             'lifetime' => (int),
@@ -280,10 +283,10 @@ return [
             'regenerateIdAfterLogin' => (bool),
             'ignoreSessionStartErrors' => (bool),
             'handlers' => [
-                //...       
+                // ...
             ],
-        ]                   
-    ] 
+        ]
+    ]
 ];
 ```
 
@@ -295,7 +298,7 @@ return [
 
 -  `ignoreSessionStartErrors` — если установлено `true`, фатальные ошибки при старте сессии будут игнорироваться. Например, ошибка подключения к серверу хранения сессий. При этом хит продолжит работать без сессии, а ошибки будут записываться только в лог. По умолчанию `false`.
 
-## Разделенный режим сессии 
+## Разделенный режим сессии
 
 Чтобы включить разделенный режим сессии, внесите правки в конфигурационный файл `/bitrix/.settings.php`.
 
@@ -307,11 +310,11 @@ return [
 
 ```php
 return [
-    //...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'separated',
-            'lifetime' => 14400, 
+            'lifetime' => 14400,
             'handlers' => [
                 'kernel' => 'encrypted_cookies',
                 'general' => [

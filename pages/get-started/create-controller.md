@@ -133,7 +133,6 @@ BX.ajax.runAction('my:module.user.like', { /* данные */ });
 
 ```php
 <?php
-
 namespace My\Module\Services;
 
 use Bitrix\Main\ArgumentException;
@@ -220,7 +219,6 @@ class LikeService
 
 ```php
 <?php
-
 namespace My\Module\Controller;
 
 use Bitrix\Main\Engine\Controller;
@@ -254,9 +252,10 @@ class User extends Controller
     /**
      * Действие для обработки лайков
      *
-     * @param  int $likedUserId
+     * @param  LikeService $service
+     * @param  int         $likedUserId
      *
-     * @return void
+     * @return array|null
      */
     public function likeAction(LikeService $service, int $likedUserId)
     {
@@ -301,10 +300,9 @@ class User extends Controller
 
 ```php
 <?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
-die();
-
 use Bitrix\Main\Localization\Loc;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 /**
  * @var array $arParams
@@ -315,7 +313,6 @@ use Bitrix\Main\Localization\Loc;
  */
 
 $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text--liked' : '';
-
 ?>
 
 <div class="my-user-card">
@@ -328,12 +325,12 @@ $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text
         >
     </div>
     <?php endif; ?>
-    
+
     <div class="my-user-card__info">
         <h2 class="my-user-card__name">
             <?= $arResult['NAME'] ?>
         </h2>
-        
+
         <?php if ($arParams['SHOW_EMAIL'] === 'Y'): ?>
         <p class="my-user-card__email">
             <span><?= Loc::getMessage('USER_CARD_EMAIL_LABEL') ?></span>
@@ -343,7 +340,7 @@ $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text
     </div>
     <?php if ($USER->IsAuthorized()): ?>
     <div class="my-user-card__like-container">
-        <span 
+        <span
             class="my-user-card__like-text js-my-user-card-like <?= $additionalUserCardContainers ?>"
             data-user-id="<?= $arParams['USER_ID'] ?>"
         >
@@ -371,7 +368,7 @@ BX.ready(() => {
     document.querySelectorAll('.js-my-user-card-like').forEach((element) => {
         BX.Event.bind(element, 'click', (e) => {
             const userId = element.dataset.userId;
-            
+
             // Отправляем AJAX-запрос к контроллеру
             BX.ajax.runAction(
                 'my:module.user.like',
@@ -468,15 +465,11 @@ BX.ready(() => {
 
 ```php
 <?php
-
 use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Loader;
 use My\Module\Services\LikeService;
 
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
-{
-    die();
-}
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 class UserCardComponent extends CBitrixComponent
 {
@@ -548,7 +541,8 @@ class UserCardComponent extends CBitrixComponent
             ])
             ->where('ID', $userId)
             ->fetch()
-        ;
+            ;
+
         if (empty($user))
         {
             return;

@@ -29,7 +29,7 @@ description: 'Установка дистрибутива. Пошаговое р
       cd /home/bitrix/www/ # переходим в корневую папку сайта
       wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php # скачиваем скрипт
       chown bitrix:bitrix bitrixsetup.php # меняем владельца файла на пользователя bitrix
-      
+
       ```
 
       Файл должен принадлежать пользователю, под которым работает веб-сервер. Поэтому меняем владельца файла на пользователя `bitrix` командой `chown`.
@@ -39,7 +39,7 @@ description: 'Установка дистрибутива. Пошаговое р
       ```bash
       cd /home/bitrix/www/ # переходим в корневую папку сайта
       wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php # скачиваем скрипт
-      
+
       ```
 
 2. Введите в браузере адрес сайта и путь к скрипту `http://[адрес_сайта]/bitrixsetup.php` .
@@ -208,7 +208,7 @@ return array (
         'readonly' => true,
     ),
     // настройки кеширования
-    'cache_flags' => array ( 
+    'cache_flags' => array (
         'value' => array (
             'config_options' => 3600, // время кэширования настроек сайта в секундах
             'site_domain' => 3600, // время кэширования настроек домена
@@ -216,7 +216,7 @@ return array (
         'readonly' => false,
     ),
     // Параметры cookies
-    'cookies' => array ( 
+    'cookies' => array (
         'value' => array (
             'secure' => false, // использовать защищенное соединение HTTPS
             'http_only' => true, // разрешать доступ только через HTTP
@@ -224,7 +224,7 @@ return array (
         'readonly' => false,
     ),
     // настройки обработки ошибок
-    'exception_handling' => array 
+    'exception_handling' => array (
         'value' => array (
             'debug' => false, // режим отладки
             'handled_errors_types' => 4437, // типы обрабатываемых ошибок

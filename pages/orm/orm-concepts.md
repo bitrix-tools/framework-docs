@@ -17,10 +17,10 @@ ORM (Object-Relational Mapping) — это технология, которая 
 
 ```sql
 Book
-	ID int [autoincrement, primary]
-	ISBN str [match: /[0-9X-]+/]
-	TITLE str [max_length: 50]
-	PUBLISH_DATE date
+    ID int [autoincrement, primary]
+    ISBN str [match: /[0-9X-]+/]
+    TITLE str [max_length: 50]
+    PUBLISH_DATE date
 ```
 
 Здесь:
@@ -421,14 +421,12 @@ new Entity\ExpressionField('AGE_DAYS',
 ```php
 class BookTable extends Entity\DataManager
 {
-	...
-	
-	public static function getUfId()
-	{
-		return 'MY_BOOK';
-	}
-	
-	...
+    public static function getUfId()
+    {
+        return 'MY_BOOK';
+    }
+
+    // ...
 }
 ```
 
@@ -570,7 +568,9 @@ new Entity\StringField('ISBN', [
 
                 if (preg_match('/^\d{13}$/', $clean)) { // Проверяем, что значение состоит из 13 цифр
                     return true; // Если условие выполняется, валидация успешна
-                } else {
+                }
+                else
+                {
                     return 'Код ISBN должен содержать 13 цифр.'; // Сообщение об ошибке, если условие не выполняется
                 }
             }
@@ -619,7 +619,9 @@ new Entity\StringField('ISBN', [
                 $clean = str_replace('-', '', $value); // Удаляем дефисы из значения
                 if (preg_match('/^\d{13}$/', $clean)) { // Проверяем, что значение состоит из 13 цифр
                     return true; // Если условие выполняется, валидация успешна
-                } else {
+                }
+                else
+                {
                     return 'Код ISBN должен содержать 13 цифр.'; // Сообщение об ошибке, если условие не выполняется
                 }
             },
@@ -638,12 +640,15 @@ new Entity\StringField('ISBN', [
 ```php
 // выполняем операцию
 $result = BookTable::update(...);
-if (!$result->isSuccess()) {
+if (!$result->isSuccess())
+{
     // Получаем список ошибок
     $errors = $result->getErrors();
-    
-    foreach ($errors as $error) {
-        if ($error->getCode() == 'MY_ISBN_CHECKSUM') {
+
+    foreach ($errors as $error)
+    {
+        if ($error->getCode() == 'MY_ISBN_CHECKSUM')
+        {
             // Обработка ошибки, связанной с нашим валидатором контрольной цифры ISBN
         }
     }
@@ -683,7 +688,7 @@ class BookTable extends Entity\DataManager
     {
         return 'my_book'; // Возвращает имя таблицы 'my_book'
     }
-    
+
     public static function getUfId(): string
     {
         return 'MY_BOOK'; // Возвращает идентификатор 'MY_BOOK'

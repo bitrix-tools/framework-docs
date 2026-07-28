@@ -38,7 +38,7 @@ public function __construct(int $userId)
        private ?int $id;
        private ?string $email;
        private ?string $phone;
-        
+
        // getters & setters ...
    }
    ```
@@ -50,19 +50,19 @@ public function __construct(int $userId)
    use Bitrix\Main\Validation\Rule\Email;
    use Bitrix\Main\Validation\Rule\Phone;
    use Bitrix\Main\Validation\Rule\PositiveNumber;
-   
+
    #[AtLeastOnePropertyNotEmpty(['email', 'phone'])]
    final class User
    {
        #[PositiveNumber]
        private ?int $id;
-       
+
        #[Email]
        private ?string $email;
-    
+
        #[Phone]
        private ?string $phone;
-    
+
        // getters & setters...
    }
    ```
@@ -75,28 +75,28 @@ public function __construct(int $userId)
    use Bitrix\Main\DI\ServiceLocator;
    use Bitrix\Main\Result;
    use Bitrix\Main\Validation\ValidationService;
-   
+
    class UserService
    {
        private ValidationService $validation;
-       
+
        public function __construct()
        {
            $this->validation = ServiceLocator::getInstance()->get('main.validation.service');
        }
-       
+
        public function create(?string $email, ?string $phone): Result
        {
            $user = new User();
            $user->setEmail($email);
            $user->setPhone($phone);
-           
+
            $result = $this->validation->validate($user);
            if (!$result->isSuccess())
            {
                return $result;
            }
-           
+
            // save logic ...
        }
    }
@@ -125,6 +125,7 @@ class Buyer
     #[Validatable]
     public ?Order $order;
 }
+
 class Order
 {
     #[PositiveNumber]
@@ -132,6 +133,7 @@ class Order
     #[Validatable]
     public ?Payment $payment;
 }
+
 class Payment
 {
     #[NotEmpty]
@@ -139,6 +141,7 @@ class Payment
     #[NotEmpty(errorMessage: 'Custom message error')]
     public string $systemCode;
 }
+
 // validation
 /** @var \Bitrix\Main\Validation\ValidationService $validationService */
 $validationService = \Bitrix\Main\DI\ServiceLocator::getInstance()->get('main.validation.service');
@@ -151,6 +154,7 @@ foreach ($result1->getErrors() as $error)
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
 }
 echo PHP_EOL;
+
 $buyer->id = 1;
 $order = new Order();
 $order->id = -1;
@@ -162,6 +166,7 @@ foreach ($result2->getErrors() as $error)
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
 }
 echo PHP_EOL;
+
 $buyer->order->id = 123;
 $payment = new Payment();
 $payment->status = '';
@@ -201,9 +206,8 @@ final class UserSettingsDto
         // Все элементы массива должны быть целыми числами
         #[ElementsType(Type::Integer)] // Используем элемент перечисления
         public array $favoriteIds = []
-    ) 
-    {
-    }
+    )
+    {}
 }
 
 // Пример использования
@@ -235,8 +239,7 @@ final class TagDto
         #[Length(max: 20)]
         public string $name
     )
-    {
-    }
+    {}
 }
 
 final class ArticleDto
@@ -246,8 +249,7 @@ final class ArticleDto
         #[ElementsType(TagDto::class)]
         public array $tags = []
     )
-    {
-    }
+    {}
 }
 
 // Использование
@@ -259,8 +261,10 @@ $article->tags = [
 ];
 
 $result = $validationService->validate($article);
-if (!$result->isSuccess()) {
-    foreach ($result->getErrors() as $error) {
+if (!$result->isSuccess())
+{
+    foreach ($result->getErrors() as $error)
+    {
         // Путь к ошибке будет включать индекс элемента, например: "tags.2.name"
         echo $error->getCode() . ': ' . $error->getMessage() . PHP_EOL;
     }
@@ -286,15 +290,14 @@ final class CreateUserDto
     public function __construct(
         #[PhoneOrEmail]
         public ?string $login,
-        
+
         #[NotEmpty]
         public ?string $password,
-        
+
         #[NotEmpty]
         public ?string $passwordRepeat,
     )
-    {
-    }
+    {}
 }
 ```
 
@@ -309,29 +312,29 @@ use Bitrix\Main\Validation\ValidationService;
 class UserController extends Controller
 {
     private ValidationService $validation;
-    
+
     protected function init()
     {
         parent::init();
-        
+
         $this->validation = ServiceLocator::getInstance()->get('main.validation.service');
     }
-    
+
     public function createAction(): Result
     {
         $dto = new CreateUserDto();
         $dto->login = (string)$this->getRequest()->get('login');
         $dto->password = (string)$this->getRequest()->get('password');
         $dto->passwordRepeat = (string)$this->getRequest()->get('passwordRepeat');
-        
+
         $result = $this->validation->validate($dto);
         if (!$result->isSuccess())
         {
             $this->addErrors($result->getErrors());
-            
+
             return false;
         }
-        
+
         // create logic ...
     }
 }
@@ -349,15 +352,15 @@ final class CreateUserDto
     public function __construct(
         #[PhoneOrEmail]
         public ?string $login = null,
-        
+
         #[NotEmpty]
         public ?string $password = null,
-        
+
         #[NotEmpty]
         public ?string $passwordRepeat = null,
     )
     {}
-    
+
     public static function createFromRequest(\Bitrix\Main\HttpRequest $request): self
     {
         return new static(
@@ -386,7 +389,7 @@ class UserController extends Controller
             ),
         ];
     }
-    
+
     public function createAction(CreateUserDto $dto): Result
     {
         // create logic ...
@@ -439,8 +442,7 @@ class User
         #[PositiveNumber(errorMessage: 'Invalid ID!')]
         public readonly int $id
     )
-    {
-    }
+    {}
 }
 $user = new User(-150);
 /** @var \Bitrix\Main\Validation\ValidationService $service */
@@ -462,8 +464,7 @@ class User
         #[PositiveNumber]
         public readonly int $id
     )
-    {
-    }
+    {}
 }
 $user = new User(-150);
 /** @var \Bitrix\Main\Validation\ValidationService $service */
@@ -581,8 +582,8 @@ final class Min implements ValidatorInterface
     public function __construct(
         private readonly int $min
     )
-    {
-    }
+    {}
+
     public function validate(mixed $value): ValidationResult
     {
         $result = new ValidationResult();
@@ -660,8 +661,7 @@ final class Range extends AbstractPropertyValidationAttribute
         private readonly int $max,
         protected ?string $errorMessage = null
     )
-    {
-    }
+    {}
 
     protected function getValidators(): array
     {
@@ -692,7 +692,7 @@ class NotOne extends AbstractClassValidationAttribute
     {
         $result = new ValidationResult();
         $properties = (new ReflectionClass($object))->getProperties();
-        
+
         if (count($properties) > 2)
         {
             $result->addError(new ValidationError('Класс содержит слишком много свойств'));

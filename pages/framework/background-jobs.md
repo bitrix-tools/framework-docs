@@ -112,7 +112,7 @@ $app->addBackgroundJob(function() {
        "agents_use_crontab",   // Настройка использования cron
        "Y"                     // Y — разрешить, N — запретить
    );
-   
+
    // Проверить текущее значение настройки
    echo COption::GetOptionString("main", "agents_use_crontab", "N"); // вернет значение Y
    ```
@@ -138,14 +138,14 @@ $app->addBackgroundJob(function() {
    COption::SetOptionString(
        "main",                 // Модуль main
        "agents_use_crontab",   // Настройка использования cron
-   	"N"                     // Y — разрешить, N — запретить
-   ); 
+       "N"                     // Y — разрешить, N — запретить
+   );
    echo COption::GetOptionString("main", "agents_use_crontab", "N"); // Выведет значение N — cron отключен для агентов
-   
+
    COption::SetOptionString(
        "main",                 // Модуль main
        "check_agents",         // Настройка проверки агентов
-   	"N"                     // Y — разрешить, N — запретить
+       "N"                     // Y — разрешить, N — запретить
    );
    echo COption::GetOptionString("main", "check_agents", "Y"); // Выведет значение N — значит автоматическая проверка агентов отключена
    ```
@@ -160,7 +160,8 @@ $app->addBackgroundJob(function() {
 3. Добавьте в файл строчку:
 
    ```php
-   if (!(defined("CHK_EVENT") && CHK_EVENT===true)) {
+   if (!(defined("CHK_EVENT") && CHK_EVENT===true))
+   {
        define("BX_CRONTAB_SUPPORT", true); // Разрешаем работу через cron
        // При этом обычные хиты не будут запускать агентов
    }
@@ -172,38 +173,39 @@ $app->addBackgroundJob(function() {
    <?php
    // Устанавливаем корневую директорию
    $_SERVER["DOCUMENT_ROOT"] = realpath(dirname(__FILE__)."/../..");
-   
+
    // Отключаем проверки для ускорения работы
    define("NO_KEEP_STATISTIC", true);       // Не вести статистику
    define("NOT_CHECK_PERMISSIONS", true);   // Не проверять права
    define('BX_NO_ACCELERATOR_RESET', true); // Не сбрасывать акселератор
-   
+
    // Указываем, что это вызов через cron
    define('CHK_EVENT', true);
-   
+
    // Разрешаем обработку после эпилога, для некоторых модулей
    define('BX_WITH_ON_AFTER_EPILOG', true);
-   
+
    // Подключаем ядро Bitrix
    require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-   
+
    // Увеличиваем время выполнения
    @set_time_limit(0);                     // Без ограничения времени
    @ignore_user_abort(true);               // Продолжать при обрыве связи
-   
+
    // 1. Проверяем и запускаем агентов
    CAgent::CheckAgents();
-   
+
    // Константы, которые обычно определяются в dbconn.php
    define("BX_CRONTAB_SUPPORT", true);      // Поддержка cron
    define("BX_CRONTAB", true);              // Пометка текущего выполнения как cron
-   
+
    // 2. Обрабатываем почтовые события (если модуль установлен)
-   if(CModule::IncludeModule('sender')) {
+   if(CModule::IncludeModule('sender'))
+   {
        \Bitrix\Sender\MailingManager::checkPeriod(false);
        \Bitrix\Sender\MailingManager::checkSend();
    }
-   
+
    // Завершаем работу
    require($_SERVER['DOCUMENT_ROOT']."/bitrix/modules/main/tools/backup.php");
    CMain::FinalActions();
@@ -226,7 +228,7 @@ $app->addBackgroundJob(function() {
 
    {% note tip "" %}
 
-   Отключите задание cron со стандартным скриптом 
+   Отключите задание cron со стандартным скриптом
 
    `/home/bitrix/www/bitrix/modules/main/tools/cron_events.php`, чтобы избежать дублирования запусков.
 
@@ -245,10 +247,11 @@ $app->addBackgroundJob(function() {
 Функция агента — это PHP-код, который выполняется при запуске агента. Функция должна вернуть строку с кодом для следующего запуска. Чтобы остановить агента — пустую строку.
 
 ```php
-function TestAgent() {
+function TestAgent()
+{
     mail('mail@gmail.com', 'Тест агента', 'Агент работает'); // код функции
     return "TestAgent();"; // Для повторного запуска
-	// Для остановки агента передайте пустой return "";
+    // Для остановки агента передайте пустой return "";
 }
 ```
 
@@ -274,14 +277,14 @@ function TestAgent() {
 
    ```php
    CAgent::AddAgent(
-   	"CStatistic::CleanUpStatistics_2();", // имя функции
-   	"statistic",                          // идентификатор модуля
-   	"N",                                  // агент не критичен к кол-ву запусков
-   	86400,                                // интервал запуска — 1 сутки
-   	"07.04.2025 20:03:26",                // дата первой проверки на запуск
-   	"Y",                                  // агент активен
-   	"07.04.2025 20:03:26",                // дата первого запуска
-   	30
+       "CStatistic::CleanUpStatistics_2();", // имя функции
+       "statistic",                          // идентификатор модуля
+       "N",                                  // агент не критичен к кол-ву запусков
+       86400,                                // интервал запуска — 1 сутки
+       "07.04.2025 20:03:26",                // дата первой проверки на запуск
+       "Y",                                  // агент активен
+       "07.04.2025 20:03:26",                // дата первого запуска
+       30
    );
    ```
 
@@ -289,13 +292,15 @@ function TestAgent() {
 
    ```php
    // Агент завершится после 5 запусков
-   class CMyModule {
-       public static function AgentLimited($count = 1) {
+   class CMyModule
+   {
+       public static function AgentLimited($count = 1)
+       {
            if ($count >= 5) return ""; // Остановка агента
            return "CMyModule::AgentLimited(".($count+1).");"; // Следующий запуск
        }
    }
-   
+
    // Регистрируем агент
    CAgent::AddAgent(
        "CMyModule::AgentLimited();",
@@ -308,30 +313,35 @@ function TestAgent() {
 3. Обновить курс валют. Курс валюты не должен зависеть от хитов, поэтому агента нужно запускать через cron.
 
    ```php
-   function AgentCurrencyUpdate() {
+   function AgentCurrencyUpdate()
+   {
        // Проверка подключения модуля валют
-       if (!CModule::IncludeModule('currency')) {
+       if (!CModule::IncludeModule('currency'))
+       {
            return "AgentCurrencyUpdate();"; // Повторить попытку
        }
-   
+
        // Запрос к API ЦБ (возвращает курс рубля к валютам)
        $json = file_get_contents('https://api.exchangerate.host/latest?base=RUB');
-       if (!$json) {
+       if (!$json)
+       {
            return "AgentCurrencyUpdate();"; // Ошибка запроса — повторить
        }
-   
+
        // Декодирование JSON и проверка данных
        $data = json_decode($json, true);
        $rates = $data['rates'] ?? [];
-       if (empty($rates)) {
+       if (empty($rates))
+       {
            return "AgentCurrencyUpdate();"; // Нет данных — повторить
        }
-   
+
        // Обновление курсов в базе
-       foreach (['USD', 'EUR'] as $currency) {
+       foreach (['USD', 'EUR'] as $currency)
+       {
            // Конвертируем курс (1 USD = X RUB, 1 RUB = 1/X USD)
            $convertedRate = 1 / ($rates[$currency] ?? 1);
-           
+
            CCurrencyRates::Add([
                'CURRENCY' => $currency,    // Код валюты
                'DATE_RATE' => date('Y-m-d'), // Текущая дата
@@ -339,7 +349,7 @@ function TestAgent() {
                'RATE_CNT' => 1             // Номинал, 1 единица валюты
            ]);
        }
-   
+
        // Запланировать следующий запуск
        return "AgentCurrencyUpdate();";
    }
@@ -410,8 +420,9 @@ function TestAgent() {
        [EmailService::class, 'sendWelcome'],
        ['user@example.com', 'Добро пожаловать!'],
    );
-   
-   function sendWelcomeEmail($email, $message) {
+
+   function sendWelcomeEmail($email, $message)
+   {
        mail($email, 'Уведомление', $message);
    }
    ```
@@ -421,12 +432,13 @@ function TestAgent() {
    ```php
    // Подготовка файла перед фоновой задачей
    $tmpFilePath = \Bitrix\Main\Application::getDocumentRoot().'/upload/tmp/'.uniqid('file_');
-   
+
    // Перемещаем загруженный файл в постоянное хранилище
-   if (!move_uploaded_file($_FILES['big_file']['tmp_name'], $tmpFilePath)) {
+   if (!move_uploaded_file($_FILES['big_file']['tmp_name'], $tmpFilePath))
+   {
        throw new \Exception('File upload failed');
    }
-   
+
    // Регистрируем фоновую задачу
    $app = \Bitrix\Main\Application::getInstance();
    $app->addBackgroundJob(

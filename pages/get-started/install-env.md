@@ -200,13 +200,13 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
    ```bash
    # войдите в sh-консоль контейнера php под пользователем bitrix
-   docker compose exec --user=bitrix php sh 
-   
+   docker compose exec --user=bitrix php sh
+
    # перейдите в папку сайта
-   cd /opt/www/ 
-   
+   cd /opt/www/
+
    # скачайте скрипт для установки продукта
-   wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php 
+   wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php
    ```
 
 5. Откройте в браузере адрес `http://localhost:8588/bitrixsetup.php`.

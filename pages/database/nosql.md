@@ -60,13 +60,13 @@ Redis поддерживает два подхода к организации �
 ```php
 // bitrix/.settings.php
 return [
-//...
+    // ...
     'session' => [
         'value' => [
             'mode' => 'default',
             'handlers' => [
                 'general' => [
-                    'type' => 'redis',   
+                    'type' => 'redis',
                     'servers' => [
                         [
                             'port' => 6379,
@@ -89,7 +89,7 @@ return [
                 ],
             ],
         ]
-    ] 
+    ]
 ];
 ```
 
@@ -144,7 +144,7 @@ $connection->get('foo');
 
 /**
  * Можно получить объект подключения напрямую
- * 
+ *
  * @var \Redis
  */
 $resource = $connection->getResource();
@@ -166,7 +166,7 @@ $resource->setnx('foo', 'bar');
     'value' => [
         'default' => [
             'className' => \Bitrix\Main\DB\MysqliConnection::class,
-            //... настройки существующего подключения в БД
+            // ... настройки существующего подключения в БД
         ],
         'custom.memcached' => [
             'className' => \Bitrix\Main\Data\MemcachedConnection::class,
@@ -192,7 +192,7 @@ $resource->setnx('foo', 'bar');
     'value' => [
         'default' => [
             'className' => \Bitrix\Main\DB\MysqliConnection::class,
-            //... настройки существующего подключения в БД
+            // ... настройки существующего подключения в БД
         ],
         'custom.memcached' => [
             'className' => \Bitrix\Main\Data\MemcachedConnection::class,
@@ -200,12 +200,12 @@ $resource->setnx('foo', 'bar');
                 [
                     'port' => 11211,
                     'host' => '127.0.0.1',
-                    'weight' => 1,  
+                    'weight' => 1,
                 ],
                 [
                     'port' => 11211,
                     'host' => '127.0.0.2',
-                    'weight' => 1, 
+                    'weight' => 1,
                 ],
             ],
         ],
@@ -228,7 +228,7 @@ $connection->get('foo');
 
 /**
  * Можно получить объект подключения напрямую
- * 
+ *
  * @var \Memcached
  */
 $resource = $connection->getResource();

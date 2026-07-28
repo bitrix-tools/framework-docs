@@ -20,17 +20,17 @@ description: 'Создание страницы. Пошаговое руково
 4. Добавьте содержимое страницы.
 
 ```php
-<?php  
+<?php
 // header.php — верхняя часть сайта
-require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');  
-?>  
+require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
+?>
 
-<!-- содержимое страницы -->  
+<!-- содержимое страницы -->
 
-<?php  
+<?php
 // footer.php — нижняя часть сайта
-require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');  
-?>  
+require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');
+?>
 ```
 
 ### Настройка метаданных

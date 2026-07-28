@@ -17,7 +17,8 @@ description: 'Коллекции. ORM Bitrix Framework: ключевые кон�
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 ```
 
 `$books` — это коллекция объектов класса `Book` с методами для групповых операций.
@@ -31,6 +32,7 @@ $books = \Bitrix\Main\Test\Typography\BookTable::getList()
 ```php
 // Файл bitrix/modules/main/lib/test/typography/books.php
 namespace Bitrix\Main\Test\Typography;
+
 class Books extends EO_Book_Collection
 {
 }
@@ -41,13 +43,14 @@ class Books extends EO_Book_Collection
     ```php
     // Файл bitrix/modules/main/lib/test/typography/booktable.php
     namespace Bitrix\Main\Test\Typography;
+
     class BookTable extends Bitrix\Main\ORM\Data\DataManager
     {
         public static function getCollectionClass()
         {
             return Books::class;
         }
-        //...
+        // ...
     }
     ```
 
@@ -67,7 +70,8 @@ class Books extends EO_Book_Collection
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 foreach ($books as $book)
 {
     // ...
@@ -80,7 +84,8 @@ foreach ($books as $book)
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $bookObjects = $books->getAll();
 echo $bookObjects[0]->getId();
 // выведет значение ID первого объекта
@@ -89,7 +94,7 @@ echo $bookObjects[0]->getId();
 Если нужно получить не сами объекты, а их данные в виде массива, следует использовать метод `collectValues`. Метод преобразует коллекцию в ассоциативный массив, где ключами являются первичные ключи объектов, а значениями — массивы данных, полученные из каждого объекта. Если элементы коллекции имеют составной первичный ключ, он будет преобразован в строку с использованием правил `\Bitrix\Main\ORM\Objectify\Collection::sysGetPrimaryKey`.
 
 ```php
-$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList()->fetchCollection(); 
+$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList()->fetchCollection();
 $books = $bookCollection->collectValues();
 ```
 
@@ -98,13 +103,15 @@ $books = $bookCollection->collectValues();
 ```php
 // Пример с простым первичным ключом
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $book = $books->getByPrimary(1);
 // книга с ID=1
 
 // Пример с составным первичным ключом
 $booksToAuthor = \Bitrix\Main\Test\Typography\BookAuthorTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $bookToAuthor = $booksToAuthor->getByPrimary(['BOOK_ID' => 2, 'AUTHOR_ID' => 18]);
 // объект отношения книги ID=2 с автором ID=18
 ```
@@ -121,6 +128,7 @@ $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->whereIn('ID', [2, 3, 4])
     ->fetchCollection()
 ;
+
 var_dump($books->has($book1)); // false
 var_dump($books->has($book2)); // true
 ```
@@ -133,6 +141,7 @@ $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->whereIn('ID', [2, 3, 4])
     ->fetchCollection()
 ;
+
 var_dump($books->hasByPrimary(1)); // false
 var_dump($books->hasByPrimary(2)); // true
 ```
@@ -145,6 +154,7 @@ $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->whereIn('ID', [2, 3, 4])
     ->fetchCollection()
 ;
+
 $isEmpty = $books->isEmpty();
 ```
 
@@ -159,6 +169,7 @@ $books = \Bitrix\Main\Test\Typography\BookTable::query()
     ->whereIn('ID', [2, 3, 4])
     ->fetchCollection()
 ;
+
 $books->add($book1);
 // или
 $books[] = $book1;
@@ -171,7 +182,8 @@ $books[] = $book1;
 ```php
 $book1 = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $books->remove($book1);
 // удалится книга с ID=1
 $books->removeByPrimary(2);
@@ -187,8 +199,8 @@ $books->removeByPrimary(2);
 Метод `save()` сохраняет новые объекты одним запросом к базе данных.
 
 ```php
-use \Bitrix\Main\Test\Typography\Books;
-use \Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Books;
+use Bitrix\Main\Test\Typography\Book;
 
 $books = new Books;
 $books[] = (new Book)->setTitle('Title 112');
@@ -197,6 +209,7 @@ $books[] = (new Book)
     ->setTitle('Title 114')
     ->setIsbn('114-000')
 ;
+
 $books->save(true);
 // INSERT INTO ... (`TITLE`, `ISBN`) VALUES
 // ('Title 112', DEFAULT),
@@ -211,8 +224,9 @@ $books->save(true);
 Метод `save()` сохраняет измененные объекты одним запросом `UPDATE`.
 
 ```php
-use \Bitrix\Main\Test\Typography\PublisherTable;
-use \Bitrix\Main\Test\Typography\BookTable;
+use Bitrix\Main\Test\Typography\PublisherTable;
+use Bitrix\Main\Test\Typography\BookTable;
+
 $books = BookTable::getList()->fetchCollection();
 $publisher = PublisherTable::wakeUpObject(254);
 foreach ($books as $book)
@@ -273,7 +287,8 @@ $books->fill(\Bitrix\Main\ORM\Fields\FieldTypeMask::FLAT);
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $books->walk(static function($book)
 {
     if ($book->getPrice() > 1000)
@@ -306,7 +321,8 @@ $saveResult = \Bitrix\Main\Test\Typography\BookTable::query()
 
 ```php
 $books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection();
+    ->fetchCollection()
+;
 $titles = $books->getTitleList();
 ```
 

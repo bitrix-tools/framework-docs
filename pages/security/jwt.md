@@ -96,11 +96,14 @@ use Bitrix\Main\Web\JWT;
 $secret = 'ваш-секретный-ключ';
 $jwt = 'токен-полученный-от-клиента';
 
-try {
+try
+{
     $payload = JWT::decode($jwt, $secret, ['HS256']);
     // Токен верный, работаем с данными:
     echo 'Пользователь: ' . $payload->name;
-} catch (Exception $e) {
+}
+catch (Exception $e)
+{
     // Токен не прошёл проверку
     echo 'Ошибка: ' . $e->getMessage();
 }

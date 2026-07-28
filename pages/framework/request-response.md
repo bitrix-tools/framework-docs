@@ -214,7 +214,7 @@ $response->setContent('Hello, world!'); // установить контент
      Content-Type: application/json; charset=UTF-8
     "ping-pong"
     **/
-    
+
     new \Bitrix\Main\Engine\Response\Json([
         'id' => 2208,
         'type' => 'license',
@@ -249,7 +249,7 @@ $response->setContent('Hello, world!'); // установить контент
                     "js": array,
                     "string": array
                 },
-            "additionalParams": array      
+            "additionalParams": array
         },
         "errors": array
     }
@@ -264,7 +264,8 @@ $response->setContent('Hello, world!'); // установить контент
 -  [Zip/Archive](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Engine-Response-Zip-Archive.html) — работает с архивом. Для NGINX можно использовать расширение mod_zip для создания архивов без нагрузки на PHP.
 
    ```php
-   use \Bitrix\Main\Engine\Response;
+   use Bitrix\Main\Engine\Response;
+
    $archive = new Response\Zip\Archive('archive.zip');
    $archive->addEntry(Response\Zip\ArchiveEntry::createFromFileId($fileId));
    ```
@@ -281,7 +282,7 @@ $response->setContent('Hello, world!'); // установить контент
 
 ```php
 // сделать переадресацию с 302 статусом
-$response = new \Bitrix\Main\Engine\Response\Redirect('/auth');   
+$response = new \Bitrix\Main\Engine\Response\Redirect('/auth');
 
 // сделать переадресацию с 301 статусом
 $response = new \Bitrix\Main\Engine\Response\Redirect('/auth');
@@ -320,7 +321,7 @@ $response->setStatus('301 Moved Permanently');
 -  `toJson()` — создает объект с форматом `OUTPUT_JSON_FORMAT`.
 
 ```php
-use \Bitrix\Main\Engine\Response\Converter;
+use Bitrix\Main\Engine\Response\Converter;
 
 // Преобразование строки: первая буква в нижний регистр + camelCase
 $converter = new Converter(Converter::LC_FIRST | Converter::TO_CAMEL);
@@ -345,9 +346,9 @@ $result = $converter->process([
 
 // Комбинация преобразований
 $converter = new Converter(
-    Converter::TO_SNAKE_DIGIT | 
-    Converter::KEYS | 
-    Converter::VALUES | 
+    Converter::TO_SNAKE_DIGIT |
+    Converter::KEYS |
+    Converter::VALUES |
     Converter::RECURSIVE
 );
 $result = $converter->process([

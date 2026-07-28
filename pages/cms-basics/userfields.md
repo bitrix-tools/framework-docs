@@ -194,17 +194,17 @@ $userTypeEntity = new CUserTypeEntity();
 $userFields = [
     // Идентификатор сущности, к которой будет привязано поле
     'ENTITY_ID' => 'IBLOCK_3_SECTION',
-    // Код поля, всегда должен начинаться с UF_ 
+    // Код поля, всегда должен начинаться с UF_
     'FIELD_NAME' => 'UF_DEV2DAY_FIELD',
     // Тип нового поля — строка
     'USER_TYPE_ID' => 'string',
     // XML_ID пользовательского свойства используется при выгрузке
     'XML_ID' => 'XML_ID_DEV2DAY_FIELD',
-    // Сортировка 
+    // Сортировка
     'SORT' => 500,
-    // Является поле множественным или нет 
+    // Является поле множественным или нет
     'MULTIPLE' => 'N',
-    // Обязательное или нет свойство 
+    // Обязательное или нет свойство
     'MANDATORY' => 'N',
     // Показывать в фильтре списка. Возможные значения: не показывать = N, точное совпадение = I,
     // поиск по маске = E, поиск по подстроке = S
@@ -213,7 +213,7 @@ $userFields = [
     'SHOW_IN_LIST' => '',
     // Пустая строка разрешает редактирование. Если передать какое-либо значение, значит флаг выставлен
     'EDIT_IN_LIST' => '',
-    // Значения поля участвуют в поиске 
+    // Значения поля участвуют в поиске
     'IS_SEARCHABLE' => 'N',
     // Дополнительные настройки поля зависят от типа
     'SETTINGS'  => [
@@ -244,14 +244,14 @@ $userFields = [
         'ru' => 'Ошибка при заполнении пользовательского свойства',
         'en' => 'An error in completing the user field',
     ],
-    // Помощь 
+    // Помощь
     'HELP_MESSAGE' => [
         'ru' => '',
         'en' => '',
     ],
 ];
 
-$userFieldId = $userTypeEntity->Add($userFields); 
+$userFieldId = $userTypeEntity->Add($userFields);
 ```
 
 **Пояснения к коду**
@@ -432,7 +432,7 @@ foreach ($rows as $row)
 
    ```php
    $type = new \CUserTypeEntity();
-   
+
    $type->Add([
        'ENTITY_ID' => 'BLOG_RATING',
        'FIELD_NAME' => 'UF_RATING',
@@ -464,12 +464,12 @@ foreach ($rows as $row)
    $manager = \Bitrix\Main\UserField\Internal\UserFieldHelper::getInstance()->getManager();
    $entityId = 'BLOG_RATING';
    $itemId = 123;
-   
+
    $fields = [
        'UF_RATING' => 50,
    ];
-   
-   $manager->Update($entityId, $itemId, $fields); 
+
+   $manager->Update($entityId, $itemId, $fields);
    ```
 
 3. Прочитайте данные с помощью методов `GetUserFieldValue` и `GetUserFields`.
@@ -481,7 +481,7 @@ foreach ($rows as $row)
    $manager = \Bitrix\Main\UserField\Internal\UserFieldHelper::getInstance()->getManager();
    $entityId = 'BLOG_RATING';
    $itemId = 123;
-   
+
    $specificValue = $manager->GetUserFieldValue($entityId, 'UF_RATING', $itemId);
    $allFields = $manager->GetUserFields($entityId, $itemId);
    ```

@@ -222,7 +222,7 @@ if ($image->load())
 {
     // Исходный прямоугольник по текущим размерам изображения
     $source = new Rectangle($image->getWidth(), $image->getHeight());
-    
+
     // Целевой прямоугольник с максимальными размерами
     $destination = new Rectangle(400, 400);
 
@@ -303,10 +303,10 @@ $image = new Image('/home/bitrix/www/sticker.gif');
 
 if ($image->load())
 {
-    // ... после обработки 
+    // ... после обработки
     $image->saveAs("/home/bitrix/www/resized_sticker.gif", 95, Image::FORMAT_GIF);
     // Освобождаем память
-    $image->clear(); 
+    $image->clear();
 }
 ```
 

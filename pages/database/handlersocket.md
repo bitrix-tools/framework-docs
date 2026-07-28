@@ -76,10 +76,10 @@ HandlerSocket ускоряет только SELECT-запросы. Для зап
 Этот конфигурационный файл позволяет настроить два типа подключений к БД — обычное через MySQL и быстрое через HandlerSocket:
 
 ```php
-'connections' => [ 
+'connections' => [
     'value' => [
         // Основное соединение с MySQL базой данных через MySQLi
-        'default' => [ 
+        'default' => [
             'className' => \Bitrix\Main\DB\MysqliConnection::class, // Используем драйвер MySQLi для соединения
             'host' => 'localhost:31006',     // Хост базы данных с указанием порта (нестандартный порт 31006)
             'database' => 'admin_bus',       // Имя базы данных
@@ -88,15 +88,15 @@ HandlerSocket ускоряет только SELECT-запросы. Для зап
             'options' => 2,                  // Дополнительные опции соединения (2 - отложенное соединение)
             'handlersocket' => [             // Настройки HandlerSocket (альтернативный метод доступа к MySQL)
                 'read' => 'handlersocket',  // Использование HandlerSocket для операций чтения
-            ], 
-        ], 
+            ],
+        ],
         // Настройки соединения HandlerSocket для чтения данных
-        'handlersocket' => [ 
+        'handlersocket' => [
             'className' => \Bitrix\Main\Data\HsphpReadConnection::class, // Специальный класс для работы с HandlerSocket
             'host' => 'localhost',    // Хост HandlerSocket
             'port' => '9998',         // Порт HandlerSocket
-        ], 
-    ], 
+        ],
+    ],
     'readonly' => true, // Запрещает изменение настроек во время выполнения скрипта
 ],
 ```

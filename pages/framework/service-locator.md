@@ -12,7 +12,7 @@ Service Locator — это шаблон проектирования для уп
 ```php
 $serviceLocator = \Bitrix\Main\DI\ServiceLocator::getInstance();
 if ($serviceLocator->has('someService'))
-{ 
+{
     $someService = $serviceLocator->get('someService');
 }
 ```

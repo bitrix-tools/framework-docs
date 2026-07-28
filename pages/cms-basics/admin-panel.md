@@ -164,7 +164,7 @@ description: 'Панель администрирования. Основы Bitr
 Код для подключения административной панели задается в служебной области шаблона дизайна сайта сразу после тега `<body>`.
 
 ```php
-<?
+<?php
 $APPLICATION->ShowPanel();
 ?>
 ```
@@ -292,7 +292,8 @@ $this->AddIncludeAreaIcons(
 
 ```php
 // Проверка режима редактирования
-if ($APPLICATION->GetShowIncludeAreas()) {
+if ($APPLICATION->GetShowIncludeAreas())
+{
     $this->AddIncludeAreaIcons([
         // Массив кнопок для панели
     ]);
@@ -377,12 +378,14 @@ $excelMode = $lAdmin->getCurrentMode() === CAdminList::MODE_EXPORT; // Пров�
 
 ```php
 // Проверить, было ли отправлено inline-редактирование
-if ($lAdmin->EditAction()) {
+if ($lAdmin->EditAction())
+{
     // Добавить загруженные файлы в список изменяемых полей
     $lAdmin->convertFilesToEditFields();
-    
+
     // Обработать каждое измененное поле
-    foreach ($lAdmin->getEditFields() as $id => $fields) {
+    foreach ($lAdmin->getEditFields() as $id => $fields)
+    {
         // Сохранить изменения для записи с ID $id
         // $fields содержит новые значения полей
     }
@@ -409,22 +412,26 @@ if ($lAdmin->EditAction()) {
 
 ```php
 // Проверить наличие группового действия
-if ($itemIds = $lAdmin->GroupAction()) {
+if ($itemIds = $lAdmin->GroupAction())
+{
     // Получить выбранное действие
     $actionId = $lAdmin->getAction();
-    
+
     // Пропустить если действие не выбрано
-    if ($actionId === null) {
+    if ($actionId === null)
+    {
         continue;
     }
 
     // Проверить действие Для всех
-    if ($lAdmin->isGroupActionToAll()) {
+    if ($lAdmin->isGroupActionToAll())
+    {
         // В $itemIds теперь все идентификаторы списка
     }
 
     // Обработать каждый элемент
-    foreach ($itemIds as $itemId) {
+    foreach ($itemIds as $itemId)
+    {
         switch ($actionId) {  // Выполнить выбранное действие
             case 'delete':
                 // Удалить элемент
@@ -469,7 +476,7 @@ $APPLICATION->SetEditArea(
                 /*  [
                         ['ICON' => 'edit-icon', 'TITLE' => 'Редактировать'],
                         ['ICON' => 'delete-icon', 'TITLE' => 'Удалить']
-                    ] 
+                    ]
                 */
 );
 ```

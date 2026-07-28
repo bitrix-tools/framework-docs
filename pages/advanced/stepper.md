@@ -19,7 +19,6 @@ description: 'Итератор. Продвинутые возможности Bi
 
 ```php
 <?php
-
 namespace MyCompany\MyModule\Stepper;
 
 use Bitrix\Main\Update\Stepper;
@@ -27,7 +26,7 @@ use Bitrix\Main\Update\Stepper;
 class ExampleStepper extends Stepper
 {
     protected static $moduleId = 'mycompany.mymodule';
-    
+
     // За один запуск обработаем один шаг и увеличим счетчик прогресса.
     public function execute(array &$option)
     {
@@ -36,15 +35,15 @@ class ExampleStepper extends Stepper
             $option['steps'] = 0; // сколько обработано
             $option['count'] = 100; // всего шагов
         }
-        
+
         $option["steps"]++;
-        
+
         // Используем константы для указания статуса выполнения
         return ($option['steps'] < $option['count'])
             ? self::CONTINUE_EXECUTION
             : self::FINISH_EXECUTION;
     }
-    
+
     // Переопределяем метод для отображения своего заголовка
     public static function getTitle()
     {
@@ -135,7 +134,7 @@ public function execute(array &$option)
 
     $categoryId = (int)($params['category_id'] ?? 0);
     $action = $params['action'] ?? '';
-    
+
     // Используем параметры в логике
 }
 ```
@@ -200,13 +199,13 @@ public function execute(array &$option)
         $option['last_processed_id'] = 0;
         $option['processed_ids'] = [];
     }
-    
+
     // Используем сохраненные данные
     $lastId = (int)$option['last_processed_id'];
-    
+
     // Обрабатываем следующую порцию
     $processed = $this->processNextBatch($lastId, 50);
-    
+
     // Сохраняем состояние для следующего запуска
     $option['last_processed_id'] = $processed['last_id'];
     $option['steps'] += $processed['count'];
@@ -214,7 +213,7 @@ public function execute(array &$option)
         $option['processed_ids'],
         $processed['ids']
     );
-    
+
     // Проверяем завершение
     return ($option['steps'] < $option['count'])
         ? self::CONTINUE_EXECUTION

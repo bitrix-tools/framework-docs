@@ -84,7 +84,7 @@ description: 'Хлебные крошки. Основы Bitrix CMS: ключев
 Чтобы вручную добавить пункт в цепочку, в коде страницы вызовите метод `AddChainItem`.
 
 ```php
-<?
+<?php
 $APPLICATION->AddChainItem("Отзывы", "/ru/forum/list.php?FID=3");
 ?>
 ```
