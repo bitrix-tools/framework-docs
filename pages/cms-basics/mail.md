@@ -188,8 +188,11 @@ Bitrix Framework обрабатывает входящие и исходящие
    Пример: правило сработает, если приоритет письма выше 3 или отправитель использует адрес с доменом `@bitrix`.
 
    ```php
-   if ($arMessageFields["FIELD_PRIORITY"] > 3 || strpos($arMessageFields["FIELD_FROM"], "@bitrix") > 0)
+   if ($arMessageFields['FIELD_PRIORITY'] > 3 || strpos($arMessageFields['FIELD_FROM'], '@bitrix') > 0)
+   {
        return true;
+   }
+
    return false;
    ```
 
@@ -293,6 +296,8 @@ Bitrix Framework обрабатывает входящие и исходящие
 
 -  Внешний SMTP-сервер с авторизацией, если стандартная отправка недоступна.
 
+Чтобы создавать локальные SMTP-подключения для отдельных отправителей, включите секцию `smtp` в файле `/bitrix/.settings.php`. Порядок настройки описан в разделе [Отправка писем](../framework/settings.md#smtp).
+
 На Windows укажите SMTP-сервер в файле `php.ini`. На сервере, например, MS Exchange, разрешите прием сообщений с IP-адреса сайта без авторизации
 
 На Linux настройте полноценный почтовый сервер или `msmtp`, который входит в состав VMBitrix.
@@ -355,13 +360,14 @@ Bitrix Framework обрабатывает входящие и исходящие
 7. Проверьте работу.
 
    ```php
-   <?php if (mail("moe_mylo@mail.ru", "test subject", "test body", "From: otpravitel@bitrix.ru"))
+   <?php
+   if (mail('moe_mylo@mail.ru', 'test subject', 'test body', 'From: otpravitel@bitrix.ru'))
    {
-       echo "Сообщение передано функции mail, проверьте почту в ящике.";
+       echo 'Сообщение передано функции mail, проверьте почту в ящике.';
    }
    else
    {
-       echo "Функция mail не работает, свяжитесь с администрацией хостинга.";
+       echo 'Функция mail не работает, свяжитесь с администрацией хостинга.';
    }
    ?>
    ```
@@ -411,7 +417,7 @@ Bitrix Framework обрабатывает входящие и исходящие
 Решение: отключите cron в файле `/bitrix/php_interface/dbconn.php`.
 
 ```php
-define("BX_CRONTAB_SUPPORT", false);
+define('BX_CRONTAB_SUPPORT', false);
 ```
 
 ### Типы событий {#event-type}
@@ -580,7 +586,10 @@ define("BX_CRONTAB_SUPPORT", false);
    <?php
    use Bitrix\Main\Localization\Loc;
 
-   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+   {
+       die();
+   }
 
    $arComponentDescription = [
        'NAME' => Loc::getMessage('SBBS_DEFAULT_TEMPLATE_NAME'),
@@ -648,7 +657,7 @@ $arTemplate = [
     'NAME' => 'Тестовая тема оформления',
     'DESCRIPTION' => 'Тестовая тема оформления',
     'SORT' => '',
-    'TYPE' => 'mail',
+    'TYPE' => 'mail', // тип шаблона
 ];
 ?>
 ```
@@ -681,12 +690,12 @@ $arTemplate = [
 
     if (empty($companyName))
     {
-        $companyName = $arParams["SITE_NAME"];
+        $companyName = $arParams['SITE_NAME'];
     }
 
     $companyName .= (
         IsModuleInstalled('bitrix24')
-            ? (\Bitrix\Main\Config\Option::get("bitrix24", "logo24show", "Y") == "Y" ? $str24 : '')
+            ? (\Bitrix\Main\Config\Option::get('bitrix24', 'logo24show', 'Y') == 'Y' ? $str24 : '')
             : $str24
     );
 
@@ -720,13 +729,13 @@ $et->Add([
     'EVENT_NAME'  => 'ADV_BANNER_STATUS_CHANGE',
     'NAME'        => 'Изменился статус баннера',
     'LID'         => 'ru',
-    'DESCRIPTION' => "
+    'DESCRIPTION' => '
         #ID# - ID баннера
         #CONTRACT_ID# - ID контракта
         #TYPE_SID# - ID типа
         #EMAIL_TO# - email получателя
         #STATUS# - текущий статус
-    ",
+    ',
 ]);
 ?>
 ```
@@ -813,6 +822,7 @@ $em->Add([
 ```php
 <?php
 use Bitrix\Main\Mail\Event;
+
 Event::send([
     'EVENT_NAME' => 'NEW_USER',
     'LID'        => 's1',
@@ -897,5 +907,5 @@ if ($fileId)
 Дополнительно можно задать константу `ONLY_EMAIL`. Если она определена, все письма отправятся только на указанный адрес, независимо от значений в шаблонах. Это удобно для тестирования. Например, в `init.php`:
 
 ```php
-define("ONLY_EMAIL", "dev@example.com");
+define('ONLY_EMAIL', 'dev@example.com');
 ```
