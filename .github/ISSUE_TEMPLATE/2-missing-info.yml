@@ -1,0 +1,30 @@
+name: Не хватает информации
+description: В документации отсутствует нужное описание
+title: "[Страница] Что не описано"
+labels:
+  - missing-info
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Дайте issue короткое конкретное название.
+  - type: input
+    id: page-url
+    attributes:
+      label: Ссылка на страницу (необязательно)
+      description: Если применимо
+    validations:
+      required: false
+  - type: textarea
+    id: missing-scenario
+    attributes:
+      label: Какой сценарий или вопрос не описан
+      description: Можно приложить скриншот или видео.
+    validations:
+      required: true
+  - type: textarea
+    id: what-to-add
+    attributes:
+      label: Что бы вы хотели увидеть в документации (необязательно)
+    validations:
+      required: false

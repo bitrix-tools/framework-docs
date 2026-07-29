@@ -1,0 +1,40 @@
+name: Ошибка в документации
+description: Неверный код, опечатка, устаревшая информация
+title: "[Страница] Кратко суть ошибки"
+labels:
+  - bug-in-docs
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Дайте issue короткое конкретное название. Код и цитаты — в блоках кода (поле «Текущий текст/код» ниже оформляет их автоматически).
+  - type: input
+    id: page-url
+    attributes:
+      label: Ссылка на страницу
+      description: URL страницы документации
+      placeholder: https://docs.1c-bitrix.ru/...
+    validations:
+      required: true
+  - type: textarea
+    id: what-is-wrong
+    attributes:
+      label: Что не так
+      description: Код не работает, опечатка, устарело — что именно. Можно приложить скриншот или видео.
+    validations:
+      required: true
+  - type: textarea
+    id: current-text
+    attributes:
+      label: Текущий текст/код (необязательно)
+      description: Процитируйте, что сейчас написано
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: expected-text
+    attributes:
+      label: Как должно быть (необязательно)
+      description: Правильный вариант, если знаете
+    validations:
+      required: false

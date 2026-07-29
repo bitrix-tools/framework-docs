@@ -1,0 +1,36 @@
+name: Непонятное объяснение
+description: Текст есть, но объяснение сложно понять
+title: "[Страница] Что неясно"
+labels:
+  - unclear-info
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Дайте issue короткое конкретное название. Цитату из документации указывайте дословно — так проще найти нужное место в тексте.
+  - type: input
+    id: page-url
+    attributes:
+      label: Ссылка на страницу
+    validations:
+      required: true
+  - type: textarea
+    id: unclear-quote
+    attributes:
+      label: Цитата, которая непонятна
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: what-unclear
+    attributes:
+      label: Что именно непонятно
+      description: Можно приложить скриншот или видео.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Какая формулировка или пример помогли бы понять (необязательно)
+    validations:
+      required: false

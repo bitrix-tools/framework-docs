@@ -1,0 +1,30 @@
+name: Предложение по улучшению
+description: Новый раздел, улучшение навигации, дополнительные примеры
+title: "Кратко суть предложения"
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Дайте issue короткое конкретное название.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Что предлагаете добавить или улучшить
+      description: Можно приложить скриншот или видео.
+    validations:
+      required: true
+  - type: input
+    id: page-url
+    attributes:
+      label: Ссылка на страницу (необязательно)
+      description: Если применимо
+    validations:
+      required: false
+  - type: textarea
+    id: why-useful
+    attributes:
+      label: Почему это будет полезно (необязательно)
+    validations:
+      required: false
