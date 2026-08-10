@@ -316,6 +316,24 @@ items:
         href: /pages/ui/hint.md
       - name: Всплывающие окна и меню main.popup
         href: /pages/ui/main-popup.md
+      - name: Расширение ui.a11y
+        items:
+          - name: Обзор
+            href: /pages/ui/a11y/index.md
+          - name: Монитор фокуса FocusMonitor
+            href: /pages/ui/a11y/focus-monitor.md
+          - name: Навигация фокуса FocusNavigator
+            href: /pages/ui/a11y/focus-navigator.md
+          - name: Ловушка фокуса FocusTrap
+            href: /pages/ui/a11y/focus-trap.md
+          - name: Зона фокуса FocusZone
+            href: /pages/ui/a11y/focus-zone.md
+          - name: Трекер способа ввода InputModalityTracker
+            href: /pages/ui/a11y/input-modality-tracker.md
+          - name: Проверка интерактивности InteractivityChecker
+            href: /pages/ui/a11y/interactivity-checker.md
+          - name: Объявления для скринридера LiveAnnouncer
+            href: /pages/ui/a11y/live-announcer.md
       - name: Диалог выбора объектов ui.entity-selector
         items:
           - name: Обзор
