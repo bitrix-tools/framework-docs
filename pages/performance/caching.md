@@ -691,9 +691,9 @@ Application::getInstance()->getTaggedCache()->clearByTag('my_tag');
 
 2. Добавьте строки:
 
-   ```php
-   umask(000);
-   @umask(~BX_DIR_PERMISSIONS);
+   ```php prompt="$"
+   $ umask(000);
+   $ @umask(~BX_DIR_PERMISSIONS);
    ```
 
 3. Сохраните изменения.

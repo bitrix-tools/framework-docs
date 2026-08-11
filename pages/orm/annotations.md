@@ -111,9 +111,9 @@ class UserTable extends DataManager
 
 Чтобы создать аннотации, нужно перейти в папку `/bitrix/` проекта и использовать CLI-команду `orm:annotate`.
 
-```bash
-cd bitrix
-php bitrix.php orm:annotate
+```bash prompt="$"
+$ cd bitrix
+$ php bitrix.php orm:annotate
 ```
 
 {% note warning "" %}
@@ -134,15 +134,15 @@ php bitrix.php orm:annotate
 
 По умолчанию команда сканирует только Главный модуль `main`. Указать другие модули можно  с помощью ключа `-m`.
 
-```bash
+```bash prompt="$"
 # Один модуль
-php bitrix.php orm:annotate -m tasks
+$ php bitrix.php orm:annotate -m tasks
 
 # Несколько модулей, перечисляйте через запятую
-php bitrix.php orm:annotate -m main,intranet
+$ php bitrix.php orm:annotate -m main,intranet
 
 # Все модули
-php bitrix.php orm:annotate -m all
+$ php bitrix.php orm:annotate -m all
 ```
 
 ## Управлять аннотациями
@@ -151,14 +151,14 @@ php bitrix.php orm:annotate -m all
 
 Чтобы полностью сбросить все аннотации, используйте ключ `-c`.
 
-```bash
-php bitrix.php orm:annotate -c -m all
+```bash prompt="$"
+$ php bitrix.php orm:annotate -c -m all
 ```
 
 ## Получить справку по команде
 
 Посмотреть все параметры команды можно с помощью `help`.
 
-```bash
-php bitrix.php help orm:annotate
+```bash prompt="$"
+$ php bitrix.php help orm:annotate
 ```

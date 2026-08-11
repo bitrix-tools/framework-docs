@@ -311,7 +311,7 @@ description: 'Проактивная защита. Руководство по �
 
 -  Найдите все `.htaccess` файлы в директории загрузок.
 
-   ```
+   ```bash prompt="$"
      $ find ./upload -type f -name '.htaccess' -print -exec cat {} \; ./upload/support/not_image/.htaccess Deny from all ./upload/.htaccess <IfModule mod_mime.c> RemoveHandler php .php3 .php4 .php5 .php6 .phtml .pl .asp .aspx .cgi .dll .exe .ico .shtm .shtml .fcg .fcgi .fpl .asmx .pht .py .psp AddType text/plain php .php3 .php4 .php5 .php6 .phtml .pl .asp .aspx .cgi .dll .exe .ico .shtm .shtml .fcg .fcgi .fpl .asmx .pht .py .psp </IfModule> <IfModule mod_php5.c> php_flag engine off </IfModule>
    ```
 
@@ -1045,26 +1045,26 @@ php_value auto_prepend_file "/www/bitrix/modules/security/tools/start.php"
 
 1. Создайте временную папку и перейдите в эту папку.
 
-   ```bash
-   mkdir -p /tmp/kaspersky && cd /tmp/kaspersky
+   ```bash prompt="$"
+   $ mkdir -p /tmp/kaspersky && cd /tmp/kaspersky
    ```
 
 2. Скачайте антивирус.
 
-   ```bash
-   wget https://devbuilds.s.kaspersky-labs.com/kvrt_linux/latest/kvrt.run
+   ```bash prompt="$"
+   $ wget https://devbuilds.s.kaspersky-labs.com/kvrt_linux/latest/kvrt.run
    ```
 
 3. Добавьте права на выполнение.
 
-   ```bash
-   chmod +x kvrt.run
+   ```bash prompt="$"
+   $ chmod +x kvrt.run
    ```
 
 4. Запустите антивирус.
 
-   ```bash
-   ./kvrt.run --allowuser — -accepteula -silent -dontencrypt -d "/tmp/kaspersky/report" -custom /home/bitrix/www/
+   ```bash prompt="$"
+   $ ./kvrt.run --allowuser — -accepteula -silent -dontencrypt -d "/tmp/kaspersky/report" -custom /home/bitrix/www/
    ```
 
    В параметре `-custom` необходимо указать путь к корню сайта.

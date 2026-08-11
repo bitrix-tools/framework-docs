@@ -308,22 +308,22 @@ Bitrix Framework обрабатывает входящие и исходящие
 
 1. Удалите `sendmail`.
 
-   ```bash
-   rpm -e --nodeps sendmail
+   ```bash prompt="$"
+   $ rpm -e --nodeps sendmail
    ```
 
 2. Установите `postfix`.
 
-   ```bash
-   yum install postfix
-   /etc/postfix/post-install upgrade-package
+   ```bash prompt="$"
+   $ yum install postfix
+   $ /etc/postfix/post-install upgrade-package
    ```
 
 3. Пересоздайте базу алиасов.
 
-   ```bash
-   cd /etc
-   newaliases
+   ```bash prompt="$"
+   $ cd /etc
+   $ newaliases
    ```
 
 4. В файле `/etc/php.ini` измените значение `sendmail_path`.
@@ -334,14 +334,14 @@ Bitrix Framework обрабатывает входящие и исходящие
 
 5. Перезапустите `postfix` и Apache.
 
-   ```bash
-   service postfix restart
-   service zend-server restart
+   ```bash prompt="$"
+   $ service postfix restart
+   $ service zend-server restart
    ```
 
 6. Проверьте `postfix` в автозагрузке.
 
-   ```bash
+   ```bash prompt="$"
    chkconfig --list | grep postfix
    ```
 
@@ -353,8 +353,8 @@ Bitrix Framework обрабатывает входящие и исходящие
 
    Если `postfix` не включен, выполните команду:
 
-   ```bash
-   chkconfig postfix on
+   ```bash prompt="$"
+   $ chkconfig postfix on
    ```
 
 7. Проверьте работу.

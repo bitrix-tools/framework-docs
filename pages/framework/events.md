@@ -66,8 +66,8 @@ Bitrix Framework предоставляет CLI-команды для удобн
 
 Пример создания события:
 
-```bash
-php bitrix.php make:event TicketClosed -m my.helpdesk --no-interaction
+```bash prompt="$"
+$ php bitrix.php make:event TicketClosed -m my.helpdesk --no-interaction
 ```
 
 Эта команда создаст файл `/local/modules/my.helpdesk/lib/Public/Event/TicketClosedEvent.php`:
@@ -114,8 +114,8 @@ $event->send();
 
 Пример создания обработчика:
 
-```bash
-php bitrix.php make:eventhandler TicketClosed --event-module my.helpdesk --handler-module my.helpdesk --no-interaction
+```bash prompt="$"
+$ php bitrix.php make:eventhandler TicketClosed --event-module my.helpdesk --handler-module my.helpdesk --no-interaction
 ```
 
 Эта команда создаст файл `local/modules/my.helpdesk/lib/Internals/Integration/My/Helpdesk/EventHandler/TicketClosedEventHandler.php`:

@@ -275,8 +275,8 @@ description: 'Резервное копирование. Продвинутые 
 
 2. Выполните команду:
 
-   ```bash
-   php -f /home/bitrix/www/bitrix/modules/main/tools/backup.php
+   ```bash prompt="$"
+   $ php -f /home/bitrix/www/bitrix/modules/main/tools/backup.php
    ```
 
 ![](./_images/backup-9.png){width=698px height=185px}
@@ -289,9 +289,9 @@ description: 'Резервное копирование. Продвинутые 
 
 Чтобы указать собственное имя копии, перейдите в папку хранения и добавьте имя в конец команды:
 
-```bash
-cd /home/bitrix/www/bitrix/backup
-php -f /home/bitrix/www/bitrix/modules/main/tools/backup.php my_name_backup
+```bash prompt="$"
+$ cd /home/bitrix/www/bitrix/backup
+$ php -f /home/bitrix/www/bitrix/modules/main/tools/backup.php my_name_backup
 ```
 
 #### Архивировать папку upload отдельно
@@ -300,8 +300,8 @@ php -f /home/bitrix/www/bitrix/modules/main/tools/backup.php my_name_backup
 
 Пример команды:
 
-```bash
-tar -czvf upload.tar.gz ./upload
+```bash prompt="$"
+$ tar -czvf upload.tar.gz ./upload
 ```
 
 Выполните команду в той директории, в которой нужно сохранить архив.
@@ -312,15 +312,15 @@ tar -czvf upload.tar.gz ./upload
 
 1. Если окружение установлено в `c:\Bitrix\`, выполните:
 
-   ```bash
-   cd c:\Bitrix\
+   ```shell prompt="$"
+   $ cd c:\Bitrix\
    ```
 
 2. Запустите резервное копирование.
 
-   ```
-   "C:\Bitrix\apache2\zendserver\bin\php.exe" -c "C:\Bitrix\apache2\zendserver\etc\php.ini" -f
-   "C:\Bitrix\www\bitrix\modules\main\tools\backup.php"
+   ```shell prompt="$"
+   $ "C:\Bitrix\apache2\zendserver\bin\php.exe" -c "C:\Bitrix\apache2\zendserver\etc\php.ini" -f
+   $ "C:\Bitrix\www\bitrix\modules\main\tools\backup.php"
    ```
 
 ## Резервное копирование при многосайтовости
@@ -439,30 +439,27 @@ tar -czvf upload.tar.gz ./upload
 
 -  Распаковать все содержимое:
 
-   ```bash
-   tar -xzvf backup.tar.gz
-   /* где
-       -x — извлекает файлы из архива
-       -z — фильтрует архив с помощью gzip
-       -v — предоставляет список обрабатываемых файлов
-       -f — обязательная опция, которая указывает имя файла архива
-   */
+   ```bash prompt="$"
+   $ tar -xzvf backup.tar.gz
    ```
-
+   где
+       `-x` — извлекает файлы из архива
+       `-z` — фильтрует архив с помощью gzip
+       `-v` — предоставляет список обрабатываемых файлов
+       `-f` — обязательная опция, которая указывает имя файла архива
 -  Распаковать конкретные файлы:
 
-   ```bash
-   tar -xzvf backup.tar.gz file1 dir2/file2
+   ```bash prompt="$"
+   $ tar -xzvf backup.tar.gz file1 dir2/file2
    ```
 
 -  Посмотреть содержимое:
 
-   ```bash
-   tar -ztf backup.tar.gz | grep file2
-   /* где
-       -t - выводит содержание архива
-   */
+   ```bash prompt="$"
+   $ tar -ztf backup.tar.gz | grep file2
    ```
+   где
+       `-t` - выводит содержание архива
 
 В операционной системе Windows используйте архиваторы: 7-Zip, WinRAR и другие.
 

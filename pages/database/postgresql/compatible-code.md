@@ -127,11 +127,11 @@ CREATE TABLE book (id int, title varchar(50), primary key (id), key ix_search(ti
 
 ### Конвертация install.sql
 
-```bash
-$cd mymodule
-$mkdir install/db/pgsql
-$cp install/mysql/uninstall.sql install/pgsql/uninstall.sql
-$php -f ../perfmon/tools/mysql_to_pgsql.php -- install/mysql/install.sql > install/pgsql/install.sql
+```bash prompt="$"
+$ cd mymodule
+$ mkdir install/db/pgsql
+$ cp install/mysql/uninstall.sql install/pgsql/uninstall.sql
+$ php -f ../perfmon/tools/mysql_to_pgsql.php -- install/mysql/install.sql > install/pgsql/install.sql
 ```
 
 ### Использование специфичного квотирования

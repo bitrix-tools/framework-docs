@@ -25,21 +25,27 @@ description: 'Установка дистрибутива. Пошаговое р
 
    -  Для пользователя `root`:
 
-      ```bash
-      cd /home/bitrix/www/ # переходим в корневую папку сайта
-      wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php # скачиваем скрипт
-      chown bitrix:bitrix bitrixsetup.php # меняем владельца файла на пользователя bitrix
+      ```bash prompt="$"
+      # переходим в корневую папку сайта
+      $ cd /home/bitrix/www/
 
+      # скачиваем скрипт
+      $ wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php
+
+      # меняем владельца файла на пользователя bitrix
+      $ chown bitrix:bitrix bitrixsetup.php
       ```
 
       Файл должен принадлежать пользователю, под которым работает веб-сервер. Поэтому меняем владельца файла на пользователя `bitrix` командой `chown`.
 
    -  Для пользователя `bitrix`:
 
-      ```bash
-      cd /home/bitrix/www/ # переходим в корневую папку сайта
-      wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php # скачиваем скрипт
+      ```bash prompt="$"
+      # переходим в корневую папку сайта
+      $ cd /home/bitrix/www/
 
+      # скачиваем скрипт
+      $ wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php
       ```
 
 2. Введите в браузере адрес сайта и путь к скрипту `http://[адрес_сайта]/bitrixsetup.php` .
@@ -62,15 +68,18 @@ description: 'Установка дистрибутива. Пошаговое р
 
 Разместите архив в корневой папке сайта на сервере. Чтобы скачать архив в папку `/home/bitrix/www/` используйте команды:
 
-```bash
-cd /home/bitrix/www/ # переходим в папку сайта
-wget https://www.1c-bitrix.ru/download/business_encode.tar.gz # скачиваем дистрибутив по ссылке
+```bash prompt="$"
+# переходим в папку сайта
+$ cd /home/bitrix/www/
+
+# скачиваем дистрибутив по ссылке
+$ wget https://www.1c-bitrix.ru/download/business_encode.tar.gz
 ```
 
 Распакуйте скачанный архив. Чтобы распаковать архив в формате `.tar.gz`, выполните команду:
 
-```bash
-tar -xf business_encode.tar.gz
+```bash prompt="$"
+$ tar -xf business_encode.tar.gz
 ```
 
 Откройте сайт в браузере. Запустится мастер установки.

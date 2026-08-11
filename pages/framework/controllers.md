@@ -41,8 +41,8 @@ description: "Контроллеры Bitrix Framework: создание дейс
 
 Команда `make:controller` создает класс контроллера и заданные действия:
 
-```bash
-php bitrix.php make:controller <controller-name> \
+```bash prompt="$"
+$ php bitrix.php make:controller <controller-name> \
     -m <module-id> \
     --actions=<action-names> \
     [-C <context>] \
@@ -69,8 +69,8 @@ php bitrix.php make:controller <controller-name> \
 
 Создайте первый контроллер в модуле `my.content`:
 
-```bash
-php bitrix.php make:controller iblock \
+```bash prompt="$"
+$ php bitrix.php make:controller iblock \
     -m my.content \
     --actions=get \
     -C Web \
@@ -214,8 +214,8 @@ return [
 
 Чтобы получить успешный ответ, создайте хотя бы один инфоблок. Затем проверьте вызов через HTTP. Контроллер проверяет авторизацию, поэтому передайте логин и пароль пользователя через Basic Authentication:
 
-```bash
-curl --request GET \
+```bash prompt="$"
+$ curl --request GET \
     --url 'http://localhost/content/iblock/0/' \
     --user 'login:password'
 ```
@@ -242,8 +242,8 @@ curl --request GET \
 
 Создайте контроллер `Iblock` с действием `ping` в контексте `Ajax`:
 
-```bash
-php bitrix.php make:controller iblock \
+```bash prompt="$"
+$ php bitrix.php make:controller iblock \
     -m my.content \
     --actions=ping \
     -C Ajax \
@@ -546,8 +546,8 @@ DTO реквеста описывает входные данные, приме�
 
 Создайте реквест командой `make:request`.
 
-```bash
-php bitrix.php make:request IblockCreate -m my.content --fields=name,type,description --no-interaction
+```bash prompt="$"
+$ php bitrix.php make:request IblockCreate -m my.content --fields=name,type,description --no-interaction
 ```
 
 Команда использует AJAX-пространство имен из `.settings.php` и создаст файл `/local/modules/my.content/lib/Infrastructure/Controller/Ajax/Request/IblockCreateRequest.php`.

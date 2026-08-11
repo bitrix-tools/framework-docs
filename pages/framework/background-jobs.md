@@ -121,9 +121,9 @@ $app->addBackgroundJob(function() {
 
 2. Добавьте задание cron на сервере:
 
-   ```bash
+   ```bash prompt="$"
    # Выполнять каждые 10 минут от имени пользователя
-   */10 * * * * bitrix /usr/bin/php -f /home/bitrix/www/bitrix/modules/main/tools/cron_events.php
+   $ */10 * * * * bitrix /usr/bin/php -f /home/bitrix/www/bitrix/modules/main/tools/cron_events.php
    ```
 
    Часть пути `/home/bitrix/www/`  замените на путь к вашему сайту.
