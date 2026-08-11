@@ -261,32 +261,32 @@ Bitrix Framework поддерживает два режима многосайт
 
 1. Создайте каталог для общих файлов, например, `/home/www/shared/`.
 
-   ```bash
-   mkdir /home/www/shared
+   ```bash prompt="$"
+   $ mkdir /home/www/shared
    ```
 
 2. Переместите ядро и ключевые папки из первого сайта в общий каталог:
 
-   ```bash
-   mv /home/www/site-main/bitrix /home/www/shared/bitrix
-   mv /home/www/site-main/upload /home/www/shared/upload
-   mv /home/www/site-main/local  /home/www/shared/local
+   ```bash prompt="$"
+   $ mv /home/www/site-main/bitrix /home/www/shared/bitrix
+   $ mv /home/www/site-main/upload /home/www/shared/upload
+   $ mv /home/www/site-main/local  /home/www/shared/local
    ```
 
 3. Создайте ссылки на общие папки в корне каждого сайта. Выполните команды от имени пользователя и группы веб-сервера. Для первого сайта `/home/www/site_main/`:
 
-   ```bash
-   ln -s /home/www/shared/bitrix /home/www/site-main/bitrix
-   ln -s /home/www/shared/upload /home/www/site-main/upload
-   ln -s /home/www/shared/local  /home/www/site-main/local
+   ```bash prompt="$"
+   $ ln -s /home/www/shared/bitrix /home/www/site-main/bitrix
+   $ ln -s /home/www/shared/upload /home/www/site-main/upload
+   $ ln -s /home/www/shared/local  /home/www/site-main/local
    ```
 
    Для второго сайта `/home/www/site_shop/`:
 
-   ```bash
-   ln -s /home/www/shared/bitrix /home/www/site_shop/bitrix
-   ln -s /home/www/shared/upload /home/www/site_shop/upload
-   ln -s /home/www/shared/local  /home/www/site_shop/local
+   ```bash prompt="$"
+   $ ln -s /home/www/shared/bitrix /home/www/site_shop/bitrix
+   $ ln -s /home/www/shared/upload /home/www/site_shop/upload
+   $ ln -s /home/www/shared/local  /home/www/site_shop/local
    ```
 
 4. Проверьте, что веб-сервер имеет права на запись в `/home/www/shared/`. Это необходимо для установки обновлений и загрузки файлов.
@@ -620,9 +620,9 @@ setcookie("PHPSESSID", "", time() - 3600, '/', '.site.ru');
 
 3. Добавьте символические ссылки.
 
-   ```bash
-   ln -s /var/www/example/bitrix /var/www/forum/bitrix
-   ln -s /var/www/example/upload /var/www/forum/upload
+   ```bash prompt="$"
+   $ ln -s /var/www/example/bitrix /var/www/forum/bitrix
+   $ ln -s /var/www/example/upload /var/www/forum/upload
    ```
 
 #### Настроить шаблон сайта

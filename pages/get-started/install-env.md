@@ -47,32 +47,32 @@ description: 'Установка окружения. Пошаговое руко
 
 2. Обновите пакеты.
 
-   ```bash
-   dnf clean all && dnf update
+   ```bash prompt="$"
+   $ dnf clean all && dnf update
    ```
 
 3. Установите утилиту `wget`, если ее нет на сервере.
 
-   ```bash
-   dnf install wget
+   ```bash prompt="$"
+   $ dnf install wget
    ```
 
 4. Скачайте и запустите скрипт `bitrix-env-9.sh`.
 
-   ```bash
-   wget http://repo.bitrix24.tech/dnf/bitrix-env-9.sh && chmod +x bitrix-env-9.sh && ./bitrix-env-9.sh
+   ```bash prompt="$"
+   $ wget http://repo.bitrix24.tech/dnf/bitrix-env-9.sh && chmod +x bitrix-env-9.sh && ./bitrix-env-9.sh
    ```
 
 5. Если SELinux включен, согласитесь на его отключение и перезагрузите сервер.
 
-   ```bash
-   reboot
+   ```bash prompt="$"
+   $ reboot
    ```
 
 6. После перезагрузки снова запустите скрипт и завершите установку.
 
-   ```bash
-   ./bitrix-env-9.sh
+   ```bash prompt="$"
+   $ ./bitrix-env-9.sh
    ```
 
 ### Тихая установка
@@ -81,8 +81,8 @@ description: 'Установка окружения. Пошаговое руко
 
 Синтаксис команды запуска скрипта:
 
-```bash
-./bitrix-env-9.sh [-h] [-s] [-p [-H hostname]] [-P] [-t] [-M mysql_root_password] [-m 8.0|8.4] [-G postgres_password] [-g 13|15|16]
+```bash prompt="$"
+$ ./bitrix-env-9.sh [-h] [-s] [-p [-H hostname]] [-P] [-t] [-M mysql_root_password] [-m 8.0|8.4] [-G postgres_password] [-g 13|15|16]
 ```
 
 Ключи:
@@ -109,8 +109,8 @@ description: 'Установка окружения. Пошаговое руко
 
 Пример команды:
 
-```bash
-./bitrix-env-9.sh -s -p -H server1 -P -m 8.4 -M 'BX123bx@#MYSQL'
+```bash prompt="$"
+$ ./bitrix-env-9.sh -s -p -H server1 -P -m 8.4 -M 'BX123bx@#MYSQL'
 # запустить установку окружения в тихом режиме
 # запустить Push сервер и создать пул с именем хоста server1
 # установить Percona 8.4 и задать пароль root для MySQL
@@ -168,9 +168,12 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
 1. Склонируйте официальный репозиторий `env-docker`.
 
-   ```bash
-   cd my-project # перейдите в папку проекта
-   git clone https://github.com/bitrix-tools/env-docker.git # склонируйте репозиторий
+   ```bash prompt="$"
+   # перейдите в папку проекта
+   $ cd my-project
+
+   # склонируйте репозиторий
+   $ git clone https://github.com/bitrix-tools/env-docker.git
    ```
 
 2. Настройте обязательные параметры перед запуском. Укажите:
@@ -191,22 +194,22 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
 3. Запустите контейнеры.
 
-   ```bash
-   cd ./env-docker
-   docker compose up -d
+   ```bash prompt="$"
+   $ cd ./env-docker
+   $ docker compose up -d
    ```
 
 4. Скачайте скрипт `bitrixsetup.php` в папку сайта `www`.
 
-   ```bash
+   ```bash prompt="$"
    # войдите в sh-консоль контейнера php под пользователем bitrix
-   docker compose exec --user=bitrix php sh
+   $ docker compose exec --user=bitrix php sh
 
    # перейдите в папку сайта
-   cd /opt/www/
+   $ cd /opt/www/
 
    # скачайте скрипт для установки продукта
-   wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php
+   $ wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php
    ```
 
 5. Откройте в браузере адрес `http://localhost:8588/bitrixsetup.php`.
@@ -225,9 +228,12 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
 Убедиться, что окружение настроено правильно, поможет скрипт [bitrix_server_test.php](https://dev.1c-bitrix.ru/download/scripts/bitrix_server_test.php). Разместить его на сервере можно командами:
 
-```bash
-cd /home/bitrix/www/ # переходим в корневую папку сайта
-wget https://dev.1c-bitrix.ru/download/scripts/bitrix_server_test.php # скачиваем скрипт
+```bash prompt="$"
+# переходим в корневую папку сайта
+$ cd /home/bitrix/www/
+
+# скачиваем скрипт
+$ wget https://dev.1c-bitrix.ru/download/scripts/bitrix_server_test.php
 ```
 
 Откройте страницу `bitrix_server_test.php` в браузере. Скрипт покажет параметры конфигурации сервера, необходимые для использования всех возможностей продукта.

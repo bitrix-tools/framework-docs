@@ -27,8 +27,8 @@ Composer можно установить:
 
 Проверьте, что Composer работает командой:
 
-```bash
-composer -V
+```bash prompt="$"
+$ composer -V
 # Должна отобразиться версия, например:
 # Composer version 2.8.5 2025-01-21 15:23:40
 ```
@@ -90,8 +90,8 @@ return [
 
 Чтобы установить зависимости, выполните команду в терминале из каталога, где расположен `composer.json`:
 
-```bash
-composer install
+```bash prompt="$"
+$ composer install
 ```
 
 Все зависимости установятся в папку `/vendor/`, которую Composer создаст рядом с файлом `composer.json`. Автозагрузчик `/vendor/autoload.php` будет подключаться автоматически.

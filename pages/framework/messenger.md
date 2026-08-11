@@ -190,8 +190,8 @@ return [
 
 При значении `cli` нужно настроить запуск скрипта вручную командой:
 
-```bash
-php bitrix.php messenger:consume
+```bash prompt="$"
+$ php bitrix.php messenger:consume
 ```
 
 Брокеры `brokers` — доступные хранилища сообщений. Ключ — имя брокера, а значение — его параметры.
@@ -391,8 +391,8 @@ return [
 
 Основная команда для обработки:
 
-```bash
-php bitrix.php messenger:consume
+```bash prompt="$"
+$ php bitrix.php messenger:consume
 ```
 
 Она запускает обработчики для всех очередей в бесконечном цикле.
@@ -401,15 +401,15 @@ php bitrix.php messenger:consume
 
 -  Выбор очередей. Можно указать несколько:
 
-   ```bash
-   php bitrix.php messenger:consume first_queue second_queue
+   ```bash prompt="$"
+   $ php bitrix.php messenger:consume first_queue second_queue
    ```
 
 -  Дополнительные опции:
 
-   ```bash
-   // Обрабатывает очередь second_queue 60 секунд с паузой 2 секунды между проверками
-   php bitrix.php messenger:consume second_queue -t 60 --sleep 2
+   ```bash prompt="$"
+   # Обрабатывает очередь second_queue 60 секунд с паузой 2 секунды между проверками
+   $ php bitrix.php messenger:consume second_queue -t 60 --sleep 2
    ```
 
    -  `-t,` `--time-limit` — ограничить время работы, в секундах,

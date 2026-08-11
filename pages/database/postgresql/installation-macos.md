@@ -11,32 +11,32 @@ PostgreSQL на macOS можно установить через Homebrew для
 
 1. Установите PostgreSQL, например, 16 версии:
 
-   ```bash
-   brew install postgresql@16
+   ```bash prompt="$"
+   $ brew install postgresql@16
    ```
 
    Homebrew создаст кластер базы данных с кодировкой UTF-8 в каталоге `$HOMEBREW_PREFIX/var/postgresql@16`.
 
 2. Добавьте команды PostgreSQL в `PATH` для текущей сессии терминала:
 
-   ```bash
-   export PATH="$(brew --prefix postgresql@16)/bin:$PATH"
+   ```bash prompt="$"
+   $ export PATH="$(brew --prefix postgresql@16)/bin:$PATH"
    ```
 
    Чтобы команды `psql`, `createuser` и `createdb` были доступны после перезапуска терминала, добавьте эту строку в профиль вашей оболочки.
 
 3. Запустите сервис:
 
-   ```bash
-   brew services start postgresql@16
+   ```bash prompt="$"
+   $ brew services start postgresql@16
    ```
 
    Команда запустит сервис и зарегистрирует его для автоматического запуска при входе пользователя в систему.
 
 4. Проверьте, что сервис запущен:
 
-   ```bash
-   brew services list
+   ```bash prompt="$"
+   $ brew services list
    ```
 
 ## Конфигурация PostgreSQL
@@ -45,44 +45,44 @@ PostgreSQL на macOS можно установить через Homebrew для
 
 1. Добавьте пользователя.
 
-   ```bash
-   createuser www-data
+   ```bash prompt="$"
+   $ createuser www-data
    ```
 
 2. Добавьте базу данных.
 
-   ```bash
-   createdb www-data --owner www-data --encoding=UTF8
+   ```bash prompt="$"
+   $ createdb www-data --owner www-data --encoding=UTF8
    ```
 
 3. Разрешите пользователю создавать объекты в схеме `public`.
 
-   ```bash
-   psql -d www-data -c 'GRANT CREATE ON SCHEMA public TO "www-data";'
+   ```bash prompt="$"
+   $ psql -d www-data -c 'GRANT CREATE ON SCHEMA public TO "www-data";'
    ```
 
 4. Добавьте расширение `pgcrypto`.
 
-   ```bash
-   psql -d www-data -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'
+   ```bash prompt="$"
+   $ psql -d www-data -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'
    ```
 
 5. Задайте пароль.
 
-   ```bash
-   psql postgres -c 'ALTER USER "www-data" WITH PASSWORD '\''passwd'\'';'
+   ```bash prompt="$"
+   $ psql postgres -c 'ALTER USER "www-data" WITH PASSWORD '\''passwd'\'';'
    ```
 
 6. Проверьте подключение к базе данных.
 
-   ```bash
-   psql --username www-data --dbname www-data --host localhost
+   ```bash prompt="$"
+   $ psql --username www-data --dbname www-data --host localhost
    ```
 
 7. Если при соединении из PHP возникла ошибка `Ident authentication error...`, разрешите аутентификацию по паролю в файле `pg_hba.conf`. Чтобы найти файл, выполните:
 
-   ```bash
-   psql postgres -c 'SHOW hba_file;'
+   ```bash prompt="$"
+   $ psql postgres -c 'SHOW hba_file;'
    ```
 
    В найденном файле замените метод аутентификации для локальных подключений на `password`.
@@ -96,6 +96,6 @@ PostgreSQL на macOS можно установить через Homebrew для
 
    После изменения конфигурации перезапустите сервис.
 
-   ```bash
-   brew services restart postgresql@16
+   ```bash prompt="$"
+   $ brew services restart postgresql@16
    ```
