@@ -391,6 +391,58 @@ items:
             href: /pages/modules/catalog/export-import.md
           - name: Производительность и частые ошибки
             href: /pages/modules/catalog/performance.md
+      - name: Интернет-магазин
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/sale/overview.md
+          - name: Схема работы интернет-магазина и основные объекты
+            href: /pages/modules/sale/architecture.md
+          - name: Как выбрать API интернет-магазина
+            href: /pages/modules/sale/choose-sale-api.md
+          - name: Базовые настройки интернет-магазина
+            href: /pages/modules/sale/sale-settings.md
+          - name: Права доступа и ограничения
+            href: /pages/modules/sale/permissions.md
+          - name: Работа с корзиной
+            href: /pages/modules/sale/basket.md
+          - name: Оформление заказа и публичные сценарии
+            href: /pages/modules/sale/order-checkout-component.md
+          - name: Создание заказа
+            href: /pages/modules/sale/order-create.md
+          - name: Изменение и чтение заказа
+            href: /pages/modules/sale/order-update.md
+          - name: Печатные формы заказа
+            href: /pages/modules/sale/order-documents.md
+          - name: Доставка и отгрузки
+            href: /pages/modules/sale/delivery-shipments.md
+          - name: Транспортные заявки
+            href: /pages/modules/sale/delivery-requests.md
+          - name: Оплаты и платежные системы
+            href: /pages/modules/sale/payments.md
+          - name: Свойства заказа
+            href: /pages/modules/sale/properties.md
+          - name: Правила работы с корзиной
+            href: /pages/modules/sale/discounts-coupons.md
+          - name: Резервирование и списание
+            href: /pages/modules/sale/reservation-deduct.md
+          - name: Статусы и события
+            href: /pages/modules/sale/statuses-events.md
+          - name: Уведомления по заказам
+            href: /pages/modules/sale/order-notifications.md
+          - name: Кассы и чеки
+            href: /pages/modules/sale/cashbox-checks.md
+          - name: Местоположения и налоги
+            href: /pages/modules/sale/locations-taxes.md
+          - name: Покупатели и внутренние счета
+            href: /pages/modules/sale/buyers-accounts.md
+          - name: Архив заказов
+            href: /pages/modules/sale/archive.md
+          - name: Отчеты и аналитические выборки
+            href: /pages/modules/sale/reports.md
+          - name: Обмен, импорт и экспорт заказов
+            href: /pages/modules/sale/exchange-import-export.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/sale/performance.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам
