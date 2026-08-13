@@ -66,15 +66,17 @@ Bitrix Framework включает готовые команды для разр�
 
 -  `make:component` — создает компонент с классом и шаблоном. Компонент можно разместить внутри модуля, в общей папке компонентов или локально.
 
+   Имя компонента указывают в формате `пространство_имен:имя_компонента`, например `my:user.card`. Часть до двоеточия — пространство имен компонента, а не пространство имен PHP. Если опустить пространство имен, команда использует `bitrix`.
+
    ```bash prompt="$"
    # Создать компонент внутри модуля
-   $ php bitrix.php make:component MyNamespace:MyComponent --module=my.module
+   $ php bitrix.php make:component my:user.card --module=my.module
 
-   # Создать компонент в общей папке /bitrix/components/
-   $ php bitrix.php make:component MyNamespace:MyComponent --no-module
+   # Создать компонент в папке /bitrix/components/bitrix/
+   $ php bitrix.php make:component user.card --no-module
 
-   # Создать компонент в папке /local/components/
-   $ php bitrix.php make:component MyNamespace:MyComponent --local -n
+   # Создать компонент в папке /local/components/my/
+   $ php bitrix.php make:component my:user.card --no-module --local -n
    ```
 
 -  `make:controller` — генерирует REST-контроллер для API.
