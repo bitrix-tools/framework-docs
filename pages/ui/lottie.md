@@ -3,13 +3,15 @@ title: Анимации Lottie
 description: 'Анимации Lottie. UI Bitrix Framework: инструменты интерфейса, подключение расширений и примеры использования.'
 ---
 
-Анимации Lottie — это анимации в формате JSON. Формат применяют для интерактивных элементов интерфейса: загрузочных экранов, индикаторов и других визуальных эффектов. Анимации не зависят от разрешения экрана и не нагружают сеть, в отличие от видео и растровых изображений.
+Lottie-анимации хранятся в формате JSON. Формат применяют для интерактивных элементов интерфейса: загрузочных экранов, индикаторов и других визуальных эффектов. Анимации не зависят от разрешения экрана и не нагружают сеть, в отличие от видео и растровых изображений.
 
 В Bitrix Framework на базе библиотеки Lottie 5.13 доступно расширение `ui.lottie`. Расширение позволяет подключать анимации в интерфейсе и управлять воспроизведением из JavaScript-кода.
 
+![Lottie](./_images/ui-lottie.png){width=740px height=360px}
+
 ## Подключить расширение
 
-Подключите библиотеку Lottie в шаблон компонента или страницы.
+Подключите расширение `ui.lottie` в шаблон компонента или страницы.
 
 В JavaScript-коде:
 
@@ -23,7 +25,7 @@ import {Lottie} from 'ui.lottie';
 \Bitrix\Main\UI\Extension::load('ui.lottie');
 ```
 
-После подключения доступен глобальный объект `Lottie`.
+После подключения используйте объект `BX.UI.Lottie` для загрузки анимации.
 
 ## Загрузить анимацию
 
@@ -31,7 +33,7 @@ import {Lottie} from 'ui.lottie';
 
 -  `container` — HTML-элемент, в который нужно вставить анимацию. Обязательный параметр.
 
--  `path` — путь к JSON-файлу с анимацией. Используйте, если файл загружается по URL.
+-  `path` — путь к JSON-файлу с анимацией. Используйте, если файл загружается по URL. Файл должен быть доступен браузеру.
 
 -  `animationData` — данные анимации в виде загруженного JSON-объекта. Альтернатива параметру `path`.
 
@@ -41,7 +43,9 @@ import {Lottie} from 'ui.lottie';
 
 -  `autoplay` — автовоспроизведение. Возможные значения: `true` — воспроизведение сразу после загрузки, `false` — по событию.
 
--  `name` — имя экземпляра анимации. Укажите имя, чтобы управлять анимацией через `Lottie.play(name)` и аналогичные методы.
+-  `name` — имя экземпляра анимации. Укажите имя, чтобы управлять анимацией через `BX.UI.Lottie.play(name)` и аналогичные методы.
+
+Для загрузки анимации передайте один источник данных: `path` или `animationData`.
 
 Пример вызова:
 
@@ -53,6 +57,10 @@ const animation = BX.UI.Lottie.loadAnimation({
     loop: true,
     autoplay: true
 });
+
+animation.addEventListener('data_failed', () => {
+    console.error('Не удалось загрузить Lottie-анимацию');
+});
 ```
 
 {% note warning "" %}
@@ -60,6 +68,46 @@ const animation = BX.UI.Lottie.loadAnimation({
 Элемент `container` должен существовать в DOM на момент вызова `loadAnimation`. Если элемент отсутствует, анимация не отображается.
 
 {% endnote %}
+
+## Передать данные анимации
+
+Используйте параметр `animationData`, когда JSON-объект уже получен из API или встроен в JavaScript-код. Такой способ не требует отдельного файла с анимацией.
+
+В примере код загружает анимацию из переменной `animationData`. Перед вызовом `loadAnimation()` подставьте в нее JSON-объект Lottie.
+
+```php
+<?php
+\Bitrix\Main\UI\Extension::load('ui.lottie');
+?>
+
+<div id="lottie-container" style="width: 120px; height: 120px;"></div>
+
+<script>
+BX.ready(() => {
+    const container = document.getElementById('lottie-container');
+    const animationData = {
+        // JSON-объект Lottie-анимации
+    };
+
+    if (!container)
+    {
+        return;
+    }
+
+    const animation = BX.UI.Lottie.loadAnimation({
+        container,
+        animationData,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+    });
+
+    animation.addEventListener('data_failed', () => {
+        console.error('Не удалось обработать Lottie-анимацию');
+    });
+});
+</script>
+```
 
 ## Настроить анимацию
 
