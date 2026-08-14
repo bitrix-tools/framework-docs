@@ -316,6 +316,10 @@ items:
         href: /pages/ui/hint.md
       - name: Всплывающие окна и меню main.popup
         href: /pages/ui/main-popup.md
+      - name: Фильтр main.ui.filter
+        href: /pages/ui/main-ui-filter.md
+      - name: Таблица main.ui.grid
+        href: /pages/ui/main-ui-grid.md
       - name: Расширение ui.a11y
         items:
           - name: Обзор

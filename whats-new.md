@@ -20,6 +20,11 @@ title: Что нового
 
 ### 2026
 
+#### 14 августа
+
+- Добавили новую статью [Фильтр main.ui.filter](./pages/ui/main-ui-filter.md).
+- Добавили новую статью [Таблица main.ui.grid](./pages/ui/main-ui-grid.md).
+
 #### 13 августа
 
 - Добавили новый раздел [Интернет-магазин](./pages/modules/sale/overview.md).
