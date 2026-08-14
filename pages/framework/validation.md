@@ -1,13 +1,13 @@
 ---
 title: Валидация
-description: 'Валидация. Документация по Bitrix Framework: принципы работы, архитектура и примеры использования.'
+description: 'Валидация данных в Bitrix Framework: правила для объектов, вложенных значений, массивов и параметров контроллера.'
 ---
 
 Валидация данных — это проверка информации на соответствие заданным правилам. Например, числовой идентификатор должен быть положительным, а email — соответствовать формату адреса.
 
 ## Как использовать валидацию
 
-В Bitrix Framework валидацию можно реализовать разными способами. Самый простой способ — ручные проверки в конструкторе или методах. Такой подход приводит к дублированию кода и усложняет его поддержку.
+В Bitrix Framework данные можно проверять вручную в конструкторе или методах. Ручные проверки приводят к дублированию кода и усложняют его поддержку.
 
 ```php
 public function __construct(int $userId)
@@ -24,11 +24,15 @@ public function __construct(int $userId)
 
 -  задавать правила в классах,
 
--  автоматически проверять данные при создании объектов,
+-  проверять объекты через единый сервис,
+
+-  проверять параметры действий контроллера до вызова действия,
 
 -  централизованно обрабатывать ошибки.
 
-### Как создать правила в классе
+Правило и валидатор выполняют разные задачи. Правило — PHP-атрибут, который связывает свойство, параметр или класс с проверкой. Валидатор реализует интерфейс `ValidatorInterface`, проверяет переданное значение и возвращает `ValidationResult`.
+
+### Как добавить правила в класс
 
 1. Создайте класс. Например, `User` со свойствами `id`, `email` и `phone`.
 
@@ -88,8 +92,14 @@ public function __construct(int $userId)
        public function create(?string $email, ?string $phone): Result
        {
            $user = new User();
-           $user->setEmail($email);
-           $user->setPhone($phone);
+           if ($email !== null)
+           {
+               $user->setEmail($email);
+           }
+           if ($phone !== null)
+           {
+               $user->setPhone($phone);
+           }
 
            $result = $this->validation->validate($user);
            if (!$result->isSuccess())
@@ -98,15 +108,18 @@ public function __construct(int $userId)
            }
 
            // save logic ...
+           return $result;
        }
-   }
+    }
    ```
+
+Валидация работает через рефлексию, поэтому модификаторы доступа не влияют на проверку свойств.
 
 {% note warning "" %}
 
--  Валидация работает через рефлексию, модификаторы доступа не учитываются.
+-  Если свойство с типом `nullable` не инициализировано, валидация пропускает его.
 
--  Если свойство помечено как `nullable` и не заполнено, валидация пропускает его.
+-  Если свойству явно присвоено значение `null`, оно считается инициализированным. Сервис передает `null` валидаторам этого свойства.
 
 {% endnote %}
 
@@ -148,7 +161,7 @@ $validationService = \Bitrix\Main\DI\ServiceLocator::getInstance()->get('main.va
 $buyer = new Buyer();
 $buyer->id = 0;
 $result1 = $validationService->validate($buyer);
-// "id: Значение поля меньше допустимого"
+// "id: Значение поля должно быть не меньше, чем 1"
 foreach ($result1->getErrors() as $error)
 {
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
@@ -160,7 +173,7 @@ $order = new Order();
 $order->id = -1;
 $buyer->order = $order;
 $result2 = $validationService->validate($buyer);
-// "order.id: Значение поля меньше допустимого"
+// "order.id: Значение поля должно быть не меньше, чем 1"
 foreach ($result2->getErrors() as $error)
 {
     echo $error->getCode() . ': ' . $error->getMessage(). PHP_EOL;
@@ -191,7 +204,7 @@ foreach ($result3->getErrors() as $error)
 
 -  `Type::Float` — число с плавающей точкой.
 
--  `Type::Numeric` — число, целое или с плавающей точкой.
+-  `Type::Numeric` — число или строка с числом, для которой `is_numeric()` возвращает `true`.
 
 ```php
 use Bitrix\Main\Validation\Rule\ElementsType;
@@ -216,7 +229,7 @@ $result = $validationService->validate($settings); // Успешно
 
 $invalidSettings = new UserSettingsDto([1, 'текст', 3]);
 $result = $validationService->validate($invalidSettings); // Ошибка
-// Сообщение: "favoriteIds: Не все элементы массива соответствуют ожидаемому типу"
+// Сообщение: "favoriteIds: Неправильный тип аргумента"
 ```
 
 {% note info "" %}
@@ -225,11 +238,13 @@ $result = $validationService->validate($invalidSettings); // Ошибка
 
 {% endnote %}
 
-Если элементы требуют сложных правил, создайте для элемента отдельный DTO. Система проверит каждый элемент массива как отдельный объект.
+Если элементы требуют нескольких правил, создайте для элемента отдельный объект передачи данных (DTO). Атрибут `#[ElementsType]` проверит класс каждого элемента, а `#[Validatable(iterable: true)]` запустит валидацию вложенных объектов.
 
 ```php
-use Bitrix\Main\Validation\Rule\RegExp;
+use Bitrix\Main\Validation\Rule\ElementsType;
 use Bitrix\Main\Validation\Rule\Length;
+use Bitrix\Main\Validation\Rule\Recursive\Validatable;
+use Bitrix\Main\Validation\Rule\RegExp;
 
 // DTO для одного элемента (тега)
 final class TagDto
@@ -244,9 +259,9 @@ final class TagDto
 
 final class ArticleDto
 {
-    // Каждый элемент массива будет провалидирован как объект TagDto
     public function __construct(
-        #[ElementsType(TagDto::class)]
+        #[ElementsType(className: TagDto::class)]
+        #[Validatable(iterable: true)]
         public array $tags = []
     )
     {}
@@ -255,8 +270,8 @@ final class ArticleDto
 // Использование
 $article = new ArticleDto();
 $article->tags = [
-    new TagDto('Tag1'),
-    new TagDto('Tag2'),
+    new TagDto('tag1'),
+    new TagDto('tag2'),
     new TagDto('Invalid Tag!'), // Вызовет ошибку: не соответствует RegExp
 ];
 
@@ -271,15 +286,32 @@ if (!$result->isSuccess())
 }
 ```
 
-Если проверка типа `Type` или валидация через вложенный DTO не решают задачу, измените структуру объекта. Массив как нетипизированное хранилище параметров сложно валидировать.
+Массив с разнородными параметрами не задает тип каждого значения. Измените структуру объекта одним из способов:
 
-1. **Преобразовать массив в свойства объекта.** Если массив содержит пары `ключ=>значение`, создайте для каждого параметра отдельное типизированное свойство класса с конкретными атрибутами валидации.
+-  **Преобразуйте массив в свойства объекта.** Если массив содержит пары `ключ => значение`, создайте для каждого параметра отдельное типизированное свойство класса с конкретными атрибутами валидации.
 
-2. **Вынести массив в отдельный объект.** Создайте новый класс для данных из массива и добавьте его как типизированное свойство в исходный DTO.
+-  **Вынесите массив в отдельный объект.** Создайте класс для данных из массива и добавьте его как типизированное свойство в исходный DTO.
 
 ### Валидация в контроллерах
 
-В контроллерах валидация помогает убедиться в корректности данных из запроса.
+В контроллерах система валидации проверяет данные из запроса до их обработки.
+
+Для скалярного значения добавьте правило непосредственно к параметру действия. Механизм привязки аргументов проверяет значение до вызова действия.
+
+```php
+use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Validation\Rule\PositiveNumber;
+
+class UserController extends Controller
+{
+    public function getAction(#[PositiveNumber] int $id): array
+    {
+        return ['id' => $id];
+    }
+}
+```
+
+Для набора связанных значений создайте DTO.
 
 ```php
 use Bitrix\Main\Validation\Rule\NotEmpty;
@@ -289,24 +321,23 @@ final class CreateUserDto
 {
     public function __construct(
         #[PhoneOrEmail]
-        public ?string $login,
+        public ?string $login = null,
 
         #[NotEmpty]
-        public ?string $password,
+        public ?string $password = null,
 
         #[NotEmpty]
-        public ?string $passwordRepeat,
+        public ?string $passwordRepeat = null,
     )
     {}
 }
 ```
 
-В коде класс будет выглядеть следующим образом:
+Проверьте DTO в действии контроллера.
 
 ```php
 use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Result;
 use Bitrix\Main\Validation\ValidationService;
 
 class UserController extends Controller
@@ -320,7 +351,7 @@ class UserController extends Controller
         $this->validation = ServiceLocator::getInstance()->get('main.validation.service');
     }
 
-    public function createAction(): Result
+    public function createAction(): ?array
     {
         $dto = new CreateUserDto();
         $dto->login = (string)$this->getRequest()->get('login');
@@ -332,10 +363,11 @@ class UserController extends Controller
         {
             $this->addErrors($result->getErrors());
 
-            return false;
+            return null;
         }
 
         // create logic ...
+        return [];
     }
 }
 ```
@@ -361,7 +393,7 @@ final class CreateUserDto
     )
     {}
 
-    public static function createFromRequest(\Bitrix\Main\HttpRequest $request): self
+    public static function createFromRequest(HttpRequest $request): self
     {
         return new static(
             login: (string)$request->get('login'),
@@ -372,11 +404,10 @@ final class CreateUserDto
 }
 ```
 
-Класс `Bitrix\Main\Validation\Engine\AutoWire\ValidationParameter` устранит повторяющуюся логику валидации.
+Класс `Bitrix\Main\Validation\Engine\AutoWire\ValidationParameter` создает DTO через указанную фабрику и проверяет его перед передачей в действие.
 
 ```php
 use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Result;
 
 class UserController extends Controller
 {
@@ -390,33 +421,33 @@ class UserController extends Controller
         ];
     }
 
-    public function createAction(CreateUserDto $dto): Result
+    public function createAction(CreateUserDto $dto): array
     {
         // create logic ...
+        return [];
     }
 }
 ```
 
-Если объект `CreateUserDto` невалиден, метод `createAction` не будет выполнен. Контроллер вернет ошибку.
+При ошибке валидации контроллер не вызывает метод `createAction` и возвращает ошибку.
 
-```php
+```json
 {
-    data: null,
-    errors:
-    [
+    "data": null,
+    "errors": [
         {
-            code: "name",
-            customData: null,
-            message: "Значение поля не должно быть пустым",
-        },
+            "code": "password",
+            "customData": null,
+            "message": "Значение поля не может быть пустым"
+        }
     ],
-    status: "error"
+    "status": "error"
 }
 ```
 
 ### Валидаторы без атрибутов
 
-Валидаторы можно применять без атрибутов для разовой проверки данных, когда нет необходимости описывать правила в объекте. Это подходит для старого кода с массивами и нетипизированными переменными.
+Применяйте валидаторы без атрибутов для разовой проверки данных, когда нет необходимости описывать правила в объекте. Такой вариант подходит для существующего кода с массивами и нетипизированными переменными.
 
 ```php
 use Bitrix\Main\Validation\Validator\EmailValidator;
@@ -431,7 +462,7 @@ if (!$result->isSuccess())
 
 ### Сообщение об ошибке после валидации
 
-Можно указать свой текст ошибки, который будет возвращен после валидации.
+В параметре `errorMessage` можно указать текст, который валидатор вернет при ошибке.
 
 ```php
 use Bitrix\Main\Validation\Rule\PositiveNumber;
@@ -454,7 +485,26 @@ foreach ($result->getErrors() as $error)
 // output: 'Invalid ID!'
 ```
 
-Стандартный текст ошибки валидатора:
+Если сообщение должно зависеть от языка, передайте в параметр `errorMessage` объект `LocalizableMessage`. Параметр `phraseSrcFile` задает PHP-файл, которому принадлежит фраза. Создайте для него языковой файл в каталоге `lang/<код языка>` с сохранением относительного пути и определите в нем элемент массива `$MESS` с указанным кодом.
+
+```php
+use Bitrix\Main\Localization\LocalizableMessage;
+use Bitrix\Main\Validation\Rule\PositiveNumber;
+
+class User
+{
+    public function __construct(
+        #[PositiveNumber(errorMessage: new LocalizableMessage(
+            'MY_MODULE_INVALID_ID',
+            phraseSrcFile: __FILE__
+        ))]
+        public readonly int $id
+    )
+    {}
+}
+```
+
+**Пример.** Без параметра `errorMessage` валидатор возвращает стандартное сообщение:
 
 ```php
 use Bitrix\Main\Validation\Rule\PositiveNumber;
@@ -473,7 +523,7 @@ foreach ($result->getErrors() as $error)
 {
     echo $error->getMessage();
 }
-// output: 'Значение поля меньше допустимого'
+// output: 'Значение поля должно быть не меньше, чем 1'
 ```
 
 ### Получить сработавший валидатор
@@ -493,11 +543,11 @@ foreach ($errors as $error)
 
 Bitrix Framework предоставляет готовые атрибуты и валидаторы для самых частых сценариев проверки данных.
 
-Свойства:
+Атрибуты свойств:
 
 -  `ElementsType` — проверка типа элементов массива,
 
--  `Email` — валидация email,
+-  `Email` — валидация email с отключением предварительной обработки адреса через параметр `strict` и проверкой домена через параметр `domainCheck`,
 
 -  `InArray` — значение входит в массив допустимых значений,
 
@@ -507,7 +557,7 @@ Bitrix Framework предоставляет готовые атрибуты и �
 
 -  `Min` — минимальное значение,
 
--  `NotEmpty` — не пустое значение,
+-  `NotEmpty` — проверка непустого значения с разрешением нуля через параметр `allowZero` и строки из пробелов через параметр `allowSpaces`,
 
 -  `Phone` — валидация телефона,
 
@@ -517,15 +567,17 @@ Bitrix Framework предоставляет готовые атрибуты и �
 
 -  `Range` — значение в диапазоне,
 
--  `RegExp` — регулярное выражение,
+-  `RegExp` — проверка по регулярному выражению с параметрами `flags` и `offset`, которые передаются в `preg_match()`,
 
 -  `Url` — валидный URL,
 
 -  `Json` — валидный JSON.
 
-Класс:
+Атрибуты классов:
 
-`AtLeastOnePropertyNotEmpty` — хотя бы одно свойство не пусто.
+-  `AtLeastOnePropertyNotEmpty` — хотя бы одно свойство не пусто,
+
+-  `OnlyOneOfPropertyRequired` — ровно одно из перечисленных свойств не пусто.
 
 Валидаторы:
 
@@ -553,31 +605,24 @@ Bitrix Framework предоставляет готовые атрибуты и �
 
 Каждый валидатор реализует интерфейс `\Bitrix\Main\Validation\Validator\ValidatorInterface` с методом `public function validate(mixed $value): ValidationResult`.
 
-Валидатор выполняет простую задачу — проверяет значение. Он не определяет, относится ли значение к свойству или классу, и не зависит от атрибутов.
+Валидатор проверяет значение. Он не определяет, относится ли значение к свойству или классу, и не зависит от атрибутов.
 
-### Пример валидатора Min
+### Пример валидатора `MinValueValidator`
 
-1. Класс `Min` реализует интерфейс `ValidatorInterface`.
+1. Класс `MinValueValidator` реализует интерфейс `ValidatorInterface`.
 
 2. Конструктор принимает минимальное значение.
 
-3. Метод `validate` создает объект `ValidationResult`, который хранит результаты проверки.
-
-   -  Сначала он проверяет, является ли значение числом. Если нет, добавляется ошибка.
-
-   -  Затем проверяет, меньше ли значение заданного минимума. Если да, добавляется соответствующая ошибка.
-
-4. В конце метод возвращает объект `ValidationResult` с результатами проверки.
+3. Метод `validate()` создает объект `ValidationResult`, проверяет тип и минимальное значение, добавляет найденные ошибки и возвращает результат.
 
 ```php
-namespace Bitrix\Main\Validation\Validator;
+namespace Vendor\Module\Validation\Validator;
 
-use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Validation\ValidationError;
 use Bitrix\Main\Validation\ValidationResult;
 use Bitrix\Main\Validation\Validator\ValidatorInterface;
 
-final class Min implements ValidatorInterface
+final class MinValueValidator implements ValidatorInterface
 {
     public function __construct(
         private readonly int $min
@@ -591,7 +636,7 @@ final class Min implements ValidatorInterface
         {
             $result->addError(
                 new ValidationError(
-                    Loc::getMessage('MAIN_VALIDATION_MIN_NOT_A_NUMBER'),
+                    'Значение должно быть числом',
                     failedValidator: $this
                 )
             );
@@ -601,7 +646,7 @@ final class Min implements ValidatorInterface
         {
             $result->addError(
                 new ValidationError(
-                    Loc::getMessage('MAIN_VALIDATION_MIN_LESS_THAN_MIN'),
+                    'Значение меньше допустимого минимума',
                     failedValidator: $this
                 )
             );
@@ -613,13 +658,13 @@ final class Min implements ValidatorInterface
 
 ## Как создать атрибуты валидации
 
-Атрибуты валидации разделены на два типа: для свойств и для классов.
+Система поддерживает два типа атрибутов валидации: для свойств и для классов.
 
 ### Атрибуты свойств
 
 Атрибуты свойств реализуют интерфейс `\Bitrix\Main\Validation\Rule\PropertyValidationAttributeInterface`. Они используют метод `validateProperty(mixed $propertyValue): ValidationResult` для проверки значений свойств.
 
-Пример простого атрибута для проверки значения свойства:
+Пример атрибута для проверки значения свойства:
 
 ```php
 use Bitrix\Main\Validation\Rule\PropertyValidationAttributeInterface;
@@ -641,17 +686,18 @@ class NotOne implements PropertyValidationAttributeInterface
 }
 ```
 
-Этот атрибут проверяет, что значение свойства не равно 1. Если условие нарушено, возвращается ошибка.
+Этот атрибут проверяет, что значение свойства не равно `1`. Если условие нарушено, метод возвращает ошибку.
 
-Для сложных проверок используйте абстрактный класс `\Bitrix\Main\Validation\Rule\AbstractPropertyValidationAttribute`. Реализуйте метод `getValidators(): array`, чтобы вернуть список валидаторов.
+Если для проверки нужно несколько валидаторов, используйте абстрактный класс `\Bitrix\Main\Validation\Rule\AbstractPropertyValidationAttribute`. Реализуйте метод `getValidators(): array`, чтобы вернуть список валидаторов.
 
 Пример атрибута `Range`, который проверяет, что значение находится в заданном диапазоне:
 
 ```php
 use Attribute;
+use Bitrix\Main\Localization\LocalizableMessageInterface;
 use Bitrix\Main\Validation\Rule\AbstractPropertyValidationAttribute;
-use Bitrix\Main\Validation\Validator\Implementation\Max;
-use Bitrix\Main\Validation\Validator\Implementation\Min;
+use Bitrix\Main\Validation\Validator\MaxValidator;
+use Bitrix\Main\Validation\Validator\MinValidator;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Range extends AbstractPropertyValidationAttribute
@@ -659,15 +705,15 @@ final class Range extends AbstractPropertyValidationAttribute
     public function __construct(
         private readonly int $min,
         private readonly int $max,
-        protected ?string $errorMessage = null
+        protected string|LocalizableMessageInterface|null $errorMessage = null
     )
     {}
 
     protected function getValidators(): array
     {
         return [
-            new Min($this->min),
-            new Max($this->max),
+            new MinValidator($this->min),
+            new MaxValidator($this->max),
         ];
     }
 }
@@ -677,7 +723,7 @@ final class Range extends AbstractPropertyValidationAttribute
 
 Атрибуты класса реализуют интерфейс `\Bitrix\Main\Validation\Rule\ClassValidationAttributeInterface`. Они используют метод `validateObject(object $object): ValidationResult` для проверки объектов.
 
-Пример атрибута для проверки количества свойств:
+Пример атрибута `MaximumProperties` для проверки количества свойств:
 
 ```php
 use Bitrix\Main\Validation\ValidationResult;
@@ -686,7 +732,7 @@ use Bitrix\Main\Validation\Rule\AbstractClassValidationAttribute;
 use ReflectionClass;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class NotOne extends AbstractClassValidationAttribute
+class MaximumProperties extends AbstractClassValidationAttribute
 {
     public function validateObject(object $object): ValidationResult
     {
@@ -706,4 +752,19 @@ class NotOne extends AbstractClassValidationAttribute
 
 ### Сообщение об ошибке для атрибута
 
-Если вы наследуетесь от `AbstractClassValidationAttribute` или `AbstractPropertyValidationAttribute`, можно задать собственное сообщение об ошибке через свойство `$errorMessage`. Это позволит вернуть одну ошибку с вашим текстом вместо стандартных ошибок валидаторов.
+Если атрибут наследуется от `AbstractClassValidationAttribute` или `AbstractPropertyValidationAttribute`, задайте сообщение об ошибке через свойство `$errorMessage`. Абстрактный класс заменяет стандартные ошибки валидаторов одной ошибкой с указанным текстом.
+
+**Пример.** Передайте сообщение в конструктор атрибута `Range`:
+
+```php
+final class ProductDto
+{
+    public function __construct(
+        #[Range(1, 10, errorMessage: 'Количество должно быть от 1 до 10')]
+        public int $quantity
+    )
+    {}
+}
+```
+
+Используйте атрибут свойства для проверки одного значения, атрибут класса — для связи между несколькими свойствами, а `#[Validatable]` — для перехода к вложенному объекту.
