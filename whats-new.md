@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 18 августа
+
+- Добавили новый раздел [Highload-блоки](./pages/modules/highloadblocks/overview.md).
+
 #### 14 августа
 
 - Добавили новую статью [Фильтр main.ui.filter](./pages/ui/main-ui-filter.md).

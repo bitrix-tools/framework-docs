@@ -373,6 +373,24 @@ items:
             href: /pages/modules/iblocks/api.md
           - name: Производительность и частые ошибки
             href: /pages/modules/iblocks/performance.md
+      - name: Highload-блоки
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/highloadblocks/overview.md
+          - name: Архитектура и основные объекты
+            href: /pages/modules/highloadblocks/architecture.md
+          - name: Создание, настройка и перенос Highload-блоков
+            href: /pages/modules/highloadblocks/manage-highloadblocks.md
+          - name: Работа с записями
+            href: /pages/modules/highloadblocks/records.md
+          - name: Связи и справочники на Highload-блоках
+            href: /pages/modules/highloadblocks/relations-and-directories.md
+          - name: События записей и права доступа
+            href: /pages/modules/highloadblocks/events.md
+          - name: Вывод данных компонентами
+            href: /pages/modules/highloadblocks/components.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/highloadblocks/performance.md
       - name: Торговый каталог
         items:
           - name: Введение и базовые концепции
