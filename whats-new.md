@@ -26,6 +26,7 @@ title: Что нового
 
 #### 14 августа
 
+- Обновили статью [Анимации Lottie](./pages/ui/lottie.md).
 - Добавили новую статью [Фильтр main.ui.filter](./pages/ui/main-ui-filter.md).
 - Добавили новую статью [Таблица main.ui.grid](./pages/ui/main-ui-grid.md).
 
