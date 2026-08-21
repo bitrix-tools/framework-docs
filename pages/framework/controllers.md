@@ -800,7 +800,7 @@ final class Iblock extends Controller
 
 {% endnote %}
 
-## Использовать рендеринг
+## Использовать рендеринг {#rendering}
 
 Рендеринг выводит HTML-страницы, компоненты или JS-расширения из контроллера.
 
@@ -814,7 +814,7 @@ final class Iblock extends Controller
 
 Методы `renderView()` и `renderComponent()` возвращают HTML-ответ на основе `HttpResponse` и предназначены для HTTP-маршрутов. Не вызывайте действия с такими ответами через `BX.ajax.runAction()`: он ожидает JSON. Чтобы вернуть результат компонента через AJAX, используйте `renderComponentAjax()` — он формирует JSON-ответ с HTML и подключаемыми ресурсами.
 
-### Отрисовать представление
+### Отрисовать представление {#render-view}
 
 Метод `renderView()` возвращает HTML из файла представления. Переменные из второго аргумента доступны в шаблоне как обычные PHP-переменные.
 
@@ -858,7 +858,7 @@ return $this->renderView('content/index', [
 ], withSiteTemplate: false);
 ```
 
-### Отрисовать компонент
+### Отрисовать компонент {#render-component}
 
 Если страница состоит из одного компонента, используйте `renderComponent()`. Отдельное представление не требуется.
 
@@ -947,7 +947,7 @@ BX.ajax.runAction('my:content.Iblock.component', {
 }
 ```
 
-### Отрисовать расширение
+### Отрисовать расширение {#render-extension}
 
 Для страниц, которые выводят только JS-расширение, используйте `renderExtension()`:
 

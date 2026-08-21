@@ -25,6 +25,7 @@ title: Что нового
 - Добавили новую статью [Отрисовка пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-rendering.md).
 - Добавили новую статью [Типы и компоненты пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-types.md).
 - Обновили статью [Пользовательские поля](./pages/cms-basics/userfields.md).
+- Добавили информацию про публичные страницы на контроллерах в статью [Роутинг](./pages/framework/routing.md#controller-public-pages).
 - Добавили раздел [Управление персоналом](./pages/modules/humanresources/overview.md).
 
 #### 18 августа
