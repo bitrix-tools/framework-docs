@@ -420,7 +420,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 }
 ```
 
-### Фильтры по умолчанию
+### Фильтры по умолчанию {#default-filters}
 
 По умолчанию все действия контроллера используют фильтры `HttpMethod`, `Authentication` и `Csrf`. Чтобы изменить такое поведение, нужно переопределить метод контроллера `getDefaultPreFilters`.
 

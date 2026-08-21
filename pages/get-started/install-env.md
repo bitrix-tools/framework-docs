@@ -160,7 +160,7 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
 {% endnote %}
 
-## Docker-образы
+## Docker-образы {#docker-images}
 
 Контейнерное окружение для Битрикс — решение на базе технологий [Docker](https://www.docker.com/), которое позволяет быстро настроить среду для тестирования и разработки. Официальный репозиторий и подробная документация по проекту находится на [GitHub](https://github.com/bitrix-tools/env-docker).
 
