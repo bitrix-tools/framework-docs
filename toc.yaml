@@ -469,6 +469,24 @@ items:
             href: /pages/modules/sale/exchange-import-export.md
           - name: Производительность и частые ошибки
             href: /pages/modules/sale/performance.md
+      - name: Управление персоналом
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/humanresources/overview.md
+          - name: Архитектура модуля и выбор сервиса
+            href: /pages/modules/humanresources/architecture.md
+          - name: Узлы структуры компании
+            href: /pages/modules/humanresources/nodes.md
+          - name: Участники и роли
+            href: /pages/modules/humanresources/node-members.md
+          - name: Выборки узлов и участников через билдеры
+            href: /pages/modules/humanresources/data-builders.md
+          - name: Пользователи и управленческая иерархия
+            href: /pages/modules/humanresources/users-and-hierarchy.md
+          - name: Настройки узлов и пользователей
+            href: /pages/modules/humanresources/settings.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/humanresources/performance.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам
