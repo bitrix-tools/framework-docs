@@ -20,6 +20,12 @@ title: Что нового
 
 ### 2026
 
+#### 21 августа
+
+- Добавили новую статью [Отрисовка пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-rendering.md).
+- Добавили новую статью [Типы и компоненты пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-types.md).
+- Обновили статью [Пользовательские поля](./pages/cms-basics/userfields.md).
+
 #### 18 августа
 
 - Добавили новый раздел [Highload-блоки](./pages/modules/highloadblocks/overview.md).

@@ -200,6 +200,10 @@ items:
         href: /pages/cms-basics/includes.md
       - name: Пользовательские поля
         href: /pages/cms-basics/userfields.md
+      - name: Отрисовка пользовательских полей в главном модуле
+        href: /pages/cms-basics/userfields-main-rendering.md
+      - name: Типы и компоненты пользовательских полей в главном модуле
+        href: /pages/cms-basics/userfields-main-types.md
       - name: Панель администрирования
         href: /pages/cms-basics/admin-panel.md
 
