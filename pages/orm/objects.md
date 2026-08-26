@@ -266,7 +266,7 @@ $values = $book->collectValues(
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::query()
     ->registerRuntimeField(
-        new \Bitrix\Main\Entity\ExpressionField(
+        new \Bitrix\Main\ORM\Fields\ExpressionField(
             'FULL_NAME', 'CONCAT(%s, " ", %s)', ['NAME', 'LAST_NAME']
         )
     )
@@ -714,7 +714,7 @@ $author['NAME'] = 'New name';
 ```php
 $author = \Bitrix\Main\Test\Typography\AuthorTable::query()
     ->registerRuntimeField(
-        new \Bitrix\Main\Entity\ExpressionField('FULL_NAME', 'CONCAT(%s, " ", %s)', ['NAME', 'LAST_NAME'])
+        new \Bitrix\Main\ORM\Fields\ExpressionField('FULL_NAME', 'CONCAT(%s, " ", %s)', ['NAME', 'LAST_NAME'])
     )
     ->addSelect('ID')
     ->addSelect('FULL_NAME')
