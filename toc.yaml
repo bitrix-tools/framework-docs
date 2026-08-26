@@ -64,6 +64,8 @@ items:
         href: /pages/get-started/directory-structure.md
       - name: Composer
         href: /pages/get-started/composer.md
+      - name: Отладка с помощью Xdebug
+        href: /pages/get-started/debug-xdebug.md
       - name: Создание страницы
         href: /pages/get-started/create-page.md
       - name: Создание компонента
