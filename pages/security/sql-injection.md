@@ -167,12 +167,12 @@ $filterList = \Bitrix\Disk\Internals\VolumeTable::getList([
 ]);.
 ```
 
-Класс `\Bitrix\Main\Entity\ExpressionField` создает вычисляемые поля. Как и `SqlExpression`, он уязвим к непроверенному вводу.
+Класс `\Bitrix\Main\ORM\Fields\ExpressionField` создает вычисляемые поля. Как и `SqlExpression`, он уязвим к непроверенному вводу.
 
 ```php
 $filterList = \Bitrix\Disk\Internals\VolumeTable::getList([
    'runtime' => array(
-      new \Bitrix\Main\Entity\ExpressionField('CNT', $_GET['count'])
+      new \Bitrix\Main\ORM\Fields\ExpressionField('CNT', $_GET['count'])
       // Позволяет внедрить вредоносный код
    )
 ]);
