@@ -110,8 +110,10 @@ file_put_contents('/tmp/today_books.sql', $sql);
 -  `getSelect`, `getGroup` — возвращает массив полей
 
 **distinct**
+
 - `setDistinct` — устанавливает флаг DISTINCT для устранения дубликатов строк
-- `hasDistinct` — проверяет, установлен ли флаг DISTINCT (включая автоматическое определение через цепочки полей)
+
+- `hasDistinct` — проверяет, установлен ли флаг DISTINCT (включая автоматическое определение в `Bitrix\Main\ORM\Fields\ExpressionField`, если таковые участвуют в запросе)
 
 **filter**
 
