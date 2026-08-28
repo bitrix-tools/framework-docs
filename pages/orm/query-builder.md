@@ -5,7 +5,7 @@ description: 'Построитель запросов. ORM Bitrix Framework: к�
 
 Методы выборки `getList` и `getRow` сразу выполняют запросы и возвращают результаты. Они подходят для простых запросов, но неудобны, если параметры неизвестны заранее или нужна сложная логика.
 
-**Гибкость с Entity\\Query.** Для гибкой настройки запросов используйте объект `Entity\Query`(далее — `Query`). Он накапливает параметры для запроса. Это полезно, когда параметры неизвестны заранее и формируются программно.
+**Гибкость с Bitrix\\Main\\ORM\\Query\\Query.** Для гибкой настройки запросов используйте объект `Bitrix\Main\ORM\Query\Query`(далее — `Query`). Он накапливает параметры для запроса. Это полезно, когда параметры неизвестны заранее и формируются программно.
 
 Пример с `getList`
 
@@ -17,11 +17,12 @@ $result = BookTable::getList([
 ]);
 ```
 
-Пример с `Entity\Query`
+Пример с `Bitrix\Main\ORM\Query\Query`
 
 ```php
-// аналогичный запрос через Entity\Query
-$q = new Entity\Query(BookTable::getEntity());
+use Bitrix\Main\ORM\Query\Query;
+// аналогичный запрос через Query
+$q = new Query(BookTable::getEntity());
 $q->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE']);
 $q->setFilter(['=ID' => 1]);
 $result = $q->exec();
@@ -34,13 +35,15 @@ $result = $q->exec();
 Если вы не знаете заранее, какие поля выбрать или какие фильтры применить, используйте объект `Query` для постепенного добавления параметров.
 
 ```php
-$query = new Entity\Query(BookTable::getEntity());
+use Bitrix\Main\ORM\Query\Query;
+
+$query = new Query(BookTable::getEntity());
 attachSelect($query);
 attachOthers($query);
 $result = $query->exec();
 
 // Функция для добавления полей в запрос
-function attachSelect(Entity\Query $query): void
+function attachSelect(Query $query): void
 {
     $query->addSelect('ID');
 
@@ -51,7 +54,7 @@ function attachSelect(Entity\Query $query): void
     }
 }
 
-function attachOthers(Entity\Query $query): void
+function attachOthers(Query $query): void
 {
     // Условие для добавления фильтра
     if (/* условие */)
@@ -67,7 +70,7 @@ function attachOthers(Entity\Query $query): void
 }
 ```
 
-**Создание объекта Query**. Используем `new Entity\Query(BookTable::getEntity())` для создания нового объекта `Query`, связанного с сущностью `BookTable`. Это будет основой для построения запроса.
+**Создание объекта Query**. Используем `new Query(BookTable::getEntity())` для создания нового объекта `Query`, связанного с сущностью `BookTable`. Это будет основой для построения запроса.
 
 **Добавление полей в запрос**. Функция `attachSelect` добавляет поля, которые нужно выбрать из базы данных.
 
@@ -86,7 +89,9 @@ function attachOthers(Entity\Query $query): void
 Объект `Query` позволяет строить запрос без его выполнения. Это полезно для подзапросов или получения текста запроса:
 
 ```php
-$q = new Entity\Query(BookTable::getEntity());
+use Bitrix\Main\ORM\Query\Query;
+
+$q = new Query(BookTable::getEntity());
 $q->setSelect(['ID']);
 $q->setFilter(['=PUBLISH_DATE' => new Type\Date('2014-12-13', 'Y-m-d')]);
 $sql = $q->getQuery();
@@ -94,7 +99,7 @@ file_put_contents('/tmp/today_books.sql', $sql);
 // Запрос "SELECT ID FROM my_book WHERE PUBLISH_DATE='2014-12-31'" будет сохранен в файл, но не выполнен.
 ```
 
-## Методы Entity\\Query
+## Методы Bitrix\\Main\\ORM\\Query\\Query
 
 **select, group**
 
