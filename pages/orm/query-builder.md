@@ -5,7 +5,7 @@ description: 'Построитель запросов. ORM Bitrix Framework: к�
 
 Методы выборки `getList` и `getRow` сразу выполняют запросы и возвращают результаты. Они подходят для простых запросов, но неудобны, если параметры неизвестны заранее или нужна сложная логика.
 
-**Гибкость с Bitrix\\Main\\ORM\\Query\\Query.** Для гибкой настройки запросов используйте объект `Bitrix\Main\ORM\Query\Query`(далее — `Query`). Он накапливает параметры для запроса. Это полезно, когда параметры неизвестны заранее и формируются программно.
+**Гибкость с объектами Query.** Для гибкой настройке запросов используйте объект `Bitrix\\Main\\ORM\\Query\\Query`. Он накапливает параметры для запроса. Это полезно, когда параметры неизвестны заранее и формируются программно.
 
 Пример с `getList`
 
@@ -21,6 +21,7 @@ $result = BookTable::getList([
 
 ```php
 use Bitrix\Main\ORM\Query\Query;
+
 // аналогичный запрос через Query
 $q = new Query(BookTable::getEntity());
 $q->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE']);
@@ -99,7 +100,7 @@ file_put_contents('/tmp/today_books.sql', $sql);
 // Запрос "SELECT ID FROM my_book WHERE PUBLISH_DATE='2014-12-31'" будет сохранен в файл, но не выполнен.
 ```
 
-## Методы Bitrix\\Main\\ORM\\Query\\Query
+## Методы Query
 
 **select, group**
 
@@ -111,9 +112,9 @@ file_put_contents('/tmp/today_books.sql', $sql);
 
 **distinct**
 
-- `setDistinct` — устанавливает флаг DISTINCT для устранения дубликатов строк
+- `setDistinct` — устанавливает флаг `DISTINCT`, чтобы убрать дубликаты строк из результата
 
-- `hasDistinct` — проверяет, установлен ли флаг DISTINCT (включая автоматическое определение в `Bitrix\Main\ORM\Fields\ExpressionField`, если таковые участвуют в запросе)
+- `hasDistinct` — возвращает `true`, если флаг `DISTINCT` установлен или указан внутри выражения `ExpressionField`, добавленного в выборку
 
 **filter**
 
