@@ -365,6 +365,12 @@ items:
         href: /pages/ui/notification-manager.md
       - name: Кнопки ui.buttons
         href: /pages/ui/ui-buttons.md
+      - name: Выпадающий список ui.select
+        href: /pages/ui/ui-select.md
+      - name: Поля форм ui.forms
+        href: /pages/ui/ui-forms.md
+      - name: Панель инструментов ui.toolbar
+        href: /pages/ui/ui-toolbar.md
 
   - name: Модули
     items:
