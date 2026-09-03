@@ -490,6 +490,28 @@ items:
             href: /pages/modules/humanresources/settings.md
           - name: Производительность и частые ошибки
             href: /pages/modules/humanresources/performance.md
+      - name: Генератор документов
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/documentgenerator/overview.md
+          - name: Схема работы генератора документов и основные объекты
+            href: /pages/modules/documentgenerator/architecture.md
+          - name: Шаблоны, поля и форматирование
+            href: /pages/modules/documentgenerator/templates-and-fields.md
+          - name: Провайдеры данных
+            href: /pages/modules/documentgenerator/data-providers.md
+          - name: Документы
+            href: /pages/modules/documentgenerator/document-generation.md
+          - name: Файлы, форматы и преобразование
+            href: /pages/modules/documentgenerator/files-and-transformation.md
+          - name: Права доступа
+            href: /pages/modules/documentgenerator/permissions.md
+          - name: События и расширение модуля
+            href: /pages/modules/documentgenerator/events-and-extension.md
+          - name: Встраивание документов в интерфейс
+            href: /pages/modules/documentgenerator/components.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/documentgenerator/performance.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам

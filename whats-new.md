@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 3 сентября
+
+- Добавили новый раздел [Генератор документов](./pages/modules/documentgenerator/overview.md).
+
 #### 21 августа
 
 - Добавили новую статью [Отрисовка пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-rendering.md).
