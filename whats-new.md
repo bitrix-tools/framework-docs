@@ -22,6 +22,9 @@ title: Что нового
 
 #### 3 сентября
 
+- Добавили новую статью [Выпадающий список ui.select](./pages/ui/ui-select.md).
+- Добавили новую статью [Поля форм ui.forms](./pages/ui/ui-forms.md).
+- Добавили новую статью [Панель инструментов ui.toolbar](./pages/ui/ui-toolbar.md).
 - Добавили новый раздел [Генератор документов](./pages/modules/documentgenerator/overview.md).
 
 #### 21 августа
