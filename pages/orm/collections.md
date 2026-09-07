@@ -1,36 +1,30 @@
 ---
 title: Коллекции
-description: 'Коллекции. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
+description: "Коллекции. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации."
 ---
 
-Коллекция — специальный тип массива, который оптимизирует работу с объектами одного типа. Она позволяет выполнять групповые операции более эффективно.
+Коллекция ORM — типизированный набор ORM-объектов одного класса. Коллекцию получают из результата запроса через `fetchCollection()`, создают вручную через класс коллекции или восстанавливают из готовых данных через `wakeUp()`.
 
-Основные характеристики коллекции:
+Коллекция нужна, когда с результатом запроса нужно работать как с набором ORM-объектов, а не как с массивом строк. В отличие от массива, у коллекции есть API для доступа к объектам, отбора элементов, заполнения полей и сохранения изменений.
 
-1. Типизация. Коллекция содержит объекты одного типа, что делает операции более эффективными и безопасными.
+## Получить коллекцию
 
-2. Оптимизация. Коллекции ускоряют выполнение операций, таких как добавление и удаление объектов.
-
-3. Удобство. Коллекции упрощают код, предоставляя высокоуровневый интерфейс для работы с группами объектов.
-
-Чтобы работать с коллекцией объектов, необходимо сначала описать сущность. Метод `fetchCollection` извлекает из базы данных коллекцию объектов одного типа. Это удобно для работы с однородными данными. В отличие от `fetchAll` или циклического `fetch`, которые возвращают данные в виде массива.
+Метод `fetchCollection()` возвращает коллекцию объектов, которые соответствуют запросу. Если в запросе не указан `select`, ORM добавляет выборку всех полей. О построении запроса читайте в статье [Выборка данных](./querying-data.md).
 
 ```php
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
     ->fetchCollection()
 ;
 ```
 
-`$books` — это коллекция объектов класса `Book` с методами для групповых операций.
+После `fetchCollection()` ORM возвращает объект класса коллекции. Если свой класс коллекции не задан, ORM использует сгенерированный класс-заглушку вида `EO_Book_Collection`. Такой класс наследует `Bitrix\Main\ORM\Objectify\Collection`, поэтому у него есть базовые методы коллекции: `add()`, `getByPrimary()`, `fill()`, `save()`.
 
-## Класс коллекции
-
-У каждой сущности есть свой класс коллекции, наследуемый от `Bitrix\Main\ORM\Objectify\Collection`. Класс создается автоматически. Для объектов `Book` он имеет название `EO_Book_Collection`, где `EO_` — это аббревиатура от `EntityObject`*.* Префикс `EO_` добавлен для уникальности , чтобы предотвратить конфликты с существующими классами.
-
-Чтобы задать свой класс, создайте наследника и укажите его в классе `Table` сущности.
+Если для коллекции нужна своя логика, создайте наследника сгенерированного класса.
 
 ```php
-// Файл bitrix/modules/main/lib/test/typography/books.php
 namespace Bitrix\Main\Test\Typography;
 
 class Books extends EO_Book_Collection
@@ -38,343 +32,508 @@ class Books extends EO_Book_Collection
 }
 ```
 
--  Класс `Books` наследует класс `EO_Book_Collection`.
-
-    ```php
-    // Файл bitrix/modules/main/lib/test/typography/booktable.php
-    namespace Bitrix\Main\Test\Typography;
-
-    class BookTable extends Bitrix\Main\ORM\Data\DataManager
-    {
-        public static function getCollectionClass()
-        {
-            return Books::class;
-        }
-        // ...
-    }
-    ```
-
--  Класс `BookTable` наследует класс `Bitrix\Main\ORM\Data\DataManager`.
-
--  Cтатический метод `getCollectionClass` возвращает `Books` — имя класса коллекции, связанной с `BookTable`.
-
-Теперь метод `fetchCollection` возвращает коллекцию `Books`, что упрощает работу с объектами `Book`.
-
-## Доступ к элементам коллекции
-
-Коллекции предоставляют методы, которые позволяют перебрать элементы, получить доступ к объектам и выполнить операции с ними.
-
-### Как перебрать элементы коллекции
-
-Коллекция реализует интерфейс `\Iterator`, что позволяет использовать цикл `foreach` для перебора элементов.
+Затем укажите свой класс коллекции в таблице через метод `getCollectionClass()`.
 
 ```php
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection()
-;
-foreach ($books as $book)
+namespace Bitrix\Main\Test\Typography;
+
+use Bitrix\Main\ORM\Data\DataManager;
+
+class BookTable extends DataManager
 {
-    // ...
+    public static function getCollectionClass()
+    {
+        return Books::class;
+    }
 }
 ```
 
-### Как получить объекты коллекции
+## Перебрать объекты коллекции
 
-Объекты коллекции можно получить напрямую. Метод `getAll` возвращает все объекты в виде массива.
-
-```php
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection()
-;
-$bookObjects = $books->getAll();
-echo $bookObjects[0]->getId();
-// выведет значение ID первого объекта
-```
-
-Если нужно получить не сами объекты, а их данные в виде массива, следует использовать метод `collectValues`. Метод преобразует коллекцию в ассоциативный массив, где ключами являются первичные ключи объектов, а значениями — массивы данных, полученные из каждого объекта. Если элементы коллекции имеют составной первичный ключ, он будет преобразован в строку с использованием правил `\Bitrix\Main\ORM\Objectify\Collection::sysGetPrimaryKey`.
+Коллекция реализует `Iterator`, поэтому ее можно передать в `foreach`.
 
 ```php
-$bookCollection = \Bitrix\Main\Test\Typography\BookTable::getList()->fetchCollection();
-$books = $bookCollection->collectValues();
-```
-
-Чтобы получить объекты по ключам, используйте метод `getByPrimary`. Если объект с указанным первичным ключом не будет найден, то метод вернет `null`. При работе с составным первичным ключом используйте ассоциативный массив с именами полей ключа.
-
-```php
-// Пример с простым первичным ключом
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection()
-;
-$book = $books->getByPrimary(1);
-// книга с ID=1
-
-// Пример с составным первичным ключом
-$booksToAuthor = \Bitrix\Main\Test\Typography\BookAuthorTable::getList()
-    ->fetchCollection()
-;
-$bookToAuthor = $booksToAuthor->getByPrimary(['BOOK_ID' => 2, 'AUTHOR_ID' => 18]);
-// объект отношения книги ID=2 с автором ID=18
-```
-
-### Проверить наличие объекта
-
-Метод `has` позволяет проверить наличие объекта в коллекции напрямую.
-
-```php
-$book1 = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
-$book2 = \Bitrix\Main\Test\Typography\Book::wakeUp(2);
-$books = \Bitrix\Main\Test\Typography\BookTable::query()
-    ->addSelect('*')
-    ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection()
-;
-
-var_dump($books->has($book1)); // false
-var_dump($books->has($book2)); // true
-```
-
-Метод `hasByPrimary` проверяет по первичному ключу.
-
-```php
-$books = \Bitrix\Main\Test\Typography\BookTable::query()
-    ->addSelect('*')
-    ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection()
-;
-
-var_dump($books->hasByPrimary(1)); // false
-var_dump($books->hasByPrimary(2)); // true
-```
-
-Метод `isEmpty` проверяет, пустая ли коллекция. Это полезно для уверенности в наличии объектов перед выполнением операций.
-
-```php
-$books = \Bitrix\Main\Test\Typography\BookTable::query()
-    ->addSelect('*')
-    ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection()
-;
-
-$isEmpty = $books->isEmpty();
-```
-
-### Как добавить объект
-
-Добавить объект в коллекцию можно с помощью метода `add` и интерфейса `ArrayAccess`. Интерфейс позволяет использовать синтаксис массива `[]`.
-
-```php
-$book1 = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
-$books = \Bitrix\Main\Test\Typography\BookTable::query()
-    ->addSelect('*')
-    ->whereIn('ID', [2, 3, 4])
-    ->fetchCollection()
-;
-
-$books->add($book1);
-// или
-$books[] = $book1;
-```
-
-### Удалить объект
-
-Метод `remove` удаляет объект из коллекции явно. Вы передаете сам объект, который хотите удалить. Метод `removeByPrimary` удаляет объект по первичному ключу. Это удобно, если у вас есть идентификатор объекта, но нет самого объекта.
-
-```php
-$book1 = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection()
-;
-$books->remove($book1);
-// удалится книга с ID=1
-$books->removeByPrimary(2);
-// удалится книга с ID=2
-```
-
-## Групповые действия
-
-Коллекции позволяют выполнять групповые операции над элементами.
-
-### Сохранить новые объекты
-
-Метод `save()` сохраняет новые объекты одним запросом к базе данных.
-
-```php
-use Bitrix\Main\Test\Typography\Books;
-use Bitrix\Main\Test\Typography\Book;
-
-$books = new Books;
-$books[] = (new Book)->setTitle('Title 112');
-$books[] = (new Book)->setTitle('Title 113');
-$books[] = (new Book)
-    ->setTitle('Title 114')
-    ->setIsbn('114-000')
-;
-
-$books->save(true);
-// INSERT INTO ... (`TITLE`, `ISBN`) VALUES
-// ('Title 112', DEFAULT),
-// ('Title 113', DEFAULT),
-// ('Title 114', '114-000')
-```
-
-Параметр `$ignoreEvents = true` отключает события ORM при добавлении записей. Это полезно при мультивставке с автоинкрементным полем, так как невозможно получить множественные значения этого поля, как при вставке одной записи. Если в сущности нет автоинкрементных полей, выполнение событий остается на усмотрение разработчика. По умолчанию события выполняются.
-
-### Обновить существующие объекты
-
-Метод `save()` сохраняет измененные объекты одним запросом `UPDATE`.
-
-```php
-use Bitrix\Main\Test\Typography\PublisherTable;
 use Bitrix\Main\Test\Typography\BookTable;
 
-$books = BookTable::getList()->fetchCollection();
-$publisher = PublisherTable::wakeUpObject(254);
-foreach ($books as $book)
-{
-    $book->setPublisher($publisher);
-}
-$books->save();
-// UPDATE ... SET `PUBLISHER_ID` = '254'
-// WHERE `ID` IN ('1', '2')
-```
-
-Групповое обновление работает, если измененные данные одинаковы для всех объектов. Если данные различаются для каждого объекта, записи сохраняются по отдельности, что может привести к множественным запросам в базу данных.
-
-Как и при добавлении, при обновлении можно отключать выполнение событий параметром `$ignoreEvents` в методе `save()`. По умолчанию они выполняются для каждого элемента коллекции. Отключение событий может повысить производительность при массовых операциях, так как исключает вызов дополнительных обработчиков.
-
-### Заполнить данные
-
-Операция `fill` заполняет данные объектов одним запросом. Метод `fill` выполняет массовое заполнение данных без валидации. Это может привести к ошибкам, если данные некорректны.
-
-```php
-$books = new \Bitrix\Main\Test\Typography\Books;
-$books[] = \Bitrix\Main\Test\Typography\Book::wakeUp(1);
-$books[] = \Bitrix\Main\Test\Typography\Book::wakeUp(2);
-$books->fill();
-// SELECT ... WHERE ID IN(1,2)
-```
-
-Можно передавать массив имен полей или маску типа.
-
-```php
-$books->fill(['TITLE', 'PUBLISHER_ID']);
-$books->fill(\Bitrix\Main\ORM\Fields\FieldTypeMask::FLAT);
-```
-
-Доступные маски:
-
--  `SCALAR`  — скалярные поля `ORM\ScalarField`,
-
--  `EXPRESSION` — выражения `ORM\ExpressionField`,
-
--  `USERTYPE` — пользовательские поля,
-
--  `REFERENCE` — отношения 1:1 и N:1 `ORM\Fields\Relations\Reference`,
-
--  `ONE_TO_MANY` — отношения 1:N `ORM\Fields\Relations\OneToMany`,
-
--  `MANY_TO_MANY` — отношения N:M `ORM\Fields\Relations\ManyToMany`,
-
--  `FLAT` — скалярные поля и выражения,
-
--  `RELATION` — все отношения,
-
--  `ALL` — абсолютно все доступные поля.
-
-### Обработать элементы коллекции {#walk}
-
-Метод `walk` перебирает элементы коллекции без использования цикла `foreach`. Метод доступен с версии 26.0.0 главного модуля.
-
-```php
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
     ->fetchCollection()
 ;
-$books->walk(static function($book)
+
+foreach ($books as $book)
 {
-    if ($book->getPrice() > 1000)
-    {
-        $book->setActive(false);
-    }
-});
+    echo $book->getTitle();
+}
 ```
 
-Метод изменяет текущую коллекцию. Новая коллекция не создается.
-
-Используйте `walk` в цепочке вызовов для компактной записи логики:
+Метод `walk()` выполняет callback для каждого объекта и возвращает текущую коллекцию. Используйте его в цепочке, чтобы получить объекты, изменить их и сразу сохранить.
 
 ```php
-$saveResult = \Bitrix\Main\Test\Typography\BookTable::query()
-    ->addSelect('*')
-    ->where('> PRICE', 1000)
+use Bitrix\Main\Test\Typography\BookTable;
+
+$processedKeys = [];
+
+$result = BookTable::query()
+    ->where('PUBLISHER_ID', 253)
     ->fetchCollection()
-    ->walk(static function($book)
+    ->walk(static function($book, $key) use (&$processedKeys)
     {
-        $book->setActive(false);
+        $processedKeys[] = $key;
+        $book->setIsArchived(true);
     })
     ->save()
 ;
 ```
 
-### Получить список значений поля
+Первый аргумент callback — объект, второй — ключ элемента коллекции.
 
-Метод `get*List` позволяет получить список значений поля из результата запроса, где `*` — имя поля в формате `camelCase` с заглавной буквы.
+## Получить объекты из коллекции
 
-```php
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->fetchCollection()
-;
-$titles = $books->getTitleList();
-```
-
-### Получить коллекцию
-
-Метод `get*Collection` возвращает уникальные объекты в виде коллекции, где `*` — имя поля в формате `camelCase` с заглавной буквы. Метод доступен только для полей отношений: `Reference`, `OneToMany`, `ManyToMany` .
+Метод `getAll()` возвращает все объекты коллекции в виде массива.
 
 ```php
-$authors = \Bitrix\Main\Test\Typography\AuthorTable::getList([
-    'select' => ['BOOKS']
-])->fetchCollection();
+use Bitrix\Main\Test\Typography\BookTable;
 
-// Получаем уникальную коллекцию книг всех авторов
-$books = $authors->getBooksCollection();
-```
-
-## Как восстановить коллекцию
-
-Метод `wakeUp`  восстанавливает коллекцию объектов из имеющихся данных без повторного запроса к базе. Коллекцию можно восстановить по первичному ключу или по набору полей.
-
-При восстановлении коллекции по набору полей необходимо указать первичный ключ. Это обязательное поле.
-
-```php
-// По первичному ключу
-$books = \Bitrix\Main\Test\Typography\Books::wakeUp([1, 2]);
-// По набору полей
-$books = \Bitrix\Main\Test\Typography\Books::wakeUp([
-    ['ID' => 1, 'TITLE' => 'Title 1'],
-    ['ID' => 2, 'TITLE' => 'Title 2']
-]);
-```
-
-{% note info "" %}
-
-Если объекты не существовали в базе данных и были восстановлены через `wakeUp`, то можно сохранить только измененные после `wakeUp` объекты. Чтобы сохранить изменения, следует использовать запрос `UPDATE`.
-
-{% endnote %}
-
-## Как выполнить слияние
-
-Метод `merge` позволяет объединить две коллекции в одну. Слияние происходит по правилам, которые определены в `\Bitrix\Main\ORM\Objectify\Collection::add`.
-
-```php
-$books = \Bitrix\Main\Test\Typography\BookTable::getList()
+$books = BookTable::query()
     ->whereIn('ID', [1, 2])
     ->fetchCollection()
 ;
 
-$anotherBooks = \Bitrix\Main\Test\Typography\BookTable::getList()
-    ->whereIn('ID', [3, 4])
+$bookList = $books->getAll();
+echo $bookList[0]->getTitle();
+```
+
+Метод `getByPrimary()` возвращает объект по первичному ключу или `null`, если объекта нет в коллекции.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
     ->fetchCollection()
 ;
 
-$books = $books->merge($anotherBooks);
+$book = $books->getByPrimary(1);
+
+if ($book !== null)
+{
+    echo $book->getTitle();
+}
 ```
+
+Для объекта с составным первичным ключом передайте массив, где ключи — имена полей первичного ключа.
+
+```php
+use Bitrix\Main\Test\Typography\StoreBookTable;
+
+$storeBooks = StoreBookTable::query()
+    ->where('STORE_ID', 33)
+    ->fetchCollection()
+;
+
+$storeBook = $storeBooks->getByPrimary([
+    'STORE_ID' => 33,
+    'BOOK_ID' => 1,
+]);
+```
+
+Метод `collectValues` возвращает данные объектов в виде массива. Ключами массива становятся значения первичного ключа объектов.
+
+Аргументы метода:
+
+-  `$valuesType` выбирает набор значений: `Values::ACTUAL` — фактические загруженные значения, `Values::CURRENT` — текущие измененные значения, `Values::ALL` — оба набора.
+
+-  `$fieldsMask` ограничивает типы полей через маску `FieldTypeMask`. Например, `FieldTypeMask::SCALAR` оставляет в результате только скалярные поля, а `FieldTypeMask::ALL` возвращает все доступные типы полей.
+
+-  `$recursive` включает в результат значения связанных объектов и коллекций. Если передать `false`, метод вернет только значения текущих объектов коллекции.
+
+Используйте аргументы, чтобы выбрать, какие данные попадут в результат:
+
+-  `collectValues()` вернет все загруженные и текущие значения полей текущих объектов.
+
+-  `collectValues(Values::ALL, FieldTypeMask::SCALAR)` вернет только скалярные поля.
+
+-  `collectValues(Values::CURRENT, FieldTypeMask::SCALAR)` вернет только текущие значения скалярных полей.
+
+-  `collectValues(Values::ALL, FieldTypeMask::ALL, true)` добавит значения загруженных связанных объектов и коллекций.
+
+```php
+use Bitrix\Main\ORM\Fields\FieldTypeMask;
+use Bitrix\Main\ORM\Objectify\Values;
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
+    ->fetchCollection()
+;
+
+$allValues = $books->collectValues();
+$scalarValues = $books->collectValues(Values::ALL, FieldTypeMask::SCALAR);
+$changedScalarValues = $books->collectValues(Values::CURRENT, FieldTypeMask::SCALAR);
+$valuesWithRelations = $books->collectValues(Values::ALL, FieldTypeMask::ALL, true);
+```
+
+## Проверить наличие объектов
+
+Метод `has()` проверяет, есть ли в коллекции переданный объект. Объект должен быть экземпляром того же ORM-класса, с которым работает коллекция.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
+    ->fetchCollection()
+;
+
+$book = $books->getByPrimary(1);
+
+if ($book !== null && $books->has($book))
+{
+    echo 'Book is in collection';
+}
+```
+
+Метод `hasByPrimary()` проверяет наличие объекта по первичному ключу и возвращает `true` или `false`.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
+    ->fetchCollection()
+;
+
+if ($books->hasByPrimary(1))
+{
+    echo 'Book is in collection';
+}
+```
+
+Метод `isEmpty()` возвращает `true`, если коллекция не содержит объектов.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->where('PUBLISHER_ID', 999)
+    ->fetchCollection()
+;
+
+if ($books->isEmpty())
+{
+    echo 'No books found';
+}
+```
+
+Метод `count()` возвращает количество объектов в коллекции.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->where('PUBLISHER_ID', 253)
+    ->fetchCollection()
+;
+
+$count = $books->count();
+```
+
+Метод `find()` возвращает первый объект, для которого callback вернул `true`. Если подходящего объекта нет, метод возвращает `null`.
+
+Callback получает объект коллекции первым аргументом и ключ элемента вторым аргументом. Чтобы объект попал в результат, callback должен вернуть `true`.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->where('PUBLISHER_ID', 253)
+    ->fetchCollection()
+;
+
+$book = $books->find(static function($book, $key)
+{
+    return $book->getIsbn() === '978-3-16-148410-0';
+});
+```
+
+Метод `filter()` возвращает новую коллекцию с объектами, для которых callback вернул `true`. Метод работает только с неизмененной коллекцией. Если до фильтрации объекты были добавлены, удалены или изменены, ORM выбросит `Bitrix\Main\ORM\Exception\CollectionFilterException`.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->where('PUBLISHER_ID', 253)
+    ->fetchCollection()
+;
+
+$archivedBooks = $books->filter(static function ($book, $key)
+{
+    return $book->getIsArchived();
+});
+```
+
+## Изменить состав коллекции
+
+Метод `add()` добавляет объект в коллекцию. Объект должен принадлежать тому же ORM-классу, иначе метод выбросит исключение `Bitrix\Main\ArgumentException`. Пока коллекция не сохранена через `save()`, объект остается только в коллекции и не попадает в базу данных.
+
+```php
+use Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Books;
+
+$books = new Books();
+
+$book = (new Book())
+    ->setTitle('Title 3')
+    ->setIsbn('978-0-00-000000-3')
+;
+
+$books->add($book);
+
+$saveResult = $books->save();
+```
+
+Коллекция поддерживает синтаксис `$collection[] = $object` только для добавления объекта. Доступ по индексу, проверка индекса и удаление по индексу через `ArrayAccess` не доступны.
+
+```php
+use Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Books;
+
+$books = new Books();
+$books[] = (new Book())->setTitle('Title 4');
+
+$saveResult = $books->save();
+```
+
+Метод `remove()` удаляет из коллекции переданный объект. Метод `removeByPrimary()` удаляет объект по первичному ключу. Удаление меняет состав коллекции в памяти. Метод не удаляет запись из базы данных.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
+    ->fetchCollection()
+;
+
+$book = $books->getByPrimary(1);
+
+if ($book !== null)
+{
+    $books->remove($book);
+}
+
+$books->removeByPrimary(2);
+
+$saveResult = $books->save();
+```
+
+## Заполнить недостающие данные
+
+Метод `fill()` загружает поля и отношения для объектов коллекции одним запросом. В метод можно передать имя поля, массив имен полей или маску `Bitrix\Main\ORM\Fields\FieldTypeMask`.
+
+```php
+use Bitrix\Main\Test\Typography\Books;
+
+$books = Books::wakeUp([
+    ['ID' => 1],
+    ['ID' => 2],
+]);
+
+$books->fill(['TITLE', 'PUBLISHER_ID']);
+```
+
+Если передать одно поле, `fill()` может вернуть результат заполнения этого поля. Для обычного поля метод возвращает список значений, для поля отношения — коллекцию связанных объектов.
+
+```php
+use Bitrix\Main\Test\Typography\Books;
+
+$books = Books::wakeUp([
+    ['ID' => 1],
+    ['ID' => 2],
+]);
+
+$titles = $books->fill('TITLE');
+$publishers = $books->fill('PUBLISHER');
+```
+
+Маски `FieldTypeMask` помогают выбрать группу полей.
+
+```php
+use Bitrix\Main\ORM\Fields\FieldTypeMask;
+use Bitrix\Main\Test\Typography\Books;
+
+$books = Books::wakeUp([
+    ['ID' => 1],
+    ['ID' => 2],
+]);
+
+$books->fill(FieldTypeMask::FLAT);
+```
+
+Доступные маски:
+
+#|
+|| **Маска** | **Что заполняет** ||
+|| `SCALAR` | Скалярные поля ||
+|| `EXPRESSION` | Вычисляемые поля `ExpressionField` ||
+|| `USERTYPE` | Пользовательские поля ||
+|| `REFERENCE` | Отношения `Reference` ||
+|| `ONE_TO_MANY` | Отношения `OneToMany` ||
+|| `MANY_TO_MANY` | Отношения `ManyToMany` ||
+|| `FLAT` | Скалярные и вычисляемые поля ||
+|| `RELATION` | Все отношения ||
+|| `ALL` | Все доступные поля и отношения ||
+|#
+
+## Сохранить объекты
+
+Метод `save($ignoreEvents = false)` сохраняет новые и измененные объекты коллекции и возвращает объект `Bitrix\Main\ORM\Data\Result`.
+
+```php
+use Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Books;
+
+$books = new Books();
+
+$books[] = (new Book())
+    ->setTitle('Title 3')
+    ->setIsbn('978-0-00-000000-3')
+;
+
+$books[] = (new Book())
+    ->setTitle('Title 4')
+    ->setIsbn('978-0-00-000000-4')
+;
+
+$result = $books->save();
+```
+
+Новые объекты ORM сохраняет через групповое добавление. Если измененные объекты содержат одинаковый набор новых значений, ORM может сохранить их через групповое обновление. Если изменения различаются, ORM сохраняет объекты по отдельности.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+use Bitrix\Main\Test\Typography\PublisherTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
+    ->fetchCollection()
+;
+
+$publisher = PublisherTable::wakeUpObject(['ID' => 254]);
+
+foreach ($books as $book)
+{
+    $book->setPublisher($publisher);
+}
+
+$result = $books->save();
+```
+
+Параметр `$ignoreEvents` передается в операции добавления и группового обновления. Значение по умолчанию — `false`: события ORM не отключаются.
+
+```php
+use Bitrix\Main\Test\Typography\Book;
+use Bitrix\Main\Test\Typography\Books;
+
+$books = new Books();
+
+$books[] = (new Book())
+    ->setTitle('Title 5')
+    ->setIsbn('978-0-00-000000-5')
+;
+
+$result = $books->save(true);
+```
+
+## Получить значения и связанные коллекции
+
+Для скалярного поля ORM генерирует метод `get*List()`, где `*` — имя поля в формате `CamelCase` с заглавной буквы. Метод возвращает список значений этого поля из объектов коллекции.
+
+Метод работает с уже загруженными значениями. Укажите поле в `addSelect()` или `setSelect()` при запросе. Если поле не выбрано, метод вернет пустой список.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->whereIn('ID', [1, 2])
+    ->fetchCollection()
+;
+
+$titles = $books->getTitleList();
+```
+
+Для поля отношения ORM генерирует метод `get*Collection()`. Метод возвращает коллекцию уникальных связанных объектов.
+
+Отношение тоже должно быть выбрано через `addSelect()` или `setSelect()`. Если отношение не загружено, метод вернет пустую коллекцию.
+
+```php
+use Bitrix\Main\Test\Typography\AuthorTable;
+
+$authors = AuthorTable::query()
+    ->addSelect('BOOKS')
+    ->fetchCollection()
+;
+
+$books = $authors->getBooksCollection();
+```
+
+Метод доступен для отношений `Reference`, `OneToMany` и `ManyToMany`.
+
+## Восстановить коллекцию из данных
+
+Метод `wakeUp()` создает коллекцию из готовых данных без запроса к базе. В каждом элементе данных должен быть первичный ключ объекта.
+
+```php
+use Bitrix\Main\Test\Typography\Books;
+
+$books = Books::wakeUp([
+    ['ID' => 1, 'TITLE' => 'Title 1'],
+    ['ID' => 2, 'TITLE' => 'Title 2'],
+]);
+```
+
+Для объектов с составным первичным ключом укажите все поля ключа.
+
+```php
+use Bitrix\Main\Test\Typography\EO_StoreBook_Collection;
+
+$storeBooks = EO_StoreBook_Collection::wakeUp([
+    [
+        'STORE_ID' => 33,
+        'BOOK_ID' => 1,
+        'QUANTITY' => 4,
+    ],
+    [
+        'STORE_ID' => 33,
+        'BOOK_ID' => 2,
+        'QUANTITY' => 0,
+    ],
+]);
+```
+
+{% note warning "" %}
+
+`wakeUp()` не проверяет, что объект уже есть в базе данных. Используйте метод для данных, которые уже получены из надежного источника, например из кеша или предыдущего запроса.
+
+{% endnote %}
+
+## Объединить коллекции
+
+Метод `merge()` добавляет в текущую коллекцию объекты из другой коллекции и возвращает текущую коллекцию. Переданная коллекция должна быть того же класса. Если передать `null`, метод вернет текущую коллекцию без изменений.
+
+```php
+use Bitrix\Main\Test\Typography\BookTable;
+
+$books = BookTable::query()
+    ->where('ID', 1)
+    ->fetchCollection()
+;
+
+$otherBooks = BookTable::query()
+    ->where('ID', 2)
+    ->fetchCollection()
+;
+
+$books->merge($otherBooks);
+```
+
+При объединении ORM добавляет объекты по тем же правилам, что и метод `add()`: объект другого класса не попадет в коллекцию.
