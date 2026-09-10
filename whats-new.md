@@ -20,6 +20,11 @@ title: Что нового
 
 ### 2026
 
+#### 10 сентября
+
+- Добавили новую статью [Сетка формы ui.layout-form](./pages/ui/ui-layout-form.md).
+- Добавили новую статью [Диалог выбора цвета color_picker](./pages/ui/color-picker.md).
+
 #### 7 сентября
 
 - Обновили статью [Операции с сущностями и события](./pages/orm/entity-operations.md).

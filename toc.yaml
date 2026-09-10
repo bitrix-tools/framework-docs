@@ -369,8 +369,12 @@ items:
         href: /pages/ui/ui-select.md
       - name: Поля форм ui.forms
         href: /pages/ui/ui-forms.md
+      - name: Сетка формы ui.layout-form
+        href: /pages/ui/ui-layout-form.md
       - name: Панель инструментов ui.toolbar
         href: /pages/ui/ui-toolbar.md
+      - name: Диалог выбора цвета color_picker
+        href: /pages/ui/color-picker.md
 
   - name: Модули
     items:
