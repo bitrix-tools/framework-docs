@@ -3,60 +3,57 @@ title: Построитель запросов
 description: 'Построитель запросов. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
 ---
 
-Методы выборки `getList` и `getRow` сразу выполняют запросы и возвращают результаты, поэтому они хорошо подходят для простых запросов, но когда все параметры запроса заранее неизвестны или нужна сложная логика начинаются сложности.
+Методы `getList` и `getRow` сразу выполняют запрос и возвращают результат. Такой вызов подходит, когда состав полей и условия фильтрации известны заранее.
 
-{% note info %}
+Если параметры запроса формируются программно, используйте построитель запросов — объект `Bitrix\Main\ORM\Query\Query`. Построитель накапливает параметры и выполняет запрос по вызову метода `exec`.
 
-Все примеры ниже используют условную сущность `BookTable` с полями `ID`, `TITLE`, `ISBN`, `AUTHOR_ID`, `YEAR`, `PRICE`.
+Сравните три способа собрать один и тот же запрос на получение книги по идентификатору. Все примеры статьи используют класс `BookTable` — его описание смотрите в статье [Операции с сущностями](./entity-operations.md).
 
-{% endnote %}
+**Метод getList**
 
-Для гибкой настройки, построитель запросов использует объект `Bitrix\Main\ORM\Query\Query` - он накапливает параметры для запроса до его выполнения. 
+Все параметры запроса передают одним массивом.
 
-Посмотрите, как можно выразить один и тот же запрос к `BookTable` на получение конкретной книги с использованием разных подходов:
+```php
+$result = BookTable::getList([
+    'select' => ['ISBN', 'TITLE', 'PUBLISH_DATE'],
+    'filter' => ['=ID' => 1]
+]);
+```
 
-{% list tabs %}
+**Объект Query**
 
-- Пример с getList
-    
-    Получение данных через getList
+Тот же запрос через построитель. Каждый параметр задает отдельный метод, а выполняет запрос метод `exec`.
 
-    ```php
-    $result = BookTable::getList([
-        'select' => ['ISBN', 'TITLE', 'PUBLISH_DATE'],
-        'filter' => ['=ID' => 1]
-    ]);
-    ```
+```php
+use Bitrix\Main\ORM\Query\Query;
 
-- С использованием Query
+$query = new Query(BookTable::getEntity());
+$query->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE']);
+$query->setFilter(['=ID' => 1]);
 
-    ```php
-    use Bitrix\Main\ORM\Query\Query;
+$result = $query->exec();
+```
 
-    $q = new Query(BookTable::getEntity());
-    $q->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE']);
-    $q->setFilter(['=ID' => 1]);
+**Цепочка вызовов**
 
-    $result = $q->exec();
-    ```
+Тот же запрос в короткой записи. Методы построителя возвращают сам объект, поэтому вызовы можно объединить в цепочку.
 
-- С использованием текучего синтаксиса
-    ```php
-    $q = BookTable::query()
-        ->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE'])
-        ->where('ID', 1)
-    ;
+```php
+$query = BookTable::query()
+    ->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE'])
+    ->where('ID', 1)
+;
 
-    $result = $q->exec();
-    ```
+$result = $query->exec();
+```
 
-{% endlist %}
+Объект `Query` — основа выборки данных. Метод `getList` создает такой же объект и заполняет его переданным массивом параметров. О составе этого массива рассказывает статья [Выборка данных](./querying-data.md).
 
-Объект `Query` — ключевой элемент для выборки данных. Именно он используется внутри `getList`/`getRow`.
+Метод `exec` возвращает объект `Bitrix\Main\ORM\Query\Result` — у него вызывают `fetch` для одной строки или `fetchAll` для всех. У построителя есть короткие псевдонимы `fetch`, `fetchAll`, `fetchObject` и `fetchCollection`: каждый выполняет запрос и сразу возвращает данные, поэтому вызывать `exec` отдельно не нужно.
 
-{% note warning %}
+{% note warning "" %}
 
-В современном Bitrix Framework рекомендуется получать объект `Query` через статический метод `::query()` [соответствующей DataManager таблицы](*recomend_query), поскольку `Query` - это общий класс запроса и каждый DataManager-наследник вправе расширять его для своих технических нужд.
+Создавайте объект `Query` методом `query()` нужной таблицы, а не через `new Query()`. Метод `query()` возвращает класс запроса, указанный в методе `getQueryClass()` таблицы. Например, модуль информационных блоков подставляет свой класс запроса. Вызов `new Query()` всегда создает базовый класс, поэтому доработки таблицы теряются.
 
 {% endnote %}
 
@@ -100,207 +97,234 @@ function attachOthers(Query $query): void
 }
 ```
 
-**Создание объекта Query**. Используем `BookTable::query()` для создания нового объекта `Query`, связанного с сущностью `BookTable`. Это будет основой для построения запроса.
+**Создание объекта Query**. Метод `BookTable::query()` создает объект `Query`, связанный с таблицей книг. Объект становится основой для построения запроса.
 
 **Добавление полей в запрос**. Функция `attachSelect` добавляет поля, которые нужно выбрать из базы данных.
 
--  `addSelect('ID')` добавляет поле `ID` в список выбираемых полей
+- `addSelect('ID')` добавляет поле `ID` в список выбираемых полей.
 
--  Условие внутри функции добавляет поле `ISBN`, если оно необходимо
+- Условие внутри функции добавляет поле `ISBN`, если оно необходимо.
 
 **Добавление фильтров и сортировки**. Функция `attachOthers` добавляет фильтры и сортировку.
 
--  `setFilter` устанавливает условия фильтрации данных
+- `setFilter` устанавливает условия фильтрации данных.
 
--  `setOrder` задает порядок сортировки результатов
+- `setOrder` задает порядок сортировки результатов.
 
 ## Запрос без выполнения
 
-Объект `Query` позволяет строить запрос без его выполнения. Это полезно для подзапросов или получения текста запроса:
+Объект `Query` позволяет построить запрос и не выполнять его. Метод `getQuery` возвращает текст запроса — он нужен для отладки или для встраивания в подзапрос.
 
 ```php
 use Bitrix\Main\Type\Date;
 
-$q = BookTable::query()
+$query = BookTable::query()
     ->setSelect(['ID'])
     ->setFilter([
         '=PUBLISH_DATE' => new Date('2014-12-13', 'Y-m-d')
     ])
 ;
 
-$sql = $q->getQuery();
+$sql = $query->getQuery();
 file_put_contents('/tmp/today_books.sql', $sql);
-// Запрос "SELECT ID FROM b_book WHERE PUBLISH_DATE='2014-12-13'" будет сохранен в файл, но не выполнен.
+// в файл попадет текст SELECT ID FROM my_book WHERE PUBLISH_DATE='2014-12-13', сам запрос не выполнится
 ```
 
 ## Методы Query
 
-В данном разделе собраны примеры использования методов `Query`.
+Методы объекта `Query` задают параметры запроса. Префикс в названии показывает, что делает метод.
 
-### select, group
+- `set` заменяет ранее заданное значение.
 
-- `setSelect`, `setGroup` — задаёт список полей, полностью заменяя предыдущие.
-- `addSelect`, `addGroup` — добавляет новые поля к существующему списку.
-- `getSelect`, `getGroup` — возвращает массив полей.
+- `add` дополняет его.
 
-```php
-$query = BookTable::query();
+- `get` возвращает текущее значение.
 
-$query->setSelect(['ID', 'TITLE']); // список полей: ID, TITLE
-$query->addSelect('PRICE');         // добавили PRICE к списку
+{% note warning "" %}
 
-print_r($query->getSelect());
-// ['ID', 'TITLE', 'PRICE']
+Если запрос обращается к полю, которого нет в объекте, ORM выбрасывает `Bitrix\Main\ArgumentException` с сообщением о том, что такого поля у объекта нет. Тем же исключением метод `addOrder` отвечает на направление сортировки, отличное от `ASC` и `DESC`.
 
-$query->setSelect(['ID', 'ISBN']);  // предыдущий список заменён
-print_r($query->getSelect());
-// ['ID', 'ISBN']
-```
+{% endnote %}
 
-```php
-$query = BookTable::query()
-    ->setSelect(['AUTHOR_ID', 'YEAR'])
-;
+### Select и Group
 
-$query->setGroup('AUTHOR_ID'); // принимает строку или массив
-$query->addGroup('YEAR');      // добавили YEAR к AUTHOR_ID
+- `setSelect`, `setGroup` — задают список полей, полностью заменяя предыдущие.
+- `addSelect`, `addGroup` — добавляют новые поля к существующему списку.
+- `getSelect`, `getGroup` — возвращают массив полей.
 
-print_r($query->getGroup());
-// ['AUTHOR_ID', 'YEAR']
-```
+Метод `setSelect` принимает массив, а `setGroup` и `addGroup` — строку с одним полем или массив полей. Вторым аргументом `addSelect` задают псевдоним поля: вызов `addSelect('PUBLISH_DATE', 'PUBLICATION')` вернет значение под ключом `PUBLICATION`.
 
-### distinct
-
-- `setDistinct` — устанавливает флаг `DISTINCT`, чтобы убрать дубликаты строк из результата.
-- `hasDistinct` — возвращает `true`, если флаг `DISTINCT` установлен или указан внутри выражения `ExpressionField`, добавленного в выборку.
-
-```php
-// Получить уникальных авторов книг
-$query = BookTable::query()
-    ->setSelect(['AUTHOR_ID'])
-    ->setDistinct()
-;
-
-$books = $query->fetchAll();
-// SQL: SELECT DISTINCT AUTHOR_ID FROM b_book
-
-if ($query->hasDistinct()) {
-    // ...
-}
-```
-
-```php
-use Bitrix\Main\ORM\Fields\ExpressionField;
-
-// DISTINCT внутри выражения тоже делает выборку уникальной
-$query = BookTable::query()
-    ->registerRuntimeField(
-        new ExpressionField('AUTHORS_CNT', 'COUNT(DISTINCT %s)', ['AUTHOR_ID'])
-    )
-    ->setSelect(['AUTHORS_CNT']);
-
-$query->hasDistinct(); // true, хотя setDistinct() не вызывали
-```
-
-### filter
-
-- `setFilter` — устанавливает фильтр.
-- `addFilter` — добавляет параметр фильтра.
-- `getFilter` — возвращает фильтр.
-
-```php
-$query = BookTable::query();
-
-$query->setFilter(['>=PRICE' => 500]);   // цена от 500
-$query->addFilter('AUTHOR_ID', 10);      // добавили условие по автору
-
-print_r($query->getFilter());
-// ['>=PRICE' => 500, 'AUTHOR_ID' => 10]
-```
-
-`setFilter` заменяет фильтр целиком, так же как и `setSelect` заменяет список полей.
-
-
-{% note note %}
-
-Методы `setFilter` / `addFilter` работают со старым массивом фильтра. Для нового кода предпочтительны fluent-условия `where*()` и `Query::filter()`:
+В примере запрос выбирает три поля, последнее из них добавляет отдельный вызов.
 
 ```php
 $books = BookTable::query()
     ->setSelect(['ID', 'TITLE'])
-    ->where('AUTHOR_ID', 10)
-    ->where('PRICE', '>=', 500)
+    ->addSelect('PUBLISH_DATE')
+    ->fetchAll()
+;
+// SELECT ID, TITLE, PUBLISH_DATE FROM my_book
+```
+
+Чтобы посчитать книги по датам выхода добавьте группировку. Поле `CNT` описывает объект `ExpressionField` — о таких полях рассказывает раздел [Runtime-поля](#runtime-polya).
+
+```php
+use Bitrix\Main\ORM\Fields\ExpressionField;
+
+$stat = BookTable::query()
+    ->registerRuntimeField(new ExpressionField('CNT', 'COUNT(*)'))
+    ->setSelect(['PUBLISH_DATE', 'CNT'])
+    ->setGroup('PUBLISH_DATE')
+    ->fetchAll()
+;
+// SELECT PUBLISH_DATE, COUNT(*) AS CNT FROM my_book GROUP BY PUBLISH_DATE
+```
+
+### Distinct
+
+- `setDistinct` — устанавливает флаг `DISTINCT` SQL-запроса, чтобы убрать дубликаты строк из результата. Без аргумента ставит флаг, вызов `setDistinct(false)` его снимает.
+
+- `hasDistinct` — возвращает `true`, если флаг `DISTINCT` установлен или указан внутри выражения `ExpressionField`, добавленного в выборку.
+
+Чтобы получить даты выхода книг без повторов, установите флаг `DISTINCT`.
+
+```php
+$dates = BookTable::query()
+    ->setSelect(['PUBLISH_DATE'])
+    ->setDistinct()
+    ->fetchAll()
+;
+// SELECT DISTINCT PUBLISH_DATE FROM my_book
+```
+
+{% note info "" %}
+
+Метод `hasDistinct` разбирает выражения выборки, а они формируются в момент построения запроса. Вызывайте метод после `exec`, `fetchAll` или `getQuery`. У неисполненного запроса метод учитывает только флаг, заданный через `setDistinct`.
+
+Если `DISTINCT` уже задан внутри выражения, метод снимает собственный флаг запроса, чтобы `DISTINCT` не попал в SQL дважды.
+
+{% endnote %}
+
+
+### Filter
+
+- `setFilter` — устанавливает фильтр и заменяет предыдущий. Принимает массив условий.
+
+- `addFilter` — добавляет одно условие к текущему фильтру. Первым аргументом принимает имя поля с префиксом оператора, вторым — значение.
+
+- `getFilter` — возвращает текущий фильтр.
+
+Основное условие отбирает книги с начала 2014 года, а второй вызов уточняет отбор по ISBN, если он задан.
+
+```php
+use Bitrix\Main\Type\Date;
+
+$query = BookTable::query()->setSelect(['ID', 'TITLE']);
+$query->setFilter(['>=PUBLISH_DATE' => new Date('2014-01-01', 'Y-m-d')]);
+
+if (/* задан отбор по ISBN */)
+{
+    $query->addFilter('=ISBN', '978-0321127426');
+}
+
+$books = $query->fetchAll();
+```
+
+{% note tip "" %}
+
+Метод `setFilter` принимает массив условий — тот же формат, что и ключ `filter` в методе `getList`.
+
+Для новых запросов удобнее методы `where*`: они принимают поле, оператор и значение отдельными аргументами. Об операторах и вложенных условиях рассказывает статья [Выборка данных](./querying-data.md).
+
+```php
+use Bitrix\Main\Type\Date;
+
+$books = BookTable::query()
+    ->setSelect(['ID', 'TITLE'])
+    ->where('ISBN', '978-0321127426')
+    ->where('PUBLISH_DATE', '>=', new Date('2014-01-01', 'Y-m-d'))
     ->fetchAll()
 ;
 ```
 
 {% endnote %}
 
+### Order
 
-### order
+- `setOrder` — задает порядок сортировки и заменяет предыдущий. Принимает массив вида `['ID' => 'DESC']` или строку с одним полем — тогда сортировка идет по возрастанию.
 
-- `setOrder` — устанавливает порядок сортировки.
-- `addOrder` — добавляет поле для сортировки.
-- `getOrder` — возвращает порядок сортировки.
+- `addOrder` — добавляет поле сортировки к текущему порядку. Второй аргумент по умолчанию равен `ASC`, допустимы только значения `ASC` и `DESC`.
 
-```php
-$query = BookTable::query();
+- `getOrder` — возвращает текущий порядок сортировки.
 
-$query->setOrder(['TITLE' => 'ASC']); // сначала по названию
-$query->addOrder('YEAR', 'DESC');     // затем свежие издания раньше
-
-print_r($query->getOrder());
-// ['TITLE' => 'ASC', 'YEAR' => 'DESC']
-```
-
-### limit/offset
-
-- `setLimit`, `setOffset` — устанавливают значение.
-- `getLimit`, `getOffset` — возвращают значение.
+Две сортировки работают по порядку: сначала свежие книги, внутри одной даты — по названию.
 
 ```php
-// Третья страница каталога: по 20 книг на страницу
-$query = BookTable::query()
+$books = BookTable::query()
     ->setSelect(['ID', 'TITLE'])
-    ->setLimit(20)
-    ->setOffset(40); // пропустить первые 40 записей
-
-$query->getLimit();  // 20
-$query->getOffset(); // 40
+    ->setOrder(['PUBLISH_DATE' => 'DESC'])
+    ->addOrder('TITLE', 'ASC')
+    ->fetchAll()
+;
+// SELECT ID, TITLE FROM my_book ORDER BY PUBLISH_DATE DESC, TITLE ASC
 ```
 
-### runtime fields
+### Limit и Offset
 
-- `registerRuntimeField` — регистрирует временное поле.
+- `setLimit`, `setOffset` — задают количество записей и смещение от начала выборки. Принимают целое число или `null`.
 
-Временное поле существует только внутри запроса: его вычисляет SQL, а в карту сущности оно не добавляется. В `registerRuntimeField` передавайте объект поля, например `ExpressionField`:
+- `getLimit`, `getOffset` — возвращают заданные значения.
+
+Для постраничного вывода задайте размер страницы и смещение. В примере это третья страница каталога по 20 книг.
+
+```php
+$pageSize = 20;
+$page = 3;
+
+$books = BookTable::query()
+    ->setSelect(['ID', 'TITLE'])
+    ->setOrder(['PUBLISH_DATE' => 'DESC'])
+    ->setLimit($pageSize)
+    ->setOffset(($page - 1) * $pageSize)
+    ->fetchAll()
+;
+```
+
+### Runtime-поля
+
+- `registerRuntimeField` — регистрирует временное поле запроса.
+
+Метод `registerRuntimeField` добавляет поле к таблице так же, как если бы его описали в методе `getMap`, но действует такое поле только внутри текущего запроса.
+
+В следующем запросе поле нужно зарегистрировать заново. В метод передавайте объект поля, чаще всего `ExpressionField` — о нем рассказывает статья [Ключевые концепции ORM](./orm-concepts.md).
+
+Здесь выражение считает возраст книги в днях — хранить это значение в таблице не нужно.
 
 ```php
 use Bitrix\Main\ORM\Fields\ExpressionField;
 
 $books = BookTable::query()
     ->registerRuntimeField(
-        new ExpressionField('PRICE_WITH_VAT', '%s * 1.2', ['PRICE'])
+        new ExpressionField('AGE_DAYS', 'DATEDIFF(NOW(), %s)', ['PUBLISH_DATE'])
     )
-    ->setSelect(['ID', 'TITLE', 'PRICE_WITH_VAT'])
+    ->setSelect(['ID', 'TITLE', 'AGE_DAYS'])
     ->fetchAll()
 ;
 ```
 
-Runtime-поля можно использовать и в фильтре, и в сортировке:
+Пример отбирает книги старше года и выводит самые старые первыми.
 
 ```php
 use Bitrix\Main\ORM\Fields\ExpressionField;
 
 $books = BookTable::query()
     ->registerRuntimeField(
-        new ExpressionField('PRICE_WITH_VAT', '%s * 1.2', ['PRICE'])
+        new ExpressionField('AGE_DAYS', 'DATEDIFF(NOW(), %s)', ['PUBLISH_DATE'])
     )
-    ->setSelect(['ID', 'TITLE', 'PRICE_WITH_VAT'])
-    ->where('PRICE_WITH_VAT', '>', 1000)
-    ->setOrder(['PRICE_WITH_VAT' => 'DESC'])
+    ->setSelect(['ID', 'TITLE', 'AGE_DAYS'])
+    ->where('AGE_DAYS', '>', 365)
+    ->setOrder(['AGE_DAYS' => 'DESC'])
     ->fetchAll()
 ;
 ```
 
-[*recomend_query]: посмотрите на `BookTable::query()` на вкладке "С использованием текучего синтаксиса"
+Зарегистрированное поле доступно в выборке, фильтре и сортировке одного запроса, поэтому повторно регистрировать его внутри запроса не нужно.
