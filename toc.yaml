@@ -198,6 +198,10 @@ items:
         href: /pages/cms-basics/menu.md
       - name: Постраничная навигация
         href: /pages/cms-basics/page-navigation.md
+      - name: Класс PageNavigation
+        href: /pages/cms-basics/page-navigation-class.md
+      - name: Класс ReversePageNavigation
+        href: /pages/cms-basics/reverse-page-navigation.md
       - name: Включаемые области
         href: /pages/cms-basics/includes.md
       - name: Панель администрирования

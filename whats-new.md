@@ -20,6 +20,12 @@ title: Что нового
 
 ### 2026
 
+#### 15 сентября
+
+- Добавили новую статью [Класс PageNavigation](./pages/cms-basics/page-navigation-class.md).
+- Добавили новую статью [Класс ReversePageNavigation](./pages/cms-basics/reverse-page-navigation.md).
+- Обновили статью [Постраничная навигация](./pages/cms-basics/page-navigation.md).
+
 #### 10 сентября
 
 - Добавили новую статью [Сетка формы ui.layout-form](./pages/ui/ui-layout-form.md).
