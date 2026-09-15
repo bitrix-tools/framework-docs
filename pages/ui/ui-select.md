@@ -48,6 +48,8 @@ import { Select } from 'ui.select';
 
 3. Вызовите метод `renderTo(target)` и передайте DOM-узел, в котором нужно показать список.
 
+**Пример.** Список типов документов выводится в узел `document-type`, а выбранным показывается вариант `invoice`.
+
 ```js
 import { Select } from 'ui.select';
 
@@ -160,7 +162,7 @@ select.renderTo(document.getElementById('unit'));
 
 Компонент не создает элемент `<select>` и скрытое поле формы. Отправляйте значение сами: прочитайте его методом `getValue()` или задайте атрибут `name` узлу из `getInput()`.
 
-В примере обработчик кнопки читает значение списка перед отправкой формы и возвращает выбор к варианту по умолчанию.
+**Пример.** Обработчик кнопки читает значение списка перед отправкой формы и возвращает выбор к варианту по умолчанию.
 
 ```js
 import { Select } from 'ui.select';
@@ -263,6 +265,8 @@ EventEmitter.subscribe('BX.UI.Select:update', (event) => {
 
 -  `isMenuShown()` — возвращает `true`, если список открыт.
 
+**Пример.** Обработчик переключает состояние списка: открытый закрывает, а закрытый открывает.
+
 ```js
 document.getElementById('choose-type').addEventListener('click', () => {
     if (select.isMenuShown())
@@ -331,7 +335,7 @@ const select = new Select({
 
 Пункт списка получает классы `ui-select__menu-item` и `menu-popup-no-icon`, а подсвеченный пункт — еще и `menu-popup-item-open`.
 
-В примере правило делает подписи пунктов полужирными во всех списках страницы.
+**Пример.** Правило делает подписи пунктов полужирными во всех списках страницы.
 
 ```css
 .select-menu-popup .ui-select__menu-item {

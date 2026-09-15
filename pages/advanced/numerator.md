@@ -310,7 +310,7 @@ $numerator->setConfig($config);
 Метод `save` возвращает объект результата. При успехе `$result->getId()` содержит идентификатор нового нумератора.
 
 ```php
-$result = $numerator->save(); // \Bitrix\Main\Entity\AddResult
+$result = $numerator->save(); // \Bitrix\Main\ORM\Data\AddResult
 ```
 
 ## Как получить нумератор

@@ -3,7 +3,7 @@ title: Выборка данных
 description: 'Выборка данных. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
 ---
 
-Для выборки данных с фильтрацией, группировкой и сортировкой в Bitrix Framework используются метод `getList` и объект [`Entity\Query`](./query-builder.md).
+Для выборки данных с фильтрацией, группировкой и сортировкой в Bitrix Framework используются метод `getList` и [построитель запросов](./query-builder.md) на объекте `Bitrix\Main\ORM\Query\Query`.
 
 ## Метод getList
 
@@ -62,22 +62,31 @@ $rows = BookTable::getList($parameters)->fetchAll();
 
 #### Форматирование данных
 
-Для изменения формата данных после выборки можно использовать метод `fetchDataModification()`. Например, изменить формат даты:
+Формат данных меняют на уровне поля, а не всей сущности. Параметр `fetch_data_modification` принимает функцию, которая возвращает массив модификаторов. Каждый модификатор получает значение поля после преобразования типов и возвращает новое значение.
+
+**Пример.** Поле `PUBLISH_DATE` отдается строкой в формате дня, месяца и года:
 
 ```php
-class BookTable extends \Bitrix\Main\Entity\DataManager
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\DateField;
+
+class BookTable extends DataManager
 {
-    public static function fetchDataModification(): array
+    public static function getMap(): array
     {
         return [
-            function ($data)
-            {
-                if (isset($data['PUBLISH_DATE']))
+            // остальные поля сущности, включая первичный ключ
+            new DateField('PUBLISH_DATE', [
+                'fetch_data_modification' => function ()
                 {
-                    $data['PUBLISH_DATE'] = date('d.m.Y', strtotime($data['PUBLISH_DATE']));
+                    return [
+                        function ($value)
+                        {
+                            return $value === null ? null : $value->format('d.m.Y');
+                        }
+                    ];
                 }
-                return $data;
-            }
+            ])
         ];
     }
 }
@@ -86,6 +95,8 @@ class BookTable extends \Bitrix\Main\Entity\DataManager
 $result = BookTable::getList($parameters);
 $rows = $result->fetchAll();
 ```
+
+Тот же модификатор можно добавить методом `addFetchDataModifier()` объекта поля — он принимает одну функцию, а не массив.
 
 ### Параметры метода getList
 
@@ -816,7 +827,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 
    ```php
    \Bitrix\Main\UserTable::query()
-       ->where('NAME', new Query\Filter\Expression\Column('LOGIN'))
+       ->where('NAME', new \Bitrix\Main\ORM\Query\Filter\Expressions\ColumnExpression('LOGIN'))
        ->exec()
    ;
    // WHERE `main_user`.`NAME` = `main_user`.`LOGIN`
@@ -827,8 +838,8 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```php
    \Bitrix\Main\UserTable::query()
        ->whereIn('LOGIN', [
-           new Column('NAME'),
-           new Column('LAST_NAME')
+           new \Bitrix\Main\ORM\Query\Filter\Expressions\ColumnExpression('NAME'),
+           new \Bitrix\Main\ORM\Query\Filter\Expressions\ColumnExpression('LAST_NAME')
        ])
        ->exec()
    ;
@@ -875,7 +886,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 
 ### OR и вложенные фильтры
 
-Для хранения условий фильтра используется контейнер `\Bitrix\Main\Entity\Query\Filter\ConditionTree`. Он позволяет добавлять другие экземпляры `ConditionTree` для создания вложенных условий.
+Для хранения условий фильтра используется контейнер `\Bitrix\Main\ORM\Query\Filter\ConditionTree`. Он позволяет добавлять другие экземпляры `ConditionTree` для создания вложенных условий.
 
 **Пример простого фильтра**
 
@@ -1014,13 +1025,14 @@ use Bitrix\Main\ORM\Query\Query;
 
 ### Условия JOIN
 
-Референсы — это связи между таблицами, которые позволяют объединять данные из разных таблиц. Они описываются с помощью `ReferenceField`:
+Референсы — это связи между таблицами, которые позволяют объединять данные из разных таблиц. Они описываются с помощью `Reference`:
 
 ```php
-use Bitrix\Main\Entity;
+use Bitrix\Main\GroupTable;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 
-new Entity\ReferenceField('GROUP', GroupTable::class,
+new Reference('GROUP', GroupTable::class,
     Join::on('this.GROUP_ID', 'ref.ID')
 )
 ```
@@ -1028,17 +1040,15 @@ new Entity\ReferenceField('GROUP', GroupTable::class,
 Метод `on` — это сокращенная запись `Query::filter()` с предустановленным условием по колонкам. Он позволяет строить условия JOIN:
 
 ```php
-use Bitrix\Main\Entity;
+use Bitrix\Main\GroupTable;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Filter\Expressions\ColumnExpression;
 use Bitrix\Main\ORM\Query\Join;
 
-new Entity\ReferenceField('GROUP', GroupTable::class,
+new Reference('GROUP', GroupTable::class,
     Join::on('this.GROUP_ID', 'ref.ID')
-        ->where('ref.TYPE', 'admin')
-        ->whereIn('ref.OPTION', [
-            new Column('this.OPTION1'),
-            new Column('this.OPTION2'),
-            new Column('this.OPTION3')
-        ])
+        ->where('ref.ACTIVE', 'Y')
+        ->where('ref.STRING_ID', new ColumnExpression('this.GROUP_CODE'))
 )
 ```
 

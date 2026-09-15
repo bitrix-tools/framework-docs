@@ -33,10 +33,10 @@ import { FocusNavigator, RESTORE_FOCUS_EVENT } from 'ui.a11y';
 
 #|
 || **Метод** | **Что возвращает** ||
-|| `getFirst(container, options?)` | Первый элемент внутри контейнера, доступный для фокуса. ||
-|| `getLast(container, options?)` | Последний элемент внутри контейнера, доступный для фокуса. ||
-|| `getNext(container, options?)` | Следующий элемент относительно текущего активного элемента или `options.from`. ||
-|| `getPrevious(container, options?)` | Предыдущий элемент относительно текущего активного элемента или `options.from`. ||
+|| `getFirst(container, options?)` | Первый элемент внутри контейнера, доступный для фокуса ||
+|| `getLast(container, options?)` | Последний элемент внутри контейнера, доступный для фокуса ||
+|| `getNext(container, options?)` | Следующий элемент относительно текущего активного элемента или `options.from` ||
+|| `getPrevious(container, options?)` | Предыдущий элемент относительно текущего активного элемента или `options.from` ||
 |#
 
 
@@ -64,13 +64,13 @@ if (firstField)
 
 #|
 || **Метод** | **Что делает** | **Возвращает** ||
-|| `focusFirst(container, options?)` | Перемещает фокус на первый подходящий элемент внутри контейнера. | <code>HTMLElement &#124; null</code> ||
-|| `focusLast(container, options?)` | Перемещает фокус на последний подходящий элемент внутри контейнера. | <code>HTMLElement &#124; null</code> ||
-|| `focusNext(container, options?)` | Перемещает фокус на следующий подходящий элемент. | <code>HTMLElement &#124; null</code> ||
-|| `focusPrevious(container, options?)` | Перемещает фокус на предыдущий подходящий элемент. | <code>HTMLElement &#124; null</code> ||
-|| `focusContainer(container, options?)` | Перемещает фокус на контейнер. Если у контейнера нет `tabindex`, добавляет `tabindex="-1"`. | `HTMLElement` ||
-|| `focusBySelector(container, selector, options?)` | Перемещает фокус на первый элемент, который совпадает с CSS-селектором и проходит параметры обхода. | <code>HTMLElement &#124; null</code> ||
-|| `focusTarget(target, options?)` | Перемещает фокус на переданный элемент. Если передан `null`, возвращает `null`. | <code>HTMLElement &#124; null</code> ||
+|| `focusFirst(container, options?)` | Перемещает фокус на первый подходящий элемент внутри контейнера | <code>HTMLElement &#124; null</code> ||
+|| `focusLast(container, options?)` | Перемещает фокус на последний подходящий элемент внутри контейнера | <code>HTMLElement &#124; null</code> ||
+|| `focusNext(container, options?)` | Перемещает фокус на следующий подходящий элемент | <code>HTMLElement &#124; null</code> ||
+|| `focusPrevious(container, options?)` | Перемещает фокус на предыдущий подходящий элемент | <code>HTMLElement &#124; null</code> ||
+|| `focusContainer(container, options?)` | Перемещает фокус на контейнер. Если у контейнера нет `tabindex`, добавляет `tabindex="-1"` | `HTMLElement` ||
+|| `focusBySelector(container, selector, options?)` | Перемещает фокус на первый элемент, который совпадает с CSS-селектором и проходит параметры обхода | <code>HTMLElement &#124; null</code> ||
+|| `focusTarget(target, options?)` | Перемещает фокус на переданный элемент. Если передан `null`, возвращает `null` | <code>HTMLElement &#124; null</code> ||
 |#
 
 
@@ -113,12 +113,12 @@ type FocusNavigatorOptions = {
 
 #|
 || **Параметр** | **Тип** | **По умолчанию** | **Описание** ||
-|| `from` | `HTMLElement` | Текущий активный элемент внутри контейнера. | Задает элемент, от которого начинается поиск следующего или предыдущего элемента. ||
-|| `tabbableOnly` | `boolean` | `true` для методов поиска и перехода. Для `focusBySelector()` и `createWalker()` задайте значение явно. | Учитывает только элементы, доступные для перехода по `Tab`. Передайте `false`, чтобы учитывать элементы с `tabindex="-1"`, которые могут получить фокус программно. ||
-|| `wrap` | `boolean` | `false` | Разрешает циклический переход: после последнего элемента поиск продолжается с первого, а перед первым — с последнего. ||
-|| `accept` | `(el: HTMLElement) => boolean` | Все найденные элементы проходят фильтр. | Фильтрует найденные элементы. Верните `true`, чтобы элемент участвовал в навигации. ||
-|| `preventScroll` | `boolean` | Поведение `focus()` без дополнительного запрета прокрутки. | Передается в `focus()` и управляет прокруткой при перемещении фокуса. ||
-|| `focusVisible` | `boolean` | Поведение `focus()` без дополнительного управления видимостью фокуса. | Передается в `focus()` для управления видимостью фокусного состояния. ||
+|| `from` | `HTMLElement` | Текущий активный элемент внутри контейнера | Задает элемент, от которого начинается поиск следующего или предыдущего элемента ||
+|| `tabbableOnly` | `boolean` | `true` для методов поиска и перехода. Для `focusBySelector()` и `createWalker()` задайте значение явно | Учитывает только элементы, доступные для перехода по `Tab`. Передайте `false`, чтобы учитывать элементы с `tabindex="-1"`, которые могут получить фокус программно ||
+|| `wrap` | `boolean` | `false` | Разрешает циклический переход: после последнего элемента поиск продолжается с первого, а перед первым — с последнего ||
+|| `accept` | `(el: HTMLElement) => boolean` | Все найденные элементы проходят фильтр | Фильтрует найденные элементы. Верните `true`, чтобы элемент участвовал в навигации ||
+|| `preventScroll` | `boolean` | Поведение `focus()` без дополнительного запрета прокрутки | Передается в `focus()` и управляет прокруткой при перемещении фокуса ||
+|| `focusVisible` | `boolean` | Поведение `focus()` без дополнительного управления видимостью фокуса | Передается в `focus()` для управления видимостью фокусного состояния ||
 |#
 
 
@@ -195,20 +195,20 @@ FocusNavigator.restoreFocus(openButton, {
 
 #|
 || **Метод** | **Параметры** | **Результат** | **Эффект и ограничения** ||
-|| `getFirst(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода. | <code>HTMLElement &#124; null</code> | Только ищет элемент. Фокус и `tabindex` не меняет. ||
-|| `getLast(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода. | <code>HTMLElement &#124; null</code> | Только ищет элемент. Фокус и `tabindex` не меняет. ||
-|| `getNext(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку. | <code>HTMLElement &#124; null</code> | Если `from` не передан, поиск идет относительно активного элемента внутри контейнера. ||
-|| `getPrevious(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку. | <code>HTMLElement &#124; null</code> | Если активный элемент вне контейнера и `wrap` не включен, предыдущий элемент не определяется. ||
-|| `focusFirst(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода и вызова `focus()`. | <code>HTMLElement &#124; null</code> | Находит первый подходящий элемент и вызывает для него `focus()`. ||
-|| `focusLast(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода и вызова `focus()`. | <code>HTMLElement &#124; null</code> | Находит последний подходящий элемент и вызывает для него `focus()`. ||
-|| `focusNext(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку. | <code>HTMLElement &#124; null</code> | Перемещает фокус на следующий подходящий элемент. При `wrap: true` может перейти с последнего элемента на первый. ||
-|| `focusPrevious(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку. | <code>HTMLElement &#124; null</code> | Перемещает фокус на предыдущий подходящий элемент. При `wrap: true` может перейти с первого элемента на последний. ||
-|| `focusContainer(container, options?)` | `container` — DOM-контейнер, `options` — параметры вызова `focus()`. | `HTMLElement` | Перемещает фокус на контейнер. Если у контейнера нет `tabindex`, добавляет `tabindex="-1"`. ||
-|| `focusBySelector(container, selector, options?)` | `container` — DOM-контейнер, `selector` — валидный CSS-селектор, `options` — параметры обхода. | <code>HTMLElement &#124; null</code> | Перемещает фокус на первый подходящий элемент по селектору. Если совпадений нет, фокус не меняется. ||
-|| `focusTarget(target, options?)` | `target` — элемент или `null`, `options` — параметры вызова `focus()`. | <code>HTMLElement &#124; null</code> | Перемещает фокус на переданный элемент. Если передан `null`, фокус не меняется. ||
-|| `restoreFocus(target, options?)` | `target` — элемент для возврата фокуса, `options` — параметры вызова `focus()`. | <code>HTMLElement &#124; null</code> | Перед перемещением фокуса отправляет событие `a11y:restore-focus`. Если событие отменено через `preventDefault()`, фокус не меняется. ||
-|| `getActiveElement(node?)` | `node` — документ или узел. | `HTMLElement` | Возвращает активный элемент документа или активный элемент внутри доступного `iframe`. ||
-|| `createWalker(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода. | Объект обхода элементов. | Учитывает `tabbableOnly` и `accept`. Используйте, когда стандартных методов поиска недостаточно. ||
+|| `getFirst(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода | <code>HTMLElement &#124; null</code> | Только ищет элемент. Фокус и `tabindex` не меняет ||
+|| `getLast(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода | <code>HTMLElement &#124; null</code> | Только ищет элемент. Фокус и `tabindex` не меняет ||
+|| `getNext(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку | <code>HTMLElement &#124; null</code> | Если `from` не передан, поиск идет относительно активного элемента внутри контейнера ||
+|| `getPrevious(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку | <code>HTMLElement &#124; null</code> | Если активный элемент вне контейнера и `wrap` не включен, предыдущий элемент не определяется ||
+|| `focusFirst(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода и вызова `focus()` | <code>HTMLElement &#124; null</code> | Находит первый подходящий элемент и вызывает для него `focus()` ||
+|| `focusLast(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода и вызова `focus()` | <code>HTMLElement &#124; null</code> | Находит последний подходящий элемент и вызывает для него `focus()` ||
+|| `focusNext(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку | <code>HTMLElement &#124; null</code> | Перемещает фокус на следующий подходящий элемент. При `wrap: true` может перейти с последнего элемента на первый ||
+|| `focusPrevious(container, options?)` | `container` — DOM-контейнер, `options.from` может задать начальную точку | <code>HTMLElement &#124; null</code> | Перемещает фокус на предыдущий подходящий элемент. При `wrap: true` может перейти с первого элемента на последний ||
+|| `focusContainer(container, options?)` | `container` — DOM-контейнер, `options` — параметры вызова `focus()` | `HTMLElement` | Перемещает фокус на контейнер. Если у контейнера нет `tabindex`, добавляет `tabindex="-1"` ||
+|| `focusBySelector(container, selector, options?)` | `container` — DOM-контейнер, `selector` — валидный CSS-селектор, `options` — параметры обхода | <code>HTMLElement &#124; null</code> | Перемещает фокус на первый подходящий элемент по селектору. Если совпадений нет, фокус не меняется ||
+|| `focusTarget(target, options?)` | `target` — элемент или `null`, `options` — параметры вызова `focus()` | <code>HTMLElement &#124; null</code> | Перемещает фокус на переданный элемент. Если передан `null`, фокус не меняется ||
+|| `restoreFocus(target, options?)` | `target` — элемент для возврата фокуса, `options` — параметры вызова `focus()` | <code>HTMLElement &#124; null</code> | Перед перемещением фокуса отправляет событие `a11y:restore-focus`. Если событие отменено через `preventDefault()`, фокус не меняется ||
+|| `getActiveElement(node?)` | `node` — документ или узел | `HTMLElement` | Возвращает активный элемент документа или активный элемент внутри доступного `iframe` ||
+|| `createWalker(container, options?)` | `container` — DOM-контейнер, `options` — параметры обхода | Объект обхода элементов | Учитывает `tabbableOnly` и `accept`. Используйте, когда стандартных методов поиска недостаточно ||
 |#
 
 ## Служебные методы
@@ -217,8 +217,8 @@ FocusNavigator.restoreFocus(openButton, {
 
 #|
 || **Метод** | **Что делает** ||
-|| `getActiveElement(node?)` | Возвращает активный `HTMLElement` для документа или узла. Если фокус находится внутри доступного iframe, возвращает активный элемент внутри него. ||
-|| `createWalker(container, options?)` | Создает объект обхода элементов внутри контейнера с учетом `tabbableOnly` и `accept`. Используйте его, если стандартных методов поиска недостаточно. ||
+|| `getActiveElement(node?)` | Возвращает активный `HTMLElement` для документа или узла. Если фокус находится внутри доступного iframe, возвращает активный элемент внутри него ||
+|| `createWalker(container, options?)` | Создает объект обхода элементов внутри контейнера с учетом `tabbableOnly` и `accept`. Используйте его, если стандартных методов поиска недостаточно ||
 |#
 
 

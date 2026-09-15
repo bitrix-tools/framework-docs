@@ -17,7 +17,7 @@ description: "Как настроить архивирование заказо�
 || Получить строку по идентификатору архива | `Bitrix\Sale\Archive\Manager::getById()` | ORM-результат для одного `ID` архива ||
 || Получить позиции корзины | `Bitrix\Sale\Archive\Manager::getBasketList()` | ORM-результат со строками архивной корзины ||
 || Восстановить полный объект в памяти | `Bitrix\Sale\Archive\Manager::returnArchivedOrder()` | `Bitrix\Sale\Archive\Order` или `null` ||
-|| Удалить архивную запись | `Bitrix\Sale\Archive\Manager::delete()` | `Bitrix\Main\Entity\DeleteResult` ||
+|| Удалить архивную запись | `Bitrix\Sale\Archive\Manager::delete()` | `Bitrix\Main\ORM\Data\DeleteResult` ||
 |#
 
 ## Как работает архивирование
