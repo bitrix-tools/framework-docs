@@ -202,15 +202,15 @@ document.getElementById('chip-container').append(chip.render());
 
 | Значение                      | Описание                                                        |
 |-------------------------------|-----------------------------------------------------------------|
-| `ChipDesign.Outline`          | Базовый контурный чип с нейтральным текстом и светлой границей. |
-| `ChipDesign.OutlineAccent`    | Контурный чип с основным акцентным цветом.                      |
-| `ChipDesign.OutlineAccent2`   | Контурный чип со вторым акцентным вариантом палитры.            |
-| `ChipDesign.OutlineSuccess`   | Контурный чип в палитре успешного состояния.                    |
-| `ChipDesign.OutlineAlert`     | Контурный чип в палитре ошибки или критичного состояния.        |
-| `ChipDesign.OutlineWarning`   | Контурный чип в палитре предупреждения.                         |
-| `ChipDesign.OutlineNoAccent`  | Контурный чип без акцентного цвета.                             |
-| `ChipDesign.OutlineCopilot`   | Контурный чип с палитрой Copilot.                               |
-| `ChipDesign.OutlineBitrixGpt` | Контурный чип со специальным градиентным оформлением BitrixGPT. |
+| `ChipDesign.Outline`          | Базовый контурный чип с нейтральным текстом и светлой границей |
+| `ChipDesign.OutlineAccent`    | Контурный чип с основным акцентным цветом                       |
+| `ChipDesign.OutlineAccent2`   | Контурный чип со вторым акцентным вариантом палитры             |
+| `ChipDesign.OutlineSuccess`   | Контурный чип в палитре успешного состояния                     |
+| `ChipDesign.OutlineAlert`     | Контурный чип в палитре ошибки или критичного состояния         |
+| `ChipDesign.OutlineWarning`   | Контурный чип в палитре предупреждения                          |
+| `ChipDesign.OutlineNoAccent`  | Контурный чип без акцентного цвета                              |
+| `ChipDesign.OutlineCopilot`   | Контурный чип с палитрой Copilot                                |
+| `ChipDesign.OutlineBitrixGpt` | Контурный чип со специальным градиентным оформлением BitrixGPT |
 
 ### Светлая заливка
 
@@ -218,11 +218,11 @@ document.getElementById('chip-container').append(chip.render());
 
 | Значение                    | Описание                                                            |
 |-----------------------------|---------------------------------------------------------------------|
-| `ChipDesign.Tinted`         | Чип со светлой акцентной подложкой и цветным текстом.               |
-| `ChipDesign.TintedSuccess`  | Чип со светлой подложкой в палитре успешного состояния.             |
-| `ChipDesign.TintedAlert`    | Чип со светлой подложкой в палитре ошибки или критичного состояния. |
-| `ChipDesign.TintedWarning`  | Чип со светлой подложкой в палитре предупреждения.                  |
-| `ChipDesign.TintedNoAccent` | Чип со светлой нейтральной подложкой без акцентного цвета.          |
+| `ChipDesign.Tinted`         | Чип со светлой акцентной подложкой и цветным текстом                |
+| `ChipDesign.TintedSuccess`  | Чип со светлой подложкой в палитре успешного состояния              |
+| `ChipDesign.TintedAlert`    | Чип со светлой подложкой в палитре ошибки или критичного состояния |
+| `ChipDesign.TintedWarning`  | Чип со светлой подложкой в палитре предупреждения                   |
+| `ChipDesign.TintedNoAccent` | Чип со светлой нейтральной подложкой без акцентного цвета           |
 
 ### Плотная заливка
 
@@ -230,12 +230,12 @@ document.getElementById('chip-container').append(chip.render());
 
 | Значение                     | Описание                                                          |
 |------------------------------|-------------------------------------------------------------------|
-| `ChipDesign.Filled`          | Чип с плотной акцентной заливкой и светлым текстом.               |
-| `ChipDesign.FilledSuccess`   | Чип с плотной заливкой в палитре успешного состояния.             |
-| `ChipDesign.FilledAlert`     | Чип с плотной заливкой в палитре ошибки или критичного состояния. |
-| `ChipDesign.FilledWarning`   | Чип с плотной заливкой в палитре предупреждения.                  |
-| `ChipDesign.FilledNoAccent`  | Чип с плотной нейтральной заливкой без акцентного цвета.          |
-| `ChipDesign.FilledBitrixGpt` | Чип с плотной градиентной заливкой BitrixGPT.                     |
+| `ChipDesign.Filled`          | Чип с плотной акцентной заливкой и светлым текстом                |
+| `ChipDesign.FilledSuccess`   | Чип с плотной заливкой в палитре успешного состояния              |
+| `ChipDesign.FilledAlert`     | Чип с плотной заливкой в палитре ошибки или критичного состояния |
+| `ChipDesign.FilledWarning`   | Чип с плотной заливкой в палитре предупреждения                   |
+| `ChipDesign.FilledNoAccent`  | Чип с плотной нейтральной заливкой без акцентного цвета           |
+| `ChipDesign.FilledBitrixGpt` | Чип с плотной градиентной заливкой BitrixGPT                      |
 
 ### Инвертированная заливка
 
@@ -243,11 +243,11 @@ document.getElementById('chip-container').append(chip.render());
 
 | Значение                            | Описание                                                                |
 |-------------------------------------|-------------------------------------------------------------------------|
-| `ChipDesign.FilledInverted`         | Инвертированный вариант плотной заливки: светлый фон и акцентный текст. |
-| `ChipDesign.FilledSuccessInverted`  | Инвертированный чип в палитре успешного состояния.                      |
-| `ChipDesign.FilledAlertInverted`    | Инвертированный чип в палитре ошибки или критичного состояния.          |
-| `ChipDesign.FilledWarningInverted`  | Инвертированный чип в палитре предупреждения.                           |
-| `ChipDesign.FilledNoAccentInverted` | Инвертированный чип в нейтральной палитре без акцентного цвета.         |
+| `ChipDesign.FilledInverted`         | Инвертированный вариант плотной заливки: светлый фон и акцентный текст |
+| `ChipDesign.FilledSuccessInverted`  | Инвертированный чип в палитре успешного состояния                       |
+| `ChipDesign.FilledAlertInverted`    | Инвертированный чип в палитре ошибки или критичного состояния           |
+| `ChipDesign.FilledWarningInverted`  | Инвертированный чип в палитре предупреждения                            |
+| `ChipDesign.FilledNoAccentInverted` | Инвертированный чип в нейтральной палитре без акцентного цвета          |
 
 ### Тень
 
@@ -255,12 +255,12 @@ document.getElementById('chip-container').append(chip.render());
 
 | Значение                          | Описание                                                     |
 |-----------------------------------|--------------------------------------------------------------|
-| `ChipDesign.Shadow`               | Чип со светлым фоном и тенью.                                |
-| `ChipDesign.ShadowNoAccent`       | Чип с тенью в нейтральной палитре без акцентного цвета.      |
-| `ChipDesign.ShadowAccent`         | Чип с тенью и акцентным цветом.                              |
-| `ChipDesign.ShadowDisabled`       | Чип с тенью в визуально неактивном состоянии.                |
-| `ChipDesign.ShadowOutlineAccent2` | Чип с тенью и контуром во втором акцентном варианте палитры. |
-| `ChipDesign.ShadowOutline`        | Чип с тенью и нейтральным контуром.                          |
+| `ChipDesign.Shadow`               | Чип со светлым фоном и тенью                                 |
+| `ChipDesign.ShadowNoAccent`       | Чип с тенью в нейтральной палитре без акцентного цвета       |
+| `ChipDesign.ShadowAccent`         | Чип с тенью и акцентным цветом                               |
+| `ChipDesign.ShadowDisabled`       | Чип с тенью в визуально неактивном состоянии                 |
+| `ChipDesign.ShadowOutlineAccent2` | Чип с тенью и контуром во втором акцентном варианте палитры |
+| `ChipDesign.ShadowOutline`        | Чип с тенью и нейтральным контуром                           |
 
 ### Неактивное оформление
 
@@ -268,7 +268,7 @@ document.getElementById('chip-container').append(chip.render());
 
 | Значение              | Описание                                                             |
 |-----------------------|----------------------------------------------------------------------|
-| `ChipDesign.Disabled` | Визуально неактивный чип. Оформление не отключает обработчики клика. |
+| `ChipDesign.Disabled` | Визуально неактивный чип. Оформление не отключает обработчики клика |
 
 ## Управлять компонентом
 

@@ -297,40 +297,70 @@ items:
 
   - name: Пользовательский интерфейс UI
     items:
-      - name: Анимации Lottie
-        href: /pages/ui/lottie.md
-      - name: Работа с эмодзи
-        href: /pages/ui/emoji.md
-      - name: Системный алерт
-        href: /pages/ui/system-alert.md
-      - name: Системный чип
-        href: /pages/ui/system-chip.md
-      - name: Системный диалог
-        href: /pages/ui/system-dialog.md
-      - name: Системный хайлайтер
-        href: /pages/ui/system-highlighter.md
-      - name: Системное поле ввода
-        href: /pages/ui/system-input.md
-      - name: Системная метка
-        href: /pages/ui/system-label.md
-      - name: Системное меню
-        href: /pages/ui/system-menu.md
-      - name: Скелетон загрузки
-        href: /pages/ui/system-skeleton.md
       - name: Типографика
         href: /pages/ui/typography.md
       - name: Иконки
         href: /pages/ui/icons.md
+      - name: Анимации Lottie
+        href: /pages/ui/lottie.md
+      - name: Панель инструментов ui.toolbar
+        href: /pages/ui/ui-toolbar.md
+      - name: Боковая панель main.sidepanel
+        href: /pages/ui/main-sidepanel.md
+      - name: Сетка формы ui.layout-form
+        href: /pages/ui/ui-layout-form.md
+      - name: Кнопки ui.buttons
+        href: /pages/ui/ui-buttons.md
+      - name: Поля форм ui.forms
+        href: /pages/ui/ui-forms.md
+      - name: Системное поле ввода
+        href: /pages/ui/system-input.md
+      - name: Выпадающий список ui.select
+        href: /pages/ui/ui-select.md
+      - name: Диалог выбора цвета color_picker
+        href: /pages/ui/color-picker.md
+      - name: Таблица main.ui.grid
+        href: /pages/ui/main-ui-grid.md
+      - name: Фильтр main.ui.filter
+        href: /pages/ui/main-ui-filter.md
+      - name: Диалог выбора объектов ui.entity-selector
+        items:
+          - name: Обзор
+            href: /pages/ui/entity-selector/index.md
+          - name: Dialog
+            href: /pages/ui/entity-selector/dialog.md
+          - name: TagSelector
+            href: /pages/ui/entity-selector/tag-selector.md
+          - name: Провайдеры данных
+            href: /pages/ui/entity-selector/data-providers.md
+          - name: Стандартные провайдеры
+            href: /pages/ui/entity-selector/standard-providers.md
+          - name: Общие параметры
+            href: /pages/ui/entity-selector/options.md
+      - name: Всплывающие окна и меню main.popup
+        href: /pages/ui/main-popup.md
+      - name: Системное меню
+        href: /pages/ui/system-menu.md
+      - name: Системный диалог
+        href: /pages/ui/system-dialog.md
       - name: Окно сообщения
         href: /pages/ui/dialogs-messagebox.md
       - name: Подсказка
         href: /pages/ui/hint.md
-      - name: Всплывающие окна и меню main.popup
-        href: /pages/ui/main-popup.md
-      - name: Фильтр main.ui.filter
-        href: /pages/ui/main-ui-filter.md
-      - name: Таблица main.ui.grid
-        href: /pages/ui/main-ui-grid.md
+      - name: Системный алерт
+        href: /pages/ui/system-alert.md
+      - name: Менеджер уведомлений
+        href: /pages/ui/notification-manager.md
+      - name: Системная метка
+        href: /pages/ui/system-label.md
+      - name: Системный чип
+        href: /pages/ui/system-chip.md
+      - name: Скелетон загрузки
+        href: /pages/ui/system-skeleton.md
+      - name: Системный хайлайтер
+        href: /pages/ui/system-highlighter.md
+      - name: Работа с эмодзи
+        href: /pages/ui/emoji.md
       - name: Расширение ui.a11y
         items:
           - name: Обзор
@@ -349,36 +379,6 @@ items:
             href: /pages/ui/a11y/interactivity-checker.md
           - name: Объявления для скринридера LiveAnnouncer
             href: /pages/ui/a11y/live-announcer.md
-      - name: Диалог выбора объектов ui.entity-selector
-        items:
-          - name: Обзор
-            href: /pages/ui/entity-selector/index.md
-          - name: Dialog
-            href: /pages/ui/entity-selector/dialog.md
-          - name: TagSelector
-            href: /pages/ui/entity-selector/tag-selector.md
-          - name: Провайдеры данных
-            href: /pages/ui/entity-selector/data-providers.md
-          - name: Стандартные провайдеры
-            href: /pages/ui/entity-selector/standard-providers.md
-          - name: Общие параметры
-            href: /pages/ui/entity-selector/options.md
-      - name: Боковая панель main.sidepanel
-        href: /pages/ui/main-sidepanel.md
-      - name: Менеджер уведомлений
-        href: /pages/ui/notification-manager.md
-      - name: Кнопки ui.buttons
-        href: /pages/ui/ui-buttons.md
-      - name: Выпадающий список ui.select
-        href: /pages/ui/ui-select.md
-      - name: Поля форм ui.forms
-        href: /pages/ui/ui-forms.md
-      - name: Сетка формы ui.layout-form
-        href: /pages/ui/ui-layout-form.md
-      - name: Панель инструментов ui.toolbar
-        href: /pages/ui/ui-toolbar.md
-      - name: Диалог выбора цвета color_picker
-        href: /pages/ui/color-picker.md
 
   - name: Модули
     items:
