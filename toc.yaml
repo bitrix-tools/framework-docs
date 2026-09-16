@@ -315,6 +315,8 @@ items:
         href: /pages/ui/ui-forms.md
       - name: Системное поле ввода
         href: /pages/ui/system-input.md
+      - name: Загрузка файлов Uploader
+        href: /pages/ui/uploader.md
       - name: Выпадающий список ui.select
         href: /pages/ui/ui-select.md
       - name: Диалог выбора цвета color_picker

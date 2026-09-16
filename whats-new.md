@@ -20,6 +20,11 @@ title: Что нового
 
 ### 2026
 
+#### 16 сентября
+
+- Добавили новую статью [Загрузка файлов Uploader](./pages/ui/uploader.md).
+- Обновили статью [Поля форм ui.forms](./pages/ui/ui-forms.md).
+
 #### 15 сентября
 
 - Добавили новую статью [Класс PageNavigation](./pages/cms-basics/page-navigation-class.md).
