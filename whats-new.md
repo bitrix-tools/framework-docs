@@ -20,6 +20,12 @@ title: Что нового
 
 ### 2026
 
+#### 17 сентября
+
+- Добавили новую статью [Каталог объектов ui.entity-catalog](./pages/ui/ui-entity-catalog.md).
+- Добавили новую статью [Поток стадий ui.stageflow](./pages/ui/ui-stageflow.md).
+- Добавили новую статью [Лента событий ui.timeline](./pages/ui/ui-timeline.md).
+
 #### 16 сентября
 
 - Добавили новую статью [Загрузка файлов Uploader](./pages/ui/uploader.md).

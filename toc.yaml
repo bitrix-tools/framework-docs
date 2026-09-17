@@ -325,6 +325,10 @@ items:
         href: /pages/ui/main-ui-grid.md
       - name: Фильтр main.ui.filter
         href: /pages/ui/main-ui-filter.md
+      - name: Лента событий ui.timeline
+        href: /pages/ui/ui-timeline.md
+      - name: Поток стадий ui.stageflow
+        href: /pages/ui/ui-stageflow.md
       - name: Диалог выбора объектов ui.entity-selector
         items:
           - name: Обзор
@@ -339,6 +343,8 @@ items:
             href: /pages/ui/entity-selector/standard-providers.md
           - name: Общие параметры
             href: /pages/ui/entity-selector/options.md
+      - name: Каталог объектов ui.entity-catalog
+        href: /pages/ui/ui-entity-catalog.md
       - name: Всплывающие окна и меню main.popup
         href: /pages/ui/main-popup.md
       - name: Системное меню
