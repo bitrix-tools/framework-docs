@@ -534,6 +534,26 @@ items:
             href: /pages/modules/documentgenerator/components.md
           - name: Производительность и частые ошибки
             href: /pages/modules/documentgenerator/performance.md
+      - name: Поиск
+        items:
+          - name: Введение и выбор способа поиска
+            href: /pages/modules/search/overview.md
+          - name: Поиск на сайте через компоненты
+            href: /pages/modules/search/components.md
+          - name: Архитектура и поисковый индекс
+            href: /pages/modules/search/architecture.md
+          - name: Выбор и настройка поискового движка
+            href: /pages/modules/search/search-engines.md
+          - name: Индексация собственного контента
+            href: /pages/modules/search/index-custom-content.md
+          - name: Поисковые запросы через CSearch
+            href: /pages/modules/search/search-queries.md
+          - name: Ранжирование, теги и поисковые подсказки
+            href: /pages/modules/search/search-quality.md
+          - name: События и расширение поиска
+            href: /pages/modules/search/events-and-extension.md
+          - name: Переиндексация и диагностика поиска
+            href: /pages/modules/search/maintenance-and-troubleshooting.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам

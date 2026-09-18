@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 18 сентября
+
+- Добавили новый раздел [Поиск](./pages/modules/search/overview.md).
+
 #### 17 сентября
 
 - Добавили новую статью [Каталог объектов ui.entity-catalog](./pages/ui/ui-entity-catalog.md).
