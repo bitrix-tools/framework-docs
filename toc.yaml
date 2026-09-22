@@ -317,6 +317,8 @@ items:
         href: /pages/ui/system-input.md
       - name: Загрузка файлов Uploader
         href: /pages/ui/uploader.md
+      - name: Просмотр файлов ui.viewer
+        href: /pages/ui/ui-viewer.md
       - name: Выпадающий список ui.select
         href: /pages/ui/ui-select.md
       - name: Диалог выбора цвета color_picker
@@ -349,6 +351,8 @@ items:
         href: /pages/ui/main-popup.md
       - name: Системное меню
         href: /pages/ui/system-menu.md
+      - name: Настраиваемое меню ui.menu-configurable
+        href: /pages/ui/ui-menu-configurable.md
       - name: Системный диалог
         href: /pages/ui/system-dialog.md
       - name: Окно сообщения

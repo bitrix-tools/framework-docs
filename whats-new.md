@@ -20,6 +20,11 @@ title: Что нового
 
 ### 2026
 
+#### 22 сентября
+
+- Добавили новую статью [Просмотр файлов ui.viewer](./pages/ui/ui-viewer.md).
+- Добавили новую статью [Настраиваемое меню ui.menu-configurable](./pages/ui/ui-menu-configurable.md).
+
 #### 18 сентября
 
 - Добавили новый раздел [Поиск](./pages/modules/search/overview.md).
