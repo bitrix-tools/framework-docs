@@ -20,6 +20,13 @@ title: Что нового
 
 ### 2026
 
+#### 24 сентября
+
+- Добавили новую статью [Карточка пользователя ui.tooltip](./pages/ui/ui-tooltip.md).
+- Добавили новую статью [Счетчик ui.counter](./pages/ui/ui-counter.md).
+- Добавили новую статью [Метка ui.label](./pages/ui/ui-label.md).
+- Обновили статью [Системная метка](./pages/ui/system-label.md#vybrat-stil).
+
 #### 22 сентября
 
 - Добавили новую статью [Просмотр файлов ui.viewer](./pages/ui/ui-viewer.md).

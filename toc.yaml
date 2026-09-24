@@ -359,14 +359,20 @@ items:
         href: /pages/ui/dialogs-messagebox.md
       - name: Подсказка
         href: /pages/ui/hint.md
+      - name: Карточка пользователя ui.tooltip
+        href: /pages/ui/ui-tooltip.md
       - name: Системный алерт
         href: /pages/ui/system-alert.md
       - name: Менеджер уведомлений
         href: /pages/ui/notification-manager.md
       - name: Системная метка
         href: /pages/ui/system-label.md
+      - name: Метка ui.label
+        href: /pages/ui/ui-label.md
       - name: Системный чип
         href: /pages/ui/system-chip.md
+      - name: Счетчик ui.counter
+        href: /pages/ui/ui-counter.md
       - name: Скелетон загрузки
         href: /pages/ui/system-skeleton.md
       - name: Системный хайлайтер

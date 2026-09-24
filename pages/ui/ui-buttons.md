@@ -145,6 +145,8 @@ const buttonNode = saveButton.render();
 |#
 
 
+Кнопка строит счетчик на классе `Counter` из `ui.cnt`, а `ButtonCounterStyle` и `ButtonCounterColor` — те же наборы значений под другими именами. Отдельный счетчик, его PHP-класс и обновление значения описаны в статье [Счетчик ui.counter](./ui-counter.md).
+
 Для кнопки-ссылки передайте `link`. Класс сам установит тег ссылки. Если вызвать `setLink()` у кнопки с другим тегом, JavaScript-класс выбросит ошибку.
 
 {% note warning "" %}
