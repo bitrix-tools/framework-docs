@@ -114,8 +114,10 @@ $app->addBackgroundJob(function() {
    );
 
    // Проверить текущее значение настройки
-   echo COption::GetOptionString("main", "agents_use_crontab", "N"); // вернет значение Y
+   echo COption::GetOptionString("main", "agents_use_crontab", "Z"); // вернет значение Y
    ```
+
+   Если скрипт вывел `Z`, это означает, что параметр отсутствует в конфигурации базы данных. Такая ситуация может возникнуть при нестандартной ситуации или повреждении настроек модуля.
 
    После выполнения кода система будет запускать на хитах только периодические агенты.
 
@@ -140,15 +142,17 @@ $app->addBackgroundJob(function() {
        "agents_use_crontab",   // Настройка использования cron
        "N"                     // Y — разрешить, N — запретить
    );
-   echo COption::GetOptionString("main", "agents_use_crontab", "N"); // Выведет значение N — cron отключен для агентов
+   echo COption::GetOptionString("main", "agents_use_crontab", "Z"); // Выведет значение N — cron отключен для агентов,
 
    COption::SetOptionString(
        "main",                 // Модуль main
        "check_agents",         // Настройка проверки агентов
        "N"                     // Y — разрешить, N — запретить
    );
-   echo COption::GetOptionString("main", "check_agents", "Y"); // Выведет значение N — значит автоматическая проверка агентов отключена
+   echo COption::GetOptionString("main", "check_agents", "Z"); // Выведет значение N — значит автоматическая проверка агентов отключена
    ```
+   
+   Если один из символов, которые скрипт вывел `Z`, это означает, что параметр отсутствует в конфигурации базы данных. Такая ситуация может возникнуть при нестандартной ситуации или повреждении настроек модуля.
 
 2. Удалите в файле `/bitrix/php_interface/dbconn.php` константы `BX_CRONTAB_SUPPORT` и `BX_CRONTAB`.
 
