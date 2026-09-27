@@ -198,6 +198,10 @@ items:
         href: /pages/cms-basics/menu.md
       - name: Постраничная навигация
         href: /pages/cms-basics/page-navigation.md
+      - name: Класс PageNavigation
+        href: /pages/cms-basics/page-navigation-class.md
+      - name: Класс ReversePageNavigation
+        href: /pages/cms-basics/reverse-page-navigation.md
       - name: Включаемые области
         href: /pages/cms-basics/includes.md
       - name: Панель администрирования
@@ -293,40 +297,88 @@ items:
 
   - name: Пользовательский интерфейс UI
     items:
-      - name: Анимации Lottie
-        href: /pages/ui/lottie.md
-      - name: Работа с эмодзи
-        href: /pages/ui/emoji.md
-      - name: Системный алерт
-        href: /pages/ui/system-alert.md
-      - name: Системный чип
-        href: /pages/ui/system-chip.md
-      - name: Системный диалог
-        href: /pages/ui/system-dialog.md
-      - name: Системный хайлайтер
-        href: /pages/ui/system-highlighter.md
-      - name: Системное поле ввода
-        href: /pages/ui/system-input.md
-      - name: Системная метка
-        href: /pages/ui/system-label.md
-      - name: Системное меню
-        href: /pages/ui/system-menu.md
-      - name: Скелетон загрузки
-        href: /pages/ui/system-skeleton.md
       - name: Типографика
         href: /pages/ui/typography.md
       - name: Иконки
         href: /pages/ui/icons.md
+      - name: Анимации Lottie
+        href: /pages/ui/lottie.md
+      - name: Панель инструментов ui.toolbar
+        href: /pages/ui/ui-toolbar.md
+      - name: Боковая панель main.sidepanel
+        href: /pages/ui/main-sidepanel.md
+      - name: Сетка формы ui.layout-form
+        href: /pages/ui/ui-layout-form.md
+      - name: Кнопки ui.buttons
+        href: /pages/ui/ui-buttons.md
+      - name: Поля форм ui.forms
+        href: /pages/ui/ui-forms.md
+      - name: Системное поле ввода
+        href: /pages/ui/system-input.md
+      - name: Загрузка файлов Uploader
+        href: /pages/ui/uploader.md
+      - name: Просмотр файлов ui.viewer
+        href: /pages/ui/ui-viewer.md
+      - name: Выпадающий список ui.select
+        href: /pages/ui/ui-select.md
+      - name: Диалог выбора цвета color_picker
+        href: /pages/ui/color-picker.md
+      - name: Таблица main.ui.grid
+        href: /pages/ui/main-ui-grid.md
+      - name: Фильтр main.ui.filter
+        href: /pages/ui/main-ui-filter.md
+      - name: Лента событий ui.timeline
+        href: /pages/ui/ui-timeline.md
+      - name: Поток стадий ui.stageflow
+        href: /pages/ui/ui-stageflow.md
+      - name: Диалог выбора объектов ui.entity-selector
+        items:
+          - name: Обзор
+            href: /pages/ui/entity-selector/index.md
+          - name: Dialog
+            href: /pages/ui/entity-selector/dialog.md
+          - name: TagSelector
+            href: /pages/ui/entity-selector/tag-selector.md
+          - name: Провайдеры данных
+            href: /pages/ui/entity-selector/data-providers.md
+          - name: Стандартные провайдеры
+            href: /pages/ui/entity-selector/standard-providers.md
+          - name: Общие параметры
+            href: /pages/ui/entity-selector/options.md
+      - name: Каталог объектов ui.entity-catalog
+        href: /pages/ui/ui-entity-catalog.md
+      - name: Всплывающие окна и меню main.popup
+        href: /pages/ui/main-popup.md
+      - name: Системное меню
+        href: /pages/ui/system-menu.md
+      - name: Настраиваемое меню ui.menu-configurable
+        href: /pages/ui/ui-menu-configurable.md
+      - name: Системный диалог
+        href: /pages/ui/system-dialog.md
       - name: Окно сообщения
         href: /pages/ui/dialogs-messagebox.md
       - name: Подсказка
         href: /pages/ui/hint.md
-      - name: Всплывающие окна и меню main.popup
-        href: /pages/ui/main-popup.md
-      - name: Фильтр main.ui.filter
-        href: /pages/ui/main-ui-filter.md
-      - name: Таблица main.ui.grid
-        href: /pages/ui/main-ui-grid.md
+      - name: Карточка пользователя ui.tooltip
+        href: /pages/ui/ui-tooltip.md
+      - name: Системный алерт
+        href: /pages/ui/system-alert.md
+      - name: Менеджер уведомлений
+        href: /pages/ui/notification-manager.md
+      - name: Системная метка
+        href: /pages/ui/system-label.md
+      - name: Метка ui.label
+        href: /pages/ui/ui-label.md
+      - name: Системный чип
+        href: /pages/ui/system-chip.md
+      - name: Счетчик ui.counter
+        href: /pages/ui/ui-counter.md
+      - name: Скелетон загрузки
+        href: /pages/ui/system-skeleton.md
+      - name: Системный хайлайтер
+        href: /pages/ui/system-highlighter.md
+      - name: Работа с эмодзи
+        href: /pages/ui/emoji.md
       - name: Расширение ui.a11y
         items:
           - name: Обзор
@@ -345,26 +397,6 @@ items:
             href: /pages/ui/a11y/interactivity-checker.md
           - name: Объявления для скринридера LiveAnnouncer
             href: /pages/ui/a11y/live-announcer.md
-      - name: Диалог выбора объектов ui.entity-selector
-        items:
-          - name: Обзор
-            href: /pages/ui/entity-selector/index.md
-          - name: Dialog
-            href: /pages/ui/entity-selector/dialog.md
-          - name: TagSelector
-            href: /pages/ui/entity-selector/tag-selector.md
-          - name: Провайдеры данных
-            href: /pages/ui/entity-selector/data-providers.md
-          - name: Стандартные провайдеры
-            href: /pages/ui/entity-selector/standard-providers.md
-          - name: Общие параметры
-            href: /pages/ui/entity-selector/options.md
-      - name: Боковая панель main.sidepanel
-        href: /pages/ui/main-sidepanel.md
-      - name: Менеджер уведомлений
-        href: /pages/ui/notification-manager.md
-      - name: Кнопки ui.buttons
-        href: /pages/ui/ui-buttons.md
 
   - name: Модули
     items:
@@ -490,6 +522,48 @@ items:
             href: /pages/modules/humanresources/settings.md
           - name: Производительность и частые ошибки
             href: /pages/modules/humanresources/performance.md
+      - name: Генератор документов
+        items:
+          - name: Введение и базовые концепции
+            href: /pages/modules/documentgenerator/overview.md
+          - name: Схема работы генератора документов и основные объекты
+            href: /pages/modules/documentgenerator/architecture.md
+          - name: Шаблоны, поля и форматирование
+            href: /pages/modules/documentgenerator/templates-and-fields.md
+          - name: Провайдеры данных
+            href: /pages/modules/documentgenerator/data-providers.md
+          - name: Документы
+            href: /pages/modules/documentgenerator/document-generation.md
+          - name: Файлы, форматы и преобразование
+            href: /pages/modules/documentgenerator/files-and-transformation.md
+          - name: Права доступа
+            href: /pages/modules/documentgenerator/permissions.md
+          - name: События и расширение модуля
+            href: /pages/modules/documentgenerator/events-and-extension.md
+          - name: Встраивание документов в интерфейс
+            href: /pages/modules/documentgenerator/components.md
+          - name: Производительность и частые ошибки
+            href: /pages/modules/documentgenerator/performance.md
+      - name: Поиск
+        items:
+          - name: Введение и выбор способа поиска
+            href: /pages/modules/search/overview.md
+          - name: Поиск на сайте через компоненты
+            href: /pages/modules/search/components.md
+          - name: Архитектура и поисковый индекс
+            href: /pages/modules/search/architecture.md
+          - name: Выбор и настройка поискового движка
+            href: /pages/modules/search/search-engines.md
+          - name: Индексация собственного контента
+            href: /pages/modules/search/index-custom-content.md
+          - name: Поисковые запросы через CSearch
+            href: /pages/modules/search/search-queries.md
+          - name: Ранжирование, теги и поисковые подсказки
+            href: /pages/modules/search/search-quality.md
+          - name: События и расширение поиска
+            href: /pages/modules/search/events-and-extension.md
+          - name: Переиндексация и диагностика поиска
+            href: /pages/modules/search/maintenance-and-troubleshooting.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам

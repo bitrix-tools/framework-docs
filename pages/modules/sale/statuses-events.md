@@ -405,29 +405,29 @@ $statusHistoryResult = \CSaleOrderChange::GetList(
 -  `VALUE` — код нового статуса
 -  `OLD_VALUE` — код предыдущего статуса
 ||
-|| `OnSaleOrderPaid` | При изменении признака полной оплаты заказа. |
+|| `OnSaleOrderPaid` | При изменении признака полной оплаты заказа |
 -  `ENTITY` — заказ `Bitrix\Sale\Order` с новым состоянием оплаты
 ||
-|| `OnSaleOrderCanceled` | При изменении признака отмены заказа. |
+|| `OnSaleOrderCanceled` | При изменении признака отмены заказа |
 -  `ENTITY` — заказ `Bitrix\Sale\Order` с новым состоянием отмены
 ||
-|| `OnSaleStatusShipmentChange` | При успешном сохранении нового статуса отгрузки. |
+|| `OnSaleStatusShipmentChange` | При успешном сохранении нового статуса отгрузки |
 -  `ENTITY` — отгрузка `Bitrix\Sale\Shipment` с новым статусом
 -  `VALUE` — код нового статуса
 -  `OLD_VALUE` — код предыдущего статуса
 ||
-|| `OnSaleShipmentDelivery` | При успешной обработке разрешения доставки, до завершения `Order::save()`. |
+|| `OnSaleShipmentDelivery` | При успешной обработке разрешения доставки, до завершения `Order::save()` |
 -  `ENTITY` — отгрузка `Bitrix\Sale\Shipment`, для которой обработано разрешение доставки
 ||
-|| `OnShipmentDeducted` | При изменении признака списания отгрузки. |
+|| `OnShipmentDeducted` | При изменении признака списания отгрузки |
 -  `ENTITY` — отгрузка `Bitrix\Sale\Shipment` с новым состоянием списания
 -  `VALUES` — исходные значения полей отгрузки до изменения
 ||
-|| `OnSalePaymentEntitySaved` | При завершении сохранения оплаты. |
+|| `OnSalePaymentEntitySaved` | При завершении сохранения оплаты |
 -  `ENTITY` — сохраненная оплата `Bitrix\Sale\Payment`
 -  `VALUES` — исходные значения полей оплаты до сохранения
 ||
-|| `OnSaleShipmentEntitySaved` | При завершении сохранения отгрузки. |
+|| `OnSaleShipmentEntitySaved` | При завершении сохранения отгрузки |
 -  `ENTITY` — сохраненная отгрузка `Bitrix\Sale\Shipment`
 -  `VALUES` — исходные значения полей отгрузки до сохранения
 -  `IS_NEW` — признак создания новой отгрузки

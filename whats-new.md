@@ -20,6 +20,57 @@ title: Что нового
 
 ### 2026
 
+#### 24 сентября
+
+- Добавили новую статью [Карточка пользователя ui.tooltip](./pages/ui/ui-tooltip.md).
+- Добавили новую статью [Счетчик ui.counter](./pages/ui/ui-counter.md).
+- Добавили новую статью [Метка ui.label](./pages/ui/ui-label.md).
+- Обновили статью [Системная метка](./pages/ui/system-label.md#vybrat-stil).
+
+#### 22 сентября
+
+- Добавили новую статью [Просмотр файлов ui.viewer](./pages/ui/ui-viewer.md).
+- Добавили новую статью [Настраиваемое меню ui.menu-configurable](./pages/ui/ui-menu-configurable.md).
+
+#### 18 сентября
+
+- Добавили новый раздел [Поиск](./pages/modules/search/overview.md).
+
+#### 17 сентября
+
+- Добавили новую статью [Каталог объектов ui.entity-catalog](./pages/ui/ui-entity-catalog.md).
+- Добавили новую статью [Поток стадий ui.stageflow](./pages/ui/ui-stageflow.md).
+- Добавили новую статью [Лента событий ui.timeline](./pages/ui/ui-timeline.md).
+
+#### 16 сентября
+
+- Добавили новую статью [Загрузка файлов Uploader](./pages/ui/uploader.md).
+- Обновили статью [Поля форм ui.forms](./pages/ui/ui-forms.md).
+
+#### 15 сентября
+
+- Добавили новую статью [Класс PageNavigation](./pages/cms-basics/page-navigation-class.md).
+- Добавили новую статью [Класс ReversePageNavigation](./pages/cms-basics/reverse-page-navigation.md).
+- Обновили статью [Постраничная навигация](./pages/cms-basics/page-navigation.md).
+- Обновили статью [Иконки](./pages/ui/icons.md).
+
+#### 10 сентября
+
+- Добавили новую статью [Сетка формы ui.layout-form](./pages/ui/ui-layout-form.md).
+- Добавили новую статью [Диалог выбора цвета color_picker](./pages/ui/color-picker.md).
+
+#### 7 сентября
+
+- Обновили статью [Операции с сущностями и события](./pages/orm/entity-operations.md).
+- Обновили статью [Коллекции](./pages/orm/collections.md).
+
+#### 3 сентября
+
+- Добавили новую статью [Выпадающий список ui.select](./pages/ui/ui-select.md).
+- Добавили новую статью [Поля форм ui.forms](./pages/ui/ui-forms.md).
+- Добавили новую статью [Панель инструментов ui.toolbar](./pages/ui/ui-toolbar.md).
+- Добавили новый раздел [Генератор документов](./pages/modules/documentgenerator/overview.md).
+
 #### 21 августа
 
 - Добавили новую статью [Отрисовка пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-rendering.md).

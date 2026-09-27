@@ -1,225 +1,338 @@
 ---
 title: Операции с сущностями и события
-description: 'Операции с сущностями. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
+description: "Операции с сущностями. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации."
 ---
 
-Сущности позволяют взаимодействовать с базой данных, выполняя основные операции: добавление, изменение и удаление записи. Этот подход упрощает работу с данными и обеспечивает их целостность и безопасность.
+Сущность ORM связывает PHP-класс с таблицей базы данных. Через класс-наследник `DataManager` можно добавлять, обновлять и удалять записи, проверять результат операции и подключать обработчики событий.
+
+Правила работы с записью остаются в одном классе:
+
+-  карта полей описывает структуру данных,
+
+-  методы `add`, `update`, `delete`, `addMulti`, `updateMulti` и `deleteByFilter` выполняют операции,
+
+-  события позволяют изменить или проверить данные в нужный момент.
+
+{% note info "" %}
+
+В примерах статьи используется класс `BookTable`. Он описывает таблицу книг и поля `ISBN`, `TITLE`, `PUBLISH_DATE`, `EDITIONS_ISBN`, `READERS_COUNT`.
+
+Полный код класса находится в разделе [Пример класса `BookTable`](#booktable-example).
+
+{% endnote %}
 
 ## Основные операции
 
-Для модификации данных в БД можно использовать три ключевых метода: `add`, `update`, `delete`. Рассмотрим их на примера класса `BookTable`.
+Для изменения данных используйте методы `add`, `update`, `delete`, `addMulti`, `updateMulti` и `deleteByFilter`. Перед вызовом убедитесь, что таблица из `getTableName()` создана в базе данных.
 
-### Метод add
+Объект результата позволяет проверить успешность операции и получить ошибки.
 
-Метод добавляет запись, принимая массив значений. Ключами массива являются имена полей сущности.
+### Добавить запись
+
+Метод `add` принимает массив значений, где ключи совпадают с именами полей в карте ORM-класса.
 
 ```php
-namespace SomePartner\MyBooksCatalog; // Пространство имен, в котором находится код
-
-use Bitrix\Main\Type; // Подключаем класс Type из пространства имен Bitrix\Main
-
 $result = BookTable::add([
     'ISBN' => '978-0321127426',
     'TITLE' => 'Patterns of Enterprise Application Architecture',
-    'PUBLISH_DATE' => new Type\Date('2002-11-16', 'Y-m-d') // Указываем дату публикации книги
+    'PUBLISH_DATE' => new \Bitrix\Main\Type\Date('16.11.2002'),
 ]);
 
 if ($result->isSuccess())
-{ // Проверяем, успешно ли добавлена запись
-    $id = $result->getId(); // Получаем ID новой записи для дальнейших операций
+{
+    // ID понадобится для последующего update, delete или выборки записи.
+    $id = $result->getId();
 }
 ```
 
-Метод `add` возвращает объект `Entity\AddResult`. Этот объект содержит ID добавленной записи и позволяет проверить, успешно ли была добавлена запись в базу данных.
+Метод `add` возвращает объект `Bitrix\Main\ORM\Data\AddResult`. Чтобы получить идентификатор записи, созданной методом `add`, используйте `getId()`.
 
-Для полей типа `DateField` и `DateTimeField`, а также пользовательских полей «Дата» и «Дата со временем» используйте объекты `Bitrix\Main\Type\Date` и `Bitrix\Main\Type\DateTime`. По умолчанию в конструктор передается строковая дата в формате сайта, но можно указать формат явно.
+Если у сущности составной ключ, `getId()` вернет массив значений ключа.
 
-### Метод update
+Метод `addMulti()` добавляет несколько записей одним вызовом. Он принимает массив записей и возвращает такой же объект результата.
 
-Метод обновляет запись, добавляя к массиву значений первичный ключ.
+Параметр `$ignoreEvents` управляет обработчиками событий. По умолчанию он равен `false`, поэтому события ORM выполняются. Значение `true` отключает обработчики при массовом добавлении.
 
 ```php
-$result = BookTable::update($id, [
-    'PUBLISH_DATE' => new Type\Date('2002-11-15', 'Y-m-d') // Изменить дату
-]);
+$result = BookTable::addMulti([
+    [
+        'ISBN' => '978-0321127426',
+        'TITLE' => 'Patterns of Enterprise Application Architecture',
+        'PUBLISH_DATE' => new \Bitrix\Main\Type\Date('16.11.2002'),
+    ],
+    [
+        'ISBN' => '978-0134757599',
+        'TITLE' => 'Refactoring',
+        'PUBLISH_DATE' => new \Bitrix\Main\Type\DateTime('16.11.2002 10:30:00'),
+    ],
+], true);
+
+if (!$result->isSuccess())
+{
+    var_dump($result->getErrorMessages());
+}
 ```
 
-Метод `update` в качестве результата возвращает объект `Entity\UpdateResult`, у которого есть проверочный метод `isSuccess()`. Проверочный метод устанавливает, были ли в запросе ошибки.
+Для полей с типами `DateField` и `DateTimeField` передавайте объекты `Bitrix\Main\Type\Date` и `Bitrix\Main\Type\DateTime`. Подробнее о работе с датами читайте в статье [Дата и время](./../advanced/datetime.md).
 
-Чтобы узнать, была ли запись фактически обновлена, используйте метод `getAffectedRowsCount()`.
+### Обновить запись
 
-### Метод delete
+Метод `update` принимает первичный ключ записи и массив новых значений. Методы `update` и `updateMulti` возвращают объект `Bitrix\Main\ORM\Data\UpdateResult`.
 
-Для удаления записи укажите ее первичный ключ.
+В примерах `$id` — значение первичного ключа записи. После добавления записи его можно получить через `$result->getId()`.
+
+```php
+use Bitrix\Main\Type\Date;
+
+$result = BookTable::update($id, [
+    'PUBLISH_DATE' => new Date('2002-11-15', 'Y-m-d'),
+]);
+
+if ($result->isSuccess())
+{
+    echo $result->getAffectedRowsCount();
+}
+else
+{
+    var_dump($result->getErrorMessages());
+}
+```
+
+После проверки результата через `isSuccess()` используйте `getAffectedRowsCount()`, чтобы узнать, сколько строк фактически изменил успешный SQL-запрос.
+
+Метод `updateMulti()` обновляет несколько записей одним набором значений. Он принимает массив первичных ключей и массив новых значений.
+
+Параметр `$ignoreEvents` работает так же, как в `addMulti()`: значение `true` отключает обработчики событий при массовом обновлении.
+
+```php
+$result = BookTable::updateMulti(
+    [$firstBookId, $secondBookId],
+    ['READERS_COUNT' => 0],
+    true
+);
+
+if ($result->isSuccess())
+{
+    echo $result->getAffectedRowsCount();
+}
+else
+{
+    var_dump($result->getErrorMessages());
+}
+```
+
+### Удалить запись
+
+Метод `delete` удаляет запись по первичному ключу.
 
 ```php
 $result = BookTable::delete($id);
-```
-
-Чтобы удалить запись с составным ключом, передайте массив со всеми значениями ключа.
-
-```php
-BookTable::delete([
-    'key1' => value1,
-    'key2' => value2
-]);
-```
-
-### Результаты операции
-
-Если в ходе операции возникли ошибки, метод вернет массив сообщений об ошибках.
-
-```php
-$result = BookTable::update(...); // Выполняем обновление записи в таблице BookTable
-
-if (!$result->isSuccess())
-{ // Проверяем, успешно ли выполнено обновление
-    $errors = $result->getErrorMessages(); // Если обновление не удалось, получаем сообщения об ошибках
+if ($result->isSuccess())
+{
+    echo "Deleted";
+}
+else
+{
+    var_dump($result->getErrorMessages());
 }
 ```
 
-## События {#events}
-
-Чтобы хранить в БД только важные данные, используйте обработчик события.
-
-Доступные события:
-
-#|
-|| **Событие** | **Когда срабатывает** | **Описание параметров** ||
-|| **OnBeforeAdd** | Перед добавлением новой записи в базу данных | `fields` — данные, которые будут добавлены ||
-|| **OnAdd** | В момент добавления записи в базу данных | `fields` — данные, которые были добавлены ||
-|| **OnAfterAdd** | После успешного добавления записи | `primary` — первичный ключ записи
-`fields` — данные добавленной записи ||
-|| **OnBeforeUpdate** | Перед обновлением существующей записи | `primary` — первичный ключ записи
-`fields` — данные для обновления ||
-|| **OnUpdate** | В момент обновления записи | `primary` — первичный ключ записи
-`fields` — данные, которые были обновлены ||
-|| **OnAfterUpdate** | После успешного обновления записи | `primary` — первичный ключ записи
-`fields` — обновленные данные ||
-|| **OnBeforeDelete** | Перед удалением записи из базы данных | `primary` — первичный ключ записи, которую планируется удалить ||
-|| **OnDelete** | В момент удаления записи | `primary` — первичный ключ удаляемой записи ||
-|| **OnAfterDelete** | После успешного удаления записи | `primary` — первичный ключ удаленной записи ||
-|#
-
-Чтобы подписаться на событие в любом месте скрипта, используйте менеджер событий. Это позволяет выполнять определенные действия при наступлении событий в системе.
+Если у ORM-класса составной ключ, передайте массив со значениями всех частей ключа.
 
 ```php
-$em = \Bitrix\Main\ORM\EventManager::getInstance();
+$result = BookTable::delete([
+    'BOOK_ID' => $bookId,
+    'STORE_ID' => $storeId,
+]);
+```
 
-$em->addEventHandler(
-    BookTable::class, // Класс сущности, для которого регистрируется обработчик
-    \Bitrix\Main\ORM\Data\DataManager::EVENT_ON_BEFORE_ADD, // Код события, которое будет обрабатываться
-    function ()
-    { // Ваша callback-функция
-        var_dump('handle entity event'); // Действие, выполняемое при срабатывании события
-    }
+Метод `delete` возвращает объект `Bitrix\Main\ORM\Data\DeleteResult`. Успешность удаления проверяйте через `isSuccess()` в объекте результата.
+
+Чтобы удалять записи по фильтру, подключите к классу сущности `Bitrix\Main\ORM\Data\Internal\DeleteByFilterTrait`. После этого в классе будет доступен метод `deleteByFilter()`.
+
+```php
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Data\Internal\DeleteByFilterTrait;
+
+class BookTable extends DataManager
+{
+    use DeleteByFilterTrait;
+}
+```
+
+```php
+BookTable::deleteByFilter([
+    '<READERS_COUNT' => 1,
+]);
+```
+
+`deleteByFilter()` не удаляет записи по пустому фильтру. Если нужно удалить все записи таблицы, используйте отдельный сценарий очистки таблицы.
+
+## События {#events}
+
+События ORM срабатывают при `add`, `update` и `delete`: до проверки данных, перед SQL-запросом и после успешной операции.
+
+Используйте события, чтобы нормализовать значения, остановить операцию с ошибкой или выполнить связанное действие после сохранения.
+
+#|
+|| **Событие** | **Когда срабатывает** | **Основные параметры** ||
+|| **OnBeforeAdd** | При подготовке новой записи к добавлению | `fields` — значения полей, `object` — объект записи ||
+|| **OnAdd** | При добавлении записи перед SQL-запросом | `fields` — значения полей, `object` — копия объекта записи ||
+|| **OnAfterAdd** | После успешного добавления записи | `primary` — первичный ключ, `fields` — значения полей, `object` — копия объекта записи ||
+|| **OnBeforeUpdate** | При подготовке существующей записи к обновлению | `primary` — первичный ключ, `fields` — новые значения полей, `object` — объект записи ||
+|| **OnUpdate** | При обновлении записи перед SQL-запросом | `primary` — первичный ключ, `fields` — новые значения полей, `object` — копия объекта записи ||
+|| **OnAfterUpdate** | После успешного обновления записи | `primary` — первичный ключ, `fields` — обновленные значения, `object` — копия объекта записи ||
+|| **OnBeforeDelete** | При подготовке записи к удалению | `primary` — первичный ключ, `object` — копия объекта записи. Параметр `fields` в событие удаления не передается ||
+|| **OnDelete** | При удалении записи перед SQL-запросом | `primary` — первичный ключ, `object` — копия объекта записи ||
+|| **OnAfterDelete** | После успешного удаления записи | `primary` — первичный ключ, `object` — копия объекта записи ||
+|#
+
+Возможности обработчика зависят от типа события:
+
+-  в `OnBeforeAdd` и `OnBeforeUpdate` можно вернуть `EventResult`, чтобы изменить поля, исключить поля из операции или прервать операцию ошибкой,
+
+-  в `OnBeforeDelete` через `EventResult` можно вернуть ошибку и прервать удаление,
+
+-  в `OnAdd`, `OnUpdate`, `OnDelete` и событиях `OnAfter*` обычно выполняют сопутствующую логику: логирование, очистку кеша или запуск связанных действий.
+
+### Зарегистрировать обработчик
+
+Регистрация обработчика связывает событие сущности с обработчиком, который выполнится при операции.
+
+`Bitrix\Main\ORM\EventManager` регистрирует обработчик для конкретного класса сущности и события. Обработчик получает объект `Bitrix\Main\ORM\Event`.
+
+Обработчик можно подключить двумя способами:
+
+-  статическим методом класса-наследника `DataManager` — для правил самой сущности: нормализации полей, обязательных проверок, запрета удаления,
+
+-  через `EventManager::registerEventHandler()` — для обработчиков модуля или интеграции.
+
+{% note info "" %}
+
+Для статического метода используйте имя события с маленькой буквы: событию `OnBeforeAdd` соответствует метод `onBeforeAdd`.
+
+Пример статического метода — в блоке [Изменить данные перед сохранением](#modify-fields).
+
+{% endnote %}
+
+Через `EventManager::addEventHandler()` обработчик регистрируют для класса сущности и кода события. Класс `DataManager` нужен только для константы события `EVENT_ON_BEFORE_ADD`, которая соответствует событию `OnBeforeAdd`.
+
+```php
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\EventManager;
+
+EventManager::getInstance()->registerEventHandler(
+    \Vendor\Books\BookTable::class,
+    DataManager::EVENT_ON_BEFORE_ADD,
+    'vendor.books',
+    \Vendor\Books\EventHandler::class,
+    'normalizeBookBeforeAdd'
 );
 ```
 
--  `$em = \Bitrix\Main\ORM\EventManager::getInstance();` создает объект менеджера событий, который управляет подписками на события.
+### Изменить данные перед сохранением {#modify-fields}
 
--  `$em->addEventHandler(...)` добавляет обработчик для события. Укажите класс сущности и код события, которое будет обрабатываться.
-
--  `function () { ... }` — анонимная callback-функция, которая будет выполнена при срабатывании события.
-
-### Как изменить данные с помощью события
-
-Система распознает метод `onBeforeAdd` как обработчик события «перед добавлением». В нем можно изменить данные или провести дополнительные проверки.
-
-В примере с валидаторами для поля ISBN проверяли наличие 13 цифр. Но в поле ISBN могут быть еще и дефисы, которые не нужно хранить в БД. Изменим поле ISBN с помощью метода `modifyFields`.
+Метод `modifyFields()` меняет значения в `OnBeforeAdd` и `OnBeforeUpdate`. Такой обработчик подходит для нормализации данных перед валидацией и записью в базу.
 
 ```php
-class BookTable extends Entity\DataManager
-{
-    public static function onBeforeAdd(Entity\Event $event)
-    {
-        $result = new Entity\EventResult;
-        $data = $event->getParameter("fields");
+namespace Vendor\Books;
 
-        if (isset($data['ISBN']))
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Event;
+use Bitrix\Main\ORM\EventResult;
+use Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\StringField;
+use Bitrix\Main\ORM\Fields\Validators\RegExpValidator;
+
+class BookTable extends DataManager
+{
+    public static function getTableName()
+    {
+        return 'my_book';
+    }
+
+    public static function getMap()
+    {
+        return [
+            (new IntegerField('ID'))
+                ->configurePrimary()
+                ->configureAutocomplete(),
+
+            (new StringField('ISBN'))
+                ->configureRequired()
+                ->addValidator(new RegExpValidator('/^\d{13}$/')),
+        ];
+    }
+
+    public static function onBeforeAdd(Event $event): EventResult
+    {
+        $result = new EventResult();
+        $fields = $event->getParameter('fields');
+
+        if (isset($fields['ISBN']))
         {
-            $cleanIsbn = str_replace('-', '', $data['ISBN']); // Удаляем дефисы из ISBN
-            $result->modifyFields(['ISBN' => $cleanIsbn]); // Модифицируем поле ISBN
+            $result->modifyFields([
+                'ISBN' => str_replace('-', '', $fields['ISBN']),
+            ]);
         }
 
         return $result;
     }
-
-    // ...
 }
 ```
 
+Например, значение `978-0321127426` будет сохранено как `9780321127426`. После такой нормализации поле можно проверять валидатором на 13 цифр.
+
 ```php
-// до преобразования
-978-0321127426
-978-1-449-31428-6
-9780201485677
-// после преобразования
-9780321127426
-9781449314286
-9780201485677
+use Bitrix\Main\ORM\Fields\StringField;
+use Bitrix\Main\ORM\Fields\Validators\RegExpValidator;
+
+(new StringField('ISBN'))
+    ->configureRequired()
+    ->addValidator(new RegExpValidator('/^\d{13}$/'))
+;
 ```
 
-После преобразования в значении остались только цифры, поэтому можно использовать стандартный валидатор `RegExp` — проверку по регулярному выражению.
+### Запретить обновление поля
+
+Метод `unsetFields()` удаляет поле из данных операции. Используйте этот способ, если обновление поля нужно пропустить без ошибки.
+
+Если после `unsetFields()` не осталось полей для обновления, `update` завершится без ошибки и без изменения записи.
 
 ```php
-'validation' => function()
+public static function onBeforeUpdate(Event $event)
 {
-    return [
-        // function ($value)
-        // {
-        //     $clean = str_replace('-', '', $value);
-        //
-        //     if (preg_match('/^\d{13}$/', $clean))
-        //     {
-        //         return true;
-        //     }
-        //     else
-        //     {
-        //         return 'Код ISBN должен содержать 13 цифр.';
-        //     }
-        // },
-        new Entity\Validator\RegExp('/\d{13}/'), // Валидатор, проверяющий, что значение содержит 13 цифр подряд
-        // ...
-    ];
-}
-```
+    $result = new EventResult();
+    $fields = $event->getParameter('fields');
 
-### Как запретить обновление данных
-
-В обработчике события можно удалять данные или прерывать операцию. Например, чтобы запретить обновление ISBN для созданных книг, используйте событие `onBeforeUpdate` одним из способов:
-
--  Удалите ISBN из данных для обновления.
-
-```php
-public static function onBeforeUpdate(Entity\Event $event)
-{
-    $result = new Entity\EventResult;
-    $data = $event->getParameter("fields");
-
-    if (isset($data['ISBN']))
+    if (isset($fields['ISBN']))
     {
-        $result->unsetFields(['ISBN']); // Удаляет поле ISBN из данных для обновления
+        // Поле будет исключено из SQL-запроса на обновление.
+        $result->unsetFields(['ISBN']);
     }
 
     return $result;
 }
 ```
 
--  Сгенерируйте ошибку при обновлении.
+Метод `addError()` прерывает операцию и добавляет ошибку в объект результата. Можно использовать любой класс ошибки, совместимый с результатом операции.
+
+Пример ошибки, которая относится к конкретному полю:
 
 ```php
-public static function onBeforeUpdate(Entity\Event $event)
-{
-    $result = new Entity\EventResult;
-    $data = $event->getParameter("fields");
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ORM\Fields\FieldError;
 
-    if (isset($data['ISBN']))
+public static function onBeforeUpdate(Event $event)
+{
+    $result = new EventResult();
+    $fields = $event->getParameter('fields');
+
+    if (isset($fields['ISBN']))
     {
-        // Получает объект поля ISBN и выдает сообщение об ошибке
-        $result->addError(new Entity\FieldError(
+        $result->addError(new FieldError(
             $event->getEntity()->getField('ISBN'),
-            'Запрещено менять ISBN код у существующих книг'
+            Loc::getMessage('BOOK_ERROR_ISBN_CHANGE_DENIED')
         ));
     }
 
@@ -227,18 +340,21 @@ public static function onBeforeUpdate(Entity\Event $event)
 }
 ```
 
-Чтобы узнать, в каком поле произошла ошибка, используйте объект `Entity\FieldError`. Если ошибка касается нескольких полей или всей записи, используйте `Entity\EntityError`.
+Пример ошибки, которая относится ко всей записи:
 
 ```php
-public static function onBeforeUpdate(Entity\Event $event)
-{
-    $result = new Entity\EventResult;
-    $data = $event->getParameter("fields");
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ORM\EntityError;
 
-    if (...) // Здесь должна быть ваша логика комплексной проверки данных
+public static function onBeforeUpdate(Event $event)
+{
+    $result = new EventResult();
+    $fields = $event->getParameter('fields');
+
+    if (empty($fields))
     {
-        $result->addError(new Entity\EntityError(
-            'Невозможно обновить запись'
+        $result->addError(new EntityError(
+            Loc::getMessage('BOOK_ERROR_EMPTY_UPDATE')
         ));
     }
 
@@ -248,180 +364,154 @@ public static function onBeforeUpdate(Entity\Event $event)
 
 ## Форматирование значений
 
-Иногда нужно хранить данные в одном формате, а работать с ними — в другом. Часто это касается массивов, которые сериализуются перед сохранением в БД, то есть преобразуются в строку. Для этого есть параметры поля `save_data_modification` и `fetch_data_modification`, которые задаются через callback.
+Данные можно хранить в одном формате, а возвращать из ORM в другом. Для массивов используйте `ArrayField`: он подключает модификаторы сохранения и чтения.
 
-Пример каталога книг, где поле `EDITIONS_ISBN` будет хранить коды ISBN других изданий книги.
+Метод `configureSerializationJson()` сохраняет массив в базе данных как JSON-строку.
 
 ```php
-new Entity\TextField('EDITIONS_ISBN', [
-    'save_data_modification' => function ()
-    {
-        return [
-            function ($value)
-            {
-                return serialize($value); // Преобразует значение в сериализованную строку перед сохранением
-            }
-        ];
-    },
-    'fetch_data_modification' => function ()
-    {
-        return [
-            function ($value)
-            {
-                return unserialize($value); // Преобразует сериализованную строку обратно в значение при извлечении
-            }
-        ];
-    }
-])
+use Bitrix\Main\ORM\Fields\ArrayField;
+
+(new ArrayField('EDITIONS_ISBN'))
+    ->configureSerializationJson()
+;
 ```
 
-Для сериализации используйте параметр `serialized`.
+Если нужен собственный формат, добавьте модификаторы поля.
+
+Метод `addSaveDataModifier()` добавляет модификатор сохранения. Его callback получает значение перед записью в базу.
+
+Метод `addFetchDataModifier()` добавляет модификатор чтения. Его callback получает значение после выборки.
 
 ```php
-new Entity\TextField('EDITIONS_ISBN', [
-    'serialized' => true // Автоматически сериализует и десериализует данные
-])
+use Bitrix\Main\ORM\Fields\TextField;
+
+(new TextField('EDITIONS_ISBN'))
+    ->addSaveDataModifier(static function (array $value): string
+    {
+        // Перед сохранением массив ISBN преобразуется в строку.
+        return implode(',', $value);
+    })
+    ->addFetchDataModifier(static function (?string $value): array
+    {
+        if ($value === null || $value === '')
+        {
+            return [];
+        }
+
+        return explode(',', $value);
+    })
+;
 ```
 
 ## Вычисляемые значения
 
-Вычисляемые значения в базе данных помогают поддерживать целостность данных, выполняя расчеты на стороне сервера. Это избавляет от необходимости каждый раз получать старое значение и пересчитывать его в приложении.
+`Bitrix\Main\DB\SqlExpression` задает значение поля через SQL-выражение. Используйте его, когда новое значение зависит от текущего значения в базе данных.
 
-Для безопасного обновления данных в базе данных используйте плейсхолдеры. Они помогают избежать SQL-инъекций, экранируя значения и идентификаторы. Список доступных плейсхолдеров:
-
--  `?` или `?s` — значение экранируется и заключается в кавычки `'` ,
-
--  `?#` — значение экранируется как идентификатор,
-
--  `?i` — значение приводится к integer,
-
--  `?f` — значение приводится к float.
-
-### Пример использования вычисляемых значений
-
-Чтобы увеличить количество читателей `READERS_COUNT` на 1, можно обновить соответствующее поле в базе данных.
+Например, чтобы увеличить `READERS_COUNT` на 1, передайте в `update` выражение `?# + 1`. Так база изменит текущее значение поля без отдельной выборки записи.
 
 ```php
-BookTable::update($id, [ // Обновление записи в таблице BookTable
-    'READERS_COUNT' => new \Bitrix\Main\DB\SqlExpression('?# + 1', 'READERS_COUNT') // Увеличение значения поля READERS_COUNT на 1
+use Bitrix\Main\DB\SqlExpression;
+
+BookTable::update($id, [
+    'READERS_COUNT' => new SqlExpression('?# + 1', 'READERS_COUNT'),
 ]);
 ```
 
-В этом примере плейсхолдер `?#` указывает на идентификатор базы данных, который будет экранирован.
+Плейсхолдеры в `SqlExpression` экранируют значения и идентификаторы.
 
-Если число читателей переменное, лучше описать выражение так.
+Список плейсхолдеров и правила их применения смотрите в статье [SqlExpression и SqlHelper](./../database/sql-helper-and-expression.md).
+
+Если прибавляемое значение приходит из переменной, добавьте для него отдельный плейсхолдер.
 
 ```php
-// правильно
-BookTable::update($id, [ // Обновление записи в таблице BookTable
-    'READERS_COUNT' => new \Bitrix\Main\DB\SqlExpression('?# + ?i', 'READERS_COUNT', $readersCount) // Увеличение значения поля READERS_COUNT на значение переменной $readersCount
-    // '?#' - плейсхолдер для имени поля, заменяется на 'READERS_COUNT'
-    // '?i' - плейсхолдер для целочисленного значения, заменяется на $readersCount
-]);
+use Bitrix\Main\DB\SqlExpression;
 
-// неправильно
-BookTable::update($id, [ // Обновление записи в таблице BookTable
-    'READERS_COUNT' => new \Bitrix\Main\DB\SqlExpression('?# + '.$readersCount, 'READERS_COUNT') // Небезопасное увеличение значения поля READERS_COUNT
-    // Отсутствие плейсхолдера для значения, что может привести к SQL-инъекциям
+BookTable::update($id, [
+    // ?# экранирует имя поля, ?i приводит значение к целому числу.
+    'READERS_COUNT' => new SqlExpression('?# + ?i', 'READERS_COUNT', $readersCount),
 ]);
 ```
 
-Здесь `?#` заменяется на имя поля `READERS_COUNT`, а `?i` — на значение переменной `$readersCount`.
+{% note warning "" %}
 
-## Предупреждения об ошибках
+Передавайте переменные только через плейсхолдеры в `SqlExpression`. Не подставляйте переменные в SQL-строку через конкатенацию, то есть через склейку строк оператором `.`.
 
-Вызывать методы можно как с проверкой успешности выполнения запроса, так и без проверки.
+Если значение добавить в SQL-строку напрямую, ORM не приведет его к нужному типу и не экранирует. Такой код может привести к SQL-инъекции: часть значения будет воспринята базой данных как SQL-команда.
 
-В режиме агента рекомендуем проверять результат выполнения операций с помощью `$result->isSuccess()` и логировать ошибки. Если запрос не прошел из-за валидации и не была вызвана проверка `isSuccess()`, система сгенерирует `E_USER_WARNING`.  В сообщении будут перечислены все ошибки.
+{% endnote %}
+
+Подробнее о рисках и защите читайте в статье [SQL-инъекции](./../security/sql-injection.md).
+
+## Пример класса `BookTable` {#booktable-example}
+
+Класс `BookTable` задает имя таблицы, карту полей и обработчик события. В карте полей настройки задаются через методы `configure*` и `addValidator()`.
 
 ```php
-// Вызов с проверкой успешности выполнения запроса
-$result = BookTable::update(...); // Выполнение обновления и сохранение результата
-if (!$result->isSuccess()) // Проверка успешности выполнения
+namespace Vendor\Books;
+
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Event;
+use Bitrix\Main\ORM\EventResult;
+use Bitrix\Main\ORM\Fields\ArrayField;
+use Bitrix\Main\ORM\Fields\DateField;
+use Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\StringField;
+use Bitrix\Main\ORM\Fields\Validators\RegExpValidator;
+use Bitrix\Main\Type\Date;
+
+class BookTable extends DataManager
 {
-    // обработка ошибки
-    // Здесь можно добавить код для обработки ошибок, например, логирование или уведомление пользователя
-}
-
-// Вызов без проверки успешности выполнения запроса
-BookTable::update(...); // Обновление записи без проверки результата
-```
-
-## Пример создания сущности
-
-Создадим класс `BookTable`, который представляет таблицу для хранения информации о книгах. В классе зададим поля таблицы, их типы и правила валидации. С помощью событий настроим обработку данных перед их добавлением в базу.
-
-```php
-namespace SomePartner\MyBooksCatalog; // Определение пространства имен для организации кода
-
-use Bitrix\Main\Entity; // Импорт класса Entity для работы с ORM
-use Bitrix\Main\Type; // Импорт класса Type для работы с типами данных
-
-class BookTable extends Entity\DataManager // Класс BookTable наследует Entity\DataManager для работы с данными
-{
-    // Метод для получения имени таблицы
     public static function getTableName()
     {
-        return 'my_book'; // Имя таблицы в базе данных
+        return 'my_book';
     }
 
-    // Метод для получения уникального идентификатора пользовательских полей
-    public static function getUfId()
-    {
-        return 'MY_BOOK'; // Уникальный идентификатор
-    }
-
-    // Метод для определения карты полей таблицы
     public static function getMap()
     {
-        return array(
-            new Entity\IntegerField('ID', array( // Поле ID
-                'primary' => true, // Указание, что это первичный ключ
-                'autocomplete' => true // Автоинкремент для поля
-            )),
-            new Entity\StringField('ISBN', array( // Поле ISBN
-                'required' => true, // Поле обязательно для заполнения
-                'column_name' => 'ISBNCODE', // Имя столбца в базе данных
-                'validation' => function()
-                { // Валидация поля
-                    return array(
-                        new Entity\Validator\RegExp('/\d{13}/'), // Проверка на 13 цифр
-                        function ($value, $primary, $row, $field)
-                        { // Дополнительная проверка
-                            // Проверка контрольной цифры ISBN
-                            return new Entity\FieldError(
-                                $field, 'Контрольная цифра ISBN не сошлась', 'MY_ISBN_CHECKSUM'
-                            ); // Возврат ошибки, если проверка не пройдена
-                        }
-                    );
-                }
-            )),
-            new Entity\StringField('TITLE'), // Поле для названия книги
-            new Entity\DateField('PUBLISH_DATE', array( // Поле для даты публикации
-                'default_value' => function ()
-                { // Установка значения по умолчанию
-                    $lastFriday = date('Y-m-d', strtotime('last friday')); // Вычисление даты последней пятницы
-                    return new Type\Date($lastFriday, 'Y-m-d'); // Возврат даты в нужном формате
-                }
-            )),
-            new Entity\TextField('EDITIONS_ISBN', array( // Поле для хранения сериализованных данных
-                'serialized' => true // Автоматическая сериализация и десериализация
-            )),
-            new Entity\IntegerField('READERS_COUNT') // Поле для количества читателей
-        );
+        return [
+            (new IntegerField('ID'))
+                // ID -- первичный ключ с автоинкрементом.
+                ->configurePrimary()
+                ->configureAutocomplete(),
+
+            (new StringField('ISBN'))
+                // В таблице поле хранится в столбце ISBNCODE.
+                ->configureRequired()
+                ->configureColumnName('ISBNCODE')
+                ->addValidator(new RegExpValidator('/^\d{13}$/')),
+
+            (new StringField('TITLE'))
+                ->configureRequired(),
+
+            (new DateField('PUBLISH_DATE'))
+                ->configureDefaultValue(static function (): Date
+                {
+                    return new Date(date('Y-m-d'), 'Y-m-d');
+                }),
+
+            (new ArrayField('EDITIONS_ISBN'))
+                // Массив ISBN хранится в JSON.
+                ->configureSerializationJson(),
+
+            (new IntegerField('READERS_COUNT'))
+                ->configureDefaultValue(0),
+        ];
     }
 
-    // Событие, вызываемое перед добавлением новой записи
-    public static function onBeforeAdd(Entity\Event $event)
+    public static function onBeforeAdd(Event $event)
     {
-        $result = new Entity\EventResult; // Создание объекта для результата события
-        $data = $event->getParameter("fields"); // Получение данных полей из события
-        if (isset($data['ISBN'])) // Проверка наличия поля ISBN
+        $result = new EventResult();
+        $fields = $event->getParameter('fields');
+
+        if (isset($fields['ISBN']))
         {
-            $cleanIsbn = str_replace('-', '', $data['ISBN']); // Удаление дефисов из ISBN
-            $result->modifyFields(array('ISBN' => $cleanIsbn)); // Модификация поля ISBN
+            // Нормализуем ISBN до проверки валидатором.
+            $result->modifyFields([
+                'ISBN' => str_replace('-', '', $fields['ISBN']),
+            ]);
         }
-        return $result; // Возврат результата события
+
+        return $result;
     }
 }
 ```

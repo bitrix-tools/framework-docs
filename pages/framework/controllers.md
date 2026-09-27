@@ -534,7 +534,7 @@ Bitrix Framework создаст объект `PageNavigation`. Контролл�
 
 {% note tip "" %}
 
-О классе `PageNavigation` читайте в статье [Постраничная навигация](./../cms-basics/page-navigation.md).
+Методы объекта навигации описаны в статье [Класс PageNavigation](./../cms-basics/page-navigation-class.md), общий сценарий постраничного вывода — в статье [Постраничная навигация](./../cms-basics/page-navigation.md).
 
 {% endnote %}
 

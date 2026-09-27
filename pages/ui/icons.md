@@ -473,6 +473,7 @@ export const ExampleComponent = {
 || Main.OUTGOING_CALL | outgoing-call ||
 || Main.INCOMING_CALL | incoming-call ||
 || Main.TELEPHONY_PHONEBOOK | telephony-phonebook ||
+|| Main.telephony_phonebook_2 | telephony-phonebook-2 ||
 || Main.CALL_CHAT | call-chat ||
 || Main.CHATS_1 | chats-1 ||
 || Main.CHATS_2 | chats-2 ||
@@ -914,6 +915,7 @@ export const ExampleComponent = {
 || **Значение** | **CSS-класс** ||
 || CRM.SEND_CONTACT | send-contact ||
 || CRM.BOOK_OPEN | book-open ||
+|| CRM.funnel_1 | funnel-1 ||
 || CRM.CRM_SEARCH | crm-search ||
 || CRM.REFRESH_9 | refresh-9 ||
 || CRM.CHECK_IN_BOX | check-in-box ||
@@ -932,7 +934,7 @@ export const ExampleComponent = {
 || CRM.STAGES | stages ||
 || CRM.EXCLUSION_LIST | exclusion-list ||
 || CRM.OPEN_CHANNELS | open-channels ||
-|| CRM.APPROVED_LIST | approved-list crm-checked_1 ||
+|| CRM.APPROVED_LIST | approved-list ||
 || CRM.COMPANY | company ||
 || CRM.COPY_FILE | copy-file ||
 || CRM.GIRD | gird ||
@@ -1197,6 +1199,7 @@ export const ExampleComponent = {
 || Outline.FILE_WITH_CHECK_2 | o-file-with-check-2 ||
 || Outline.FILE_WITH_CHECK | o-file-with-check ||
 || Outline.FILE_WITH_CLOCK | o-file-with-clock ||
+|| Outline.FILE_SETTINGS | o-file-settings ||
 || Outline.FILE | o-file ||
 || Outline.FILTER_2_LINES | o-filter-2-lines ||
 || Outline.FILTER_FUNNEL | o-filter-funnel ||
@@ -1235,6 +1238,7 @@ export const ExampleComponent = {
 || Outline.HOURGLASS | o-hourglass ||
 || Outline.IDEA_LAMP | o-idea-lamp ||
 || Outline.IMAGE | o-image ||
+|| Outline.IMAGE_PLUS | o-image-plus ||
 || Outline.INFO_CIRCLE | o-info-circle ||
 || Outline.INTERVAL | o-interval ||
 || Outline.INTRANET | o-intranet ||
@@ -1723,6 +1727,7 @@ export const ExampleComponent = {
 || Outline.FILE_WITH_CALENDAR | o-file-with-calendar ||
 || Outline.FILE_WITH_CROWN | o-file-with-crown ||
 || Outline.FILE_WITH_PERSON | o-file-with-person ||
+|| Outline.NO_CLOUD_SYNC | o-no-cloud-sync ||
 |#
 
 {% endcut %}
