@@ -20,6 +20,18 @@ title: Что нового
 
 ### 2026
 
+#### 1 октября
+
+- Добавили новую статью [Поле выбора файлов FileInput](./pages/ui/file-input.md).
+
+- Добавили новую статью [Список шагов ui.stepbystep](./pages/ui/ui-stepbystep.md).
+
+- Добавили новую статью [Пошаговое выполнение ui.stepprocessing](./pages/ui/ui-stepprocessing.md).
+
+- Добавили новую статью [Индикаторы прогресса ui.progressbar и ui.progressround](./pages/ui/ui-progress.md).
+
+- Обновили статью [Загрузка файлов Uploader](./pages/ui/uploader.md).
+
 #### 24 сентября
 
 - Добавили новую статью [Карточка пользователя ui.tooltip](./pages/ui/ui-tooltip.md).

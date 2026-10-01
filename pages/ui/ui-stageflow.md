@@ -405,4 +405,6 @@ document.getElementById('document-stageflow').appendChild(chart.render());
 
 -  [Лента событий ui.timeline](./ui-timeline.md) — история смены стадий рядом с потоком.
 
+-  [Список шагов ui.stepbystep](./ui-stepbystep.md) — вертикальный список шагов, если пользователь не переключает стадии, а идет сверху вниз.
+
 -  [Расширения](../framework/extensions.md) — подключение JavaScript-расширений Bitrix Framework.

@@ -317,6 +317,8 @@ items:
         href: /pages/ui/system-input.md
       - name: Загрузка файлов Uploader
         href: /pages/ui/uploader.md
+      - name: Поле выбора файлов FileInput
+        href: /pages/ui/file-input.md
       - name: Просмотр файлов ui.viewer
         href: /pages/ui/ui-viewer.md
       - name: Выпадающий список ui.select
@@ -331,6 +333,8 @@ items:
         href: /pages/ui/ui-timeline.md
       - name: Поток стадий ui.stageflow
         href: /pages/ui/ui-stageflow.md
+      - name: Список шагов ui.stepbystep
+        href: /pages/ui/ui-stepbystep.md
       - name: Диалог выбора объектов ui.entity-selector
         items:
           - name: Обзор
@@ -375,6 +379,10 @@ items:
         href: /pages/ui/ui-counter.md
       - name: Скелетон загрузки
         href: /pages/ui/system-skeleton.md
+      - name: Индикаторы прогресса ui.progressbar и ui.progressround
+        href: /pages/ui/ui-progress.md
+      - name: Пошаговое выполнение ui.stepprocessing
+        href: /pages/ui/ui-stepprocessing.md
       - name: Системный хайлайтер
         href: /pages/ui/system-highlighter.md
       - name: Работа с эмодзи
