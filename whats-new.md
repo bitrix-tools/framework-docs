@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 2 октября
+
+- Добавили новый раздел [Push and Pull](./pages/modules/pull/overview.md).
+
 #### 1 октября
 
 - Добавили новую статью [Поле выбора файлов FileInput](./pages/ui/file-input.md).

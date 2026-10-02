@@ -572,6 +572,26 @@ items:
             href: /pages/modules/search/events-and-extension.md
           - name: Переиндексация и диагностика поиска
             href: /pages/modules/search/maintenance-and-troubleshooting.md
+      - name: Push and Pull
+        items:
+          - name: Введение и принципы работы
+            href: /pages/modules/pull/overview.md
+          - name: Настройка модуля и сервера очередей
+            href: /pages/modules/pull/configuration.md
+          - name: Обновление страницы по команде сервера
+            href: /pages/modules/pull/quick-start.md
+          - name: Отправка команд из PHP
+            href: /pages/modules/pull/sending-events.md
+          - name: Обработка команд в JavaScript
+            href: /pages/modules/pull/javascript-client.md
+          - name: Подписки по тегам
+            href: /pages/modules/pull/watch-subscriptions.md
+          - name: Обновление компонента после фоновой операции
+            href: /pages/modules/pull/events-and-extension.md
+          - name: Отправка мобильных push-уведомлений
+            href: /pages/modules/pull/push-notifications.md
+          - name: Диагностика и обслуживание Push and Pull
+            href: /pages/modules/pull/maintenance-and-troubleshooting.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам
