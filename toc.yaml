@@ -361,6 +361,10 @@ items:
         href: /pages/ui/system-dialog.md
       - name: Окно сообщения
         href: /pages/ui/dialogs-messagebox.md
+      - name: Диалог с флажками ui.dialogs.checkbox-list
+        href: /pages/ui/dialogs-checkbox-list.md
+      - name: Форма обратной связи ui.feedback.form
+        href: /pages/ui/ui-feedback-form.md
       - name: Подсказка
         href: /pages/ui/hint.md
       - name: Карточка пользователя ui.tooltip

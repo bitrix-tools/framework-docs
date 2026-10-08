@@ -20,6 +20,11 @@ title: Что нового
 
 ### 2026
 
+#### 8 октября
+
+- Добавили новую статью [Форма обратной связи ui.feedback.form](./pages/ui/ui-feedback-form.md).
+- Добавили новую статью [Диалог с флажками ui.dialogs.checkbox-list](./pages/ui/dialogs-checkbox-list.md).
+
 #### 2 октября
 
 - Добавили новый раздел [Push and Pull](./pages/modules/pull/overview.md).
