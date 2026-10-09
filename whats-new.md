@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 9 октября
+
+- Добавили новый раздел [CRM](./pages/modules/crm/overview.md).
+
 #### 8 октября
 
 - Добавили новую статью [Форма обратной связи ui.feedback.form](./pages/ui/ui-feedback-form.md).

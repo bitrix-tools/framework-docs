@@ -69,7 +69,7 @@ Bitrix Framework участвует в этом процессе: он полу�
 
 <iframe src="/pages/framework/_images/request-lifecycle.svg" width="100%" height="361px" style="border:none;"></iframe>
 
-### Подготовить контекст
+### Подготовить контекст {#prepare-context}
 
 Служебная часть пролога — файл `/bitrix/modules/main/include/prolog_before.php`
 

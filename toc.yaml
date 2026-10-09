@@ -596,6 +596,36 @@ items:
             href: /pages/modules/pull/push-notifications.md
           - name: Диагностика и обслуживание Push and Pull
             href: /pages/modules/pull/maintenance-and-troubleshooting.md
+      - name: CRM
+        items:
+          - name: Введение в CRM
+            href: /pages/modules/crm/overview.md
+          - name: Схема работы CRM и основные объекты API
+            href: /pages/modules/crm/architecture.md
+          - name: Как выбрать API CRM
+            href: /pages/modules/crm/choose-crm-api.md
+          - name: Работа с элементами CRM
+            href: /pages/modules/crm/items.md
+          - name: Смарт-процессы
+            href: /pages/modules/crm/smart-processes.md
+          - name: Направления и стадии
+            href: /pages/modules/crm/categories-and-stages.md
+          - name: Поля и данные клиента
+            href: /pages/modules/crm/fields-and-client-data.md
+          - name: Связи между элементами
+            href: /pages/modules/crm/relations.md
+          - name: Товары в элементах CRM
+            href: /pages/modules/crm/product-rows.md
+          - name: Дела и история взаимодействий
+            href: /pages/modules/crm/activities.md
+          - name: Права доступа в PHP API CRM
+            href: /pages/modules/crm/permissions.md
+          - name: События и расширение поведения CRM
+            href: /pages/modules/crm/events-and-extension.md
+          - name: Синхронизация CRM с внешней системой
+            href: /pages/modules/crm/synchronization.md
+          - name: Производительность и типовые ошибки CRM
+            href: /pages/modules/crm/performance-and-errors.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам
