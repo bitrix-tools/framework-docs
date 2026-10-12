@@ -178,11 +178,15 @@ $ tar -xf business_encode.tar.gz
 
 {% note warning "" %}
 
-Если используете Docker окружение:
+Если используете окружение `env-docker` с MySQL, заполните параметры подключения.
 
--  создайте нового пользователя и новую базу данных,
+-  В поле *Сервер* укажите `mysql`.
 
--  заполните параметры в соответствии с инструкцией на [GitHub](https://github.com/bitrix-tools/env-docker?tab=readme-ov-file#установка-дистрибутивов).
+-  Используйте существующего пользователя `root`.
+
+-  В поле *Пароль* укажите значение `MYSQL_ROOT_PASSWORD` из файла `.env_mysql`.
+
+Подробнее об установке с MySQL и PostgreSQL — в [README env-docker](https://github.com/bitrix-tools/env-docker?tab=readme-ov-file#установка-дистрибутивов).
 
 {% endnote %}
 

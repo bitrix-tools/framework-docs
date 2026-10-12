@@ -164,7 +164,7 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
 
 Контейнерное окружение для Битрикс — решение на базе технологий [Docker](https://www.docker.com/), которое позволяет быстро настроить среду для тестирования и разработки. Официальный репозиторий и подробная документация по проекту находится на [GitHub](https://github.com/bitrix-tools/env-docker).
 
-Чтобы поднять окружение:
+Чтобы поднять окружение, выполните следующие шаги.
 
 1. Склонируйте официальный репозиторий `env-docker`.
 
@@ -176,15 +176,17 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
    $ git clone https://github.com/bitrix-tools/env-docker.git
    ```
 
-2. Настройте обязательные параметры перед запуском. Укажите:
+2. Настройте обязательные параметры перед запуском в папке `env-docker`.
 
-   -  пароли баз данных MySQL и Postgres в файле `.env_sql`
+   -  Задайте пароль пользователя `root` MySQL в параметре `MYSQL_ROOT_PASSWORD` файла `.env_mysql`.
 
-   -  секретный ключ для Push-сервера в файле `.env_push`
+   -  Задайте пароль пользователя `postgres` PostgreSQL в параметре `POSTGRES_PASSWORD` файла `.env_postgresql`.
+
+   -  Укажите секретный ключ для Push-сервера в файле `.env_push`.
 
    {% note tip "" %}
 
-   Подробнее о том, как сгенерировать уникальные пароли и ключ, в инструкциях:
+   Подробнее о том, как сгенерировать уникальные пароли и ключ, в инструкциях.
 
    -  [Пароли к базам данных MySQL и PostgreSQL](https://github.com/bitrix-tools/env-docker?tab=readme-ov-file#пароли-к-базам-данных-mysql-и-postgresql)
 
@@ -199,7 +201,7 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
    $ docker compose up -d
    ```
 
-4. Скачайте скрипт `bitrixsetup.php` в папку сайта `www`.
+4. Скачайте скрипт `bitrixsetup.php` в корневую папку сайта `/opt/www` внутри контейнера `php`.
 
    ```bash prompt="$"
    # войдите в sh-консоль контейнера php под пользователем bitrix
@@ -212,7 +214,13 @@ Amazon Elastic Compute Cloud (EC2) — веб-сервис с масштабир
    $ wget https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php
    ```
 
-5. Откройте в браузере адрес `http://localhost:8588/bitrixsetup.php`.
+5. Откройте в браузере адрес `http://10.0.1.119:8588/bitrixsetup.php`. Замените `10.0.1.119` на IP-адрес компьютера, где запущено Docker-окружение, в локальной сети. Можно использовать домен, который указывает на этот компьютер.
+
+   {% note warning "" %}
+
+   Не используйте `localhost` и `127.0.0.1` для работы с сайтом на локальной машине. Это требование описано в [разделе «Доступ к сайту» README `env-docker`](https://github.com/bitrix-tools/env-docker#доступ-к-сайту).
+
+   {% endnote %}
 
 6. Следуйте инструкциям мастера установки.
 

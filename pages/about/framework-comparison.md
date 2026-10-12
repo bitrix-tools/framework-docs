@@ -24,11 +24,11 @@ Bitrix Framework часто ассоциируется с 1C-Битрикс: У�
 
 ### Роутинг
 
-Роутинг определяет, какой код выполнить при обращении к URL. В Bitrix Framework настройка маршрутов осуществляется через файл `routing_index.php`, в котором указывают путь, контроллер и действие. Подход похож на конфигурацию в Yii, где маршруты задают в массиве.
+Роутинг определяет, какой код выполнить при обращении к URL. В Bitrix Framework маршруты описывают в файлах `/local/routes/*.php` и подключают через секцию `routing` в `/bitrix/.settings.php`. Маршруты связывают URL с функциями или контроллерами. Файл `/bitrix/routing_index.php` служит точкой входа для обработки запросов. Настройка описана в разделе [Роутинг](../framework/routing.md#configuration).
 
 | Фреймворк | Реализация роутинга                                              |
 |-----------|------------------------------------------------------------------|
-| Bitrix    | Файл `routing_index.php`                                         |
+| Bitrix    | Файлы `/local/routes/*.php`, подключенные через секцию `routing` в `/bitrix/.settings.php` |
 | Yii       | Конфигурация в `config/web.php` через `urlManager`               |
 | Laravel   | Файл `routes/web.php`, использование `Route::` фасада            |
 | Symfony   | Конфигурация в `config/routes.yaml` или через аннотации `@Route` |
@@ -84,24 +84,26 @@ Laravel и Yii запускают задачи  через системный cr
 
 Командная строка нужна для запуска задач, миграций, тестов. CLI упрощает автоматизацию и разработку.
 
-Bitrix Framework поддерживает CLI через `bitrix.php` и пакет `@bitrix/cli`. Создавать команды можно так же, как в Laravel или Symfony. Команды работают в контексте Bitrix Framework, имеют доступ к ядру и API.
+В Bitrix Framework [консольные команды](../framework/console-commands.md) запускают через `php bitrix.php` из папки `/bitrix/`. Этот инструмент основан на Symfony Console и соответствует `php artisan` в Laravel. Команды работают в контексте Bitrix Framework, имеют доступ к ядру и API.
+
+Пакет `@bitrix/cli` используют для создания и сборки [JS-расширений](../framework/extensions.md).
 
 | Фреймворк | CLI инструменты                 |
 |-----------|---------------------------------|
-| Bitrix    | `@bitrix/cli`, `bitrix.php`     |
+| Bitrix    | `php bitrix.php` на основе Symfony Console |
 | Yii       | `./yii`, например `yii migrate` |
 | Laravel   | `php artisan`                   |
 | Symfony   | `bin/console`                   |
 
 ### ORM
 
-ORM позволяет работать с данными из базы в виде объектов. Bitrix Framework использует собственную реализацию через `\Bitrix\Main\Entity` с поддержкой сущностей, полей и связей.
+ORM позволяет работать с данными из базы в виде объектов. Bitrix Framework использует собственную реализацию в пространстве имен `\Bitrix\Main\ORM` с поддержкой объектов, полей и связей.
 
 Это похоже на `ActiveRecord` в Yii и `Eloquent` в Laravel. Symfony чаще использует `Doctrine ORM` с паттерном `Data Mapper`.
 
 | Фреймворк | Реализация ORM        |
 |-----------|-----------------------|
-| Bitrix    | `\Bitrix\Main\Entity` |
+| Bitrix    | `\Bitrix\Main\ORM` |
 | Yii       | `yii\db\ActiveRecord` |
 | Laravel   | `Eloquent`            |
 | Symfony   | `Doctrine ORM`        |
@@ -146,4 +148,4 @@ Bitrix Framework включает те же архитектурные комп�
 
 -  события управляются через `EventManager`,
 
--  CLI-команды доступны через `@bitrix/cli`.
+-  CLI-команды запускают через `php bitrix.php`, а `@bitrix/cli` используют для создания и сборки JS-расширений.
