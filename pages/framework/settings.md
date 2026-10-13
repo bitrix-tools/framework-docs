@@ -35,7 +35,9 @@ description: 'Конфигурация ядра. Документация по B
 
 -  `dbconn.php` — в папке `/local/php_interface/`.
 
-Подробнее о папке `/local/` в статье [Структура директорий](./../get-started/directory-structure#%D0%BF%D0%B0%D0%BF%D0%BA%D0%B0-/local).
+Если существует файл `/local/.settings.php`, система использует его вместо `/bitrix/.settings.php` целиком. Настройки из этих файлов не объединяются. При переносе сохраните в `/local/.settings.php` полную конфигурацию, включая обязательную секцию `connections`. Чтобы дополнить основной файл отдельными настройками, используйте `.settings_extra.php`.
+
+Подробнее о папке `/local/` в статье [Структура директорий](../get-started/directory-structure.md#local).
 
 ## Секции настроек
 
@@ -445,9 +447,9 @@ description: 'Конфигурация ядра. Документация по B
         'run_mode' => 'web', // Режим обработки сообщений: web или cli
         'brokers' => [
             'default' => [
-                'type' => DbBroker::TYPE_CODE, // Тип брокера
+                'type' => \Bitrix\Main\Messenger\Internals\Broker\DbBroker::TYPE_CODE, // Тип брокера
                 'params' => [ // Набор параметров, который зависит от типа брокера
-                    'table' => MessengerMessageTable::class,
+                    'table' => \Bitrix\Main\Messenger\Internals\Storage\Db\Model\MessengerMessageTable::class,
                 ]
             ],
         ],

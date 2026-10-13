@@ -27,7 +27,7 @@ description: 'Создание контроллера. Пошаговое рук
 
 Bitrix Framework связывает JavaScript-вызов и PHP-метод по имени — без дополнительной настройки. Это работает, когда соблюдаете три правила:
 
--  размещаете контроллер в папке `/lib/controller/` модуля,
+-  размещаете контроллер в папке `/lib/Controller/` модуля,
 
 -  объявляете класс в правильном пространстве имен,
 
@@ -35,7 +35,7 @@ Bitrix Framework связывает JavaScript-вызов и PHP-метод по
 
 В примере модуль называется `my.module`. Bitrix Framework преобразует его имя в пространство имен. Первая часть `my` становится `My`, вторая `module` — `Module`, итого: `My\Module`.
 
-Создайте файл контроллера, например, `/lib/controller/user.php` со следующим содержимым:
+Создайте файл контроллера, например, `/lib/Controller/User.php` со следующим содержимым:
 
 ```php
 namespace My\Module\Controller;
@@ -52,7 +52,7 @@ class User extends \Bitrix\Main\Engine\Controller
 Теперь можно вызвать метод из JavaScript:
 
 ```javascript
-BX.ajax.runAction('my:module.user.like', { /* данные */ });
+BX.ajax.runAction('my:module.User.like', { /* данные */ });
 ```
 
 Система разбирает имя действия по частям:
@@ -61,11 +61,13 @@ BX.ajax.runAction('my:module.user.like', { /* данные */ });
 
 -  `module` — вторая часть символьного кода,
 
--  `user` — имя класса контроллера `User` в нижнем регистре,
+-  `User` — имя класса контроллера с тем же регистром, что в имени файла,
 
 -  `like` — имя метода `likeAction()` без суффикса `Action`.
 
 В результате система находит класс `\My\Module\Controller\User` и запускает метод `likeAction()`.
+
+Сохраняйте регистр `Controller/User.php` в пути и `User` в AJAX-вызове. Это нужно для автозагрузки на файловых системах с учетом регистра. Подробнее о соответствии пространства имен и пути читайте в статье [Автозагрузка классов](./../framework/autoloading.md).
 
 Сопоставление работает, если в файле модуля `.settings.php` указан параметр `defaultNamespace`. Без этого Bitrix Framework не найдет класс и вернет ошибку.
 
@@ -81,7 +83,7 @@ BX.ajax.runAction('my:module.user.like', { /* данные */ });
 
 -  `/lib/Services/LikeService.php` — для класса-сервиса лайков,
 
--  `/lib/controller/user.php` — для описания контроллера.
+-  `/lib/Controller/User.php` — для описания контроллера.
 
 ```
 /local/modules/my.module/
@@ -103,8 +105,8 @@ BX.ajax.runAction('my:module.user.like', { /* данные */ });
 │   ├── index.php                   // Файл установки
 │   └── version.php                 // Версия модуля
 ├── lib/
-│   ├── controller/
-│   │   └── user.php                // Контроллер для обработки лайков
+│   ├── Controller/
+│   │   └── User.php                // Контроллер для обработки лайков
 │   └── Services/
 │       └── LikeService.php         // Сервис для бизнес-логики
 ├── lang/
@@ -207,7 +209,7 @@ class LikeService
 
 ## Контроллер обработки лайков
 
-В файле `/lib/controller/user.php` опишите контроллер `User`, который управляет действиями для обработки лайков.
+В файле `/lib/Controller/User.php` опишите контроллер `User`, который управляет действиями для обработки лайков.
 
 Контроллер наследуется от `\Bitrix\Main\Engine\Controller`. Он не содержит бизнес-логику — только маршрутизацию, валидацию и вызов сервиса.
 
@@ -371,7 +373,7 @@ BX.ready(() => {
 
             // Отправляем AJAX-запрос к контроллеру
             BX.ajax.runAction(
-                'my:module.user.like',
+                'my:module.User.like',
                 {
                     data: { likedUserId: userId }
                 }
@@ -584,7 +586,7 @@ class UserCardComponent extends CBitrixComponent
 
 ## Настройка .settings.php
 
-Файл `/local/modules/my.module/.settings.php` обязателен для работы контроллеров. Добавьте регистрацию контроллера. В результате становится возможен вызов `my:module.user.like`.
+Файл `/local/modules/my.module/.settings.php` обязателен для работы контроллеров. Добавьте регистрацию контроллера. В результате становится возможен вызов `my:module.User.like`.
 
 -  `defaultNamespace` должен соответствовать пространству имен контроллера.
 
