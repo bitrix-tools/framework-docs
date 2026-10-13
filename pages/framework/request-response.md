@@ -30,38 +30,39 @@ $request = Context::getCurrent()->getRequest();
 
 ### Параметры запроса
 
+Метод `get()` возвращает параметр из объединенных GET- и POST-данных. При совпадении имен используется значение из POST. Параметры запроса доступны только для чтения: вызов `set('param', $value)` бросает исключение `\Bitrix\Main\NotSupportedException`.
+
 -  Получить параметр GET или POST
 
     ```php
-    $value = $request->get("param");
-    $value = $request["param"];
+    $value = $request->get('param');
     ```
 
 -  Получить GET-параметры
 
     ```php
-    $value = $request->getQuery("param"); // получить параметр param
+    $value = $request->getQuery('param'); // получить параметр param
     $values = $request->getQueryList(); // получить список всех параметров
     ```
 
 -  Получить POST-параметры
 
     ```php
-    $value = $request->getPost("param"); // получить параметр param
+    $value = $request->getPost('param'); // получить параметр param
     $values = $request->getPostList(); // получить список всех параметров
     ```
 
 -  Получить загруженный файл
 
     ```php
-    $value = $request->getFile("param"); // получить файл param
+    $value = $request->getFile('param'); // получить файл param
     $values = $request->getFileList(); // получить список всех загруженных файлов
     ```
 
 -  Получить значение cookie
 
     ```php
-    $value = $request->getCookie("param"); // получить cookie param
+    $value = $request->getCookie('param'); // получить cookie param
     $values = $request->getCookieList(); // получить список всех cookies
     ```
 
@@ -76,7 +77,7 @@ $request = Context::getCurrent()->getRequest();
 -  Проверить тип запроса
 
     ```php
-    $flag = $request->isGet(); // вернет true, если GET-запрос
+    $flag = $request->getRequestMethod() === 'GET'; // вернет true, если GET-запрос
     $flag = $request->isPost(); // вернет true, если POST-запрос
     $flag = $request->isAjaxRequest(); // вернет true, если AJAX-запрос
     $flag = $request->isHttps(); // вернет true, если HTTPS-запрос
@@ -105,12 +106,12 @@ $request = Context::getCurrent()->getRequest();
 -  Получить директорию запрошенной страницы
 
     ```php
-    $rDir = $request->getRequestedPageDirectory(); // например, "/catalog/category"
+    $rDir = $request->getRequestedPageDirectory(); // например, '/catalog/category/'
     ```
 
 ### Класс HttpRequest
 
-HttpRequest — это класс, который управляет объектом Request. Он содержит информацию о текущем запросе, включая его тип и параметры. Этот класс помогает избежать использования глобальных переменных, которые применялись в старом ядре.
+Класс [HttpRequest](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-HttpRequest.html) — наследник Request для HTTP-запросов. Он предоставляет доступ к методу запроса, URL и переданным параметрам вместо глобальных переменных `$_GET` и `$_POST`.
 
 Создавать объект HttpRequest вручную не требуется. Его можно получить через приложение и контекст:
 
@@ -118,37 +119,64 @@ HttpRequest — это класс, который управляет объек�
 use Bitrix\Main\Application;
 
 $request = Application::getInstance()->getContext()->getRequest();
-$name = $request->getPost("name");
-$email = htmlspecialchars($request->getQuery("email"));
+$name = $request->getPost('name');
+$email = $request->getQuery('email');
+```
+
+Экранируйте данные при выводе в HTML. Метод `getQuery()` может вернуть строку, массив или `null`, поэтому перед выводом email проверьте тип значения. Используйте `htmlspecialcharsbx()` или `\Bitrix\Main\Text\HtmlFilter::encode()` — подробнее в статье [XSS](../security/xss.md).
+
+Выведите строковое значение email через `htmlspecialcharsbx()`:
+
+```php
+if (is_string($email))
+{
+    echo htmlspecialcharsbx($email);
+}
+```
+
+Для вывода через `HtmlFilter::encode()` используйте:
+
+```php
+use Bitrix\Main\Text\HtmlFilter;
+
+if (is_string($email))
+{
+    echo HtmlFilter::encode($email);
+}
 ```
 
 ## Ответ (Response)
 
-Класс \Bitrix\Main\HttpResponse — это базовый класс для работы с HTTP-ответами. Он служит контейнером для:
+Класс [\Bitrix\Main\HttpResponse](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-HttpResponse.html) хранит заголовки, cookies и содержимое HTTP-ответа. Методы класса вызывайте через объект ответа из текущего контекста:
 
-**HTTP-заголовков** [`\Bitrix\Main\Web\HttpHeaders`](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Web-HttpHeaders.html)
+```php
+use Bitrix\Main\Context;
+
+$response = Context::getCurrent()->getResponse();
+```
+
+Используйте объект `$response` для работы с данными ответа:
+
+**HTTP-заголовки** [`\Bitrix\Main\Web\HttpHeaders`](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Web-HttpHeaders.html)
 
 -  Добавить заголовок
 
     ```php
-    \Bitrix\Main\HttpResponse::addHeader(
-        $name,
-        $value
-    )
+    $response->addHeader($name, $value);
     ```
 
 -  Установить заголовок
 
     ```php
-    \Bitrix\Main\HttpResponse::setHeaders(
-        Web\HttpHeaders $headers
-    )
+    $headers = new \Bitrix\Main\Web\HttpHeaders();
+    $headers->add('Content-Type', 'text/plain; charset=UTF-8');
+    $response->setHeaders($headers);
     ```
 
--  Получить заголовок
+-  Получить заголовки
 
     ```php
-    \Bitrix\Main\HttpResponse::getHeaders()
+    $headers = $response->getHeaders();
     ```
 
 **Cookies** [`\Bitrix\Main\Web\Cookie`](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Web-Cookie.html)
@@ -156,47 +184,54 @@ $email = htmlspecialchars($request->getQuery("email"));
 -  Добавить cookie
 
     ```php
-    \Bitrix\Main\HttpResponse::addCookie(
-        Web\Cookie $cookie,
-        $replace,
-        $checkExpires
-    )
+    $cookie = new \Bitrix\Main\Web\Cookie('display_mode', 'compact');
+    $response->addCookie($cookie);
     ```
 
 -  Получить cookies
 
     ```php
-    \Bitrix\Main\HttpResponse::getCookies()
+    $cookies = $response->getCookies();
     ```
 
-**Контента** `\Bitrix\Main\HttpResponse::$content`
+**Содержимое ответа**
 
 -  Установить контент
 
     ```php
-    \Bitrix\Main\HttpResponse::setContent(
-        $content
-    )
+    $response->setContent($content);
     ```
 
 -  Получить контент
 
     ```php
-    \Bitrix\Main\HttpResponse::getContent()
+    $content = $response->getContent();
     ```
 
-С помощью HttpResponse можно формировать ответы приложения любого типа и содержания.
+{% note info "" %}
+
+Для изменения ответа текущей страницы используйте `Context::getCurrent()->getResponse()`. Объект, созданный через `new HttpResponse()`, ядро само не отправит: его нужно явно передать приложению или отправить методом `send()`.
+
+{% endnote %}
+
+**Пример.** Код формирует текстовый ответ с cookie и завершает приложение. Метод `Application::end(0, $response)` отправляет подготовленный ответ:
 
 ```php
-$response = new \Bitrix\Main\HttpResponse();
-$response->addHeader('Content-Type', 'text/plain'); // добавить заголовок
-$response->addCookie(new \Bitrix\Main\Web\Cookie('Biscuits', 'Yubileynoye')); // добавить cookie
+use Bitrix\Main\Application;
+use Bitrix\Main\Context;
+use Bitrix\Main\Web\Cookie;
+
+$response = Context::getCurrent()->getResponse();
+$response->addHeader('Content-Type', 'text/plain; charset=UTF-8'); // добавить заголовок
+$response->addCookie(new Cookie('display_mode', 'compact')); // добавить cookie
 $response->setContent('Hello, world!'); // установить контент
+
+Application::getInstance()->end(0, $response);
 ```
 
 ### Стандартные форматы ответов
 
--  [AjaxJson](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Engine-Response-AjaxJson.html) — методы для JSON-ответов. Все ответы от контроллеров `\Bitrix\Main\Engine\Controller` имеют структуру, понятную для JS API [BX.ajax.runAction](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runaction.php), [BX.ajax.runComponentAction](https://dev.1c-bitrix.ru/api_help/js_lib/ajax/bx_ajax_runcomponentaction.php).
+-  [AjaxJson](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Engine-Response-AjaxJson.html) — методы для JSON-ответов. Все ответы от контроллеров `\Bitrix\Main\Engine\Controller` имеют структуру, понятную для JS API `BX.ajax.runAction` и `BX.ajax.runComponentAction`. Примеры вызовов `BX.ajax.runAction` приведены в статье [Контроллеры](controllers.md).
 
     ```json
     {

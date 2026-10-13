@@ -21,7 +21,7 @@ if ($serviceLocator->has('someService'))
 
 По умолчанию Service Locator работает в режиме Autowire — автоматически разрешает все зависимости у сервисов.
 
-Также контейнер может автоматически создавать объекты указанных классов, даже если их нет внутри контейнера.
+Если передать в метод `get()` полное имя существующего класса, контейнер может создать его объект без предварительной регистрации. Для этого конструктор и его зависимости должны допускать автоматическое разрешение.
 
 ```php
 $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorName\SomeModule\Services\SomeService::class);
@@ -71,13 +71,13 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
 
 ## Регистрация сервиса
 
-Чтобы обратиться к сервису, его нужно зарегистрировать одним из способов.
+Чтобы получить сервис по строковому коду, зарегистрируйте его одним из способов ниже. Для получения объекта по имени класса доступен режим Autowire.
 
-1. **Через файл настроек bitrix/.settings.php**
+1. **Через файл настроек /bitrix/.settings.php или /local/.settings.php**
 
-   В Bitrix Framework файлы `.settings.php` используются для хранения конфигураций. Они находятся в корне проекта и содержат секции для различных настроек, таких как базы данных, кеширование и сервисы.
+   Глобальная конфигурация хранится в файле `/bitrix/.settings.php` или `/local/.settings.php`. Если существует `/local/.settings.php`, система использует его вместо `/bitrix/.settings.php`. Настройки этих файлов не объединяются. Подробнее читайте в статье [Настройки](./settings.md).
 
-   Сервисы регистрируются в секции services.
+   Добавьте сервисы в секцию `services` существующего файла настроек. Сохраните остальные секции:
 
    ```php
    // /bitrix/.settings.php
@@ -101,7 +101,6 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
 
    ```php
    $serviceLocator = \Bitrix\Main\DI\ServiceLocator::getInstance();
-   $someGoodServiceName = $serviceLocator->get('someGoodServiceName');
    $someServiceName = $serviceLocator->get('someServiceName');
    ```
 
@@ -148,6 +147,6 @@ $serviceInstance = \Bitrix\Main\DI\ServiceLocator::getInstance()->get(\VendorNam
 
    -  `has(string $code)` — проверить наличие сервиса.
 
-   -  `get(string $code)` — получить сервис. Метод создает сервис при первом обращении. Если сервиса нет, выбрасывается исключение \\Psr\\Container\\NotFoundExceptionInterface.
+   -  `get(string $code)` — получить сервис. Метод создает сервис при первом обращении. Если передать имя существующего класса без регистрации, метод создаст объект в режиме Autowire. Если передать незарегистрированный строковый код, который не является именем существующего класса, метод выбросит исключение `\Bitrix\Main\DI\Exception\ServiceNotFoundException`, которое реализует интерфейс `\Psr\Container\NotFoundExceptionInterface`.
 
    Подробное описание методов — в [справочнике API](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-DI-ServiceLocator.html).

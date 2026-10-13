@@ -21,7 +21,9 @@ description: 'Пре- и постфильтры. Документация по B
 
 Аргументы:
 
--  `$allowedMethods` — список допустимых HTTP-методов. По умолчанию — `GET`.
+-  `$allowedMethods` — список допустимых HTTP-методов. По умолчанию — `[HttpMethod::METHOD_GET]`.
+
+При создании фильтра без аргументов `new HttpMethod()` разрешает только `GET`. Стандартный контроллер в методе `getDefaultPreFilters()` явно передает `GET` и `POST`. Метод `BX.ajax.runAction()` по умолчанию отправляет `POST`, поэтому при самостоятельной настройке фильтра для такого вызова добавьте `HttpMethod::METHOD_POST` в список допустимых методов.
 
 Пример использования:
 
@@ -422,9 +424,9 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 ### Фильтры по умолчанию {#default-filters}
 
-По умолчанию все действия контроллера используют фильтры `HttpMethod`, `Authentication` и `Csrf`. Чтобы изменить такое поведение, нужно переопределить метод контроллера `getDefaultPreFilters`.
+По умолчанию все действия контроллера используют префильтры `HttpMethod`, `Authentication` и `Csrf`. Чтобы изменить этот набор, переопределите метод `getDefaultPreFilters()`. Метод `getDefaultPostFilters()` задает постфильтры по умолчанию.
 
-В примере ниже, все действия контроллера будут использовать фильтры `Authentication` и `Cors`.
+В примере ниже все действия контроллера используют префильтр `Authentication` и постфильтр `Cors`.
 
 ```php
 use Bitrix\Main\Engine\ActionFilter\Authentication;
@@ -605,9 +607,14 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 Фильтр может подменить результат через метод `onAfterAction`.
 
 ```php
-class CustomFilter extends \Bitrix\Main\Engine\ActionFilter\Base
+use Bitrix\Main\Engine\ActionFilter\Base;
+use Bitrix\Main\Event;
+use Bitrix\Main\EventResult;
+use Bitrix\Main\HttpResponse;
+
+class CustomFilter extends Base
 {
-    public function onBeforeAction(\Bitrix\Main\Event $event)
+    public function onBeforeAction(Event $event)
     {
         // Решаем подменить ответ, возвращаем ошибку в обработчике ДО
 
@@ -617,13 +624,13 @@ class CustomFilter extends \Bitrix\Main\Engine\ActionFilter\Base
         );
     }
 
-    public function onAfterAction(\Bitrix\Main\Event $event)
+    public function onAfterAction(Event $event)
     {
         // В обработчике ПОСЛЕ подменяем результат
         // Если вернуть объект HttpResponse, то он отдается как есть
         // Иначе результат обернут в стандартный JSON
 
-        $customResponse = new \Bitrix\Main\HttpResponse();
+        $customResponse = new HttpResponse();
 
         $event->setParameter('result', $customResponse);
     }
