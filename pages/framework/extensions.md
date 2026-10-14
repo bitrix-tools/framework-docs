@@ -127,9 +127,9 @@ description: 'Расширения. Документация по Bitrix Framewo
        // По умолчанию true (включено)
        treeshake: boolean,
 
-       // Разрешает или запрещает пересобирать бандлы,
-       // если сборка запущена не в корне текущего расширения.
-       // По умолчанию `false` (разрешено)
+       // Защищает расширение от пересборки из родительской директории.
+       // По умолчанию false — защита отключена, пересборка разрешена.
+       // При true сборку нужно запускать из корня расширения.
        'protected': boolean,
 
        plugins: {
@@ -343,9 +343,123 @@ test/
     └── app.test.js
 ```
 
+## Создать и подключить расширение
+
+Создадим расширение `my.message`, которое выводит сообщение на странице. Его файлы будут находиться в `/local/js/my/message/`, а экспортируемая функция — в пространстве имен `BX.My.Message`.
+
+### Установить сборщик
+
+Для работы сборщика нужны Node.js и npm. Установите консольный инструмент `@bitrix/cli` через npm:
+
+```bash
+npm install -g @bitrix/cli
+```
+
+После глобальной установки команда `bitrix` доступна в терминале. Порядок запуска сборки описан ниже в разделе [Собрать расширение](#build-extension).
+
+### Создать файлы расширения
+
+В корне сайта создайте папку `/local/js/my/message/` с подпапками `src` и `dist`. Добавьте файл `/local/js/my/message/src/message.js`:
+
+```javascript
+import 'main.core';
+import './message.css';
+
+export function showMessage(container)
+{
+    container.textContent = 'Расширение подключено';
+    container.classList.add('my-message');
+}
+```
+
+Импорт `main.core` добавляет зависимость на ядро JavaScript, которое понадобится для вызова `BX.ready` на странице. Импорт CSS включает стили в сборку. Добавьте файл `/local/js/my/message/src/message.css`:
+
+```css
+.my-message {
+    padding: 16px;
+    background-color: #eef2f5;
+}
+```
+
+В файле `/local/js/my/message/bundle.config.js` задайте точку входа, пути к бандлам и пространство имен для экспортов:
+
+```javascript
+module.exports = {
+    input: './src/message.js',
+    output: {
+        js: './dist/message.bundle.js',
+        css: './dist/message.bundle.css',
+    },
+    namespace: 'BX.My.Message',
+};
+```
+
+Имя расширения `my.message` определяется путем `/local/js/my/message/` и используется при подключении через PHP. Параметр `namespace` задает имя объекта JavaScript: функция `showMessage` будет доступна как `BX.My.Message.showMessage`.
+
+### Собрать расширение {#build-extension}
+
+Перейдите в папку расширения и запустите сборку. Замените `/path/to/document_root` путем к корню сайта:
+
+```bash
+cd /path/to/document_root/local/js/my/message
+bitrix build
+```
+
+Сборщик создаст файлы `dist/message.bundle.js` и `dist/message.bundle.css`. При включенном по умолчанию параметре `adjustConfigPhp` он также создаст или обновит `config.php`, добавив пути к бандлам и зависимость `main.core`.
+
+**Пример.** Конфигурация `/local/js/my/message/config.php`, которая подключает собранные файлы:
+
+```php
+<?php
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
+
+return [
+    'js' => './dist/message.bundle.js',
+    'css' => './dist/message.bundle.css',
+    'rel' => ['main.core'],
+];
+```
+
+После изменения исходных файлов повторно выполните `bitrix build`. Чтобы автоматически пересобирать расширение при изменениях, запустите сборщик в режиме наблюдения:
+
+```bash
+bitrix build --watch
+```
+
+### Подключить расширение на странице
+
+Создайте файл `/extension-demo.php` в корне сайта. Подключите шапку сайта для инициализации ядра, затем вызовите `Extension::load('my.message')`. Метод подключает файлы расширения и его зависимости.
+
+**Пример.** Страница загружает расширение и выводит сообщение после готовности DOM:
+
+```php
+<?php
+
+use Bitrix\Main\UI\Extension;
+
+require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php';
+
+Extension::load('my.message');
+?>
+<div id="extension-message"></div>
+<script>
+    BX.ready(function () {
+        BX.My.Message.showMessage(document.getElementById('extension-message'));
+    });
+</script>
+<?php
+require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
+```
+
+Откройте `/extension-demo.php` в браузере. На странице появится сообщение «Расширение подключено» с отступами и фоном из `message.css`. При переносе на другой сайт разместите там папку расширения вместе с `config.php` и собранными файлами `dist`.
+
 ## Использование расширений
 
-В PHP загрузите и подключите расширение на странице с помощью метода`\Bitrix\Main\UI\Extension::load`. Этот метод принимает в качестве параметра имя расширения либо массив имен.
+В PHP загрузите и подключите расширение на странице с помощью метода `\Bitrix\Main\UI\Extension::load`. Этот метод принимает в качестве параметра имя расширения либо массив имен.
 
 ```php
 \Bitrix\Main\UI\Extension::load('main.loader');

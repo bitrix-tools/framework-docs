@@ -50,7 +50,7 @@ $app->addBackgroundJob(function() {
 
 -  **Периодические.** Запускаются в указанное время.
 
-   `Время следующего запуска = время предыдущего запуска + интервал`.
+   `Время следующего запуска = ранее запланированное время запуска + интервал`.
 
 -  **Непериодические.** Запускаются через заданный интервал и только после успешного завершения предыдущего выполнения, что исключает накладки.
 
@@ -87,6 +87,62 @@ $app->addBackgroundJob(function() {
    );
    ```
 
+### Создать класс агента в модуле {#agent-class}
+
+В модуле код агента можно разместить в классе с пространством имен. Статический метод выполняет задачу и возвращает строку с вызовом для следующего запуска. Регистрация такого агента остается через `CAgent::AddAgent()`.
+
+Создайте класс в установленном модуле `my.module` с помощью команды [`make:agent`](./console-commands.md). Выполните команду из папки `/bitrix/` сайта:
+
+```bash prompt="$"
+$ php bitrix.php make:agent UpdateRating -m my.module -n
+```
+
+Команда создаст файл `lib/Infrastructure/Agent/UpdateRatingAgent.php` в папке модуля. Опция `-m` задает идентификатор модуля, а `-n` отключает интерактивные вопросы. Генератор добавляет суффикс `Agent` к имени класса и выводит PHP-код регистрации.
+
+Поместите код задачи в метод `runInternal()` сгенерированного класса:
+
+```php
+namespace My\Module\Infrastructure\Agent;
+
+final class UpdateRatingAgent
+{
+    public static function run(): ?string
+    {
+        $instance = new static();
+        $result = $instance->runInternal();
+
+        if ($result === false)
+        {
+            return null;
+        }
+
+        return __METHOD__ . '();';
+    }
+
+    private function runInternal(): bool
+    {
+        // Добавьте код обновления рейтинга
+
+        return true;
+    }
+}
+```
+
+Метод `runInternal()` возвращает `true`, чтобы продолжить запуски, или `false`, чтобы остановить агента. Метод `run()` преобразует результат в строку следующего вызова или `null` для остановки.
+
+Зарегистрируйте агент один раз, например при установке модуля. Следующий пример задает непериодический запуск с интервалом в один час:
+
+```php
+CAgent::AddAgent(
+    '\\My\\Module\\Infrastructure\\Agent\\UpdateRatingAgent::run();',
+    'my.module',
+    'N',
+    3600
+);
+```
+
+Система подключает указанный модуль перед вызовом агента. Класс загружает автозагрузчик модуля.
+
 ### Создать агента через интерфейс
 
 Агента можно добавить через административный раздел на странице *Настройки > Настройки продукта > Агенты*. Нажмите *Добавить агента* и заполните параметры, аналогичные регистрации через функцию `addAgent`.
@@ -106,20 +162,18 @@ $app->addBackgroundJob(function() {
 1. Откройте страницу *Настройки > Инструменты > Командная PHP-строка.* Выполните код:
 
    ```php
-   // Включить частичный перевод агентов на cron
-   COption::SetOptionString(
-       "main",                 // Модуль main
-       "agents_use_crontab",   // Настройка использования cron
-       "Y"                     // Y — разрешить, N — запретить
-   );
+   use Bitrix\Main\Config\Option;
+
+   // Включить разделение агентов между хитами и cron
+   Option::set('main', 'agents_use_crontab', 'Y');
 
    // Проверить текущее значение настройки
-   echo COption::GetOptionString("main", "agents_use_crontab", "Z"); // вернет значение Y
+   echo Option::get('main', 'agents_use_crontab', 'Z'); // Вернет Y
    ```
 
    Ожидаемый результат — `Y`. Если метод не найдет значение настройки, он вернет `Z`.
 
-   После выполнения кода система будет запускать на хитах только периодические агенты.
+   При значении `agents_use_crontab = Y` система выбирает периодические агенты на обычных хитах, где константа `BX_CRONTAB` не определена или не равна `true`. Стандартный скрипт `cron_events.php` определяет `BX_CRONTAB = true` и запускает непериодические агенты. Метод `CAgent::CheckAgents()` передает выполнение методу `ExecuteAgents()`, который выбирает тип агентов с учетом настройки и константы.
 
 2. Добавьте задание cron на сервере:
 
@@ -134,22 +188,18 @@ $app->addBackgroundJob(function() {
 
 Агенты не будут зависеть от посещаемости сайта и сработают точно по расписанию.
 
-1. Откройте страницу *Настройки > Инструменты > Командная PHP-строка*. Выполните код, который полностью отключит запуск агентов.
+1. Откройте страницу *Настройки > Инструменты > Командная PHP-строка*. Выполните код, который отключит автоматическую проверку агентов на хитах и разделение агентов по типам.
 
    ```php
-   COption::SetOptionString(
-       "main",                 // Модуль main
-       "agents_use_crontab",   // Настройка использования cron
-       "N"                     // Y — разрешить, N — запретить
-   );
-   echo COption::GetOptionString("main", "agents_use_crontab", "Z"); // Выведет значение N — cron отключен для агентов
+   use Bitrix\Main\Config\Option;
 
-   COption::SetOptionString(
-       "main",                 // Модуль main
-       "check_agents",         // Настройка проверки агентов
-       "N"                     // Y — разрешить, N — запретить
-   );
-   echo COption::GetOptionString("main", "check_agents", "Z"); // Выведет значение N — значит автоматическая проверка агентов отключена
+   // Отключить разделение агентов между хитами и cron
+   Option::set('main', 'agents_use_crontab', 'N');
+   echo Option::get('main', 'agents_use_crontab', 'Z'); // Выведет N
+
+   // Отключить автоматическую проверку агентов на хитах
+   Option::set('main', 'check_agents', 'N');
+   echo Option::get('main', 'check_agents', 'Z'); // Выведет N
    ```
    Каждый вызов должен вернуть `N`. Если метод не найдет значение соответствующей настройки, он вернет `Z`.
 
@@ -239,7 +289,14 @@ $app->addBackgroundJob(function() {
 
 #### Вернуть запуск агентов на хитах
 
-1. В таблице `b_option` удалите записи `NAME = agents_use_crontab` и `NAME = check_agents`.
+1. Удалите настройки `agents_use_crontab` и `check_agents` модуля `main` через метод `Option::delete()`:
+
+   ```php
+   use Bitrix\Main\Config\Option;
+
+   Option::delete('main', ['name' => 'agents_use_crontab']);
+   Option::delete('main', ['name' => 'check_agents']);
+   ```
 
 2. Очистите управляемый кеш в административном разделе.
 
@@ -282,7 +339,7 @@ function TestAgent()
    CAgent::AddAgent(
        "CStatistic::CleanUpStatistics_2();", // имя функции
        "statistic",                          // идентификатор модуля
-       "N",                                  // агент не критичен к кол-ву запусков
+       "N",                                  // непериодический агент — интервал отсчитывается от окончания работы
        86400,                                // интервал запуска — 1 сутки
        "07.04.2025 20:03:26",                // дата первой проверки на запуск
        "Y",                                  // агент активен
@@ -324,7 +381,7 @@ function TestAgent()
            return "AgentCurrencyUpdate();"; // Повторить попытку
        }
 
-       // Запрос к API ЦБ (возвращает курс рубля к валютам)
+       // Запрос к API exchangerate.host (базовая валюта — RUB)
        $json = file_get_contents('https://api.exchangerate.host/latest?base=RUB');
        if (!$json)
        {
@@ -420,7 +477,7 @@ function TestAgent()
    ```php
    $app = \Bitrix\Main\Application::getInstance();
    $app->addBackgroundJob(
-       [EmailService::class, 'sendWelcome'],
+       'sendWelcomeEmail',
        ['user@example.com', 'Добро пожаловать!'],
    );
 

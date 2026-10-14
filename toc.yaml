@@ -93,6 +93,8 @@ items:
         href: /pages/framework/controllers.md
       - name: Пре- и постфильтры
         href: /pages/framework/pre-post-filters.md
+      - name: Объект приложения и контекст
+        href: /pages/framework/app-and-context.md
       - name: Request и Response
         href: /pages/framework/request-response.md
       - name: Service Locator
@@ -109,8 +111,6 @@ items:
         href: /pages/framework/components.md
       - name: Расширения
         href: /pages/framework/extensions.md
-      - name: Объект приложения и контекст
-        href: /pages/framework/app-and-context.md
       - name: Агенты и фоновые задачи
         href: /pages/framework/background-jobs.md
       - name: События
