@@ -568,7 +568,7 @@ export const focus = {
 };
 ```
 
-## Интеграция с Bitrix Framework
+## Интеграция с Bitrix Framework {#bitrix-integration}
 
 Все интеграционные методы Bitrix Framework доступны в компонентах через глобальную переменную `$Bitrix`. Это единая точка доступа к локализациям, событиям, данным и системным клиентам.
 
@@ -1069,7 +1069,7 @@ BitrixVue.createApp({
 
 По умолчанию BitrixVue запускается в режиме production. Для отладки включите режим разработчика.
 
-Добавьте в файл `/bitrix/php_interface/init.php`:
+Добавьте в файл `/local/php_interface/init.php`:
 
 ```php
 define('VUEJS_DEBUG', true);

@@ -9,6 +9,8 @@ description: 'Выборка данных. ORM Bitrix Framework: ключевы�
 
 Метод `getList` универсален для всех сущностей и работает по общим правилам. Его невозможно изменить, но он дает гибкость для выполнения запросов.
 
+Примеры статьи используют сущности модуля `somepartner.mybookscatalog`. Полное описание класса `BookTable` смотрите в статье [Концепция ORM](./orm-concepts.md#book-model). Перед обращением к классу подключите модуль вызовом `Loader::includeModule('somepartner.mybookscatalog')` — подробнее в разделе [Подключить модуль сущности](./orm-concepts.md#include-module).
+
 Рассмотрим применение метода на примере сущности `BookTable`. Метод принимает параметры:
 
 ```php
@@ -62,11 +64,13 @@ $rows = BookTable::getList($parameters)->fetchAll();
 
 #### Форматирование данных
 
-Формат данных меняют на уровне поля, а не всей сущности. Параметр `fetch_data_modification` принимает функцию, которая возвращает массив модификаторов. Каждый модификатор получает значение поля после преобразования типов и возвращает новое значение.
+Формат данных меняют на уровне поля, а не всей сущности. Метод `addFetchDataModifier()` объекта поля добавляет модификатор чтения. Модификатор получает значение поля после преобразования типов и возвращает новое значение.
 
 **Пример.** Поле `PUBLISH_DATE` отдается строкой в формате дня, месяца и года:
 
 ```php
+namespace SomePartner\MyBooksCatalog;
+
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\DateField;
 
@@ -75,18 +79,12 @@ class BookTable extends DataManager
     public static function getMap(): array
     {
         return [
-            // остальные поля сущности, включая первичный ключ
-            new DateField('PUBLISH_DATE', [
-                'fetch_data_modification' => function ()
+            // остальные поля — как в статье «Концепция ORM»
+            (new DateField('PUBLISH_DATE'))
+                ->addFetchDataModifier(static function ($value)
                 {
-                    return [
-                        function ($value)
-                        {
-                            return $value === null ? null : $value->format('d.m.Y');
-                        }
-                    ];
-                }
-            ])
+                    return $value === null ? null : $value->format('d.m.Y');
+                }),
         ];
     }
 }
@@ -96,7 +94,7 @@ $result = BookTable::getList($parameters);
 $rows = $result->fetchAll();
 ```
 
-Тот же модификатор можно добавить методом `addFetchDataModifier()` объекта поля — он принимает одну функцию, а не массив.
+В старом коде тот же модификатор задают параметром `fetch_data_modification` в массиве конструктора поля. Параметр принимает функцию, которая возвращает массив модификаторов. Массив параметров конструктора остался для совместимости, в новом коде используйте `addFetchDataModifier()`.
 
 ### Параметры метода getList
 
@@ -249,7 +247,7 @@ $result = BookTable::getList([
 ]);
 
 // Bitrix ORM преобразует этот запрос в SQL:
-// SELECT * FROM book_table WHERE ID IN (1, 2, 3);
+// SELECT * FROM my_book WHERE ID IN (1, 2, 3);
 ```
 
 #### Group
@@ -369,6 +367,12 @@ BookTable::getList([
 -  `AGE_DAYS` автоматически разворачивается в `DATEDIFF(NOW(), PUBLISH_DATE)`
 
 Вложенные выражения разворачиваются последовательно.
+
+{% note warning "" %}
+
+Функция `DATEDIFF()` есть только в MySQL. ORM подставляет текст выражения в SQL без изменений, поэтому на PostgreSQL такой запрос завершится ошибкой. Если модуль должен работать с обеими СУБД, замените функции MySQL по правилам из статьи [Как писать код, совместимый с PostgreSQL](./../database/postgresql/compatible-code.md). Класс [SqlHelper](./../database/sql-helper-and-expression.md) возвращает функции текущей даты и арифметику дат для текущей СУБД.
+
+{% endnote %}
 
 #### Count_total
 
@@ -665,7 +669,7 @@ public static function getTableName()
 
 ```php
 $query = BookTable::query()
-    ->addSelect('NAME')
+    ->addSelect('TITLE')
     ->addSelect('AUTHORS')
     ->setLimit(5)
 ;
@@ -673,8 +677,8 @@ $books = $query->fetchCollection();
 
 // SQL-запрос:
 /*
-SELECT ... FROM `b_books`
-LEFT JOIN `b_books_authors` ...
+SELECT ... FROM `my_book`
+LEFT JOIN `my_book_author` ...
 LIMIT 5
 */
 ```
@@ -685,19 +689,17 @@ LIMIT 5
 
 ```php
 $query = BookTable::query()
-    ->addSelect('NAME')
+    ->addSelect('TITLE')
     ->addSelect('AUTHORS')
-    ->addSelect('CATEGORIES')
-    ->addSelect('TAGS')
+    ->addSelect('STORE_ITEMS')
 ;
 $books = $query->fetchCollection();
 
 // SQL-запрос
 /*
-SELECT ... FROM `b_books`
-LEFT JOIN `b_books_authors` ... // 15 значений
-LEFT JOIN `b_books_categories` ... // 7 значений
-LEFT JOIN `b_books_tags` ... // 11 значений
+SELECT ... FROM `my_book`
+LEFT JOIN `my_book_author` ... // 15 значений
+LEFT JOIN `my_store_book` ... // 7 значений
 */
 ```
 
@@ -705,7 +707,7 @@ LEFT JOIN `b_books_tags` ... // 11 значений
 
 -  Результат представляет декартово произведение всех связанных записей.
 
--  Если у свойств 15, 7 и 11 значений соответственно, будет выбрано 15 \* 7 \* 11 = 1155 строк вместо ожидаемых 15 + 7 + 11 = 33 строки.
+-  Если у книги 15 авторов и 7 записей о наличии в магазинах, будет выбрано 15 \* 7 = 105 строк вместо ожидаемых 15 + 7 = 22 строки.
 
 -  Это может привести к нехватке памяти и снижению производительности при большом количестве свойств или значений.
 
@@ -810,6 +812,12 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
    ```
 
    Аргументы выражения аналогичны конструктору поля `ExpressionField` и подставляются через `sprintf`.
+
+   {% note warning "" %}
+
+   Текст выражения попадает в SQL без изменений. Функция `JSON_CONTAINS()` из примера есть только в MySQL, на PostgreSQL такой запрос завершится ошибкой. Для модуля, который работает с обеими СУБД, используйте конструкции из статьи [Как писать код, совместимый с PostgreSQL](./../database/postgresql/compatible-code.md).
+
+   {% endnote %}
 
 6. **Сравнение** **с другим полем**
 

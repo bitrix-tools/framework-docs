@@ -319,8 +319,7 @@ $ tar -czvf upload.tar.gz ./upload
 2. Запустите резервное копирование.
 
    ```shell prompt="$"
-   $ "C:\Bitrix\apache2\zendserver\bin\php.exe" -c "C:\Bitrix\apache2\zendserver\etc\php.ini" -f
-   $ "C:\Bitrix\www\bitrix\modules\main\tools\backup.php"
+   $ "C:\Bitrix\apache2\zendserver\bin\php.exe" -c "C:\Bitrix\apache2\zendserver\etc\php.ini" -f "C:\Bitrix\www\bitrix\modules\main\tools\backup.php"
    ```
 
 ## Резервное копирование при многосайтовости

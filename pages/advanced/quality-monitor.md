@@ -105,12 +105,20 @@ description: 'Монитор качества. Документация по Bit
 
 Монитор качества вызовет этот метод при запуске автотеста. Метод должен возвращать результат, сообщение для краткого отчета и, при необходимости, подробное описание. Если тест выполняется в несколько шагов, метод может возвращать промежуточный прогресс.
 
+Обработчик события регистрируйте методом `EventManager::addEventHandlerCompatible()`. Модуль `main` вызывает событие `OnCheckListGet` классическим механизмом событий и передает обработчику текущий чек-лист аргументом.
+
 **Пример.** Код добавляет раздел `PROJECT_QC`, автоматизированный тест на наличие файла `/favicon.ico` и ручной тест для проверки доступа к тестовому окружению.
 
 ```php
 <?php
 
-AddEventHandler('main', 'OnCheckListGet', ['ProjectQualityTests', 'onCheckListGet']);
+use Bitrix\Main\EventManager;
+
+EventManager::getInstance()->addEventHandlerCompatible(
+    'main',
+    'OnCheckListGet',
+    ['ProjectQualityTests', 'onCheckListGet']
+);
 
 class ProjectQualityTests
 {
