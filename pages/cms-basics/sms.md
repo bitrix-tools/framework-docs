@@ -280,7 +280,7 @@ EventManager::getInstance()->addEventHandler(
 
 ```php
 \Bitrix\MessageService\Sender\Sms\SmsRu::ID      // идентификатор SMS.RU
-\Bitrix\MessageService\Sender\Sms\EdnaRu::ID     // идентификатор Edna
+\Bitrix\MessageService\Sender\Sms\Ednaru::ID     // идентификатор Edna
 ```
 
 {% note info "" %}
@@ -294,7 +294,7 @@ EventManager::getInstance()->addEventHandler(
 Подключите модуль `messageservice`, чтобы использовать методы.
 
 ```php
-CModule::IncludeModule('messageservice');
+\Bitrix\Main\Loader::includeModule('messageservice');
 ```
 
 -  `getSenders` — получает список всех доступных провайдеров.
@@ -325,21 +325,61 @@ $sender = \Bitrix\MessageService\Sender\SmsManager::getSenderById(
 
 #### Зарегистрировать провайдера
 
-Чтобы добавить провайдера:
-
--  создайте класс провайдера — наследник `\Bitrix\MessageService\Sender\Base`,
-
--  зарегистрируйте класс через событие.
+Создайте класс — наследник `\Bitrix\MessageService\Sender\Base` — и верните его объект из обработчика события `onGetSmsSenders`. Пример для файла `/local/php_interface/init.php` регистрирует тестового провайдера. Он записывает данные сообщения в журнал и возвращает фиктивный статус `DELIVERED`, не отправляя СМС. Для отправки через внешний сервис замените логику метода `sendMessage()` на вызов API провайдера.
 
 ```php
-$eventManager = \Bitrix\Main\EventManager::getInstance();
-$eventManager->registerEventHandler(
-    'messageservice',
-    'onGetSmsSenders',
-    'messageservice',
-    'Bitrix\MessageService\Sender\Sms\Dummy',
-    'onGetSmsSenders'
-);
+if (\Bitrix\Main\Loader::includeModule('messageservice'))
+{
+    class LocalSmsSender extends \Bitrix\MessageService\Sender\Base
+    {
+        public const ID = 'local_sms';
+
+        public function getId()
+        {
+            return self::ID;
+        }
+
+        public function getName()
+        {
+            return 'Тестовый СМС-провайдер';
+        }
+
+        public function getShortName()
+        {
+            return $this->getName();
+        }
+
+        public function canUse()
+        {
+            return true;
+        }
+
+        public function getFromList()
+        {
+            return [['id' => 'test', 'name' => 'test']];
+        }
+
+        public function sendMessage(array $messageFields)
+        {
+            AddMessage2Log($messageFields);
+
+            $result = new \Bitrix\MessageService\Sender\Result\SendMessage();
+            $result->setStatus(\Bitrix\MessageService\MessageStatus::DELIVERED);
+            $result->setExternalId(uniqid());
+
+            return $result;
+        }
+    }
+
+    \Bitrix\Main\EventManager::getInstance()->addEventHandler(
+        'messageservice',
+        'onGetSmsSenders',
+        static function ()
+        {
+            return [new LocalSmsSender()];
+        }
+    );
+}
 ```
 
 ### Отправка сообщений
@@ -355,7 +395,7 @@ $eventManager->registerEventHandler(
     'SENDER_ID' => \Bitrix\MessageService\Sender\Sms\Ednaru::ID, // Идентификатор провайдера
     'AUTHOR_ID' => $authorId, // Пользователь — отправитель сообщения
     'MESSAGE_TO' => $phoneNumber, // Номер получателя в международном формате
-    'MESSAGE_FROM' => $chanelId, // Канал отправителя
+    'MESSAGE_FROM' => $channelId, // Канал отправителя
     'MESSAGE_BODY' => 'Здравствуйте, ваш заказ уже в пути.', // Текст сообщения
 ]);
 ```
@@ -376,7 +416,7 @@ $eventManager->registerEventHandler(
 $message = \Bitrix\MessageService\Sender\SmsManager::createMessage([
     'SENDER_ID' => \Bitrix\MessageService\Sender\Sms\Ednaru::ID,
     'MESSAGE_TO' => $phoneNumber,
-    'MESSAGE_FROM' => $chanelId,
+    'MESSAGE_FROM' => $channelId,
     'MESSAGE_BODY' => $text,
     'MESSAGE_HEADERS' => [
         'module_id' => 'crm', // Привязка к модулю, например, CRM
@@ -391,10 +431,9 @@ $message = \Bitrix\MessageService\Sender\SmsManager::createMessage([
 
 // Отправить через очередь
 $result = $message->send();
-
-// Отправить немедленно
-$result = $message->sendDirectly();
 ```
+
+Чтобы отправить сообщение без очереди, замените вызов `send()` на `sendDirectly()`. Не вызывайте оба метода для одного сообщения.
 
 #### Отправить сообщение без очереди
 
@@ -436,7 +475,7 @@ foreach ($messages as $message)
 
 #### Проверить статус сообщения
 
-Метод `getMessageStatus()` позволяет получить текущий статус отправленного сообщения. Статус помогает отслеживать доставку и обрабатывать ошибки.
+Метод `getMessageStatus()` запрашивает статус сообщения у провайдера, который поддерживает получение статусов.
 
 ```php
 // Получаем статус сообщения по его ID
@@ -444,8 +483,8 @@ $status = \Bitrix\MessageService\Sender\SmsManager::getMessageStatus($messageId)
 
 if ($status->isSuccess())
 {
-    // Сообщение успешно обработано
-    $statusCode = $status->getExternalStatus();  // Код статуса от провайдера
+    // Статус получен от провайдера
+    $statusCode = $status->getStatusCode();       // Код статуса от провайдера
     $statusText = $status->getStatusText();      // Текстовое описание статуса
 }
 else
@@ -454,6 +493,8 @@ else
     $errors = $status->getErrorMessages();       // Массив ошибок
 }
 ```
+
+В проверенной версии модуля при несуществующем ID сообщения или провайдере без поддержки получения статусов метод выбрасывает PHP-ошибку из-за обращения к отсутствующему классу `Bitrix\Main\Result\MessageStatus`. В этих случаях ветка `else` из примера не выполняется.
 
 ### Автоматическая нормализация номеров
 
@@ -481,21 +522,22 @@ if (!$result->isSuccess())
 
 ### События
 
-Событие `OnMessageSuccessfullySent` позволяет выполнить код после успешной отправки СМС. Например, можно залогировать отправку или обновить данные в CRM.
+Событие `OnMessageSuccessfullySent` возникает, когда метод `SmsManager::sendMessage()` успешно добавил сообщение в очередь. Оно не подтверждает доставку СМС. Например, можно записать в журнал ID сообщения или обновить данные в CRM.
 
 ```php
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Event;
 
-// Логируем отправку СМС
+// Логируем добавление СМС в очередь
 EventManager::getInstance()->addEventHandler(
     'messageservice',
     'OnMessageSuccessfullySent',
-    function(Event $event) {
+    function (Event $event)
+    {
         $messageId = $event->getParameter('ID');
 
-        // Запишем успешную отправку сообщения
-        AddMessage2Log("СМС отправлено. ID: {$messageId}", 'messageservice');
+        // Запишем ID сообщения, добавленного в очередь
+        AddMessage2Log("СМС добавлено в очередь. ID: {$messageId}", 'messageservice');
     }
 );
 ```

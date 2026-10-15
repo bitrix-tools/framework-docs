@@ -27,6 +27,7 @@ description: 'Создание страницы. Пошаговое руково
 <?php
 // header.php — верхняя часть сайта
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
+$APPLICATION->SetTitle('Моя страница');
 ?>
 
 <!-- содержимое страницы -->
@@ -37,6 +38,10 @@ require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');
 ?>
 ```
 
+При подключении `/bitrix/header.php` система определяет текущий сайт и выбирает его шаблон с учетом условий применения. Затем она подключает `header.php` выбранного шаблона, а `/bitrix/footer.php` подключает его `footer.php`. Подробнее читайте в статье [Шаблоны сайтов](../cms-basics/site-templates.md).
+
+Метод `SetTitle()` задает основной заголовок страницы. Если страница не должна использовать шаблон сайта, подключите служебные файлы `prolog_before.php` и `epilog_after.php`. Порядок подключений описан в статье [Жизненный цикл запроса](../framework/request-lifecycle.md#start-page-lifecycle).
+
 ### Настройка метаданных
 
 1. Создайте файл `.section.php` в папке страницы. Он задает метаданные раздела для SEO.
@@ -45,12 +50,12 @@ require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php');
 
 ```php
 <?php
-$sSectionName = "Название раздела";
-$arDirProperties = array(
+$sSectionName = 'Название раздела';
+$arDirProperties = [
     'title' => 'SEO заголовок',
-    "description" => "Описание страницы",
-    "keywords" => "Ключевые слова"
-);
+    'description' => 'Описание страницы',
+    'keywords' => 'Ключевые слова',
+];
 ?>
 ```
 

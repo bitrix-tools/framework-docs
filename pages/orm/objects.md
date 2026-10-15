@@ -3,7 +3,7 @@ title: Объекты
 description: 'Объекты. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
 ---
 
-В Bitrix Framework объект представляет собой экземпляр класса. Класс соответствует записи в базе данных. Это позволяет работать с данными в виде объектов, а не массивов, что делает код более удобным.
+В Bitrix Framework класс объекта описывает работу с данными таблицы, а его экземпляр представляет одну запись или новую запись до сохранения. Это позволяет работать с данными в виде объектов, а не массивов, что делает код более удобным.
 
 Примеры статьи используют сущности модуля `somepartner.mybookscatalog` — их описание смотрите в статье [Концепция ORM](./orm-concepts.md#book-model). Перед обращением к классам подключите модуль вызовом `Loader::includeModule('somepartner.mybookscatalog')` — подробнее в разделе [Подключить модуль сущности](./orm-concepts.md#include-module).
 
@@ -14,6 +14,12 @@ $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)
     ->fetchObject()
 ;
 ```
+
+{% note info "" %}
+
+Примеры с выборкой и изменением предполагают, что в таблицах модуля уже есть книги с ID 1 и 2, авторы с ID 17 и 18 и издательство с ID 253. Показанный вывод соответствует этим условным данным.
+
+{% endnote %}
 
 Теперь `$book` — это объект сущности `Book`, который предоставляет методы для работы с данными книги и ее связями с другими сущностями. Методы объекта можно использовать для получения и изменения данных, например, `$book->getTitle()` для получения названия книги или `$book->setTitle('New Title')` для его изменения.
 
@@ -91,7 +97,7 @@ $book->resetTitle();
 
 ### Универсальные методы
 
-Существуют универсальные методы: `getTitle`, `setTitle`, `remindActualTitle` и другие. Они принимают имя поля, например, `$fieldName`, как аргумент.
+Существуют универсальные методы: `get`, `set`, `remindActual`, `reset` и другие. Они принимают имя поля, например, `$fieldName`, как аргумент.
 
 ```php
 $fieldName = 'TITLE';
@@ -145,7 +151,7 @@ var_dump($book->getId()); // int 1
 var_dump($book->getTitle()); // string 'Title 1' (length=7)
 ```
 
-Поля типа `BooleanField` ожидают значения `true` или `false`. Если в базе данных такие значения представлены как `Y` или `N`, они автоматически преобразуются.
+Поля типа `BooleanField` ожидают значения `true` или `false`. Если в базе данных такие значения представлены как `Y` или `N`, они автоматически преобразуются. Метод `configureValues()` — короткий синоним `configureStorageValues()`.
 
 ```php
 // (new BooleanField('IS_ARCHIVED'))
@@ -177,7 +183,7 @@ $title = $book->getTitle();
 
 ### require
 
-Метод можно использовать, если поле должно быть заполнено. Если поле пустое, сценарий не будет выполнен, и будет выведена ошибка.
+Метод `require` возвращает значение поля. Если оно не было загружено из базы данных и не устанавливалось в объекте, метод выбрасывает `SystemException`. Если поле содержит `null`, метод возвращает `null`.
 
 ```php
 $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)
@@ -186,7 +192,7 @@ $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)
 $title = $book->requireTitle();
 ```
 
-В данном случае результат `requireTitle()` не будет отличаться от вызова `getTitle()`, так как поле `TITLE` заполнено. В следующем примере поле не заполнено, поэтому будет выброшено исключение.
+В данном случае результат `requireTitle()` не будет отличаться от вызова `getTitle()`, так как поле `TITLE` загружено. В следующем примере поле не включено в выборку и его значение не устанавливалось, поэтому будет выброшено исключение.
 
 ```php
 $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1, ['select' => ['ID', 'PUBLISHER_ID', 'ISBN']])
@@ -265,13 +271,13 @@ $values = $book->collectValues(
 
 ### runtime
 
-Для `runtime` полей используется только универсальный метод `get`.
+Значение `runtime`-поля можно прочитать универсальным методом `get`.
 
 ```php
 $author = \SomePartner\MyBooksCatalog\AuthorTable::query()
     ->registerRuntimeField(
         new \Bitrix\Main\ORM\Fields\ExpressionField(
-            'FULL_NAME', 'CONCAT(%s, " ", %s)', ['NAME', 'LAST_NAME']
+            'FULL_NAME', "CONCAT(%s, ' ', %s)", ['NAME', 'LAST_NAME']
         )
     )
     ->addSelect('ID')
@@ -282,7 +288,7 @@ $author = \SomePartner\MyBooksCatalog\AuthorTable::query()
 echo $author->get('FULL_NAME'); // 'Name 17 Last name 17'
 ```
 
-Значения `runtime` полей изолированы от штатных полей, поэтому другие методы для них неактуальны.
+Метод `has($fieldName)` позволяет проверить, есть ли поле среди полученных `runtime`-значений. Изменить его через `set` нельзя: `runtime`-поле доступно только для чтения.
 
 ## Записать данные объекта
 
@@ -399,7 +405,7 @@ var_dump($book->hasIsbn()); // false
 
 ## Проверить состояние объекта
 
-Объект может находиться в одном из трех состояний:
+Объект может находиться в одном из четырех состояний:
 
 -  `RAW` — новый. Объект только что создан, и его данные еще не были сохранены в базе данных.
 
@@ -508,7 +514,7 @@ $book = \SomePartner\MyBooksCatalog\Book::wakeUp(1);
 $book->delete();
 ```
 
-Метод `delete()` удаляет только ту запись, которая соответствует конкретному объекту. Если нужно удалить или изменить связанные данные, это необходимо сделать явно.
+Метод `delete()` удаляет запись объекта и обрабатывает связи. Для отношения многие ко многим ORM удаляет записи связующей таблицы. Для других отношений действия зависят от настроенной политики каскадного удаления: связанные объекты могут быть удалены, а ссылки — обнулены.
 
 При удалении объекта через метод `delete()` срабатывают все необходимые события. Дополнительные действия можно описать в обработчике события `onDelete`.
 
@@ -593,9 +599,9 @@ $author->fill(
 
 Маски бывают:
 
--  `SCALAR` — скалярные поля `ORM\ScalarField`,
+-  `SCALAR` — скалярные поля `Bitrix\Main\ORM\Fields\ScalarField`,
 
--  `EXPRESSION` — выражения `ORM\ExpressionField`,
+-  `EXPRESSION` — выражения `Bitrix\Main\ORM\Fields\ExpressionField`,
 
 -  `USERTYPE` — пользовательские поля,
 
@@ -721,7 +727,7 @@ $author['NAME'] = 'New name';
 ```php
 $author = \SomePartner\MyBooksCatalog\AuthorTable::query()
     ->registerRuntimeField(
-        new \Bitrix\Main\ORM\Fields\ExpressionField('FULL_NAME', 'CONCAT(%s, " ", %s)', ['NAME', 'LAST_NAME'])
+        new \Bitrix\Main\ORM\Fields\ExpressionField('FULL_NAME', "CONCAT(%s, ' ', %s)", ['NAME', 'LAST_NAME'])
     )
     ->addSelect('ID')
     ->addSelect('FULL_NAME')

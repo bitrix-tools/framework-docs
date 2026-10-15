@@ -345,7 +345,7 @@ $MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
 ```php
 <?php
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php');
-$APPLICATION->SetTitle('');
+$APPLICATION->SetTitle('Карточка пользователя');
 
 $APPLICATION->IncludeComponent(
     "my:user.card",

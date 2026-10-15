@@ -176,7 +176,73 @@ if ($user->LAST_ERROR)
 }
 ```
 
+### Зарегистрировать пользователя
+
+`Register()` создает учетную запись с учетом настроек регистрации. Если включено подтверждение по email или телефону, пользователь сможет войти после подтверждения. В примере данные пользователя получены из формы регистрации. Пример рассчитан на регистрацию без капчи и обязательного номера телефона. Если эти проверки включены, передайте в метод код и идентификатор капчи, а также номер телефона.
+
+```php
+global $USER;
+
+/**
+ * @var \CUser $USER
+ */
+
+$result = $USER->Register(
+    $login,
+    $name,
+    $lastName,
+    $password,
+    $confirmPassword,
+    $email
+);
+
+if ($result['TYPE'] === 'OK')
+{
+    echo 'Пользователь зарегистрирован, ID: ' . $result['ID'];
+}
+else
+{
+    ShowMessage($result['MESSAGE']);
+}
+```
+
+### Сменить пароль
+
+`ChangePassword()` проверяет текущий пароль и меняет его на новый. В примере логин, текущий и новый пароли получены из формы. Если настройки требуют капчу, передайте ее код и идентификатор вместо пустой строки и нуля.
+
+```php
+global $USER;
+
+/**
+ * @var \CUser $USER
+ */
+
+$result = $USER->ChangePassword(
+    $login,
+    '',
+    $newPassword,
+    $confirmPassword,
+    false,
+    '',
+    0,
+    true,
+    '',
+    $currentPassword
+);
+
+if ($result['TYPE'] === 'OK')
+{
+    echo 'Пароль изменен';
+}
+else
+{
+    ShowMessage($result['MESSAGE']);
+}
+```
+
 ### Выполнить авторизацию пользователя
+
+При входе с логином и паролем `Login()` проверяет пароль и возможность входа пользователя.
 
 ```php
 global $USER;
@@ -191,6 +257,10 @@ if ($authResult === true)
     // Пользователь успешно авторизовался
     LocalRedirect("/personal/");
 }
+elseif ($authResult === false)
+{
+    ShowMessage('Не удалось авторизовать пользователя');
+}
 else
 {
     // Вывести ошибку
@@ -198,7 +268,7 @@ else
 }
 ```
 
-Код выполняет проверку пароля и возможность входа.
+`Authorize()` авторизует пользователя с идентификатором `$userId` без проверки пароля. Передавайте в него только доверенный идентификатор, полученный после проверки прав на это действие.
 
 ```php
 global $USER;
@@ -210,7 +280,19 @@ global $USER;
 $USER->Authorize($userId);
 ```
 
-Код выполняет авторизацию под пользователем с идентификатором `$userId`.
+### Завершить сеанс пользователя
+
+`Logout()` завершает авторизацию текущего пользователя.
+
+```php
+global $USER;
+
+/**
+ * @var \CUser $USER
+ */
+
+$USER->Logout();
+```
 
 ### Проверить авторизацию
 
@@ -251,7 +333,7 @@ class Example extends Controller
     public function saveAction(CurrentUser $user)
     {
         $login = $user->getLogin();
-        $name  = $user->getName();
+        $name  = $user->getFirstName();
 
         // ...
     }
@@ -344,7 +426,7 @@ global $USER;
  * @var \CUser $USER
  */
 
-$groupId = 1;
+$groupId = 3;
 if (in_array($groupId, $USER->GetUserGroupArray()))
 {
     # code...
@@ -361,10 +443,14 @@ if (in_array($groupId, $USER->GetUserGroupArray()))
 $isDeleted = CUser::Delete($userId);
 if (!$isDeleted)
 {
-    $error = (string)$APPLICATION->GetException();
-    if (empty($error))
+    $exception = $APPLICATION->GetException();
+    if ($exception)
     {
-        $error = "Пользователь не найден";
+        $error = $exception->GetString();
+    }
+    else
+    {
+        $error = 'Не удалось удалить пользователя';
     }
 }
 ```
