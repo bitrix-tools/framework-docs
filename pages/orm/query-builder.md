@@ -7,7 +7,7 @@ description: 'Построитель запросов. ORM Bitrix Framework: к�
 
 Если параметры запроса формируются программно, используйте построитель запросов — объект `Bitrix\Main\ORM\Query\Query`. Построитель накапливает параметры и выполняет запрос по вызову метода `exec`.
 
-Сравните три способа собрать один и тот же запрос на получение книги по идентификатору. Все примеры статьи используют класс `BookTable` — его описание смотрите в статье [Операции с сущностями](./entity-operations.md#booktable-example).
+Сравните три способа собрать один и тот же запрос на получение книги по идентификатору. Все примеры статьи используют класс `BookTable` — его описание смотрите в статье [Концепция ORM](./orm-concepts.md#book-model). ISBN в модели хранится без дефисов. Перед обращением к классу подключите модуль вызовом `Loader::includeModule('somepartner.mybookscatalog')` — подробнее в разделе [Подключить модуль сущности](./orm-concepts.md#include-module).
 
 **Метод getList**
 
@@ -226,7 +226,7 @@ $query->setFilter(['>=PUBLISH_DATE' => new Date('2014-01-01', 'Y-m-d')]);
 
 if (/* задан отбор по ISBN */)
 {
-    $query->addFilter('=ISBN', '978-0321127426');
+    $query->addFilter('=ISBN', '9780321127426');
 }
 
 $books = $query->fetchAll();
@@ -243,7 +243,7 @@ use Bitrix\Main\Type\Date;
 
 $books = BookTable::query()
     ->setSelect(['ID', 'TITLE'])
-    ->where('ISBN', '978-0321127426')
+    ->where('ISBN', '9780321127426')
     ->where('PUBLISH_DATE', '>=', new Date('2014-01-01', 'Y-m-d'))
     ->fetchAll()
 ;

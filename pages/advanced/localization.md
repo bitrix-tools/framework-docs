@@ -344,6 +344,8 @@ created()
 
 -  `value` — значение языковой фразы.
 
+В хуке `beforeCreate` обращайтесь к интеграционным методам через `this.$bitrix` с маленькой буквы, а не через `this.$Bitrix`. Подробнее — в разделе [Интеграция с Bitrix Framework](./vue.md#bitrix-integration) статьи «Vue.js».
+
 ```javascript
 beforeCreate()
 {
