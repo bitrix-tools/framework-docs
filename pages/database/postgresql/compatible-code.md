@@ -25,13 +25,15 @@ description: 'Как писать код, совместимый с PostgreSQL. 
 
 ## Как адаптировать модуль
 
+Проверьте схему данных, установочные SQL-файлы и прямые запросы модуля. Для работы с базой данных используйте соединение из `Application::getConnection()` и его `SqlHelper`.
+
 ### Схема данных
 
 Для квотирования идентификаторов в PostgreSQL используются двойные кавычки.
 
 PostgreSQL преобразует все неквотированные идентификаторы к нижнему регистру и ищет их в метаданных базы.
 
-Для совместимости с кодом *1С-Битрикс: Управление сайтом* метод `fetch` преобразует все колонки к верхнему регистру.
+При чтении результата через `fetch()` драйвер PostgreSQL в Bitrix Framework возвращает имена колонок в верхнем регистре.
 
 Поэтому если создана таблица:
 
@@ -44,43 +46,49 @@ create table test (ID int)
 При выборке через *1С-Битрикс: Управление сайтом*:
 
 ```php
-$rs = $DB->Query('SELECT ID from test');
+$connection = \Bitrix\Main\Application::getConnection();
+$result = $connection->query('SELECT ID FROM test');
 ```
 
 Неквотированный `ID` будет сначала преобразован в нижний регистр, найден в метаданных и запрос выполнится.
 
-Вот пример неправильного запроса:
+Прочитайте строку результата:
 
 ```php
-$rs = $DB->Query('SELECT "ID" from test');
+$row = $result->fetch();
 ```
 
-При выборке данных:
+Метод `fetch()` вернет значение колонки `id` под ключом `ID`.
+
+**Пример.** Запрос с `"ID"` завершится ошибкой, потому что колонки с таким именем в таблице нет:
 
 ```php
-$ar = $rs->Fetch();
+$connection = \Bitrix\Main\Application::getConnection();
+$result = $connection->query('SELECT "ID" FROM test');
 ```
 
-Метод `Fetch` автоматически преобразует колонку `id` в `ID`.
+Если идентификатор нужно квотировать, используйте метод `SqlHelper::quote()`. Подробнее о нем — в статье [Формирование запросов](../sql-helper-and-expression.md).
 
-Если идентификатор нужно квотировать, используйте метод `quote` из [SqlHelper](https://dev.1c-bitrix.ru/api_d7/bitrix/main/db/sqlhelper/quote.php) или `CDatabase`.
-
-В MySQL регистр не изменится. В PostgreSQL идентификатор сначала будет приведен к нижнему регистру. После этого он будет обрамлен двойными кавычками.
+В MySQL регистр не изменится. В PostgreSQL идентификатор сначала будет приведен к нижнему регистру. После этого он будет обрамлен двойными кавычками. Сформируйте запрос с помощью хелпера:
 
 ```php
-$sql = 'SELECT ' . $DB->quote('ID') . ' from ' . $DB->quote('test');
+$connection = \Bitrix\Main\Application::getConnection();
+$helper = $connection->getSqlHelper();
+
+$sql = 'SELECT ' . $helper->quote('ID') . ' FROM ' . $helper->quote('test');
+$result = $connection->query($sql);
 ```
 
-Для MySQL код сформирует строку:
+**Пример.** Для MySQL код сформирует строку:
 
 ```sql
-SELECT `ID` from `test`
+SELECT `ID` FROM `test`
 ```
 
-Для PostgreSQL код сформирует строку:
+**Пример.** Для PostgreSQL код сформирует строку:
 
 ```sql
-SELECT "id" from "test"
+SELECT "id" FROM "test"
 ```
 
 Код будет работать с обеими СУБД.
@@ -89,8 +97,8 @@ SELECT "id" from "test"
 
 Замените типы колонок, которые могут работать по-разному в MySQL и PostgreSQL:
 
-- `timestamp` — на `datetime` с переносом логики на PHP;
-- `enum` — на `char`, чтобы PostgreSQL не создавал отдельный тип для колонки;
+- `timestamp` — на `datetime` с переносом логики на PHP,
+- `enum` — на `char`, чтобы PostgreSQL не создавал отдельный тип для колонки,
 - `char` — на `varchar`, если в колонке хранится строка переменной длины. PostgreSQL дополняет значение `char` пробелами справа до указанной длины поля.
 
 В PostgreSQL нет модификатора `unsigned`, поэтому для него увеличивается разрядность хранения.
@@ -127,18 +135,24 @@ CREATE TABLE book (id int, title varchar(50), primary key (id), key ix_search(ti
 
 ### Конвертация install.sql
 
+Разместите SQL-файлы PostgreSQL в каталоге `install/db/pgsql`. Проверьте, что установщик модуля выбирает этот каталог для соединения типа `pgsql`.
+
+Для модуля с исходными SQL-файлами в `install/db/mysql` выполните команды из каталога `/bitrix/modules/`. Замените `mymodule` на имя модуля. Команды запишут файлы в `install/db/pgsql`, поэтому перед повторным запуском сохраните внесенные в них правки:
+
 ```bash prompt="$"
 $ cd mymodule
-$ mkdir install/db/pgsql
-$ cp install/mysql/uninstall.sql install/pgsql/uninstall.sql
-$ php -f ../perfmon/tools/mysql_to_pgsql.php -- install/mysql/install.sql > install/pgsql/install.sql
+$ mkdir -p install/db/pgsql
+$ cp install/db/mysql/uninstall.sql install/db/pgsql/uninstall.sql
+$ php -f ../perfmon/tools/mysql_to_pgsql.php -- install/db/mysql/install.sql > install/db/pgsql/install.sql
 ```
+
+Проверьте скопированный `uninstall.sql` и результат конвертации `install.sql` на совместимость с PostgreSQL.
 
 ### Использование специфичного квотирования
 
 Использование обратных кавычек для экранирования идентификаторов в MySQL не подходит для PostgreSQL.
 
-Такие конструкции нужно переписать с использованием методов `CDatabase::quote` или `SqlHelper::quote` либо убрать как ненужные или избыточные. Названия таблиц всегда в нижнем регистре, а названия столбцов — в верхнем.
+Замените обратные кавычки вызовом `SqlHelper::quote()` или уберите квотирование, если оно не требуется. При вызове `quote()` для PostgreSQL хелпер приведет идентификатор к нижнему регистру и обрамит двойными кавычками.
 
 ### Строковые литералы
 
@@ -162,10 +176,13 @@ select '\\Bitrix'
 
 В MySQL запрос вернет `"\Bitrix"`, а в PostgreSQL — `"\\Bitrix"`.
 
-Чтобы избежать различий, используйте функцию `ForSql` из [SqlHelper](../sql-helper-and-expression.md) или `CDatabase`:
+Чтобы избежать различий, экранируйте значение методом `SqlHelper::forSql()` из статьи [Формирование запросов](../sql-helper-and-expression.md):
 
 ```php
-$rs = $DB->Query("SELECT '" . $DB->ForSql("\\Bitrix") . "'")
+$connection = \Bitrix\Main\Application::getConnection();
+$helper = $connection->getSqlHelper();
+
+$result = $connection->query("SELECT '" . $helper->forSql('\\Bitrix') . "'");
 ```
 
 Для обеих баз данных запрос вернет `"\Bitrix"`.
@@ -289,7 +306,7 @@ $sql = 'SELECT ID, ' . $helper->addSecondsToDateTime(60, 'TIMESTAMP_X') . ' AS E
 
 #### date()
 
-Перепишите с использованием метода `getCurrentDateFunction` из `\Bitrix\Main\Application::getConnection()->getSqlHelper()`.
+Для преобразования даты и времени в дату используйте метод `SqlHelper::getDatetimeToDateFunction()`. Передайте ему SQL-выражение или имя колонки, экранированное через `quote()`. Метод `getCurrentDateFunction()` возвращает текущую дату и не заменяет `date(значение)`.
 
 #### rand()
 
@@ -320,11 +337,11 @@ $sql = 'INSERT IGNORE INTO b_user_access_check (USER_ID, PROVIDER_ID) SELECT ...
 $connection = \Bitrix\Main\Application::getConnection();
 $helper = $connection->getSqlHelper();
 
-$sql = $helper->getInsertIgnore("b_user_group", "(USER_ID, GROUP_ID, DATE_ACTIVE_FROM, DATE_ACTIVE_TO)", "VALUES (...)");
-$sql = $helper->getInsertIgnore("b_user_access_check", "(USER_ID, PROVIDER_ID)", "SELECT ...");
+$sql = $helper->getInsertIgnore('b_user_group', '(USER_ID, GROUP_ID, DATE_ACTIVE_FROM, DATE_ACTIVE_TO)', 'VALUES (...)');
+$sql = $helper->getInsertIgnore('b_user_access_check', '(USER_ID, PROVIDER_ID)', 'SELECT ...');
 ```
 
-[Различия в CDatabase::PrepareInsert и SqlHelper::prepareInsert](#CDatabase)
+При подготовке данных для вставки учитывайте [обработку дат и времени](#CDatabase).
 
 `UPDATE IGNORE`
 
@@ -358,24 +375,33 @@ $update = [
 $merge = $helper->prepareMerge('b_module_table', ['KEY_ID'], $update, $update);
 if ($merge[0])
 {
-    $connection->query($merge[0]);
-}
-//or another helper method
-//$update - is a row in a rows array
-foreach ($helper->prepareMergeMultiple('b_module_table', ['KEY_ID'], [$update]) as $sql)
-{
-    $connection->query($sql);
+    $connection->queryExecute($merge[0]);
 }
 ```
 
-[Различия в CDatabase::PrepareInsert и SqlHelper::prepareInsert](#CDatabase)
+Для замены нескольких записей используйте `prepareMergeMultiple()`:
+
+```php
+$connection = \Bitrix\Main\Application::getConnection();
+$helper = $connection->getSqlHelper();
+$rows = [
+    ['KEY_ID' => 1, 'DATA' => 'a'],
+];
+
+foreach ($helper->prepareMergeMultiple('b_module_table', ['KEY_ID'], $rows) as $sql)
+{
+    $connection->queryExecute($sql);
+}
+```
+
+При подготовке данных для вставки учитывайте [обработку дат и времени](#CDatabase).
 
 `DELETE ... LIMIT`
 
 Перепишите прямые запросы на методы `SqlHelper`:
 
 ```php
-$sql = 'DELETE FROM b_test WHERE ACTIVE = 'N' ORDER BY TIMESTAMP_X ASC LIMIT 50';
+$sql = "DELETE FROM b_test WHERE ACTIVE = 'N' ORDER BY TIMESTAMP_X ASC LIMIT 50";
 ```
 
 Измените на:
@@ -400,70 +426,46 @@ $sql = $helper->prepareDeleteLimit('b_test', ['ID'], "ACTIVE = 'N'", ['TIMESTAMP
 
 Проверьте код, который использует эти классы.
 
-### Некоторые особенности
+### Вставка в таблицу без автоинкремента
 
-`CDatabase::Add` в таблицу без автоинкремента:
-
-```php
-$DB->Add("b_iblock_fields", $arAdd, array("DEFAULT_VALUE"));
-```
-
-Перепишите на прямой запрос:
+Для таблицы без автоинкремента подготовьте запрос методом `SqlHelper::prepareInsert()` и выполните его через `queryExecute()`. В примере таблица `b_module_table` содержит поля `KEY_ID` и `DATA`, а значение ключа задается в массиве данных:
 
 ```php
-$arInsert = $DB->PrepareInsert("b_iblock_fields", $arAdd);
-$DB->Query("INSERT INTO b_iblock_fields (".$arInsert[0].") VALUES (".$arInsert[1].")");
+$connection = \Bitrix\Main\Application::getConnection();
+$helper = $connection->getSqlHelper();
+$fields = [
+    'KEY_ID' => 1,
+    'DATA' => 'a',
+];
+
+[ $columns, $values, $binds ] = $helper->prepareInsert('b_module_table', $fields);
+$sql = 'INSERT INTO ' . $helper->quote('b_module_table') . ' (' . $columns . ') VALUES (' . $values . ')';
+$connection->queryExecute($sql, $binds);
 ```
 
-### Различия в CDatabase::PrepareInsert и SqlHelper::prepareInsert {#CDatabase}
+Метод `prepareInsert()` возвращает список колонок, список значений и массив привязок. Передайте привязки вторым аргументом в `queryExecute()`.
 
-- Поля типа дата/время обрабатываются по-разному.
-- `CDatabase` учитывает настройку часовых поясов, а `SqlHelper` — нет.
+### Даты и время при подготовке вставки {#CDatabase}
 
-Поэтому в методы хелпера передавайте объект даты и времени, созданный методом [`\Bitrix\Main\Type\DateTime::createFromUserTime`](../../advanced/datetime.md#methods). Например:
+При переходе с `CDatabase::PrepareInsert()` на `SqlHelper::prepareInsert()` учитывайте различие в обработке часовых поясов. `SqlHelper` не применяет поправку пользовательского часового пояса автоматически.
+
+Если дата задана в часовом поясе пользователя, создайте объект методом [`DateTime::createFromUserTime()`](../../advanced/datetime.md#methods) и передайте его в `prepareInsert()`:
 
 ```php
-$fields = [
-    'DATE_REGISTER' => '01.01.2023 00:00:00',
-];
-print_r($DB->PrepareInsert('b_user', $fields));
+use Bitrix\Main\Application;
+use Bitrix\Main\Type\DateTime;
+
+$connection = Application::getConnection();
+$helper = $connection->getSqlHelper();
 
 $fields = [
-    'DATE_REGISTER' => new \Bitrix\Main\Type\DateTime('01.01.2023 00:00:00'),
+    'DATE_REGISTER' => DateTime::createFromUserTime('01.01.2023 00:00:00'),
 ];
-print_r(\Bitrix\Main\Application::getConnection()->getSqlHelper()->prepareInsert('b_user', $fields));
-
-$fields = [
-    'DATE_REGISTER' => \Bitrix\Main\Type\DateTime::createFromUserTime('01.01.2023 00:00:00'),
-];
-print_r(\Bitrix\Main\Application::getConnection()->getSqlHelper()->prepareInsert('b_user', $fields));
+[ $columns, $values, $binds ] = $helper->prepareInsert('b_user', $fields);
 ```
 
-Выведет
+Если дата уже задана во времени сервера, передайте обычный объект `DateTime`. Результат преобразования пользовательской даты зависит от настроек часового пояса.
 
-```text
-Array
-(
-    [0] => `DATE_REGISTER`
-    [1] => DATE_ADD('2023-01-01 00:00:00', INTERVAL 3600 SECOND)
-)
-Array
-(
-    [0] => `DATE_REGISTER`
-    [1] => '2023-01-01 00:00:00'
-    [2] => Array
-        (
-        )
-)
-Array
-(
-    [0] => `DATE_REGISTER`
-    [1] => '2023-01-01 01:00:00'
-    [2] => Array
-        (
-        )
-```
-
-### Использование двойных кавычек
+### Использование двойных кавычек {#double-quotes}
 
 В PostgreSQL нельзя использовать двойные кавычки для строковых литералов. Заменяйте их на одиночные кавычки.

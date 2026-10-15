@@ -25,9 +25,7 @@ $result = BookTable::getList([
 Тот же запрос через построитель. Каждый параметр задает отдельный метод, а выполняет запрос метод `exec`.
 
 ```php
-use Bitrix\Main\ORM\Query\Query;
-
-$query = new Query(BookTable::getEntity());
+$query = BookTable::query();
 $query->setSelect(['ISBN', 'TITLE', 'PUBLISH_DATE']);
 $query->setFilter(['=ID' => 1]);
 

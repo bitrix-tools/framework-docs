@@ -60,7 +60,7 @@ Bitrix Framework включает готовые команды для разр�
 
 {% note info "" %}
 
-Команды `make:entity`, `make:мodule`, `make:request`, `make:service`, `make:event`, `make:eventandler`, `make:message`, `make:messagehandler,` `make:agent` можно использовать с версии main 25.900.0.
+Команды `make:entity`, `make:module`, `make:request`, `make:service`, `make:event`, `make:eventhandler`, `make:message`, `make:messagehandler`, `make:agent` можно использовать с версии main 25.900.0.
 
 {% endnote %}
 
@@ -72,14 +72,17 @@ Bitrix Framework включает готовые команды для разр�
    # Создать компонент внутри модуля
    $ php bitrix.php make:component my:user.card --module=my.module
 
-   # Создать компонент в папке /bitrix/components/bitrix/
-   $ php bitrix.php make:component user.card --no-module
-
    # Создать компонент в папке /local/components/my/
    $ php bitrix.php make:component my:user.card --no-module --local -n
    ```
 
--  `make:controller` — генерирует REST-контроллер для API.
+   {% note warning "" %}
+
+   Для собственных компонентов используйте пространство имен проекта и папку `/local/components/`. Команда `make:component user.card --no-module` без пространства имен и опции `--local` создает компонент в `/bitrix/components/bitrix/`. Эта папка предназначена для системных компонентов. Не размещайте в ней собственный код — соблюдайте [правила кастомизации](../get-started/how-customize.md#where-to-place-changes).
+
+   {% endnote %}
+
+-  `make:controller` — генерирует класс [контроллера](./controllers.md), который наследуется от `Bitrix\Main\Engine\Controller`.
 
    ```bash prompt="$"
    # Создать контроллер с CRUD-действиями
@@ -134,11 +137,46 @@ Bitrix Framework включает готовые команды для разр�
    $ php bitrix.php make:messagehandler PostCreated -n
    ```
 
--  `make:module` — создает структуру нового модуля с базовыми файлами.
+-  `make:module` — создает заготовку модуля в папке `/local/modules/<id>/`, где `<id>` — идентификатор модуля, например `my.module`.
+
+   Передайте идентификатор модуля аргументом команды:
 
    ```bash prompt="$"
    $ php bitrix.php make:module my.module
    ```
+
+   Команда запрашивает название, описание и версию модуля в интерактивном режиме. Эти значения можно передать через опции.
+
+   - `--name` — название модуля. Обязательно при запуске без интерактивных запросов.
+   - `--description` — описание модуля. Можно не указывать.
+   - `--module-version` — версия в формате `N.M.Z`, например `1.0.0`. По умолчанию `1.0.0`.
+
+   Чтобы создать заготовку без интерактивных запросов, укажите опции и добавьте `-n`:
+
+   ```bash prompt="$"
+   $ php bitrix.php make:module my.module --name="Мой модуль" --description="Функционал проекта" --module-version=1.0.0 -n
+   ```
+
+   **Пример.** Для идентификатора `my.module` команда создает следующую структуру:
+
+   ```text
+   /local/modules/my.module/
+   ├── default_option.php
+   ├── install/
+   │   ├── index.php
+   │   ├── version.php
+   │   └── mysql/
+   │       ├── install.sql
+   │       └── uninstall.sql
+   └── lang/
+       └── ru/
+           └── install/
+               └── index.php
+   ```
+
+   Файл `install/index.php` содержит класс установки модуля, `install/version.php` — версию и дату ее создания. Файлы `install/mysql/install.sql` и `install/mysql/uninstall.sql` — пустые заготовки SQL-скриптов.
+
+   Файл `default_option.php` содержит заготовку настроек по умолчанию. Файл `lang/ru/install/index.php` содержит языковую фразу для названия модуля и, если описание задано, фразу для описания.
 
 -  `make:request` — генерирует класс Request для валидации параметров запроса.
 
@@ -192,8 +230,8 @@ $ php bitrix.php orm:annotate --clean
 # Запустить обработчик для всех очередей
 $ php bitrix.php messenger:consume
 
-# Обработать конкретные очереди
-$ php bitrix.php messenger:consume first_queue,second_queue
+# Обработать конкретные очереди — имена разделяются пробелами
+$ php bitrix.php messenger:consume first_queue second_queue
 
 # Установить паузу между проходами в 11 секунд
 $ php bitrix.php messenger:consume --sleep 11
@@ -287,7 +325,7 @@ return [
 
 ### Где разместить файлы команд
 
-Файлы команд рекомендуется хранить в каталоге модуля в папке `/lib/command/`.
+Размещайте файлы команд в папке `lib/Cli/Command/` внутри модуля.
 
 Пример структуры модуля с одним классом команды:
 

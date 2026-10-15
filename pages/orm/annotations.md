@@ -79,16 +79,12 @@ class MyClass
 
 ## Аннотации для классов таблиц
 
-Аннотации также добавляют phpDoc-блок перед классом таблицы.
+Команда `orm:annotate` записывает в файл аннотаций заглушку класса таблицы с phpDoc-блоком. Исходный файл класса таблицы команда не изменяет.
+
+**Пример.** Заглушка `UserTable` описывает типы результатов статических методов.
 
 ```php
-//  Пример для UserTable
 /**
- * Class UserTable
- *
- * DO NOT WRITE ANYTHING BELOW THIS
- *
- * <<< ORMENTITYANNOTATION
  * @method static EO_User_Query query()
  * @method static EO_User_Result getByPrimary($primary, array $parameters = [])
  * @method static EO_User_Result getById($id)
@@ -99,9 +95,8 @@ class MyClass
  * @method static \Bitrix\Main\EO_User wakeUpObject($row)
  * @method static \Bitrix\Main\EO_User_Collection wakeUpCollection($rows)
  */
-class UserTable extends DataManager
+class UserTable extends \Bitrix\Main\ORM\Data\DataManager
 {
-    // ...
 }
 ```
 
@@ -109,40 +104,58 @@ class UserTable extends DataManager
 
 ## Создать аннотации
 
-Чтобы создать аннотации, нужно перейти в папку `/bitrix/` проекта и использовать CLI-команду `orm:annotate`.
+Для запуска `bitrix.php` настройте [Composer](../get-started/composer.md) и установите зависимости проекта, включая Symfony Console.
+
+Чтобы создать аннотации для установленного модуля `vendor.module` из `/local/modules/`, перейдите в папку `/bitrix/` проекта и выполните команду `orm:annotate`.
 
 ```bash prompt="$"
 $ cd bitrix
-$ php bitrix.php orm:annotate
+$ php bitrix.php orm:annotate -m vendor.module
 ```
-
-{% note warning "" %}
-
-Перед использованием CLI-команд необходимо установить зависимости проекта через [composer](./../get-started/composer).
-
-{% endnote %}
 
 ### Как работает команда
 
-Система сканирует файлы в папках `/bitrix/modules/[module]/lib`. Когда она находит класс `Table`, унаследованный от `Bitrix\Main\ORM\Data\DataManager`, то анализирует его карту полей — массив, который описывает структуру таблицы базы данных.
+Команда сканирует PHP-файлы в папках `/local/modules/<id>/lib` и `/local/modules/<id>/dev/lib` выбранных модулей. Неустановленные модули и модули, которые не удалось подключить, она пропускает. Для каждого неабстрактного наследника `Bitrix\Main\ORM\Data\DataManager` с именем, которое заканчивается на `Table`, команда получает сущность ORM и формирует аннотации по ее полям.
 
-Результат работы — файл `/bitrix/modules/orm_annotations.php`. Файл содержит описания классов объекта и коллекции сущностей, а также вспомогательные классы для автодополнения.
+Папки `/bitrix/modules/<id>/lib` команда не сканирует. Для модулей ядра она отдельно читает списки классов из файлов `meta/ormuf.php` и формирует аннотации пользовательских полей. Также команда обрабатывает виртуальные ORM-классы через событие `main:onVirtualClassBuildList`.
+
+По умолчанию команда записывает результат в `/bitrix/modules/orm_annotations.php`. Файл содержит описания классов объекта и коллекции сущностей, а также вспомогательные классы для автодополнения.
 
 При изменении карты полей в классе `Table` нужно сгенерировать аннотации снова, чтобы IDE отображала актуальные поля и методы.
 
 ## Настроить сканирование модулей
 
-По умолчанию команда сканирует только Главный модуль `main`. Указать другие модули можно  с помощью ключа `-m`.
+Опция `-m` или `--modules` задает модули для обработки. По умолчанию она имеет значение `main`. Чтобы обработать собственный модуль, передайте его идентификатор. Несколько идентификаторов перечислите через запятую, а для обработки всех модулей укажите `all`.
+
+Выберите нужный вариант запуска.
 
 ```bash prompt="$"
 # Один модуль
-$ php bitrix.php orm:annotate -m tasks
+$ php bitrix.php orm:annotate -m vendor.module
 
 # Несколько модулей, перечисляйте через запятую
-$ php bitrix.php orm:annotate -m main,intranet
+$ php bitrix.php orm:annotate -m vendor.module,vendor.other
 
 # Все модули
 $ php bitrix.php orm:annotate -m all
+```
+
+## Выбрать файл для аннотаций
+
+Необязательный аргумент `output` задает путь к файлу результата. Относительный путь команда отсчитывает от текущей рабочей папки.
+
+Чтобы сохранить аннотации в `/bitrix/modules/vendor_orm.php` при запуске из `/bitrix/`, передайте путь после имени команды.
+
+```bash prompt="$"
+$ php bitrix.php orm:annotate modules/vendor_orm.php -m vendor.module
+```
+
+Опция `--inside` сохраняет аннотации внутри модуля, в `/local/modules/<id>/meta/orm.php`. Для этого выберите один модуль через `-m`. В таком режиме команда использует путь внутри модуля вместо аргумента `output`. При выборе нескольких модулей или значения `all` опция не действует, и команда записывает результат по пути `output`.
+
+Чтобы сохранить аннотации в `/local/modules/vendor.module/meta/orm.php`, выполните команду с опцией `--inside`.
+
+```bash prompt="$"
+$ php bitrix.php orm:annotate -m vendor.module --inside
 ```
 
 ## Управлять аннотациями

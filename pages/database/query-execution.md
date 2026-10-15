@@ -45,25 +45,46 @@ $id = $db->queryScalar('SELECT `ID`, `NAME` FROM b_user');
 Выполнить запрос без возврата результата:
 
 ```php
-$db->queryExecute('UPDATE b_user SET ACTIVE = "Y" WHERE DATE_REGISTER > "2024-01-01"');
+$db->queryExecute("UPDATE b_user SET ACTIVE = 'Y' WHERE DATE_REGISTER > '2024-01-01'");
 ```
+
+Строковые значения в SQL заключайте в одинарные кавычки. Это соответствует [правилам совместимости с PostgreSQL](postgresql/compatible-code.md#double-quotes).
+
+### Параметр binds
+
+Методы `query()`, `queryScalar()` и `queryExecute()` принимают необязательный массив `$binds` после SQL-строки. Он передает драйверу дополнительные данные для привязки значений. Обработка массива зависит от драйвера. Например, драйвер Oracle использует его для записи текстовых данных в CLOB-поля.
+
+Передайте в `queryExecute()` массив привязок, который вернул `SqlHelper::prepareUpdate()` вместе с SQL-фрагментом:
+
+```php
+$helper = $db->getSqlHelper();
+[$update, $binds] = $helper->prepareUpdate('b_user', ['ACTIVE' => 'Y']);
+$sql = 'UPDATE ' . $helper->quote('b_user') . ' SET ' . $update
+    . ' WHERE ' . $helper->quote('ID') . ' = 1';
+
+$db->queryExecute($sql, $binds);
+```
+
+В MySQL и PostgreSQL метод `prepareUpdate()` возвращает пустой массив привязок. Значения уже входят в SQL-фрагмент. Драйверы этих СУБД передают `$binds` в SQL-трекер, но не используют его для подстановки значений в запрос. Передавать значения для плейсхолдеров `?` или `:name` через этот параметр нельзя.
 
 {% note warning "Важно" %}
 
-Параметры `binds` в методах `query`, `queryScalar` и `queryExecute` не обеспечивают защиту от SQL-инъекций. Для защиты используйте `SqlExpression` или `SqlHelper`.
+Параметр `$binds` не обеспечивает защиту от SQL-инъекций. Для значений, которые добавляете в SQL, используйте типизированные плейсхолдеры `SqlExpression` или экранирование через `SqlHelper::forSql()`. Подробнее — в статье [Формирование запросов](sql-helper-and-expression.md).
 
 {% endnote %}
 
 ## Как выполнять INSERT-запросы
 
-Добавить одну запись:
+В комментариях к INSERT-примерам показан SQL для MySQL. Предполагается, что таблица `my_table` содержит строковые столбцы `NAME` и `CONTENT`.
+
+Добавьте одну запись:
 
 ```php
 $id = $db->add('my_table', [
     'NAME' => 'example',
     'CONTENT' => 'Про "базы" данных'
 ]);
-// SQL: INSERT INTO `my_table`(`NAME`, `CONTENT`) VALUES ('example', 'про \" базы \'')
+// SQL: INSERT INTO `my_table`(`NAME`, `CONTENT`) VALUES ('example', 'Про \"базы\" данных')
 ```
 
 Сделать массовое добавление записей:
@@ -76,10 +97,10 @@ $lastId = $db->addMulti('my_table', [
     ],
     [
         'NAME' => 'example two',
-        'CONTENT' => "Вторая статья"
+        'CONTENT' => 'Вторая статья'
     ]
 ]);
-// SQL: INSERT INTO `my_table` (`NAME`, `CONTENT`) VALUES ('example one', 'про \" базы \''), ('example two', '\';SELECT * FROM b_user WHERE ID = 1')
+// SQL: INSERT INTO `my_table` (`NAME`, `CONTENT`) VALUES ('example one', 'Первая статья'), ('example two', 'Вторая статья')
 ```
 
 Методы `add()` и `addMulti()` преобразуют значения и проверяют существование столбцов в таблице. Если указанного столбца нет, метод исключает его из запроса:
@@ -87,7 +108,7 @@ $lastId = $db->addMulti('my_table', [
 ```php
 /**
  * Выполнится запрос:
- * INSERT INTO `b_user`(`NAME`) VALUES ('habr')
+ * INSERT INTO `b_user`(`NAME`) VALUES ('example')
  */
 $insertedId = $db->add('b_user', [
     'NAME' => 'example',
@@ -97,54 +118,64 @@ $insertedId = $db->add('b_user', [
 
 ## Методы работы с таблицами
 
+Объект соединения предоставляет методы для создания таблиц, изменения их структуры и проверки существования.
+
 ### Создать новую таблицу
 
-Создает новую таблицу метод `createTable`. Параметры метода:
+Метод `createTable()` создает таблицу, если ее еще нет, через `CREATE TABLE IF NOT EXISTS`. Структуру существующей таблицы метод не меняет. Параметры метода:
 
 -  `$tableName` — имя создаваемой таблицы,
 
--  `$arFields` — массив полей таблицы в формате `'FIELD_NAME' => FieldObject`.
+-  `$fields` — массив ORM-полей таблицы в формате `'FIELD_NAME' => FieldObject`. Каждый объект должен наследовать `\Bitrix\Main\ORM\Fields\ScalarField`,
+
+-  `$primary` — массив ключей из `$fields`, которые образуют первичный ключ. По умолчанию пустой массив,
+
+-  `$autoincrement` — массив ключей из `$fields` для столбцов с автоинкрементом. По умолчанию пустой массив.
+
+Передайте `['ID']` третьим и четвертым аргументами, чтобы создать первичный ключ и автоинкремент для столбца `ID`:
 
 ```php
 $db->createTable('my_table', [
-
-    // Поле ID — целочисленный идентификатор
-    // Используем IntegerField с параметрами:
-    'ID' => new \Bitrix\Main\ORM\Fields\IntegerField('ID', [
-        'primary' => true,      // Указываем что это первичный ключ
-        'autocomplete' => true  // Включаем автоинкремент, то есть значение будет увеличиваться автоматически
-    ]),
-
-    // Поле NAME — строковое поле для хранения названия
-    // Используем StringField с параметрами:
+    'ID' => new \Bitrix\Main\ORM\Fields\IntegerField('ID'),
     'NAME' => new \Bitrix\Main\ORM\Fields\StringField('NAME', [
-        'size' => 255  // Максимальная длина строки — 255 символов
+        'size' => 255,
     ]),
-]);
+], ['ID'], ['ID']);
 ```
+
+Метод берет первичный ключ и автоинкремент из аргументов `$primary` и `$autoincrement`. Параметры ORM-поля `primary` и `autocomplete` их не заменяют.
+
+Метод создает поля без параметра `nullable => true` с ограничением `NOT NULL`. Значение по умолчанию из параметра ORM-поля `default_value` не попадает в `DEFAULT` колонки. При прямой вставке через SQL передавайте значения таких столбцов в запросе.
 
 ### Удалить существующую таблицу
 
-Удаляет таблицу метод `dropTable`. В методе нужно указать название таблицы.
+Метод `dropTable()` удаляет таблицу по имени. Он выполняет `DROP TABLE` без `IF EXISTS` и выбрасывает исключение `\Bitrix\Main\DB\SqlQueryException`, если таблицы нет. Перед удалением проверьте ее существование методом `isTableExists()`:
 
 ```php
-$db->dropTable('my_table');
+if ($db->isTableExists('my_table'))
+{
+    $db->dropTable('my_table');
+}
 ```
 
 ### Создать индекс
 
-Создает индекс метод `createIndex`. Параметры метода:
-
--  `$indexName` — имя создаваемого индекса,
+Метод `createIndex()` создает индекс. Параметры метода:
 
 -  `$tableName` — имя таблицы,
 
--  `$columns` — массив имен столбцов для индекса,
+-  `$indexName` — имя создаваемого индекса,
 
--  `$unique` — флаг уникальности индекса, по умолчанию `false`.
+-  `$columnNames` — массив имен столбцов для индекса,
+
+-  `$columnLengths` — массив длин префиксов в формате `'COLUMN_NAME' => длина` для MySQL. По умолчанию `null` — индекс по полным значениям. PostgreSQL игнорирует этот параметр,
+
+-  `$indexType` — тип индекса. По умолчанию `null` — обычный индекс. Для уникального индекса передайте `\Bitrix\Main\DB\Connection::INDEX_UNIQUE`.
+
+Создайте уникальный индекс по столбцу `NAME`:
 
 ```php
-$db->createIndex('idx_name', 'my_table', ['NAME'], true);
+$db->createIndex('my_table', 'idx_name', ['NAME'], null, \Bitrix\Main\DB\Connection::INDEX_UNIQUE);
 ```
 
 ### Создать первичный ключ для таблицы
@@ -214,7 +245,7 @@ $fields = $db->getTableFields('my_table');
 Использовать как итератор:
 
 ```php
-$result = $connection->query('SELECT * FROM b_user');
+$result = $db->query('SELECT * FROM b_user');
 foreach ($result as $row)
 {
     $id = $row['ID'];

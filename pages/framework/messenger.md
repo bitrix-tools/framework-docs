@@ -23,90 +23,103 @@ description: 'Очереди сообщений. Документация по B
 
 -  брокер — хранилище сообщений,
 
--  очередь — логическая группа сообщений, привязанная к обработчику.
+-  очередь — логическая группа сообщений, привязанная к обработчику,
+
+-  воркер — запускает обработчики настроенных очередей. Обработчик получает доступные сообщения из брокера и выполняет задачу.
+
+В режиме `web` система запускает воркер через [фоновые задачи](./background-jobs.md#фоновые-задачи) после отправки ответа пользователю. В режиме `cli` воркер запускает консольная команда `messenger:consume`.
 
 ## Быстрый старт
 
-Чтобы использовать очереди:
+Создайте сообщение и обработчик, настройте очередь и отправьте сообщение. Для проверки запустите обработку в консольном режиме и найдите запись в логе.
 
--  создайте класс сообщения,
-
--  создайте класс обработчика сообщения,
-
--  добавьте информацию об очереди в конфигурацию `.settings.php`.
-
-Дополнительно можно настроить сложную логику сообщений, переключить обработку на консольный скрипт и использовать свою таблицу для хранения сообщений.
+Для других сценариев можно настроить повторные попытки, отложить обработку и использовать свою таблицу для хранения сообщений.
 
 ### Пример настройки очереди сообщений
 
+Используйте установленный пользовательский модуль `vendor.module`. Классы разместите в его папке `lib/` по правилам [автозагрузки](./autoloading.md#разместить-классы-в-lib).
+
 #### 1\. Создать класс сообщения
 
-Сообщение должно поддерживать JSON-сериализацию.
+Класс `AbstractMessage` передает публичные свойства для JSON-сериализации и восстанавливает объект перед обработкой. Для полей типов `string`, `int`, `float`, `bool` и массивов таких значений переопределять методы `jsonSerialize()` и `createFromData()` не нужно. Имена параметров конструктора должны совпадать с именами сохраненных полей.
 
--  Используйте поля простых типов для автоматической сериализации: `string`, `int`, `float`, `bool`, `array`.
-
--  Реализуйте метод `jsonSerialize()`, если нужно передать объект. Метод вернет массив простых типов.
+Создайте файл `/local/modules/vendor.module/lib/Public/Message/MyMessage.php`:
 
 ```php
+<?php
+
+namespace Vendor\Module\Public\Message;
+
 use Bitrix\Main\Messenger\Entity\AbstractMessage;
-use Bitrix\Main\Messenger\Entity\MessageInterface;
 
 class MyMessage extends AbstractMessage
 {
     public function __construct(
-        public readonly string $text,  // string — допустимый тип, сериализуется автоматически
-        public readonly int $superId   // int — допустимый тип, сериализуется автоматически
-    ) {}
-
-    public function jsonSerialize(): mixed // метод вернет массив простых типов
+        public readonly string $text,
+        public readonly int $itemId
+    )
     {
-        return [
-            'text' => $this->text,
-            'superId' => $this->superId,
-        ];
-    }
-
-    public static function createFromData(array $data): MessageInterface
-    {
-        return new static(...$data);
     }
 }
 ```
+
+Поле `text` содержит текст сообщения, а `itemId` — идентификатор объекта, к которому оно относится.
+
+Если данные требуют собственного преобразования, переопределите `jsonSerialize()` для сохранения и `createFromData()` для восстановления объекта.
 
 #### 2\. Создать класс обработчика
 
-Обработчик получает сообщения из очереди и выполняет нужные действия.
+Обработчик получает сообщение и записывает его данные в лог. Создайте файл `/local/modules/vendor.module/lib/Internals/Messenger/Receiver/MyReceiver.php`:
 
 ```php
+<?php
+
+namespace Vendor\Module\Internals\Messenger\Receiver;
+
+use Bitrix\Main\Diag\LoggerFactory;
 use Bitrix\Main\Messenger\Entity\MessageInterface;
+use Bitrix\Main\Messenger\Internals\Exception\Receiver\UnprocessableMessageException;
 use Bitrix\Main\Messenger\Receiver\AbstractReceiver;
+use Vendor\Module\Public\Message\MyMessage;
 
 class MyReceiver extends AbstractReceiver
 {
-    /**
-     * @param MyMessage $message
-     */
     protected function process(MessageInterface $message): void
     {
-        $this->superNotifier->send($message->text);
+        if (!($message instanceof MyMessage))
+        {
+            throw new UnprocessableMessageException($message);
+        }
+
+        $logger = (new LoggerFactory())->createDefault();
+        $logger->info(
+            'Queue message: item {itemId}, text {text}',
+            [
+                'itemId' => $message->itemId,
+                'text' => $message->text,
+            ]
+        );
     }
 }
 ```
 
+Для файлового логирования задайте непустую константу `LOG_FILENAME` в общем файле `/local/php_interface/init.php`. Укажите абсолютный путь к файлу вне публичной папки сайта, доступный для записи пользователю PHP. Если константа уже задана, используйте существующий путь.
+
+Без `LOG_FILENAME` метод `createDefault()` возвращает `NullLogger`, который не сохраняет сообщения. Подробнее о настройке — в статье [Логгеры](../advanced/logger.md).
+
 #### 3\. Добавить конфигурацию в .settings.php
 
-Добавьте очередь в конфигурацию модуля — в `handler` укажите путь к классу обработчику.
+Добавьте секцию `messenger` в файл `/local/modules/vendor.module/.settings.php`. В параметре `handler` укажите полное имя созданного обработчика. Если файл уже содержит другие настройки, сохраните их:
 
 ```php
 <?php
 
 return [
-    ... // другие настройки, в том числе брокеров
     'messenger' => [
         'value' => [
             'queues' => [ // список очередей
                 'first_queue' => [ // очередь с именем 'first_queue'
-                    'handler' => \Bitrix\MyModule\Internals\Messenger\Receiver\MyReceiver::class,
+                    'handler' => \Vendor\Module\Internals\Messenger\Receiver\MyReceiver::class,
                 ],
             ],
         ],
@@ -115,16 +128,73 @@ return [
 ];
 ```
 
-Убедитесь, что в конфигурации есть настройки брокера. Подробнее в разделе [Конфигурация очередей](./messenger.md#settings).
+В глобальном файле `/bitrix/.settings.php` настройте брокер `default` и режим `cli`. Добавьте секцию в существующий массив настроек или дополните ее, если она уже есть:
+
+```php
+'messenger' => [
+    'value' => [
+        'run_mode' => 'cli',
+        'brokers' => [
+            'default' => [
+                'type' => 'db',
+                'params' => [
+                    'table' => \Bitrix\Main\Messenger\Internals\Storage\Db\Model\MessengerMessageTable::class,
+                ],
+            ],
+        ],
+    ],
+    'readonly' => true,
+],
+```
+
+{% note warning "" %}
+
+Режим `run_mode` действует на все очереди проекта. Если используется `web`, переключение на `cli` требует запуска консольного обработчика и для остальных очередей.
+
+{% endnote %}
+
+Подробнее — в разделе [Конфигурация очередей](./messenger.md#settings).
 
 #### 4\. Отправить сообщение
 
-Сообщение поступит в очередь и обработается в фоне.
+В коде сайта после подключения ядра подключите модуль и отправьте сообщение. Имя очереди в `send()` должно совпадать с ключом в конфигурации:
 
 ```php
+use Bitrix\Main\Loader;
+use Vendor\Module\Public\Message\MyMessage;
+
+Loader::requireModule('vendor.module');
+
 $message = new MyMessage('Мое первое сообщение!', 12345);
 $message->send('first_queue');
 ```
+
+Метод `send()` сохраняет сообщение через брокер. В режиме `cli` оно будет ждать запуска консольного обработчика.
+
+#### 5\. Запустить обработку и проверить результат
+
+Выполните команду из папки `/bitrix/` сайта. Для проверки ограничьте время работы десятью секундами:
+
+```bash prompt="$"
+$ php bitrix.php messenger:consume first_queue --time-limit 10
+```
+
+Откройте файл, указанный в `LOG_FILENAME`, и найдите сообщение `Queue message: item 12345, text Мое первое сообщение!`. Форматтер может добавлять к нему дату и другие данные. Если записи нет, проверьте настройки логирования, права на файл и совпадение имени очереди в конфигурации и вызове `send()`.
+
+### Создать классы через консоль
+
+Для создания классов можно использовать команды [`make:message` и `make:messagehandler`](./console-commands.md#генерация-кода). Они доступны с версии 25.900.0 главного модуля. Выполните команды из папки `/bitrix/` сайта для установленного модуля `vendor.module`:
+
+```bash prompt="$"
+$ php bitrix.php make:message My -m vendor.module -n
+$ php bitrix.php make:messagehandler My --handler-module=vendor.module --message-module=vendor.module -n
+```
+
+Первая команда создает класс `MyMessage`, вторая — `MyMessageHandler`. Параметр `-m` задает модуль сообщения, `--handler-module` — модуль обработчика, `--message-module` — модуль сообщения, а `-n` отключает интерактивные вопросы.
+
+Добавьте поля сообщения и код обработки в сгенерированные классы. В обработчике подключите класс сообщения через `use Vendor\Module\Public\Message\MyMessage;`.
+
+Генератор размещает обработчик в пространстве имен `Vendor\Module\Internals\Integration\Vendor\Module\MessageHandler`. Укажите полное имя `\Vendor\Module\Internals\Integration\Vendor\Module\MessageHandler\MyMessageHandler::class` в параметре `handler` конфигурации.
 
 ## Конфигурация очередей {#settings}
 
@@ -177,6 +247,7 @@ return [
             ],
         ],
         'readonly' => true,
+    ],
 ];
 ```
 
@@ -223,7 +294,7 @@ return [
         'value' => [
             'queues' => [
                 'google_section_sync' => [
-                    'broker' => 'calendar_db',
+                    'broker' => 'db_calendar',
                     'handler' => \Bitrix\Calendar\Synchronization\Internals\Messenger\Receiver\GoogleSectionReceiver::class,
                 ],
                 'google_event_sync' => [
@@ -292,13 +363,13 @@ return [
 
 Для каждой очереди можно указать в конфигурации параметр `retry_strategy` с настройками повторной обработки.
 
--  `max_retries` — максимальное количество попыток. По умолчанию — `3`.
+-  `max_retries` — максимальное количество попыток обработки, включая исходную попытку. По умолчанию — `3`.
 
 -  `delay` — базовая задержка между попытками в секундах. По умолчанию — `1`.
 
 -  `multiplier` — множитель задержки между попытками. По умолчанию — `2`.
 
--  `max_delay` — максимальное значение задержки между повторами в секундах. По умолчанию — `0`, то есть без ограничения.
+-  `max_delay` — максимальное значение задержки между повторами в секундах. Ограничивает задержку, но не отменяет повторные попытки. По умолчанию — `0`, то есть без ограничения.
 
 #### Пример конфигурации
 
@@ -323,13 +394,15 @@ return [
 ];
 ```
 
--  Первая повторная попытка выполнится через 5 секунд.
+-  Первая повторная попытка станет доступна через 10 секунд после ошибки. Задержка равна `delay * multiplier`, то есть `5 * 2`.
 
--  Вторая — через 10 секунд.
+-  Вторая — через 20 секунд после следующей ошибки.
 
--  Третья — через 20 секунд, далее задержка будет увеличиваться с учетом `multiplier`.
+-  Третья — через 40 секунд. Далее задержка увеличивается с учетом `multiplier`.
 
--  Шестая попытка не выполнится, так как через 300 секунд сработает ограничение `max_delay`.
+-  Шестая и последующие повторные попытки станут доступны через 300 секунд после ошибки. Расчетная задержка для шестого повтора равна `5 * 2 ** 6 = 320` секундам, поэтому применяется ограничение `max_delay`.
+
+При значении `max_retries = 10` обработчик может выполнить исходную попытку и до девяти повторов для обычных исключений. Если все десять попыток завершатся ошибкой, брокер удалит сообщение из очереди. Для исключения `RecoverableMessageException` ограничение количества попыток не действует.
 
 ### Своя таблица для сообщений
 
@@ -457,21 +530,24 @@ class SomeReceiver extends AbstractReceiver
 
 ### Пример обработчика сообщений в консольном режиме
 
-В примере обработчик `SomeReceiver` используется для конкретной очереди. При получении сообщения он выводит его `ID`. В `cli`\-режиме воркер нужно запускать вручную. Он проверяет очередь в цикле и передает сообщения обработчику.
+Создайте обработчик `SomeReceiver`, который выводит данные полученного сообщения в формате JSON:
 
 ```php
-class SomeReceiver extends \Bitrix\Main\Messenger\Receiver\AbstractReceiver
+use Bitrix\Main\Messenger\Entity\MessageInterface;
+use Bitrix\Main\Messenger\Receiver\AbstractReceiver;
+
+class SomeReceiver extends AbstractReceiver
 {
     protected function process(MessageInterface $message): void
     {
-        echo "Message {$message->getId()} received\n";
+        echo json_encode($message, JSON_THROW_ON_ERROR) . PHP_EOL;
     }
 }
-
-// Для cli-режима нужно запускать воркер вручную:
-$worker = new \Bitrix\Main\Messenger\Internals\Worker();
-$worker->process();
 ```
+
+Зарегистрируйте обработчик для нужной очереди в параметре `handler` и запустите команду `messenger:consume` в режиме `cli`.
+
+Метод `Worker::process()` выполняет один проход по настроенным очередям. Цикл повторных проходов и паузы между ними организует команда `messenger:consume`. Для постоянной обработки в режиме `cli` используйте эту команду.
 
 ### Собственная реализация
 

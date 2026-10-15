@@ -69,7 +69,7 @@ $helper->convertToDbString(123); // '123'
 Обрезать строку до нужной длины:
 
 ```php
-$helper->convertToDbString('Длинная строка', 10); // 'Длинная и '
+$helper->convertToDbString('Длинная строка', 10); // 'Длинная ст'
 ```
 
 Конвертировать для текстовых полей. Аналогично `convertToDbString`, но без указания длины:
@@ -374,11 +374,14 @@ SqlExpression использует специальные метки — пле�
 
 -  `?#` — имя столбца.
 
--  `?v` — подстановка значений VALUES для запросов типа INSERT и UPDATE.
+-  `?v` — значение столбца из добавляемой строки при обновлении существующей записи.
 
 Создать новый объект:
 
 ```php
+use Bitrix\Main\Application;
+use Bitrix\Main\DB\SqlExpression;
+
 $sql = new SqlExpression('SELECT * FROM b_user');
 $result = Application::getConnection()->query($sql);
 ```
@@ -393,6 +396,9 @@ echo (string)$sql;    // Неявное преобразование в стро
 Создать новое SQL-выражение с использованием SqlExpression для безопасного формирования запроса:
 
 ```php
+use Bitrix\Main\DB\SqlExpression;
+use Bitrix\Main\Type\Date;
+
 $sql = new SqlExpression(
     // Шаблон SQL-запроса с плейсхолдерами для безопасной подстановки параметров
     'SELECT * FROM ?# WHERE (ID = ?i OR ID > ?f) AND `NAME` = ?s AND DATE_REGISTER > ?',
@@ -402,7 +408,7 @@ $sql = new SqlExpression(
     1,              // ?i — целочисленное значение (ID = 1)
     1.23,           // ?f — число с плавающей точкой (ID > 1.23)
     'admin',        // ?s — строковое значение (NAME = 'admin', с экранированием)
-    new \Bitrix\Main\Type\Date('01.01.2024') // ? — объект даты (DATE_REGISTER > '2024-01-01')
+    new Date('01.01.2024') // ? — объект даты (DATE_REGISTER > '2024-01-01')
 );
 ```
 
@@ -412,9 +418,26 @@ $sql = new SqlExpression(
 SELECT * FROM `b_user` WHERE (ID = 1 OR ID > 1.23) AND `NAME` = 'admin' AND DATE_REGISTER > '2024-01-01'
 ```
 
+Чтобы при вставке обновить существующую запись значением из добавляемой строки, передайте в `?v` имя столбца. В MySQL используйте такой SQL-фрагмент в части `ON DUPLICATE KEY UPDATE` запроса `INSERT`:
+
+```php
+use Bitrix\Main\DB\SqlExpression;
+
+$sql = new SqlExpression('?# = ?v', 'CNT', 'CNT');
+echo $sql->compile();
+```
+
+**Пример.** Результат компиляции для MySQL:
+
+```sql
+`CNT` = VALUES(`CNT`)
+```
+
 Передача `NULL` преобразует в `NULL` все плейсхолдеры, кроме `?#`:
 
 ```php
+use Bitrix\Main\DB\SqlExpression;
+
 $sql = new SqlExpression(
     'SELECT * FROM ?# WHERE ID = ?i OR NAME = ?',
     null,
@@ -432,13 +455,17 @@ SELECT * FROM `` WHERE ID = NULL OR NAME = NULL
 Для дат используйте базовый плейсхолдер `?` для автоматического форматирования. Для строкового представления — `?s`:
 
 ```php
+use Bitrix\Main\DB\SqlExpression;
+use Bitrix\Main\Type\Date;
+use Bitrix\Main\Type\DateTime;
+
 $sql = new SqlExpression(
     'WHERE (DATE = ? OR DATE_TIME = ?)
      AND (DATE = ?s OR DATE_TIME = ?s)',
-    new \Bitrix\Main\Type\Date('01.01.2024'),
-    new \Bitrix\Main\Type\DateTime('01.01.2024'),
-    new \Bitrix\Main\Type\Date('01.01.2024'),
-    new \Bitrix\Main\Type\DateTime('01.01.2024')
+    new Date('01.01.2024'),
+    new DateTime('01.01.2024'),
+    new Date('01.01.2024'),
+    new DateTime('01.01.2024')
 );
 ```
 

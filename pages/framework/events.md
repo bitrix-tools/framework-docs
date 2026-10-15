@@ -210,7 +210,7 @@ final class TicketService
         return $result;
     }
 
-    private function canClose(int $ticketId, string $closeReason): Error
+    private function canClose(int $ticketId, string $closeReason): ?Error
     {
         $event = new BeforeTicketCloseEvent($ticketId, $closeReason);
         $event->send();
@@ -252,7 +252,7 @@ final class BeforeTicketCloseEventHandler
                 parameters: [
                     'message' => \Bitrix\Main\Localization\Loc::getMessage('TICKET_HAS_OPEN_TASKS'),
                 ],
-                moduleId: 'my.taskTracker',
+                moduleId: 'my.tasktracker',
             );
         }
 
@@ -267,10 +267,10 @@ final class BeforeTicketCloseEventHandler
 
 ```php
 \Bitrix\Main\EventManager::getInstance()->registerEventHandler(
-    fromModule: 'my.helpdesk',
+    fromModuleId: 'my.helpdesk',
     eventType: 'BeforeTicketClose',
     toModuleId: 'my.helpdesk',
-    toClass: My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\TicketClosedEventHandler::class,
+    toClass: My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\BeforeTicketCloseEventHandler::class,
     toMethod: 'handle',
 );
 ```
@@ -281,10 +281,10 @@ final class BeforeTicketCloseEventHandler
 
 ```php
 \Bitrix\Main\EventManager::getInstance()->unRegisterEventHandler(
-    fromModule: 'my.helpdesk',
+    fromModuleId: 'my.helpdesk',
     eventType: 'BeforeTicketClose',
     toModuleId: 'my.helpdesk',
-    toClass: My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\TicketClosedEventHandler::class,
+    toClass: My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\BeforeTicketCloseEventHandler::class,
     toMethod: 'handle',
 );
 ```
@@ -293,17 +293,82 @@ final class BeforeTicketCloseEventHandler
 
 ```php
 \Bitrix\Main\EventManager::getInstance()->addEventHandler(
-    fromModule: 'my.helpdesk',
+    fromModuleId: 'my.helpdesk',
     eventType: 'BeforeTicketClose',
-    callback: '\My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\TicketClosedEventHandler::handle',
+    callback: '\My\Helpdesk\Internals\Integration\My\Helpdesk\EventHandler\BeforeTicketCloseEventHandler::handle',
 );
 ```
 
-{% note warning "" %}
+Метод `addEventHandler` добавляет обработчик только на время текущего запроса и не сохраняет регистрацию в базе данных. Для обработчиков модуля используйте постоянную регистрацию при установке. Для кода конкретного проекта можно регистрировать обработчики в `init.php` при каждом подключении пролога.
 
-Не рекомендуется использовать динамическую регистрацию. Она усложняет отладку и анализ системы. Постоянная регистрация в одном месте позволяет легко найти все обработчики событий.
+### Подключить системное событие в init.php
 
-{% endnote %}
+Добавьте регистрацию в файл `/local/php_interface/init.php`. Ядро подключает его до события `OnPageStart`. Подробнее о назначении файла и порядке подключения — в разделе [Файл init.php](request-lifecycle.md#файл-initphp).
+
+В примере обработчик добавляет HTTP-заголовок `X-Project` к ответу при начале обработки запроса. Событие `OnPageStart` не передает аргументы обработчику:
+
+```php
+<?php
+
+use Bitrix\Main\Context;
+use Bitrix\Main\EventManager;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    return;
+}
+
+EventManager::getInstance()->addEventHandler(
+    'main',
+    'OnPageStart',
+    static function (): void
+    {
+        $response = Context::getCurrent()->getResponse();
+        $response->addHeader('X-Project', 'helpdesk');
+    },
+);
+```
+
+Для событий классического API с аргументами по ссылке используйте метод `addEventHandlerCompatible`. Например, добавьте в тот же файл обработчик `OnBeforeIBlockElementAdd`, чтобы удалить пробелы по краям названия элемента перед добавлением:
+
+```php
+\Bitrix\Main\EventManager::getInstance()->addEventHandlerCompatible(
+    'iblock',
+    'OnBeforeIBlockElementAdd',
+    static function (array &$fields): bool
+    {
+        $fields['NAME'] = trim((string)($fields['NAME'] ?? ''));
+
+        if ($fields['NAME'] === '')
+        {
+            global $APPLICATION;
+
+            $APPLICATION->ThrowException('Укажите название элемента.');
+
+            return false;
+        }
+
+        return true;
+    },
+);
+```
+
+Параметр `$fields` содержит поля нового элемента. Знак `&` сохраняет изменения в исходном массиве. Если после удаления пробелов название пустое, метод `ThrowException` задает сообщение об ошибке, а возврат `false` отменяет добавление. Этот обработчик действует для всех инфоблоков. Чтобы ограничить его одним инфоблоком, проверяйте поле `IBLOCK_ID` до изменения названия.
+
+## Основные системные события
+
+Выбирайте событие по операции и моменту, когда нужно выполнить код. Для событий классического API используйте режим совместимости, а для событий ORM — класс `Bitrix\Main\ORM\EventManager` и объект `Bitrix\Main\ORM\Event`.
+
+| Событие | Модуль или источник | Когда срабатывает | Для чего использовать |
+| --- | --- | --- | --- |
+| [OnPageStart](https://dev.1c-bitrix.ru/api_help/main/events/onpagestart.php) | `main` | При начале выполняемой части пролога после подключения `init.php` | Выполнить код в начале обработки запроса |
+| [OnBeforeIBlockElementAdd](https://dev.1c-bitrix.ru/api_help/iblock/events/onbeforeiblockelementadd.php) | `iblock` | При проверке полей перед добавлением элемента через `CIBlockElement::Add` | Изменить поля элемента или запретить добавление |
+| [OnAfterUserAdd](https://dev.1c-bitrix.ru/api_help/main/events/onafteruseradd.php) | `main` | При завершении попытки добавления пользователя через `CUser::Add` | Выполнить действие с учетом результата в поле `RESULT`, событие вызывается и при ошибке |
+| [OnBeforeAdd, OnBeforeUpdate, OnBeforeDelete](../orm/entity-operations.md#events) | Класс ORM | При подготовке записи к добавлению, обновлению или удалению | Проверить данные или остановить операцию, а перед добавлением и обновлением — изменить поля |
+| [OnAdd, OnUpdate, OnDelete](../orm/entity-operations.md#events) | Класс ORM | При выполнении операции перед SQL-запросом | Выполнить сопутствующую логику перед записью в базу данных |
+| [OnAfterAdd, OnAfterUpdate, OnAfterDelete](../orm/entity-operations.md#events) | Класс ORM | При завершении успешной операции с записью | Выполнить связанное действие после изменения данных |
+
+События ORM относятся к конкретному классу и операции с его данными. Они не заменяют события классического API, например `OnBeforeIBlockElementAdd`. Примеры регистрации и обработки результатов ORM приведены в разделе [События](../orm/entity-operations.md#events).
 
 ## Старые события и режим совместимости
 
@@ -328,7 +393,7 @@ class OnBeforeUserAddEventHandler
 
 ```php
 \Bitrix\Main\EventManager::getInstance()->registerEventHandlerCompatible(
-    fromModule: 'main',
+    fromModuleId: 'main',
     eventType: 'OnBeforeUserAdd',
     toModuleId: 'my.testing',
     toClass: My\Testing\Internals\Integration\Main\EventHandler\OnBeforeUserAddEventHandler::class,

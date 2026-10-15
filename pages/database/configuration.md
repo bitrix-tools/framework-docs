@@ -5,6 +5,12 @@ description: 'Конфигурация. Работа с базой данных 
 
 Конфигурация подключения к базе данных в Bitrix Framework хранится в файле `/bitrix/.settings.php` в секции `connections`.
 
+Файл `/bitrix/php_interface/dbconn.php` относится к классическому ядру. Ядро продолжает подключать его при загрузке для совместимости, например для констант и параметров отладки `$DBDebug` и `$DBDebugToFile`. Параметры подключения для `Application::getConnection()` и ORM задавайте в секции `connections` файла `.settings.php`.
+
+Настройки подключения в `dbconn.php` не заменяют секцию `connections`. При загрузке ядро сбрасывает переменные `$DBHost`, `$DBName`, `$DBLogin` и `$DBPassword` из `dbconn.php`. Сохраняйте сам файл для совместимости. Подробнее о назначении обоих файлов и размещении конфигурации в `/local/` читайте в статье [Конфигурация ядра](../framework/settings.md).
+
+Задайте параметры основного соединения `default` в секции `connections`:
+
 ```php
 'connections' => [
     'value' => [
@@ -107,6 +113,34 @@ $db = \Bitrix\Main\Application::getConnection('default');
 $redis = \Bitrix\Main\Application::getConnection('redis');
 ```
 
+## Использовать дополнительное соединение в ORM
+
+Метод `DataManager::getConnectionName()` возвращает имя соединения для ORM-класса. По умолчанию он возвращает `default`. Чтобы работать с другой базой данных, добавьте SQL-соединение в секцию `connections` файла `.settings.php` и переопределите метод в своем ORM-классе.
+
+Добавьте соединение `reporting` в массив `connections['value']` рядом с `default`:
+
+```php
+'reporting' => [
+    'className' => \Bitrix\Main\DB\MysqliConnection::class,
+    'host' => 'localhost',
+    'database' => 'reports',
+    'login' => 'reports_user',
+    'password' => '***',
+    'options' => 2,
+],
+```
+
+Внутри своего класса, который наследует `Bitrix\Main\ORM\Data\DataManager`, добавьте метод:
+
+```php
+public static function getConnectionName()
+{
+    return 'reporting';
+}
+```
+
+Имя `reporting` должно совпадать с ключом соединения в конфигурации. ORM будет выполнять запросы этого класса через соединение `reporting`. Подготовьте в выбранной базе таблицу и поля, которые описывают методы `getTableName()` и `getMap()` вашего класса. Вызов `Application::getConnection('reporting')` сам по себе не меняет соединение ORM-класса.
+
 ## Подключить key-value хранилище {#key-value}
 
 ### Memcache
@@ -189,6 +223,8 @@ $redis = \Bitrix\Main\Application::getConnection('redis');
 
 Класс подключения — `\Bitrix\Main\Data\RedisConnection`.
 
+Задайте параметры именованного соединения в секции `connections`. Для хранения сессий используйте секцию `session`, как в статье [Сессии](../framework/sessions.md). В текущем ядре обе секции используют параметр `readTimeout` для таймаута чтения. Обработчик сессий не использует ключ `read_timeout`.
+
 -  `host` — хост сервера. По умолчанию имеет значение `localhost`.
 
 -  `port` — порт сервера. По умолчанию имеет значение `6379`.
@@ -226,7 +262,7 @@ $redis = \Bitrix\Main\Application::getConnection('redis');
 
 {% note info "" %}
 
-Про варианты значений для параметров `serializer`, `persistent`, `failover`, `timeout`, `read_timeout` можно прочитать в официальной документации расширения `redis`.
+Про варианты значений для параметров `serializer`, `persistent`, `failover`, `timeout`, `readTimeout` можно прочитать в официальной документации расширения `redis`.
 
 {% endnote %}
 

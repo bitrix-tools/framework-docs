@@ -53,9 +53,11 @@ Redis поддерживает два подхода к организации �
 
 ### Как настроить Redis cluster в режиме Multi-Master
 
-1. Укажите все мастер-узлы в массиве `servers`.
+Настройте хранение сессий в секции `session` файла `/bitrix/.settings.php`. Подробнее о выборе обработчика читайте в статье [Сессии](../framework/sessions.md). Для именованного соединения в секции `connections` используйте настройки из статьи [Конфигурация](configuration.md#key-value).
 
-2. Задайте параметры кластера.
+1. Укажите все мастер-узлы в массиве `servers` обработчика `session['value']['handlers']['general']`.
+
+2. Задайте общие параметры кластера рядом с `servers`:
 
 ```php
 // bitrix/.settings.php
@@ -80,12 +82,12 @@ return [
                             'port' => 6379,
                             'host' => '127.0.0.3',
                         ],
-                        'serializer' => \Redis::SERIALIZER_IGBINARY,
-                        'persistent' => false,
-                        'failover' => \RedisCluster::FAILOVER_DISTRIBUTE,
-                        'timeout' => null,
-                        'read_timeout' => null,
                     ],
+                    'serializer' => \Redis::SERIALIZER_IGBINARY,
+                    'persistent' => false,
+                    'failover' => \RedisCluster::FAILOVER_DISTRIBUTE,
+                    'timeout' => null,
+                    'readTimeout' => null,
                 ],
             ],
         ]
@@ -101,9 +103,13 @@ return [
 
 -  `timeout` — задает время ожидания соединения в секундах,
 
--  `read_timeout` — задает время ожидания ответа после соединения в секундах.
+-  `readTimeout` — задает время ожидания ответа после соединения в секундах.
+
+Секция `session` задает обработчик хранения сессий, а секция `connections` — именованные соединения для вызова `Application::getConnection()`. В текущем ядре параметр таймаута чтения в обеих секциях называется `readTimeout`. Обработчик сессий не использует ключ `read_timeout`.
 
 ### Как настроить Redis cluster в режиме Master-Slave
+
+Задайте обработчик хранения сессий в секции `session` файла `/bitrix/.settings.php`, как в статье [Сессии](../framework/sessions.md).
 
 1. Укажите основной сервер, который будет обрабатывать записи.
 
@@ -138,7 +144,7 @@ Bitrix Framework предоставляет два способа взаимод
 /**
  * @var \Bitrix\Main\Data\RedisConnection $connection
  */
-$connection = \Bitrix\Main\Application::getConnection('my-redis');
+$connection = \Bitrix\Main\Application::getConnection('custom.redis');
 $connection->set('foo', 'bar');
 $connection->get('foo');
 
@@ -175,7 +181,7 @@ $resource->setnx('foo', 'bar');
         ],
         'custom2.memcached' => [
             'className' => \Bitrix\Main\Data\MemcachedConnection::class,
-            'port' => 6379,
+            'port' => 11211,
             'host' => '127.0.0.4',
         ],
     ],
