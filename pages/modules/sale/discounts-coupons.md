@@ -854,8 +854,8 @@ while ($discount = $discountIterator->Fetch())
 Чтобы рассчитать корзину без заказа, используйте метод `\Bitrix\Sale\Discount::buildFromBasket()`. Для предварительного расчета корзины создайте контекст покупателя, постройте объект скидок по корзине и выполните расчет.
 
 ```php
-// Обновляем цены и купоны перед расчетом
-$basket->refreshData(['PRICE', 'COUPONS']);
+// Пересчитываем товарные данные корзины перед расчетом
+$basket->refresh();
 
 // Создаем контекст покупателя, которому принадлежит корзина
 $context = new \Bitrix\Sale\Discount\Context\Fuser($basket->getFUserId(true));
@@ -909,8 +909,8 @@ if (!\Bitrix\Sale\DiscountCouponsManager::add($couponCode))
     throw new \RuntimeException('Не удалось добавить купон в расчет');
 }
 
-// Обновляем цены и купоны перед расчетом
-$basket->refreshData(['PRICE', 'COUPONS']);
+// Пересчитываем товарные данные корзины перед расчетом
+$basket->refresh();
 
 // Создаем контекст покупателя, которому принадлежит корзина
 $context = new \Bitrix\Sale\Discount\Context\Fuser($basket->getFUserId(true));
@@ -1229,7 +1229,7 @@ foreach ($coupons as $coupon)
 
 -  купон создан в том модуле, который участвует в расчете,
 
--  корзина обновлена через `refreshData(['PRICE', 'COUPONS'])` перед предварительным расчетом.
+-  корзина пересчитана через `refresh()` перед предварительным расчетом.
 
 ### Как округление влияет на итог
 

@@ -18,7 +18,7 @@ description: "Работа с корзиной. Создание, загрузк
 || Определить покупателя | `\Bitrix\Sale\Fuser::getId()` | Возвращает `FUSER_ID`, к которому привязана корзина текущего посетителя ||
 || Загрузить или создать корзину | `\Bitrix\Sale\Basket::loadItemsForFUser()` или `\Bitrix\Sale\Basket::create()` | Код получает объект корзины для сайта ||
 || Добавить или изменить позицию | `Basket::createItem()`, `BasketItem::setField()`, `BasketItem::setFields()` | В объекте корзины появляется новая строка или меняются поля существующей строки ||
-|| Пересчитать товарные данные | `Basket::refresh()` или `Basket::refreshData()` | Корзина получает у провайдера каталога цену, доступность, вес, НДС и другие данные позиции ||
+|| Пересчитать товарные данные | `Basket::refresh()` | Корзина получает у провайдера каталога цену, доступность, вес, НДС и другие данные позиции ||
 || Сохранить изменения | `Basket::save()` | Записывает изменения в таблицы модуля `sale` и возвращает объект результата ||
 |#
 
@@ -266,7 +266,7 @@ $basketItem = $basketResult->getData()['BASKET_ITEM'];
 
 Метод возвращает объект результата. Добавленная позиция доступна в данных результата по ключу `BASKET_ITEM`.
 
-После `addProductToBasket()` не нужно отдельно вызывать `refreshData()` для добавленной позиции. Метод уже получает данные товара через каталог. Сохраните корзину через `save()`, чтобы записать результат в базу.
+После `addProductToBasket()` не нужно отдельно вызывать `refresh()` для добавленной позиции. Метод уже получает данные товара через каталог. Сохраните корзину через `save()`, чтобы записать результат в базу.
 
 По умолчанию метод ищет в корзине существующую позицию с тем же товаром и тем же набором свойств. Если позиция найдена, метод увеличивает ее количество. Чтобы всегда создавать отдельную строку, передайте опцию `USE_MERGE => 'N'`.
 
@@ -319,7 +319,7 @@ if (!$saveResult->isSuccess())
 
 -  `PRODUCT_PROVIDER_CLASS` — класс провайдера, который вернет цену, доступность, вес, НДС и другие товарные данные.
 
-Перед сохранением пересчитайте позицию. Вызов `refreshData([], $basketItem)` обновляет данные одной позиции. Без второго параметра метод пересчитает всю корзину.
+Перед сохранением пересчитайте позицию. Метод `refresh()` со стратегией `RefreshFactory::createSingle()` обновляет данные одной позиции по ее коду в корзине. Без аргумента метод `refresh()` пересчитает всю корзину.
 
 ```php
 $siteId = 's1'; // идентификатор сайта
@@ -341,7 +341,9 @@ if (!$setFieldsResult->isSuccess())
     throw new \RuntimeException(implode('; ', $setFieldsResult->getErrorMessages()));
 }
 
-$refreshResult = $basket->refreshData([], $basketItem);
+$refreshResult = $basket->refresh(
+    \Bitrix\Sale\Basket\RefreshFactory::createSingle($basketItem->getBasketCode())
+);
 
 if (!$refreshResult->isSuccess())
 {
@@ -449,7 +451,9 @@ if (!$quantityResult->isSuccess())
     throw new \RuntimeException(implode('; ', $quantityResult->getErrorMessages()));
 }
 
-$refreshResult = $basket->refreshData([], $basketItem);
+$refreshResult = $basket->refresh(
+    \Bitrix\Sale\Basket\RefreshFactory::createSingle($basketItem->getBasketCode())
+);
 
 if (!$refreshResult->isSuccess())
 {
@@ -994,7 +998,7 @@ if (isset($discountData['BASKET_ITEMS']))
 
 Перед созданием заказа пересчитайте корзину. Код обновит цену, доступность, остаток, НДС и другие данные, которые могли измениться после добавления товара.
 
-В большинстве случаев вызовите `$basket->refreshData()`. Метод пересчитает все позиции через провайдера. Метод `RefreshFactory` пригодится, когда нужна явная стратегия: полный пересчет или пересчет одной строки по коду корзины.
+В большинстве случаев вызовите `$basket->refresh()` без аргумента. Метод пересчитает все позиции через провайдера. Класс `RefreshFactory` создает стратегию пересчета явно: полный пересчет или пересчет одной строки по коду корзины.
 
 Для полного пересчета подставьте:
 
@@ -1050,7 +1054,7 @@ $basket = \Bitrix\Sale\Basket::loadItemsForFUser(
     $siteId
 );
 
-$refreshResult = $basket->refreshData();
+$refreshResult = $basket->refresh();
 
 if (!$refreshResult->isSuccess())
 {
@@ -1070,7 +1074,13 @@ if (!$basketResult->isSuccess())
 
 После этого заполните тип плательщика, свойства, оплату и отгрузку. Полный сценарий оформления смотрите в статье [Создание заказа](./order-create.md).
 
-Если нужно пересчитать одну строку, используйте `RefreshFactory::createSingle($basketItem->getBasketCode())` или `refreshData([], $basketItem)`.
+Чтобы пересчитать одну строку, передайте в `refresh()` стратегию `RefreshFactory::createSingle($basketItem->getBasketCode())`.
+
+{% note warning "" %}
+
+Метод `refreshData()` устарел, но продолжает работать и передает выполнение в `refresh()`. Если во втором параметре передана позиция, метод пересчитывает только ее, иначе — всю корзину. Первый параметр со списком полей метод не использует. В новом коде вызывайте `refresh()`.
+
+{% endnote %}
 
 {% note info "" %}
 
@@ -1094,7 +1104,7 @@ if (!$basketResult->isSuccess())
 || `OnSaleBasketItemDeleted` | После удаления позиции при сохранении корзины | Массив значений удаленной позиции ||
 |#
 
-Обработчики событий сохранения и пересчета могут вернуть ошибочный `\Bitrix\Main\EventResult`. В таком случае `save()`, `refresh()` или `refreshData()` вернет ошибку в объекте результата. В коде проекта всегда проверяйте `isSuccess()` после этих методов.
+Обработчики событий сохранения и пересчета могут вернуть ошибочный `\Bitrix\Main\EventResult`. В таком случае `save()` или `refresh()` вернет ошибку в объекте результата. В коде проекта всегда проверяйте `isSuccess()` после этих методов.
 
 Например, обработчик `OnSaleBasketItemBeforeSaved` может остановить сохранение позиции с количеством больше десяти.
 
