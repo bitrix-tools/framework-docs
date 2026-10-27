@@ -30,14 +30,14 @@ description: 'Создание компонента. Пошаговое руко
 ├── .description.php        // Описание компонента
 ├── .parameters.php         // Параметры компонента
 ├── class.php               // Логика компонента
-├── templates/
+└── templates/
 │   └── .default/
-│       ├── template.php    // Шаблон вывода
-│       ├── script.js       // Логика для карточки
-│       └── style.css       // Стили карточки
-└── lang/
-    └── ru/
-        └── messages.php    // Локализация
+│       ├── lang/
+│       │   └── ru/
+│       │       └── template.php // Локализация шаблона
+│       ├── template.php          // Шаблон вывода
+│       ├── script.js             // Логика для карточки
+│       └── style.css             // Стили карточки
 ```
 
 {% note warning "" %}
@@ -69,7 +69,7 @@ $arComponentDescription = [
 
 Файл `.parameters.php` содержит массив `$arComponentParameters`, который описывает входные параметры компонента. Добавьте в массив группу `USER_CARD` и два параметра:
 
--  `USER_ID` — числовой параметр с идентификатором пользователя,
+-  `USER_ID` — текстовое поле для идентификатора пользователя,
 
 -  `SHOW_EMAIL` — чекбокс, который определяет, показывать ли email.
 
@@ -87,7 +87,7 @@ $arComponentParameters = [
     'PARAMETERS' => [
         'USER_ID' => [
             'NAME' => 'Идентификатор пользователя',
-            'TYPE' => 'NUMBER',
+            'TYPE' => 'STRING',
             'PARENT' => 'USER_CARD',
         ],
         'SHOW_EMAIL' => [
@@ -102,11 +102,7 @@ $arComponentParameters = [
 
 ### Файл class.php
 
-Файл `class.php` — основной файл логики компонента. Чтобы получить данные пользователя и передать их в шаблон, используйте методы:
-
--  `initResult()` — получает данные из базы,
-
--  `executeComponent()` — выполняет компонент и кеширует результаты.
+Файл `class.php` — основной файл логики компонента. Метод базового класса `executeComponent()` выполняет компонент и кеширует результат. В примере он вызывает вспомогательный приватный метод `initResult()`, который получает данные пользователя. Этот метод не входит в API `CBitrixComponent`, его нужно создать в классе компонента.
 
 ```php
 <?php
@@ -206,9 +202,7 @@ class UserCardComponent extends CBitrixComponent
 
 {% note warning "" %}
 
-Вывод данных через `<?= $arResult['NAME'] ?>` безопасен и не приведет к XSS или HTML-инъекциям. Данные в массивах `$arParams` и `$arResult` экранированы и подготовлены для вывода.
-
-Есть ряд исключений для типов данных. Подробнее в статье [Компоненты](./../framework/components.md).
+Значения массива `$arResult` автоматически не экранируются. Перед выводом строковых значений в HTML применяйте функцию `htmlspecialcharsbx`, чтобы предотвратить XSS и HTML-инъекции. Подробнее о массивах `$arParams` и `$arResult` читайте в статье [Компоненты](./../framework/components.md).
 
 {% endnote %}
 
@@ -232,20 +226,20 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
     <div class="my-user-card__avatar">
         <img
             class="js-my-user-card-avatar-show-in-new-page"
-            src="<?= $arResult['PERSONAL_PHOTO_SRC'] ?>"
-            alt="<?= $arResult['NAME'] ?>"
+            src="<?= htmlspecialcharsbx($arResult['PERSONAL_PHOTO_SRC']) ?>"
+            alt="<?= htmlspecialcharsbx($arResult['NAME']) ?>"
         >
     </div>
     <?php endif; ?>
 
     <div class="my-user-card__info">
         <h2 class="my-user-card__name">
-            <?= $arResult['NAME'] ?>
+            <?= htmlspecialcharsbx($arResult['NAME']) ?>
         </h2>
         <?php if ($arParams['SHOW_EMAIL'] === 'Y'): ?>
             <p class="my-user-card__email">
                 <span><?= Loc::getMessage('USER_CARD_EMAIL_LABEL') ?></span>
-                <span><?= $arResult['EMAIL'] ?></span>
+                <span><?= htmlspecialcharsbx($arResult['EMAIL']) ?></span>
             </p>
         <?php endif; ?>
     </div>
@@ -295,9 +289,9 @@ BX.ready(() => {
 }
 ```
 
-### Файл messages.php
+### Файл templates/.default/lang/ru/template.php
 
-Файл `/lang/ru/messages.php` содержит переводы текстов, которые используются в компоненте. Локализация нужна для поддержки разных языков.
+Файл `/templates/.default/lang/ru/template.php` содержит переводы текстов из шаблона. Имя языкового файла совпадает с именем исходного файла, а путь повторяет его расположение относительно папки компонента. Локализация нужна для поддержки разных языков.
 
 ```php
 <?php

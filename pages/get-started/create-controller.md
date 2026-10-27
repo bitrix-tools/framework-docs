@@ -3,7 +3,7 @@ title: Создание контроллера
 description: 'Создание контроллера. Пошаговое руководство по началу работы с Bitrix: установка, структура проектов и базовые принципы.'
 ---
 
-Контроллер в Bitrix Framework — это PHP-класс, который обрабатывает AJAX-запросы от браузера. Он получает данные, выполняют бизнес-логику и формирует ответ.
+Контроллер в Bitrix Framework — это PHP-класс, который обрабатывает AJAX-запросы от браузера. Он получает данные, выполняет бизнес-логику и формирует ответ.
 
 В статье приведен пример, как в компонент `my:user.card` добавить функционал лайков. Для этого создадим контроллер, который будет:
 
@@ -85,6 +85,8 @@ BX.ajax.runAction('my:module.User.like', { /* данные */ });
 
 -  `/lib/Controller/User.php` — для описания контроллера.
 
+Ниже приведена полная структура модуля после добавления контроллера. Регистр каталогов `Controller` и `Services` соответствует частям пространств имен `My\Module\Controller` и `My\Module\Services`.
+
 ```
 /local/modules/my.module/
 ├── install/
@@ -98,11 +100,13 @@ BX.ajax.runAction('my:module.User.like', { /* данные */ });
 │   │           │   └── .default/
 │   │           │       ├── template.php
 │   │           │       ├── script.js
-│   │           │       └── style.css
-│   │           └── lang/
-│   │               └── ru/
-│   │                   └── messages.php
+│   │           │       ├── style.css
+│   │           │       └── lang/
+│   │           │           └── ru/
+│   │           │               └── template.php
 │   ├── index.php                   // Файл установки
+│   ├── step.php                    // Экран результата установки
+│   ├── unstep.php                  // Экран результата удаления
 │   └── version.php                 // Версия модуля
 ├── lib/
 │   ├── Controller/
@@ -111,9 +115,9 @@ BX.ajax.runAction('my:module.User.like', { /* данные */ });
 │       └── LikeService.php         // Сервис для бизнес-логики
 ├── lang/
 │   └── ru/
-│       ├── install/
-│       │   └── index.php           // Языковой файл установки
-│       └── messages.php            // Общие языковые файлы
+│       └── install/
+│           └── index.php           // Языковой файл установки
+├── include.php                     // Файл подключения модуля
 └── .settings.php                   // Настройка пространства имен контроллеров
 ```
 
@@ -135,6 +139,7 @@ BX.ajax.runAction('my:module.User.like', { /* данные */ });
 
 ```php
 <?php
+
 namespace My\Module\Services;
 
 use Bitrix\Main\ArgumentException;
@@ -144,11 +149,11 @@ use Bitrix\Main\Web\Json;
 
 class LikeService
 {
-    private const COOKIE_NAME = 'liked_users';
+    public const COOKIE_NAME = 'liked_users';
 
     public function isLiked(int $userId): bool
     {
-        return in_array($userId, $this->getLikedUsersIds());
+        return in_array($userId, $this->getLikedUsersIds(), true);
     }
 
     public function likeUser(int $userId): void
@@ -157,7 +162,7 @@ class LikeService
         $likedUsers[] = $userId;
 
         $this->setLikedUsersIds(
-            array_unique($likedUsers)
+            array_values(array_unique($likedUsers))
         );
     }
 
@@ -166,7 +171,7 @@ class LikeService
         $likedUsers = array_filter($this->getLikedUsersIds(), static fn($i) => (int)$i !== $userId);
 
         $this->setLikedUsersIds(
-            array_unique($likedUsers)
+            array_values(array_unique($likedUsers))
         );
     }
 
@@ -186,7 +191,7 @@ class LikeService
                 return [];
             }
 
-            return $value;
+            return array_map('intval', $value);
         }
         catch (ArgumentException)
         {
@@ -200,7 +205,7 @@ class LikeService
             new Cookie(
                 self::COOKIE_NAME,
                 Json::encode($likedUsers),
-                time() + 60 * 60 * 24 * 30 // 30 days
+                time() + 60 * 60 * 24 * 30 // 30 дней
             )
         );
     }
@@ -221,6 +226,7 @@ class LikeService
 
 ```php
 <?php
+
 namespace My\Module\Controller;
 
 use Bitrix\Main\Engine\Controller;
@@ -254,8 +260,8 @@ class User extends Controller
     /**
      * Действие для обработки лайков
      *
-     * @param  LikeService $service
-     * @param  int         $likedUserId
+     * @param LikeService $service
+     * @param int $likedUserId
      *
      * @return array|null
      */
@@ -292,9 +298,20 @@ class User extends Controller
 
 Компонент `my:user.card` был создан [ранее](./create-component.md). Чтобы показывать информацию о лайках, внесите изменения в файлы компонента.
 
+Пути ниже указаны относительно папки модуля `/local/modules/my.module/`. Если модуль уже установлен, после правок обновите рабочую копию компонента по инструкции [Как разместить компонент на сайте](#как-разместить-компонент-на-сайте).
+
 ### Шаблон template.php
 
 В файле `/install/components/my/user.card/templates/.default/template.php` добавьте блок лайка с текстом Нравится.
+
+В файле `/install/components/my/user.card/templates/.default/lang/ru/template.php` добавьте к существующему переводу подписи email языковую фразу для текста лайка:
+
+```php
+<?php
+
+$MESS['USER_CARD_EMAIL_LABEL'] = 'E-mail:';
+$MESS['USER_CARD_LIKE_BUTTON'] = 'Нравится';
+```
 
 -  Атрибут `data-user-id` хранит идентификатор пользователя, карточку которого лайкают. Он нужен JavaScript.
 
@@ -304,7 +321,10 @@ class User extends Controller
 <?php
 use Bitrix\Main\Localization\Loc;
 
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
 /**
  * @var array $arParams
@@ -314,7 +334,9 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
  * @var CBitrixComponentTemplate $this
  */
 
-$additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text--liked' : '';
+$additionalUserCardContainers = $arResult['HAS_LIKE']
+    ? 'my-user-card__like-text--liked'
+    : '';
 ?>
 
 <div class="my-user-card">
@@ -322,31 +344,31 @@ $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text
     <div class="my-user-card__avatar">
         <img
             class="js-my-user-card-avatar-show-in-new-page"
-            src="<?= $arResult['PERSONAL_PHOTO_SRC'] ?>"
-            alt="<?= $arResult['NAME'] ?>"
+            src="<?= htmlspecialcharsbx($arResult['PERSONAL_PHOTO_SRC']) ?>"
+            alt="<?= htmlspecialcharsbx($arResult['NAME']) ?>"
         >
     </div>
     <?php endif; ?>
 
     <div class="my-user-card__info">
         <h2 class="my-user-card__name">
-            <?= $arResult['NAME'] ?>
+            <?= htmlspecialcharsbx($arResult['NAME']) ?>
         </h2>
 
         <?php if ($arParams['SHOW_EMAIL'] === 'Y'): ?>
         <p class="my-user-card__email">
             <span><?= Loc::getMessage('USER_CARD_EMAIL_LABEL') ?></span>
-            <span><?= $arResult['EMAIL'] ?></span>
+            <span><?= htmlspecialcharsbx($arResult['EMAIL']) ?></span>
         </p>
         <?php endif; ?>
     </div>
-    <?php if ($USER->IsAuthorized()): ?>
+    <?php if ($arResult['IS_AUTHORIZED']): ?>
     <div class="my-user-card__like-container">
         <span
             class="my-user-card__like-text js-my-user-card-like <?= $additionalUserCardContainers ?>"
-            data-user-id="<?= $arParams['USER_ID'] ?>"
+            data-user-id="<?= (int)$arParams['USER_ID'] ?>"
         >
-            Нравится
+            <?= Loc::getMessage('USER_CARD_LIKE_BUTTON') ?>
         </span>
     </div>
     <?php endif; ?>
@@ -361,25 +383,26 @@ $additionalUserCardContainers = $arResult['HAS_LIKE'] ? 'my-user-card__like-text
 BX.ready(() => {
     // Обработка клика на аватар
     document.querySelectorAll('.js-my-user-card-avatar-show-in-new-page').forEach((item) => {
-        BX.Event.bind(item, 'click', (e) => {
+        BX.Event.bind(item, 'click', () => {
             window.open(item.src, '_blank');
         });
     });
 
     // Обработка клика на текст "Нравится"
     document.querySelectorAll('.js-my-user-card-like').forEach((element) => {
-        BX.Event.bind(element, 'click', (e) => {
+        BX.Event.bind(element, 'click', () => {
             const userId = element.dataset.userId;
 
             // Отправляем AJAX-запрос к контроллеру
             BX.ajax.runAction(
                 'my:module.User.like',
                 {
-                    data: { likedUserId: userId }
+                    data: { likedUserId: userId },
                 }
             ).then((response) => {
                 // Успешный ответ: обновляем внешний вид
-                if (response.status === 'success') {
+                if (response.status === 'success')
+                {
                     if (response.data.liked)
                     {
                         element.classList.add('my-user-card__like-text--liked');
@@ -461,24 +484,35 @@ BX.ready(() => {
 
 -  в выборку пользователя добавьте поле `ID`,
 
--  в `arResult` добавьте проверку лайков `HAS_LIKE`,
+-  в `arResult` добавьте признак авторизации `IS_AUTHORIZED` и проверку лайков `HAS_LIKE`,
+
+-  в дополнительный идентификатор кеша добавьте признак авторизации и cookie с лайками,
 
 -  добавьте метод `isUserLiked()`, который проверяет лайк через `LikeService`.
 
+Персональные данные должны влиять на идентификатор кеша. Иначе в кеш попадут состояние лайка и признак авторизации первого посетителя, а остальные посетители увидят тот же результат.
+
+Класс `LikeService` не нужно регистрировать в настройках сервисов. В метод `get()` передается полное имя существующего класса, поэтому Service Locator создает его объект в режиме Autowire. Объект повторно используется только в рамках текущего HTTP-запроса. Состояние лайков между запросами сохраняет cookie, а не Service Locator.
+
 ```php
 <?php
+use Bitrix\Main\Context;
 use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Loader;
+use Bitrix\Main\UserTable;
 use My\Module\Services\LikeService;
 
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
 class UserCardComponent extends CBitrixComponent
 {
     /**
      * Подготавливаем входные параметры
      *
-     * @param  array $arParams
+     * @param array $arParams
      *
      * @return array
      */
@@ -489,14 +523,17 @@ class UserCardComponent extends CBitrixComponent
 
         return $arParams;
     }
+
     /**
      * Основной метод выполнения компонента
      *
      * @return void
      */
-
     public function executeComponent()
     {
+        /** @global CUser $USER */
+        global $USER;
+
         if (!Loader::includeModule('my.module'))
         {
             ShowError('Модуль my.module не установлен');
@@ -504,12 +541,19 @@ class UserCardComponent extends CBitrixComponent
             return;
         }
 
-        // кешируем результат, чтобы не делать постоянные запросы к базе
-        if ($this->startResultCache())
-        {
-           $this->initResult();
+        $additionalCacheId = [
+            'isAuthorized' => $USER->IsAuthorized(),
+            'likedUsers' => Context::getCurrent()
+                ->getRequest()
+                ->getCookie(LikeService::COOKIE_NAME),
+        ];
 
-            // в случае если ничего не найдено, отменяем кеширование
+        // Кешируем результат, чтобы не делать постоянные запросы к базе
+        if ($this->startResultCache(false, $additionalCacheId))
+        {
+            $this->initResult($additionalCacheId['isAuthorized']);
+
+            // Если ничего не найдено, отменяем кеширование
             if (empty($this->arResult))
             {
                 $this->abortResultCache();
@@ -517,6 +561,7 @@ class UserCardComponent extends CBitrixComponent
 
                 return;
             }
+
             $this->includeComponentTemplate();
         }
     }
@@ -524,9 +569,11 @@ class UserCardComponent extends CBitrixComponent
     /**
      * Инициализируем результат
      *
+     * @param bool $isAuthorized
+     *
      * @return void
      */
-    private function initResult(): void
+    private function initResult(bool $isAuthorized): void
     {
         $userId = (int)$this->arParams['USER_ID'];
         if ($userId < 1)
@@ -534,7 +581,7 @@ class UserCardComponent extends CBitrixComponent
             return;
         }
 
-        $user = \Bitrix\Main\UserTable::query()
+        $user = UserTable::query()
             ->setSelect([
                 'ID',
                 'NAME',
@@ -543,7 +590,7 @@ class UserCardComponent extends CBitrixComponent
             ])
             ->where('ID', $userId)
             ->fetch()
-            ;
+        ;
 
         if (empty($user))
         {
@@ -553,20 +600,21 @@ class UserCardComponent extends CBitrixComponent
         $this->arResult = [
             'NAME' => $user['NAME'],
             'EMAIL' => $user['EMAIL'],
+            'IS_AUTHORIZED' => $isAuthorized,
             'HAS_LIKE' => $this->isUserLiked((int)$user['ID']),
         ];
 
-        // получаем путь до аватарки, в случае если она указана
+        // Получаем путь до аватара, если он указан
         if (!empty($user['PERSONAL_PHOTO']))
         {
             $this->arResult['PERSONAL_PHOTO_SRC'] = \CFile::GetPath($user['PERSONAL_PHOTO']);
         }
     }
 
-     /**
+    /**
      * Проверяем, поставил ли текущий пользователь лайк
      *
-     * @return void
+     * @return bool
      */
     private function isUserLiked(int $userId): bool
     {
@@ -574,9 +622,7 @@ class UserCardComponent extends CBitrixComponent
          * @var LikeService $service
          */
 
-        // Используем ServiceLocator, а не new LikeService(),
-        // чтобы компонент и контроллер работали с одним состоянием:
-        // если контроллер изменил cookie — компонент сразу увидит изменения
+        // Service Locator автоматически создает объект по имени класса
         $service = ServiceLocator::getInstance()->get(LikeService::class);
 
         return $service->isLiked($userId);
@@ -618,7 +664,9 @@ return [
 
 2. Установите модуль *Мой модуль (my.module)*.
 
-3. Создайте страницу и разместите на ней компонент *Карточка пользователя*.
+   Если модуль уже установлен после предыдущей статьи, скопируйте содержимое папки `/local/modules/my.module/install/components/my/user.card/` в `/local/components/my/user.card/` с заменой файлов. Так вы обновите рабочую копию компонента без переустановки модуля. Распаковка архива или изменение файлов в папке установки модуля сами по себе рабочую копию не обновляют.
+
+3. Откройте страницу с компонентом из предыдущей статьи или создайте страницу и разместите на ней компонент *Карточка пользователя*.
 
 После настройки компонента авторизованные пользователи увидят текст «Нравится» в карточке. Изначально текст будет серым, но, если поставить лайк, цвет изменится на синий.
 

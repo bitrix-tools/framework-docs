@@ -71,6 +71,8 @@ Bitrix Framework состоит из модулей. Каждый модуль �
 
 Добавим в систему модуль `my.module`. Он установит компонент *Карточка пользователя*.
 
+В примере используется партнерский формат идентификатора, чтобы показать структуру модуля с пространством имен `\My\Module`. Для собственного модуля используйте идентификатор без точки, например `mytest`, и задайте такое же имя папки и класса установщика.
+
 ### Структура модуля
 
 1. Создайте папку `my.module` в `/local/modules/`.
@@ -90,12 +92,12 @@ Bitrix Framework состоит из модулей. Каждый модуль �
 │   │           ├── class.php
 │   │           ├── templates/
 │   │           │   └── .default/
-│   │           │       ├── template.php
+│   │           │       ├── lang/
+│   │           │       │   └── ru/
+│   │           │       │       └── template.php
 │   │           │       ├── script.js
-│   │           │       └── style.css
-│   │           └── lang/
-│   │               └── ru/
-│   │                  └── messages.php
+│   │           │       ├── style.css
+│   │           │       └── template.php
 │   ├── index.php                 // Основной файл установки
 │   ├── step.php                  // Экран результата установки
 │   ├── unstep.php                // Экран результата удаления
@@ -120,13 +122,19 @@ Bitrix Framework состоит из модулей. Каждый модуль �
 
 -  методов работы с файлами: `InstallFiles()` и `UnInstallFiles()`.
 
+Установщик сочетает актуальный объектный API и классический API. Класс `CModule` и метод `$APPLICATION->IncludeAdminFile()` входят в классический контракт установки модулей. Прямой замены для них в актуальном объектном API нет.
+
+Функция `CopyDirFiles()` рекурсивно копирует файлы установки. В классе `Bitrix\Main\IO\Directory` нет метода для такого копирования. Для регистрации модуля, локализации и удаления каталога компонента используются классы `ModuleManager`, `Loc` и `Directory`.
+
 В метод `InstallFiles()` добавьте вызов `CopyDirFiles`. Он скопирует компонент `my:user.card` из папки установки модуля в рабочую папку `/local/components/`.
 
-В методе `UnInstallFiles()` используйте `DeleteDirFilesEx` для удаления файлов компонента.
+В методе `UnInstallFiles()` удалите только каталог установленного компонента `/local/components/my/user.card`. Не удаляйте каталог пространства имен `/local/components/my`, потому что в нем могут находиться компоненты других модулей.
 
 ```php
 <?php
 
+use Bitrix\Main\Application;
+use Bitrix\Main\IO\Directory;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 
@@ -198,41 +206,33 @@ class my_module extends CModule
 
     public function InstallDB()
     {
-        // метод приведен для примера
-        // зарегистрировать зависимости на события модулей
-        $eventManager = \Bitrix\Main\EventManager::getInstance();
-        $eventManager->registerEventHandler('...');
-
-        // добавить агенты
-        \CAgent::AddAgent(...);
-
-        // добавить пользовательские поля
-        $userType = new \CUserTypeEntity();
-        $userType->Add(...);
+        // Здесь можно зарегистрировать обработчики событий, агентов
+        // и пользовательские поля модуля
+        return true;
     }
 
     public function UnInstallDB()
     {
-        // метод приведен для примера
-        // удалить все зависимости на событиях
-        $eventManager = \Bitrix\Main\EventManager::getInstance();
-        $eventManager->unRegisterEventHandler('...');
-
-        // агенты можно не удалять, они будут удалены автоматически
-
-        // удалить пользовательские поля
-        $userType = new \CUserTypeEntity();
-        $userType->Delete(...);
+        // Здесь нужно удалить обработчики событий и пользовательские поля модуля
+        return true;
     }
 
     public function InstallFiles()
     {
-        CopyDirFiles($_SERVER['DOCUMENT_ROOT'] . '/local/modules/my.module/install/components', $_SERVER['DOCUMENT_ROOT'] . '/local/components', true, true);
+        CopyDirFiles(
+            $_SERVER['DOCUMENT_ROOT'] . '/local/modules/my.module/install/components',
+            $_SERVER['DOCUMENT_ROOT'] . '/local/components',
+            true,
+            true
+        );
     }
 
     public function UnInstallFiles()
     {
-        DeleteDirFilesEx('/local/components/my');
+        Directory::deleteDirectory(
+            Application::getDocumentRoot() . '/local/components/my/user.card'
+        );
+
         return true;
     }
 }
@@ -241,9 +241,7 @@ class my_module extends CModule
 
 {% note warning "" %}
 
-Методы работы с базой данных `InstallDB()` и `UnInstallDB()` приведены для примера. В них могут быть включены операции по добавлению и удалению обработчиков событий, агентов и других данных.
-
-При копировании кода методы нужно оформить самостоятельно или удалить.
+Методы `InstallDB()` и `UnInstallDB()` — точки расширения установщика. Добавьте в них регистрацию и удаление обработчиков событий, пользовательских полей и других данных, если они нужны модулю. Передавайте идентификатор модуля при регистрации агентов. Метод `ModuleManager::unRegisterModule()` автоматически удалит такие агенты при удалении модуля.
 
 {% endnote %}
 
