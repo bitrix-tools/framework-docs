@@ -69,11 +69,19 @@ description: 'Репликация и кластер. Оптимизация п�
 
 Для работы репликации учетные записи серверов должны иметь привилегии: `SUPER`, `REPLICATION CLIENT`, `REPLICATION SLAVE`. Рекомендуется объединить их в одну учетную запись.
 
+В MySQL 8 создайте учетную запись командой `CREATE USER`, затем назначьте права командой `GRANT`. Пароль задается в `CREATE USER`, конструкция `GRANT ... IDENTIFIED BY` не поддерживается. Подробнее — в [документации MySQL](https://dev.mysql.com/doc/refman/8.0/en/grant.html).
+
 1. Учетная запись для работы с базой данных на всех узлах кластера.
 
+   Создайте учетную запись и назначьте права на каждом узле:
+
    ```sql
-   GRANT SELECT, LOCK TABLES, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX, REPLICATION CLIENT, RELOAD ON bitrixcluster.* TO 'bitrixcluster'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';
+   CREATE USER 'bitrixcluster'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';
+   GRANT SELECT, LOCK TABLES, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON bitrixcluster.* TO 'bitrixcluster'@'%';
+   GRANT REPLICATION CLIENT, RELOAD ON *.* TO 'bitrixcluster'@'%';
    ```
+
+   Привилегии `REPLICATION CLIENT` и `RELOAD` назначаются на уровне сервера через `ON *.*`.
 
    -  `REPLICATION CLIENT` — для отображения статистики master-базы,
 
@@ -81,15 +89,29 @@ description: 'Репликация и кластер. Оптимизация п�
 
 2. Учетная запись для управления slave-нодами. Создается в каждой slave-базе и указывается при подключении.
 
-   -  `GRANT REPLICATION CLIENT on *.* TO 'bitrixcluster_slave'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';` — для отображения статистики в интерфейсе,
+   Создайте учетную запись и назначьте права на каждом slave-сервере:
 
-   -  `GRANT SUPER on *.* TO 'bitrixcluster_slave'@'%';` — для отображения запуска/остановки slave-базы и изменения параметров репликации из административного интерфейса,
+   ```sql
+   CREATE USER 'bitrixcluster_slave'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';
+   GRANT REPLICATION CLIENT ON *.* TO 'bitrixcluster_slave'@'%';
+   GRANT SUPER ON *.* TO 'bitrixcluster_slave'@'%';
+   GRANT SELECT, LOCK TABLES, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON bitrixcluster.* TO 'bitrixcluster_slave'@'%';
+   ```
 
-   -  `GRANT SELECT, LOCK TABLES, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON bitrixcluster.* TO 'bitrixcluster_slave'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';` — для экспорта данных из master-базы в slave-базу.
+   -  `REPLICATION CLIENT` — для отображения статистики в интерфейсе,
+
+   -  `SUPER` — для запуска и остановки slave-базы и изменения параметров репликации из административного интерфейса,
+
+   -  права на `bitrixcluster.*` — для экспорта данных из master-базы в slave-базу.
 
 3. Учетная запись для загрузки бинарных логов создается на master-базе для каждого подключения slave.
 
-   `GRANT REPLICATION SLAVE on *.* TO 'bitrixcluster_replica'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';` — для загрузки бинарных логов с master-сервера.
+   Создайте учетную запись и назначьте право на загрузку бинарных логов с master-сервера:
+
+   ```sql
+   CREATE USER 'bitrixcluster_replica'@'%' IDENTIFIED BY 'Rr6wNCPJH+WU';
+   GRANT REPLICATION SLAVE ON *.* TO 'bitrixcluster_replica'@'%';
+   ```
 
 {% note info "" %}
 
@@ -111,15 +133,21 @@ description: 'Репликация и кластер. Оптимизация п�
 
 ### Особенности работы с master-базой
 
-Если происходит запись в master-базу, последующие чтения данных также будут происходить из нее. Это гарантирует актуальность данных, так как синхронизация со slave может иметь задержку.
+После записи в master-базу система направляет последующие запросы чтения измененных таблиц в нее же. Чтение остальных таблиц может продолжаться через slave-базы. Это позволяет получать актуальные данные после записи, даже если репликация еще не завершилась.
 
-Когда нужно создать собственные запросы на запись в системе, например, для веб-аналитики, то следует использовать методы `StartUsingMasterOnly` и `StopUsingMasterOnly` класса `CDatabase`. Эти методы позволяют временно переключиться на использование только основной базы данных.
+Чтобы временно направить запросы только в master-базу, используйте метод `Bitrix\Main\Data\ConnectionPool::useMasterOnly($mode)`. Получите пул соединений через `Bitrix\Main\Application::getInstance()->getConnectionPool()`.
 
--  `StartUsingMasterOnly` — начинает использование только master-базы для записи.
+Параметр `$mode` управляет режимом.
 
--  `StopUsingMasterOnly` — завершает использование только master-базы.
+-  `true` — включает режим, в котором и чтение, и запись идут в master-базу,
 
-Вы можете обернуть API-вызовы на запись этими методами. Однако убедитесь, что после этого в коде не будет чтения данных, так как они могут еще не быть синхронизированы с копиями.
+-  `false` — завершает режим.
+
+Вызовы должны быть парными. Если режим включен несколько раз, завершите каждое включение отдельным вызовом с `false`. Чтобы завершить режим и при исключении, вызывайте `useMasterOnly(false)` в блоке `finally`.
+
+В классическом API методы `CDatabase::StartUsingMasterOnly()` и `CDatabase::StopUsingMasterOnly()` вызывают этот же метод с `true` и `false` соответственно. Метод `useMasterOnly()` — их D7-аналог.
+
+Если внутри этого режима выполняются запросы на запись, после его завершения чтение может снова идти из slave-базы. Данные могут еще не успеть синхронизироваться. Выполняйте чтение, которому нужны результаты этих записей, до вызова `useMasterOnly(false)`.
 
 ## Резервная копия
 

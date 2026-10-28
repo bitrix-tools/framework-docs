@@ -35,7 +35,9 @@ try_files $uri $uri/ /bitrix/routing_index.php;
 
 {% note info "" %}
 
-В [Docker-окружении](./../get-started/install-env#docker-images) роутинг включен по умолчанию.
+В [Docker-окружении](./../get-started/install-env#docker-images) роутинг по умолчанию выключен. Чтобы включить его до первого запуска, закомментируйте строки с `urlrewrite.php` и раскомментируйте строки с `routing_index.php` в файле `confs/nginx/conf.d/default.conf` репозитория `env-docker`. Для запущенного сайта внесите те же изменения в файл `/etc/nginx/conf.d/default.conf` контейнера `nginx` и перезапустите контейнер.
+
+Пошаговая инструкция — в [разделе Роутинг README env-docker](https://github.com/bitrix-tools/env-docker#phproutingbeforestart).
 
 {% endnote %}
 

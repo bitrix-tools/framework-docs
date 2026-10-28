@@ -81,96 +81,96 @@ CAPTCHA можно подключить несколькими способам�
 
 ### В своих скриптах
 
-Для создания CAPTCHA в своих скриптах используйте следующий код:
+Примеры выполняйте после подключения пролога Bitrix Framework. В отдельном обработчике подключите `/bitrix/modules/main/include/prolog_before.php`. Класс `CCaptcha` загружается автоматически, подключать файл класса напрямую не нужно.
+
+Для новой формы используйте `captcha_sid` и методы объекта `$APPLICATION`, описанные ниже. Вариант с `captcha_code` нужен при доработке формы, которая уже передает такое поле. Не смешивайте имена полей в форме, URL изображения и обработчике.
+
+Чтобы подготовить CAPTCHA для формы с полем `captcha_code`, создайте объект `CCaptcha` и вызовите `SetCodeCrypt()`:
 
 ```php
 <?php
-// Подключаем класс CAPTCHA
-include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/captcha.php");
-
-// Создаем объект CAPTCHA
 $cpt = new CCaptcha();
-
-// Получаем или генерируем пароль для CAPTCHA
-$captchaPass = COption::GetOptionString("main", "captcha_password", "");
-if (strlen($captchaPass) <= 0)
-{
-    $captchaPass = randString(10); // Генерируем случайный пароль с помощью функции randString
-    COption::SetOptionString("main", "captcha_password", $captchaPass); // Сохраняем пароль
-}
-
-// Устанавливаем пароль для шифрования CAPTCHA
-$cpt->SetCodeCrypt($captchaPass);
+$cpt->SetCodeCrypt();
+$code = $cpt->GetCodeCrypt();
 ?>
 ```
 
-Добавьте код в PHP-скрипт, который отвечает за отображение формы. Он создаст CAPTCHA и сгенерирует скрытое поле с кодом.
+В обычном режиме `SetCodeCrypt()` сохраняет проверочный код в базе данных, а `GetCodeCrypt()` возвращает идентификатор записи. Настройка `captcha_password` для этих вызовов не нужна.
+
+{% note warning "" %}
+
+Если определена константа `CAPTCHA_COMPATIBILITY`, поведение отличается: `SetCodeCrypt()` шифрует код с паролем из сессии, а `GetCodeCrypt()` возвращает зашифрованное значение. В этом режиме проверяйте `captcha_code` методом `CheckCodeCrypt()` у объекта `CCaptcha`. Метод `$APPLICATION->CaptchaCheckCode()` предназначен для `captcha_sid`. В обычном режиме оба способа используют базу данных.
+
+{% endnote %}
 
 Добавьте в форму три элемента:
 
 ```php
 <!-- Скрытое поле с кодом CAPTCHA -->
-<input name="captcha_code" value="<?= htmlspecialchars($cpt->GetCodeCrypt()); ?>" type="hidden">
+<input name="captcha_code" value="<?= htmlspecialcharsbx($code) ?>" type="hidden">
 
 <!-- Поле для ввода CAPTCHA -->
 <input id="captcha_word" name="captcha_word" type="text">
 
 <!-- Изображение CAPTCHA -->
-<img src="/bitrix/tools/captcha.php?captcha_code=<?= htmlspecialchars($cpt->GetCodeCrypt()); ?>">
+<img src="/bitrix/tools/captcha.php?captcha_code=<?= htmlspecialcharsbx($code) ?>" alt="CAPTCHA">
 ```
 
-Чтобы проверить, правильно ли пользователь ввел CAPTCHA, добавьте в обработчик формы код:
+Чтобы проверить ответ для поля `captcha_code`, создайте объект `CCaptcha` в обработчике формы и вызовите `CheckCodeCrypt()`. Метод поддерживает обычный режим и режим совместимости:
 
 ```php
 <?php
-// Проверяем, правильно ли введена CAPTCHA
-if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_code"]))
+$cpt = new CCaptcha();
+if (!$cpt->CheckCodeCrypt($_POST['captcha_word'] ?? '', $_POST['captcha_code'] ?? ''))
 {
     // Неправильное значение
-    echo "CAPTCHA введена неверно. Попробуйте еще раз.";
+    echo 'CAPTCHA введена неверно. Попробуйте еще раз.';
 }
 else
 {
     // Правильное значение
-    echo "CAPTCHA введена верно.";
+    echo 'CAPTCHA введена верно.';
 }
 ?>
 ```
 
 ## Методы работы с CAPTCHA
 
--  `CaptchaGetCode` — создает объект класса `CCaptcha` и возвращает сгенерированный код. Это нестатический метод.
+Для формы с полем `captcha_sid` используйте методы класса `CMain`. Это нестатические методы: вызывайте их у объекта `$APPLICATION`, доступного после подключения пролога.
 
--  `CaptchaCheckCode` — проверяет код CAPTCHA.
+-  `CaptchaGetCode` — создает CAPTCHA и возвращает ее идентификатор для поля `captcha_sid`.
+
+-  `CaptchaCheckCode` — проверяет ответ пользователя по идентификатору CAPTCHA.
 
 ### Пример использования методов
 
+Получите идентификатор перед выводом формы:
+
 ```php
-// Получаем код CAPTCHA
+// Получаем идентификатор CAPTCHA
 $code = $APPLICATION->CaptchaGetCode();
 ```
 
-Код передается в HTML для отображения картинки. Картинка генерируется скриптом `/bitrix/tools/captcha.php`.
+Добавьте в форму скрытое поле с идентификатором, поле для ответа и изображение. Скрипт `/bitrix/tools/captcha.php` сформирует изображение по переданному `captcha_sid`:
 
 ```php
 <!-- Скрытое поле для хранения идентификатора CAPTCHA -->
-<input type="hidden" name="captcha_sid" value="<?= $code; ?>" />
+<input type="hidden" name="captcha_sid" value="<?= htmlspecialcharsbx($code) ?>" />
+
+<!-- Поле для ввода ответа -->
+<input type="text" name="captcha_word" id="captcha_word" />
 
 <!-- Отображение картинки CAPTCHA -->
-<img src="/bitrix/tools/captcha.php?captcha_sid=<?= $code; ?>" alt="CAPTCHA" />
+<img src="/bitrix/tools/captcha.php?captcha_sid=<?= htmlspecialcharsbx($code) ?>" alt="CAPTCHA" />
 ```
 
-При обращении к скрипту:
-
-1. Генерируется картинка.
-
-2. Добавляется запись в базу данных.
+В обычном режиме `CaptchaGetCode()` создает запись с проверочным кодом в базе данных. Скрипт изображения читает эту запись по `captcha_sid` и рисует CAPTCHA. При определенной константе `CAPTCHA_COMPATIBILITY` вариант с `captcha_sid` хранит код в сессии.
 
 Для проверки кода CAPTCHA при обработке формы используйте метод `CaptchaCheckCode`.
 
 ```php
 // Проверяем введенный пользователем код CAPTCHA
-if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_sid"]))
+if (!$APPLICATION->CaptchaCheckCode($_POST['captcha_word'] ?? '', $_POST['captcha_sid'] ?? ''))
 {
     echo 'Неверный код CAPTCHA';
 }
@@ -178,12 +178,9 @@ if (!$APPLICATION->CaptchaCheckCode($_POST["captcha_word"], $_POST["captcha_sid"
 
 ### Как изменить настройки CAPTCHA
 
-Чтобы настроить CAPTCHA для вашего сайта используйте класс `CCaptcha`.
+Чтобы задать длину проверочного кода для отдельной формы, используйте класс `CCaptcha`. Вызовите `SetCodeLength()` перед генерацией кода:
 
 ```php
-// Подключаем класс CAPTCHA
-include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/captcha.php");
-
 // Создаем объект CAPTCHA
 $cpt = new CCaptcha();
 
@@ -199,18 +196,20 @@ $code = $cpt->GetSID();
 
 #### Настройки в отдельном файле
 
-Если вы хотите изменить логику или внешний вид CAPTCHA, но при этом оставить оригинальный файл `captcha.php` без изменений:
+Для отдельного оформления изображения создайте свой скрипт в `/local/`. Системный файл `/bitrix/tools/captcha.php` оставьте без изменений. Правила размещения доработок описаны в статье [Как правильно и безопасно кастомизировать коробочные продукты](../get-started/how-customize.md#where-to-place-changes).
 
-1. Создайте файл `captcha2.php` и скопируйте в него содержимое `captcha.php`.
+1. Создайте файл `/local/tools/captcha.php` и скопируйте в него содержимое `/bitrix/tools/captcha.php`.
 
-2. Настройте отображение CAPTCHA в `captcha2.php`.
+2. Сохраните подключения пролога и эпилога через `$_SERVER['DOCUMENT_ROOT']`, а также получение кода по `captcha_sid` или `captcha_code`. Настройте отображение изображения перед вызовом `Output()`.
 
-3. Обновите путь к файлу в HTML-коде.
+3. Укажите путь `/local/tools/captcha.php` в форме. Например, для варианта с `captcha_sid`:
 
 ```php
 <!-- Скрытое поле для хранения идентификатора CAPTCHA -->
-<input type="hidden" name="captcha_sid" value="<?= $code; ?>" />
+<input type="hidden" name="captcha_sid" value="<?= htmlspecialcharsbx($code) ?>" />
 
-<!-- Отображение картинки CAPTCHA через кастомный скрипт captcha2.php  -->
-<img src="/bitrix/tools/captcha2.php?captcha_sid=<?= $code; ?>"alt="CAPTCHA" />
+<!-- Отображение картинки CAPTCHA через свой скрипт -->
+<img src="/local/tools/captcha.php?captcha_sid=<?= htmlspecialcharsbx($code) ?>" alt="CAPTCHA" />
 ```
+
+Обновления ядра не обновляют копию в `/local/`. После обновлений сравнивайте ее с системным скриптом и переносите необходимые изменения.

@@ -82,7 +82,7 @@ description: 'Установка окружения. Пошаговое руко
 Синтаксис команды запуска скрипта:
 
 ```bash prompt="$"
-$ ./bitrix-env-9.sh [-h] [-s] [-p [-H hostname]] [-P] [-t] [-M mysql_root_password] [-m 8.0|8.4] [-G postgres_password] [-g 13|15|16]
+$ ./bitrix-env-9.sh [-h] [-s] [-p [-H hostname]] [-P] [-t] [-M mysql_root_password] [-m 8.0|8.4] [-G postgres_password] [-g 15|16]
 ```
 
 Ключи:
@@ -103,7 +103,7 @@ $ ./bitrix-env-9.sh [-h] [-s] [-p [-H hostname]] [-P] [-t] [-M mysql_root_passwo
 
 -  `-G` — установить пароль суперпользователя postgres для базы данных PostgreSQL. По умолчанию пароль — `password`. Ключ доступен с версии BitrixVM 9.0.8
 
--  `-g` — установить PostgreSQL указанной версии. По умолчанию — 13 версия. Ключ доступен с версии BitrixVM 9.0.8
+-  `-g` — установить PostgreSQL версии 15 или 16. Без ключа скрипт устанавливает версию 13. Ключ доступен с версии BitrixVM 9.0.8
 
 -  `-h` — показать справку
 

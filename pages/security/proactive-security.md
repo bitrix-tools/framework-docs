@@ -149,9 +149,9 @@ description: 'Проактивная защита. Руководство по �
 
 -  Заносить записи в Syslog — если опция включена, информация о событиях будет занесена в системный журнал Syslog или штатный журнал событий ОС Windows.
 
--  Тип журналирования (facility) — укажите [тип журналирования (facility)](http://php.net/manual/ru/function.openlog.php) для записей о событиях.
+-  Тип журналирования (facility) — укажите [тип журналирования (facility)](https://php.net/manual/ru/function.openlog.php) для записей о событиях.
 
--  Уровень оповещения — укажите [уровень оповещения (priority)](http://php.net/manual/ru/function.syslog.php) для записей о событиях.
+-  Уровень оповещения — укажите [уровень оповещения (priority)](https://php.net/manual/ru/function.syslog.php) для записей о событиях.
 
 -  Заносить записи в файл — если опция включена, информация о событиях будет занесена в файл.
 
@@ -301,28 +301,36 @@ description: 'Проактивная защита. Руководство по �
 
 {% cut ".htaccess файлы обрабатываются Apache в директории хранения загружаемых файлов" %}
 
-Злоумышленник может загрузить `.htaccess` с вредоносными настройками.
-
-```
- <Files ~ "^\.ht"> Order allow,deny Allow from all </Files> AddHandler zend-enabler-script .htaccess <IfModule mod_mime.c> AddType application/x-httpd-php .htaccess </IfModule> #<?php assert($_GET[0]); ?>
-```
+Загруженный файл `.htaccess` может изменить настройки Apache и разрешить выполнение скриптов в директории загрузок.
 
 Решение:
 
--  Найдите все `.htaccess` файлы в директории загрузок.
+-  Найдите все файлы `.htaccess` в директории загрузок и просмотрите их содержимое. Выполните команду из корня сайта:
 
-   ```bash prompt="$"
-     $ find ./upload -type f -name '.htaccess' -print -exec cat {} \; ./upload/support/not_image/.htaccess Deny from all ./upload/.htaccess <IfModule mod_mime.c> RemoveHandler php .php3 .php4 .php5 .php6 .phtml .pl .asp .aspx .cgi .dll .exe .ico .shtm .shtml .fcg .fcgi .fpl .asmx .pht .py .psp AddType text/plain php .php3 .php4 .php5 .php6 .phtml .pl .asp .aspx .cgi .dll .exe .ico .shtm .shtml .fcg .fcgi .fpl .asmx .pht .py .psp </IfModule> <IfModule mod_php5.c> php_flag engine off </IfModule>
+   ```bash
+   find ./upload -type f -name '.htaccess' -print -exec cat {} \;
    ```
 
--  Перенесите их правила в конфигурацию виртуального хоста.
+-  Перенесите необходимые правила из проверенных файлов в конфигурацию виртуального хоста.
 
--  Добавьте `AllowOverride None` для директории загрузок.
+-  Запретите обработку `.htaccess` и доступ к исполняемым файлам в директории загрузок. Для Apache 2.4 добавьте в конфигурацию виртуального хоста следующие правила, заменив `/home/bitrix/www` на путь к корню сайта:
 
+   ```apache
+   <Directory "/home/bitrix/www/upload">
+       AllowOverride None
+       AllowOverrideList None
+
+       <FilesMatch "(?i)\.(php[0-9]*|phtml|pl|asp|aspx|cgi|dll|exe|shtm|shtml|fcg|fcgi|fpl|asmx|pht|py|psp)(\.|$)">
+           Require all denied
+       </FilesMatch>
+   </Directory>
+
+   <Directory "/home/bitrix/www/upload/support/not_image">
+       Require all denied
+   </Directory>
    ```
-   <Directory /home/bitrix/www/upload/support/not_image> AllowOverride none Order allow,deny Deny from all </Directory> <Directory /home/bitrix/www/upload> AllowOverride none AddType text/plain php .php3 .php4 .php5 .php6 .phtml .pl .asp .aspx .cgi .dll .exe .ico .shtm .shtml .fcg .fcgi .fpl .asmx .pht .py .psp php_value engine off </Directory>
 
-   ```
+   Перечень расширений должен учитывать обработчики, настроенные на вашем сервере. Подробнее о запрете обработки `.htaccess` читайте в [документации Apache](https://httpd.apache.org/docs/2.4/mod/core.html#allowoverride).
 
 {% endcut %}
 
@@ -349,20 +357,6 @@ description: 'Проактивная защита. Руководство по �
 При установке cookie сайт не передает дополнительный флаг `httpOnly` для HTTP-заголовка `Set-Cookie`, который указывает на запрет чтения/записи данных сookie посредством JavaScript.
 
 Решение: установите `session.cookie_httponly = On` в настройках PHP.
-
-{% endcut %}
-
-{% cut "Не установлен дополнительный источник энтропии при создании идентификатора сессии" %}
-
-Отсутствие дополнительной энтропии позволяет предугадывать случайные числа.
-
-Решение: установите `session.entropy_file = /dev/urandom` и `session.entropy_length = 128`.
-
-{% endcut %}
-
-{% cut "Включено использование тегов в стиле ASP" %}
-
-Решение: установите `asp_tags = Off`.
 
 {% endcut %}
 
@@ -522,9 +516,9 @@ description: 'Проактивная защита. Руководство по �
 
 {% endcut %}
 
-{% cut "Включен Automatic MIME Type Detection для Internet Explorer" %}
+{% cut "Проверка MIME-типа ответа" %}
 
-Решение: отключите mime-сниффинг в Internet Explorer. Добавьте заголовок `X-Content-Type-Options: nosniff` в конфигурацию сервера.
+Решение: настройте сервер так, чтобы он передавал заголовок `X-Content-Type-Options: nosniff` и корректный `Content-Type` для каждого ресурса. Это защищает от интерпретации файлов как скриптов или стилей при несоответствии MIME-типа.
 
 {% endcut %}
 
@@ -648,7 +642,7 @@ description: 'Проактивная защита. Руководство по �
 
 ### Показ ошибочных запросов базы данных
 
-Для стандартного уровня безопасности показ ошибочных запросов базы данных должен быть отключен. Установите переменную `$DBDebug` в значение `code` в файле `/bitrix/php_interface/dbconn.php`, чтобы ограничить показ ошибок только администраторам.
+Для стандартного уровня безопасности отключите отладку SQL-запросов: установите `$DBDebug = false` в файле `/bitrix/php_interface/dbconn.php`.
 
 ## Высокий уровень безопасности
 
@@ -702,9 +696,11 @@ description: 'Проактивная защита. Руководство по �
 
 Хранение сессий в базе данных, Redis или Memcache исключает возможность чтения данных сессий через файловую систему.
 
-1. Добавьте параметры хранения сессий в секцию `session` в файле `/bitrix/.settings.php`.
+Для высокого уровня безопасности сессии должны храниться вне файловой системы. Хранение в таблице модуля Проактивная защита не является обязательным: можно использовать базу данных, Redis или Memcache.
 
-2. Убедитесь, что сессии хранятся в таблице модуля Проактивная защита.
+1. Настройте выбранное хранилище в секции `session` файла `/bitrix/.settings.php`. Варианты настройки описаны в статье [Сессии](../framework/sessions.md).
+
+2. Откройте страницу *Настройки > Проактивная защита > Панель безопасности* и убедитесь, что параметр хранения сессий соответствует высокому уровню.
 
 {% note warning "" %}
 
@@ -910,7 +906,7 @@ php_value auto_prepend_file "/www/bitrix/modules/security/tools/start.php"
 
    По умолчанию сканирование начинается от корня сайта `/home/bitrix/www/`. Можно указать другую папку в поле Начальный путь.
 
-3. Отметьте файлы и скачайте их, чтобы выполнить проверку обычным антивирусом или на сайте [www.virustotal.com](http://www.virustotal.com)
+3. Отметьте файлы и скачайте их, чтобы выполнить проверку обычным антивирусом или на сайте [www.virustotal.com](https://www.virustotal.com)
 
 {% note warning "" %}
 

@@ -5,95 +5,180 @@ description: 'Как оптимизировать запросы к базе д�
 
 Оптимизация запросов к базе данных ускоряет работу сайта, снижает нагрузку на сервер и помогает избежать сбоев при высокой посещаемости. Даже небольшие улучшения могут значительно повысить производительность.
 
+Примеры выполняются в контексте загруженного ядра. Перед работой с элементами инфоблока подключите модуль `iblock` через `Loader::includeModule()`:
+
+```php
+if (!\Bitrix\Main\Loader::includeModule('iblock'))
+{
+    throw new \RuntimeException('Модуль iblock недоступен');
+}
+```
+
+Класс `Bitrix\Iblock\ElementTable` используйте для чтения базовых полей элементов. Для работы со свойствами нужен ORM-класс конкретного инфоблока — подробнее в статье [API инфоблоков](../modules/iblocks/api.md#элементы).
+
 ## Уменьшить количество запросов
 
 Множественные запросы в цикле создают лишнюю нагрузку. Лучше собрать данные заранее и выполнить один запрос.
 
 ### Пример запроса для товаров
 
--  Неправильный подход: выполнить запрос в цикле. Для каждого товара в корзине выполняется отдельный запрос к базе данных. Это неэффективно, так как количество запросов растет с увеличением числа товаров.
+-  **Пример.** Запрос в цикле: для каждого товара в корзине код отдельно обращается к базе данных. Массив `$arResult['ORDERS']` содержит заказы, а `BASKET_ITEMS` — позиции корзины с идентификаторами товаров в `PRODUCT_ID`.
 
    ```php
-   foreach ($arResult["ORDERS"] as $key => $val)
+   foreach ($arResult['ORDERS'] as $order)
    {
-       foreach ($val["BASKET_ITEMS"] as $vvval)
+       foreach ($order['BASKET_ITEMS'] as $item)
        {
-           $rsEls = CIBlockElement::GetByID($vvval["PRODUCT_ID"]); // Запрос в цикле
+           $rsEls = CIBlockElement::GetByID($item['PRODUCT_ID']); // Запрос в цикле
        }
    }
    ```
 
--  Правильный подход: собрать данные и выполнить один запрос. Сначала собрать все ID товаров в один массив. Затем выполнить один запрос к базе данных, чтобы получить данные всех товаров. Это значительно снижает нагрузку на сервер.
+-  **Пример.** Групповая выборка через классический API: код собирает уникальные ID товаров, читает результат одного запроса и добавляет названия в позиции корзины. Условие перед запросом исключает выборку с пустым списком ID.
 
    ```php
-   // Создаем массив для хранения ID товаров
-   $arIDs = array();
+   $productIds = [];
 
-   // Перебираем заказы и товары в корзине
-   foreach($arResult["ORDERS"] as $key => $val)
+   foreach ($arResult['ORDERS'] as $order)
    {
-       foreach($val["BASKET_ITEMS"] as $vvval)
+       foreach ($order['BASKET_ITEMS'] as $item)
        {
-           // Добавляем ID товара в массив
-           $arIDs[] = $vvval["PRODUCT_ID"];
+           $productIds[] = (int)$item['PRODUCT_ID'];
        }
    }
 
-   // Если массив не пустой, выполняем один запрос
-   if (!empty($arIDs))
+   $productIds = array_values(array_unique($productIds));
+   $productsById = [];
+
+   if ($productIds !== [])
    {
        $rsEls = CIBlockElement::GetList(
            [],
-           ["ID" => $arIDs],
+           ['ID' => $productIds],
            false,
            false,
-           ["ID", "NAME"]
+           ['ID', 'NAME']
        );
 
-   // Наполняем данные, используя ID
-   foreach($arResult["ORDERS"] as $key => $val)
-   {
-       foreach($val["BASKET_ITEMS"] as $vvval)
+       while ($product = $rsEls->Fetch())
        {
-           // Работа с данными
+           $productsById[$product['ID']] = $product;
+       }
+   }
+
+   foreach ($arResult['ORDERS'] as $orderKey => $order)
+   {
+       foreach ($order['BASKET_ITEMS'] as $itemKey => $item)
+       {
+           $arResult['ORDERS'][$orderKey]['BASKET_ITEMS'][$itemKey]['PRODUCT_NAME'] =
+               $productsById[$item['PRODUCT_ID']]['NAME'] ?? null;
        }
    }
    ```
 
+Для D7 замените блок выборки `CIBlockElement::GetList()` и чтения результата следующим кодом. Массивы `$productIds` и `$productsById` подготовьте как в предыдущем примере. Параметр `filter` с оператором `@ID` задает список идентификаторов, а `select` — поля результата:
+
+```php
+if ($productIds !== [])
+{
+    $result = \Bitrix\Iblock\ElementTable::getList([
+        'select' => ['ID', 'NAME'],
+        'filter' => ['@ID' => $productIds],
+    ]);
+
+    while ($product = $result->fetch())
+    {
+        $productsById[$product['ID']] = $product;
+    }
+}
+```
+
 ## Использовать специализированные методы вместо универсальных
 
-Универсальные методы подходят для широкого круга задач, но не учитывают их специфику. Это приводит к избыточному коду. Если есть специализированные методы для конкретных задач, используйте их. Специализированные методы уже содержат всю необходимую логику, что упрощает код и снижает вероятность ошибок.
+Для изменения данных используйте методы объектной модели модуля. Если для операции есть специализированный метод, выбирайте его, чтобы явно указать назначение действия. Сам по себе такой выбор не гарантирует уменьшения количества SQL-запросов.
 
-Например, для изменения статуса оплаты заказа в модуле Интернет-магазин лучше использовать метод `\Bitrix\Sale\Controller\Payment::setPaid`, а не универсальный метод `\Bitrix\Sale\Internals\Entity::setFields`. Это гарантирует вызов всех необходимых обработчиков, связанных с оплатой.
+Для изменения статуса конкретной оплаты используйте метод `Bitrix\Sale\Payment::setPaid('Y')`. Получите оплату из коллекции заказа, проверьте результат изменения и сохраните заказ через `Order::save()`. Метод `setPaid()` вызывает `setField('PAID', ...)`, поэтому его преимущество здесь — явное назначение операции. Универсальный метод `setFields()` также вызывает `setField()` для каждого поля.
+
+**Пример.** Код отмечает существующую оплату как оплаченную. Передайте в `$orderId` идентификатор заказа, а в `$paymentId` — идентификатор оплаты этого заказа. Подключите модуль `sale` через `Loader::includeModule()`:
+
+```php
+if (!\Bitrix\Main\Loader::includeModule('sale'))
+{
+    throw new \RuntimeException('Модуль sale недоступен');
+}
+
+$order = \Bitrix\Sale\Order::load($orderId);
+if ($order === null)
+{
+    throw new \RuntimeException('Заказ не найден');
+}
+
+$paymentCollection = $order->getPaymentCollection();
+$payment = $paymentCollection->getItemById($paymentId);
+if ($payment === null)
+{
+    throw new \RuntimeException('Оплата не найдена в заказе');
+}
+
+$result = $payment->setPaid('Y');
+if (!$result->isSuccess())
+{
+    throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
+}
+
+$result = $order->save();
+if (!$result->isSuccess())
+{
+    throw new \RuntimeException(implode('; ', $result->getErrorMessages()));
+}
+```
+
+Сохраняйте изменения оплаты через заказ, чтобы согласованно сохранить связанные объекты. Подробнее — в статье [Оплаты и платежные системы](../modules/sale/payments.md).
 
 ## Оптимизировать выборку данных
+
+Ограничивайте состав полей и получайте связанные данные в основном запросе, если они нужны для обработки результата.
 
 ### Заменить метод GetByID на GetList
 
 Метод [CIBlockElement::GetByID](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getbyid.php) загружает все поля, даже если они не нужны. Используйте [CIBlockElement::GetList](https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getlist.php), указывая только необходимые поля.
 
+**Пример.** Запрос выбирает ID и названия товаров. Непустой массив `$productIds` содержит идентификаторы из предыдущего примера:
+
 ```php
 $rsEls = CIBlockElement::GetList(
     [],
-    ["ID" => $arIDs],
+    ['ID' => $productIds],
     false,
     false,
-    ["ID", "NAME"] // Указываем только необходимые поля
+    ['ID', 'NAME']
 );
 ```
 
 В примере указываем, какие поля нужно получить из базы данных. Это уменьшает объем обрабатываемых данных и ускоряет выполнение запроса.
 
+В ORM метод `getById()` по умолчанию выбирает все базовые поля. Для ограничения полей передайте `select` в `getList()`. В параметре `filter` укажите ID элемента `$productId`:
+
+```php
+$result = \Bitrix\Iblock\ElementTable::getList([
+    'select' => ['ID', 'NAME'],
+    'filter' => ['=ID' => $productId],
+]);
+$product = $result->fetch();
+```
+
 ### Оптимизировать основной запрос
 
 Избегайте лишних запросов для получения связанных данных. Получайте все данные сразу, если это возможно.
+
+**Пример.** Классический API выбирает книги и данные автора через свойство `AUTHOR` типа Привязка к элементам. В переменной `$iblockId` передайте идентификатор инфоблока книг. Параметр сортировки задает порядок по ID, фильтр отбирает активные элементы:
 
 ```php
 // Получаем данные о книгах и авторах одним запросом
 $rs = CIBlockElement::GetList(
     ['ID' => 'ASC'],
     [
-        'IBLOCK_ID' => YY, // ID инфоблока
+        'IBLOCK_ID' => $iblockId,
         'ACTIVE' => 'Y'
     ],
     false,
@@ -109,39 +194,115 @@ $rs = CIBlockElement::GetList(
 );
 
 // Сохраняем результаты
-while($ar = $rs->GetNext())
+while ($ar = $rs->GetNext())
 {
     $arResult['ITEMS'][] = $ar;
 }
 ```
 
+В ORM связанные поля укажите в `select` через имя связи. Параметр `order` задает сортировку, а `filter` — условия отбора.
+
+**Пример.** Запрос получает элементы инфоблока `$iblockId` и название основного раздела через связь `IBLOCK_SECTION`. Псевдоним `SECTION_NAME` задает ключ в результате:
+
+```php
+$result = \Bitrix\Iblock\ElementTable::getList([
+    'select' => ['ID', 'NAME', 'SECTION_NAME' => 'IBLOCK_SECTION.NAME'],
+    'filter' => ['=IBLOCK_ID' => $iblockId, '=ACTIVE' => 'Y'],
+    'order' => ['ID' => 'ASC'],
+]);
+$items = $result->fetchAll();
+```
+
+Для выборки свойств и связанных через них элементов используйте ORM-класс конкретного инфоблока. Класс `ElementTable` не содержит свойства `AUTHOR`. Подготовка ORM-класса описана в статье [API инфоблоков](../modules/iblocks/api.md).
+
 ## Использовать точные фильтры вместо LIKE
 
-Фильтр `LIKE`  позволяет находить данные, которые частично совпадают с заданным значением. Фильтр использует специальный символ `%`, который заменяет любое количество других символов.
+Фильтр `LIKE` позволяет находить данные, которые частично совпадают с заданным значением. Фильтр использует специальный символ `%`, который заменяет любое количество других символов.
 
-Если поиск по части строки не требуется, используйте вместо `LIKE` фильтры точного сравнения `=` или `where`. Это снизит нагрузку на сервер.
+Если поиск по части строки не требуется, используйте точное сравнение: оператор `=` в массиве `filter` или вызов `where('CODE', 'xxx')`. Такой фильтр не ищет частичное совпадение. Скорость запроса зависит также от индексов и плана выполнения.
 
--  Пример фильтра `=`:
+-  **Пример.** Точное сравнение через оператор `=` в параметре `filter`:
 
    ```php
-   Bitrix\Iblock\ElementTable::getList([
+   $result = \Bitrix\Iblock\ElementTable::getList([
        'select' => ['ID', 'NAME', 'CODE'],
-       ['=CODE' => 'xxx']
+       'filter' => ['=CODE' => 'xxx'],
    ]);
    ```
 
    В примере мы используем точный фильтр `['=CODE' => 'xxx']` и получаем данные только для элементов с конкретным значением поля `CODE`.
 
--  Пример фильтра `where`:
+-  **Пример.** Точное сравнение через метод `where()`:
 
    ```php
-   Bitrix\Iblock\ElementTable::query()
-       ->setSelect(['ID', 'NAME', 'CODE'])
-       ->where('CODE','xxx')->exec()
+   $result =
+       \Bitrix\Iblock\ElementTable::query()
+           ->setSelect(['ID', 'NAME', 'CODE'])
+           ->where('CODE', 'xxx')
+           ->exec()
    ;
    ```
 
    Здесь фильтр `where('CODE', 'xxx')` отбирает элементы, у которых поле `CODE` равно `'xxx'`.
+
+## Ограничить количество записей
+
+Передайте в `getList()` параметр `limit`, чтобы получить только нужное количество записей. Параметр `offset` задает, сколько записей пропустить. Укажите устойчивую сортировку в `order`, например по уникальному полю `ID`, чтобы порядок страниц был определен.
+
+**Пример.** Запрос выбирает первые 20 активных элементов инфоблока `$iblockId`:
+
+```php
+$result = \Bitrix\Iblock\ElementTable::getList([
+    'select' => ['ID', 'NAME'],
+    'filter' => ['=IBLOCK_ID' => $iblockId, '=ACTIVE' => 'Y'],
+    'order' => ['ID' => 'ASC'],
+    'limit' => 20,
+]);
+$items = $result->fetchAll();
+```
+
+Для постраничной выборки используйте класс [PageNavigation](../cms-basics/page-navigation-class.md). Метод `setPageSize()` задает размер страницы, а `initFromUri()` читает ее номер из адреса. Методы `getLimit()` и `getOffset()` возвращают ограничения для запроса.
+
+**Пример.** Код подсчитывает активные элементы инфоблока `$iblockId` и получает одну страницу. Идентификатор `elements` связывает параметры адреса с этим списком. Передайте общее количество записей в `setRecordCount()` до вызова `initFromUri()`, чтобы навигация ограничила номер страницы доступным диапазоном:
+
+```php
+$filter = ['=IBLOCK_ID' => $iblockId, '=ACTIVE' => 'Y'];
+
+$navigation = new \Bitrix\Main\UI\PageNavigation('elements');
+$navigation->setPageSize(20);
+$navigation->setRecordCount(\Bitrix\Iblock\ElementTable::getCount($filter));
+$navigation->initFromUri();
+
+$result = \Bitrix\Iblock\ElementTable::getList([
+    'select' => ['ID', 'NAME'],
+    'filter' => $filter,
+    'order' => ['ID' => 'ASC'],
+    'limit' => $navigation->getLimit(),
+    'offset' => $navigation->getOffset(),
+]);
+$items = $result->fetchAll();
+```
+
+Метод `ElementTable::getCount($filter)` выполняет отдельный запрос подсчета. Передайте одинаковый фильтр в `getCount()` и `getList()`, чтобы количество записей соответствовало выборке. Подсчитывайте записи, когда интерфейсу нужно общее число записей или страниц. Вывод ссылок описан в статье [Постраничная навигация](../cms-basics/page-navigation.md).
+
+## Кешировать результаты ORM-запросов
+
+Для повторяющихся выборок, в которых допустимо использовать сохраненные данные, передайте в `getList()` параметр `cache`. Ключ `ttl` задает время жизни кеша в секундах.
+
+**Пример.** Запрос кеширует выборку первых 20 активных элементов инфоблока `$iblockId` на 300 секунд:
+
+```php
+$result = \Bitrix\Iblock\ElementTable::getList([
+    'select' => ['ID', 'NAME'],
+    'filter' => ['=IBLOCK_ID' => $iblockId, '=ACTIVE' => 'Y'],
+    'order' => ['ID' => 'ASC'],
+    'limit' => 20,
+    'cache' => ['ttl' => 300],
+]);
+$items = $result->fetchAll();
+```
+
+По умолчанию ORM не кеширует запросы со связями `JOIN`. Для такой выборки дополнительно передайте `'cache_joins' => true` внутри `cache`. Выбирайте время жизни с учетом допустимой задержки обновления данных и учитывайте способ сброса кеша. Подробнее — в разделе [Кеширование выборки](../orm/querying-data.md#кеширование-выборки) и статье [Кеширование](./caching.md).
 
 ## Создать поисковые индексы
 
@@ -206,5 +367,4 @@ while($ar = $rs->GetNext())
 Созданный индекс появится на странице *Настройки > Производительность > Индексы > Список индексов.* Проверьте его эффективность, выполнив повторный анализ запросов.
 
 ![](./_images/query-optimization-4.png){width=1186px height=301px}
-
 

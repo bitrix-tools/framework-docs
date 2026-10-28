@@ -385,8 +385,9 @@ function TestAgent()
            return "AgentCurrencyUpdate();"; // Повторить попытку
        }
 
-       // Запрос к API exchangerate.host (базовая валюта — RUB)
-       $json = file_get_contents('https://api.exchangerate.host/latest?base=RUB');
+       // Запрос к сервису курсов валют, замените адрес на API своего поставщика
+       // Пример ожидает JSON с курсами относительно рубля: {"rates": {"USD": 0.0123, "EUR": 0.0105}}
+       $json = file_get_contents('https://rates.example.com/latest?base=RUB');
        if (!$json)
        {
            return "AgentCurrencyUpdate();"; // Ошибка запроса — повторить
