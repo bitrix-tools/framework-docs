@@ -15,7 +15,13 @@ description: 'Санитайзер. Руководство по безопасн
 
 ## Методы класса CBXSanitizer
 
-Для работы с санитайзером используются методы класса [CBXSanitizer](https://dev.1c-bitrix.ru/api_help/main/reference/cbxsanitizer/index.php).
+{% note info "" %}
+
+Класс `CBXSanitizer` относится к классическому API главного модуля. Аналога в D7 у него нет, поэтому в новом коде тоже используйте `CBXSanitizer`.
+
+{% endnote %}
+
+Санитайзер настраивают и запускают методами класса `CBXSanitizer`:
 
 -  `AddTags(array $tags)` — добавляет теги и атрибуты в список разрешенных.
 
@@ -45,7 +51,7 @@ description: 'Санитайзер. Руководство по безопасн
    $Sanitizer = new CBXSanitizer();
    ```
 
-2. Задайте правила фильтрации. Например, разрешите определенные теги и атрибуты с помощью функции [AddTags](https://dev.1c-bitrix.ru/api_help/main/reference/cbxsanitizer/addtags.php).
+2. Задайте правила фильтрации. Например, разрешите определенные теги и атрибуты с помощью метода `AddTags()`.
 
    ```php
    $Sanitizer->AddTags([
