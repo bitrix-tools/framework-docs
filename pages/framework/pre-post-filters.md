@@ -46,17 +46,17 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 }
 ```
 
-Имеет аналог в виде атрибута:
+Атрибут `HttpMethod` также принимает массив допустимых HTTP-методов в первом аргументе:
 
 ```php
 use Bitrix\Main\Engine\ActionFilter\HttpMethod;
 
 final class Entity extends \Bitrix\Main\Engine\Controller
 {
-    #[\Bitrix\Main\Engine\ActionFilter\Attribute\Rule\HttpMethod(
+    #[\Bitrix\Main\Engine\ActionFilter\Attribute\Rule\HttpMethod([
         HttpMethod::METHOD_GET,
         HttpMethod::METHOD_POST,
-    )]
+    ])]
     public function indexAction()
     {
         // ...
@@ -162,13 +162,15 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 `\Bitrix\Main\Engine\ActionFilter\Csrf`
 
-Проверяет наличие и корректность CSRF-токена и блокирует действие, если проверка не пройдена. Необходим для защиты от CSRF-атак, особенно в формах и AJAX-запросах.
+Проверяет наличие и корректность CSRF-токена и блокирует действие, если проверка не пройдена. Работает в области `Controller::SCOPE_AJAX` и использует `check_bitrix_sessid()`.
+
+Для AJAX-действий, которые меняют данные, сочетайте `Csrf` с `Authentication` и `HttpMethod`, разрешающим только `POST`. Метод `BX.ajax.runAction()` автоматически передает токен в заголовке `X-Bitrix-Csrf-Token`. Пример настройки приведен в статье [«CSRF и SSRF»](../security/csrf-ssrf.md#controller-actions).
 
 Аргументы:
 
 -  `$enabled` — включает проверку токена. По умолчанию — `true`.
 
--  `$tokenName` — имя токена. По умолчанию — `'sessid`'.
+-  `$tokenName` — имя параметра запроса с токеном. По умолчанию — `'sessid'`.
 
 -  `$returnNew` — возвращает новый токен при неудаче. По умолчанию — `true`.
 
@@ -424,7 +426,19 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 ### Фильтры по умолчанию {#default-filters}
 
-По умолчанию все действия контроллера используют префильтры `HttpMethod`, `Authentication` и `Csrf`. Чтобы изменить этот набор, переопределите метод `getDefaultPreFilters()`. Метод `getDefaultPostFilters()` задает постфильтры по умолчанию.
+Если для действия не задан собственный набор префильтров, контроллер берет его из метода `getDefaultPreFilters()`. В стандартном AJAX-контроллере этот набор включает:
+
+-  `Authentication` — требует входа пользователя,
+
+-  `HttpMethod` — разрешает `GET` и `POST`,
+
+-  `Csrf` — проверяет CSRF-токен.
+
+Повторно включать эти проверки для AJAX-действий не нужно. Дополнительная настройка нужна, если действие должно разрешать только `POST`, быть доступным гостям или использовать другие параметры фильтров. Фильтр `Authentication` проверяет только вход пользователя. Права на конкретные данные проверяйте отдельно.
+
+Параметр `prefilters` в `configureActions()` и атрибут `Prefilters` задают собственный набор префильтров действия вместо набора по умолчанию. При такой настройке явно укажите необходимые проверки. Чтобы дополнить или сократить существующий набор, используйте [дополняющие и вычитающие фильтры](#filter-modifiers).
+
+Чтобы изменить набор по умолчанию для всего контроллера, переопределите метод `getDefaultPreFilters()`. Метод `getDefaultPostFilters()` задает постфильтры по умолчанию.
 
 В примере ниже все действия контроллера используют префильтр `Authentication` и постфильтр `Cors`.
 
@@ -472,7 +486,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 }
 ```
 
-### Дополняющие и вычитающие фильтры
+### Дополняющие и вычитающие фильтры {#filter-modifiers}
 
 Чтобы гибко работать с фильтрами, можно включать и отключать различные фильтры с помощью префиксов `+` и `-` в `configureActions()`.
 

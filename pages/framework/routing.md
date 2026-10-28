@@ -54,7 +54,11 @@ try_files $uri $uri/ /bitrix/routing_index.php;
 
 {% note info "" %}
 
-С версии 24.100.0 главного модуля можно не изменять `/bitrix/.settings.php`: добавьте секцию `routing` в файл `/local/.settings_extra.php`. Система загружает дополнительный файл после основного и целиком заменяет одноименные секции. Файл `/local/.settings.php` не дополняет `/bitrix/.settings.php`, а используется вместо него, поэтому должен содержать полную обязательную конфигурацию, включая секцию `connections`.
+С версии 24.100.0 главного модуля можно не изменять `/bitrix/.settings.php`: добавьте секцию `routing` в файл `/local/.settings_extra.php`. Файл должен возвращать PHP-массив с настройками через `return`.
+
+Система отдельно выбирает основной и дополнительный файлы: сначала ищет каждый из них в `/local/`, затем в `/bitrix/` и подключает только первый найденный. Например, `/local/.settings_extra.php` дополняет `/bitrix/.settings.php`, если основного файла в `/local/` нет. Если существуют оба файла `.settings_extra.php`, система использует только файл из `/local/`.
+
+Дополнительный файл загружается после основного и целиком заменяет одноименные секции. Поэтому в секции `routing` дополнительного файла укажите весь список файлов маршрутов, который нужно сохранить. Файл `/local/.settings.php` используется вместо `/bitrix/.settings.php` и должен содержать полную обязательную конфигурацию, включая секцию `connections`.
 
 {% endnote %}
 
@@ -62,9 +66,9 @@ try_files $uri $uri/ /bitrix/routing_index.php;
 
 -  `/local/routes/web.php`,
 
--  `/bitrix/routes/web.php`
+-  `/bitrix/routes/web.php`.
 
-Если есть оба файла, система подключит каждый из них.
+Если есть оба файла, система подключит каждый из них: сначала `/local/routes/web.php`, затем `/bitrix/routes/web.php`. В отличие от файлов настроек, файл маршрутов из `/local/` не заменяет одноименный файл из `/bitrix/`. Для нескольких имен в `routing.value.config` система повторяет этот порядок для каждого имени по очереди.
 
 {% note warning "" %}
 
@@ -120,7 +124,7 @@ return static function (RoutingConfigurator $routes) {
    $routes->any('/blog', BlogIndexAction::class);
    ```
 
-   В этом случае класс-действия должен реализовывать интерфейс `\Bitrix\Main\Engine\Contract\RoutableAction`.
+   В этом случае класс-действия должен реализовывать интерфейс `\Bitrix\Main\Engine\Contract\RoutableAction`. Метод `getDefaultName()` должен возвращать имя действия из `configureActions()` контроллера — в примере это `index`.
 
    ```php
    class BlogController extends \Bitrix\Main\Engine\Controller
@@ -145,7 +149,7 @@ return static function (RoutingConfigurator $routes) {
 
        public static function getDefaultName()
        {
-           return 'view';
+           return 'index';
        }
 
        public function run()
@@ -166,6 +170,26 @@ return static function (RoutingConfigurator $routes) {
    Используйте `PublicPageController` только для миграции со старого движка маршрутизации [urlrewrite.php](./routing#urlrewrite-migration). В остальных случаях применяйте контроллеры. Как перенести существующую страницу на контроллер, описано в разделе [Публичные страницы на контроллерах](./routing#controller-public-pages).
 
    {% endnote %}
+
+### Маршрут на контроллер своего модуля {#custom-module-controller}
+
+Для маршрута на контроллер установленного модуля отдельно вызывать `Loader::includeModule()` в файле маршрутов не нужно. При обработке запроса система вызывает `Loader::requireClass()`: он определяет модуль по пространству имен контроллера, подключает модуль и загружает класс. Например, пространство имен `My\Blog` соответствует модулю `my.blog`.
+
+**Пример.** Маршрут `/blog/` вызывает действие `indexAction()` контроллера `My\Blog\Controller\BlogController` из модуля `my.blog`. Опишите маршрут в файле `/local/routes/web.php`:
+
+```php
+<?php
+
+use Bitrix\Main\Routing\RoutingConfigurator;
+use My\Blog\Controller\BlogController;
+
+return static function (RoutingConfigurator $routes)
+{
+    $routes->get('/blog/', [BlogController::class, 'index']);
+};
+```
+
+Модуль `my.blog` должен быть установлен, а класс контроллера — находиться в файле `/local/modules/my.blog/lib/Controller/BlogController.php`. Директива `use` и выражение `BlogController::class` задают имя класса, но сами не подключают модуль. Если код файла маршрутов обращается к API модуля до обработки запроса, подключите модуль через `Loader::includeModule('my.blog')` перед таким обращением. Полный пример контроллера и представления приведен в разделе [Как перенести страницу на контроллер](./routing#migrate-page-to-controller).
 
 ## HTTP-методы {#http-methods}
 
@@ -369,23 +393,23 @@ $routes
 
 #### Параметры группы {#group-parameters}
 
-Выносите однотипные параметры на уровень группы методом `where`.
+Выносите однотипные параметры на уровень группы методом `where`. В обоих примерах паттерн `[\w\d\-]+` принимает непустой код из букв, цифр, знаков подчеркивания и дефисов. Знак `+` после квадратных скобок задает количество символов.
 
 -  Без группировки.
 
 ```php
-$routes->post('/blog/post/', [PostController::class, 'create'])->where('code', '[\w+\d+\-]');
-$routes->get('/blog/post/{code}', [PostController::class, 'view'])->where('code', '[\w+\d+\-]');
-$routes->put('/blog/post/{code}', [PostController::class, 'update'])->where('code', '[\w+\d+\-]');
-$routes->patch('/blog/post/{code}', [PostController::class, 'update'])->where('code', '[\w+\d+\-]');
-$routes->delete('/blog/post/{code}', [PostController::class, 'delete'])->where('code', '[\w+\d+\-]');
+$routes->post('/blog/post/', [PostController::class, 'create'])->where('code', '[\w\d\-]+');
+$routes->get('/blog/post/{code}', [PostController::class, 'view'])->where('code', '[\w\d\-]+');
+$routes->put('/blog/post/{code}', [PostController::class, 'update'])->where('code', '[\w\d\-]+');
+$routes->patch('/blog/post/{code}', [PostController::class, 'update'])->where('code', '[\w\d\-]+');
+$routes->delete('/blog/post/{code}', [PostController::class, 'delete'])->where('code', '[\w\d\-]+');
 ```
 
 -  С группировкой.
 
 ```php
 $routes
-    ->where('code', '[\w+\d+\-]+')
+    ->where('code', '[\w\d\-]+')
     ->group(static function (RoutingConfigurator $routes) {
         $routes->post('/blog/post/', [PostController::class, 'create']);
         $routes->get('/blog/post/{code}', [PostController::class, 'view']);

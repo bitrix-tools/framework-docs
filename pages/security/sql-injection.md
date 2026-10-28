@@ -18,12 +18,13 @@ SQL-инъекция — уязвимость, которая позволяет
 -  **Приведение типов для чисел.** Преобразуйте ввод в число, если ожидается числовое значение.
 
    ```php
-   // Опасный SQL запрос
-   SELECT * FROM b_user WHERE id=$_REQUEST['id'];
+   // Опасный запрос
+   $id = $_REQUEST['id'];
+   $res = $DB->Query("SELECT * FROM b_user WHERE ID={$id}");
 
    // Безопасный вариант
    $id = intval($_REQUEST['id']);
-   $res = $DB->Query("SELECT * FROM b_user WHERE id=$id");
+   $res = $DB->Query("SELECT * FROM b_user WHERE ID={$id}");
    ```
 
 -  **Экранирование строк.** Метод `ForSql()` экранирует строки. Результат нужно заключить в кавычки.
@@ -146,7 +147,7 @@ $result = \Bitrix\Main\UserTable::getList([
 
 {% note info "" %}
 
-Приватные поля в ORM защищены, доступ к ним ограничен. Частичная разметка базы данных может привести к утечке.
+Объявляйте конфиденциальные поля приватными в ORM, чтобы ограничить доступ к ним. Если конфиденциальное поле не объявлено приватным, пользовательский ввод в `select` или `filter` может привести к утечке его значения.
 
 {% endnote %}
 
@@ -164,8 +165,25 @@ $filterList = \Bitrix\Disk\Internals\VolumeTable::getList([
       '@ID' => new \Bitrix\Main\DB\SqlExpression(implode(', ', $filterIds)),
       // Может привести к выполнению произвольного SQL-кода
    ],
-]);.
+]);
 ```
+
+Для безопасной подстановки целого числа передайте значение отдельным аргументом в `SqlExpression('?i', $id)`. Плейсхолдер `?i` преобразует значение в целое число:
+
+```php
+use Bitrix\Main\DB\SqlExpression;
+use Bitrix\Main\UserTable;
+
+$id = $_GET['id'];
+$result = UserTable::getList([
+    'select' => ['ID'],
+    'filter' => [
+        '=ID' => new SqlExpression('?i', $id),
+    ],
+]);
+```
+
+Подробнее о типах плейсхолдеров и их использовании — в статье [Формирование запросов](../database/sql-helper-and-expression.md).
 
 Класс `\Bitrix\Main\ORM\Fields\ExpressionField` создает вычисляемые поля. Как и `SqlExpression`, он уязвим к непроверенному вводу.
 

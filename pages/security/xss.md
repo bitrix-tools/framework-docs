@@ -11,13 +11,13 @@ XSS (Cross-Site Scripting) — уязвимость, которая позвол
 
 Чтобы заменить спецсимволы на HTML-сущности используйте:
 
--  `htmlspecialcharsbx` — функция преобразует спецсимволы `<`, `>`, `"`, `'`, `&` в HTML-сущности,
+-  `htmlspecialcharsbx` — функция преобразует спецсимволы `<`, `>`, `"`, `&` в HTML-сущности. По умолчанию использует флаг `ENT_COMPAT` и не экранирует одинарную кавычку `'`. Чтобы экранировать оба вида кавычек, передайте вторым аргументом `ENT_QUOTES`.
 
--  [`\Bitrix\Main\Text\HtmlFilter::encode`](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Text-HtmlFilter.html#method_encode) — работает аналогично, но поддерживает Unicode.
+-  [`\Bitrix\Main\Text\HtmlFilter::encode`](https://docs.1c-bitrix.ru/api/classes/Bitrix-Main-Text-HtmlFilter.html#method_encode) — работает аналогично, включая флаг `ENT_COMPAT` по умолчанию. Оба способа используют кодировку UTF-8.
 
 {% note warning "" %}
 
-Избегайте `htmlspecialcharsEx` — функция работает по черному списку, то есть запрещает только определенные символы. Лучше использовать полное экранирование `htmlspecialcharsbx` или белый список [CBXSanitizer](./sanitizer).
+Избегайте `htmlspecialcharsEx` — функция работает по черному списку, то есть запрещает только определенные символы. Лучше использовать полное экранирование `htmlspecialcharsbx` или белый список [CBXSanitizer](./sanitizer.md).
 
 {% endnote %}
 
@@ -37,7 +37,7 @@ XSS (Cross-Site Scripting) — уязвимость, которая позвол
 
 ```js
 const valueNotSafe = '<script>alert(1)</script>';
-const valueEscaped = BX.Text.encode(valueNotSave); // &lt;script&gt;alert(1)&lt;/script&gt;
+const valueEscaped = BX.Text.encode(valueNotSafe); // &lt;script&gt;alert(1)&lt;/script&gt;
 const yetValueNotSafe = BX.Text.decode(valueEscaped); // <script>alert(1)</script>
 ```
 
@@ -51,15 +51,53 @@ const valueEscaped = Text.encode(valueNotSafe);
 
 ### Атрибуты
 
-Заключайте значения атрибутов в двойные кавычки `"`. С одинарными кавычками экранирование не сработает.
+Заключайте значения атрибутов в двойные кавычки `"`. При вызове `htmlspecialcharsbx` без второго аргумента одинарная кавычка из входных данных останется без изменений и сможет закрыть значение атрибута, заключенное в одинарные кавычки.
 
 ```php
 <!-- Правильно: значения в двойных кавычках -->
 <input type="text" name="foo" value="<?= htmlspecialcharsbx($fooValue) ?>" />
 
-<!-- Неправильно: в одинарных кавычках экранирование может не сработать -->
+<!-- Неправильно: одинарная кавычка во входных данных может закрыть атрибут -->
 <input type="text" name="foo" value='<?= htmlspecialcharsbx($fooValue) ?>' />
 ```
+
+Если нужны одинарные кавычки вокруг значения атрибута, передайте `ENT_QUOTES`:
+
+```php
+<input type="text" name="foo" value='<?= htmlspecialcharsbx($fooValue, ENT_QUOTES) ?>' />
+```
+
+## Вывести данные в шаблоне компонента
+
+Массив `$arResult` содержит данные, которые подготовил компонент. Если компонент получает поля через `CDBResult::GetNext()` или `CIBlockResult::GetNext()`, при стандартных аргументах метод возвращает две версии значения:
+
+-  `NAME` — значение для вывода в HTML. Для обычных строковых полей метод применяет `htmlspecialcharsEx`.
+
+-  `~NAME` — исходное значение без HTML-экранирования.
+
+Например, компонент `bitrix:news.detail` получает поля через `GetNextElement()->GetFields()` и передает их в `$arResult`. Если название содержит `<b>Название</b>`, поле `$arResult['NAME']` содержит `&lt;b&gt;Название&lt;/b&gt;`, а `$arResult['~NAME']` — исходную строку с тегами.
+
+Для обычного текстового поля, подготовленного таким способом, используйте готовое значение или экранируйте исходное перед выводом:
+
+```php
+<!-- Поле NAME уже экранировано компонентом -->
+<h2><?= $arResult['NAME'] ?></h2>
+
+<!-- Исходное значение экранируем перед выводом -->
+<h2><?= htmlspecialcharsbx($arResult['~NAME']) ?></h2>
+```
+
+Повторный вызов `htmlspecialcharsbx($arResult['NAME'])` экранирует HTML-сущности еще раз. Вместо `<b>Название</b>` читатель увидит `&lt;b&gt;Название&lt;/b&gt;`. Прямой вывод `$arResult['~NAME']` позволит браузеру обработать теги из исходных данных.
+
+В базовой реализации `CDBResult::GetNext($bTextHtmlAuto = true, $use_tilda = true)` аргументы управляют разными преобразованиями:
+
+-  `$bTextHtmlAuto` — включает обработку полей с парным полем `ИМЯ_ПОЛЯ_TYPE` через `FormatText`. Для типа `html` метод сохраняет HTML, для остальных типов преобразует текст через `TxtToHtml`. Вызов `GetNext(false)` отключает эту обработку, но сохраняет экранирование обычных строковых полей.
+
+-  `$use_tilda` — включает дополнительные ключи с префиксом `~`. Вызов `GetNext(true, false)` убирает эти ключи, но сохраняет обработку значений без префикса.
+
+Метод `CIBlockResult::GetNext()` дополнительно формирует URL. При `$use_tilda = false` он возвращает вычисленные URL без HTML-экранирования. Перед выводом таких значений в HTML-атрибуты применяйте `htmlspecialcharsbx`.
+
+Проверяйте, как конкретный компонент заполняет `$arResult`: сам массив не экранирует данные, а отсутствие `~` в ключе не гарантирует безопасный вывод. Поля с HTML и значения, добавленные компонентом вручную, могут содержать исходную разметку. Для пользовательского HTML применяйте [санитайзер](./sanitizer.md). Для передачи исходных значений в JavaScript используйте экранирование JavaScript, описанное ниже.
 
 ## Экранировать JavaScript
 
@@ -129,8 +167,8 @@ $foo = ['key' => $userInput];
 <div><?= (new CBXSanitizer)->sanitizeHtml($foo) ?></div>
 ```
 
-{% note tip "Подробнее в статье" %}
+{% note tip "" %}
 
-[Санитайзер](./sanitizer)
+Подробнее в статье [Санитайзер](./sanitizer.md)
 
 {% endnote %}

@@ -85,6 +85,8 @@ Bitrix Framework поддерживает два режима многосайт
 
 Настройка отличается способом организации файловой структуры и параметров сайта.
 
+В примерах папки сайтов размещены в `/var/www/`. На вашем сервере путь может отличаться, например, быть `/home/www/`. Используйте фактические пути к папкам во всех командах, настройках сайтов и конфигурации веб-сервера.
+
 {% note info "" %}
 
 Если используете BitrixVM, не редактируйте конфигурационные файлы вручную. В меню виртуальной машины запустите мастер *8\. Configure pool sites > 1. Create a site*.
@@ -259,116 +261,102 @@ Bitrix Framework поддерживает два режима многосайт
 
 **Вариант 1.** Создайте отдельный каталог для ядра и общих файлов.
 
-1. Создайте каталог для общих файлов, например, `/home/www/shared/`.
+1. Создайте каталог для общих файлов, например, `/var/www/shared/`.
 
    ```bash prompt="$"
-   $ mkdir /home/www/shared
+   $ mkdir /var/www/shared
    ```
 
 2. Переместите ядро и ключевые папки из первого сайта в общий каталог:
 
    ```bash prompt="$"
-   $ mv /home/www/site-main/bitrix /home/www/shared/bitrix
-   $ mv /home/www/site-main/upload /home/www/shared/upload
-   $ mv /home/www/site-main/local  /home/www/shared/local
+   $ mv /var/www/site-main/bitrix /var/www/shared/bitrix
+   $ mv /var/www/site-main/upload /var/www/shared/upload
+   $ mv /var/www/site-main/local /var/www/shared/local
    ```
 
-3. Создайте ссылки на общие папки в корне каждого сайта. Выполните команды от имени пользователя и группы веб-сервера. Для первого сайта `/home/www/site_main/`:
+3. Создайте ссылки на общие папки в корне каждого сайта. Выполните команды от имени пользователя и группы веб-сервера. Для первого сайта `/var/www/site-main/`:
 
    ```bash prompt="$"
-   $ ln -s /home/www/shared/bitrix /home/www/site-main/bitrix
-   $ ln -s /home/www/shared/upload /home/www/site-main/upload
-   $ ln -s /home/www/shared/local  /home/www/site-main/local
+   $ ln -s /var/www/shared/bitrix /var/www/site-main/bitrix
+   $ ln -s /var/www/shared/upload /var/www/site-main/upload
+   $ ln -s /var/www/shared/local /var/www/site-main/local
    ```
 
-   Для второго сайта `/home/www/site_shop/`:
+   Для второго сайта `/var/www/site-shop/`:
 
    ```bash prompt="$"
-   $ ln -s /home/www/shared/bitrix /home/www/site_shop/bitrix
-   $ ln -s /home/www/shared/upload /home/www/site_shop/upload
-   $ ln -s /home/www/shared/local  /home/www/site_shop/local
+   $ ln -s /var/www/shared/bitrix /var/www/site-shop/bitrix
+   $ ln -s /var/www/shared/upload /var/www/site-shop/upload
+   $ ln -s /var/www/shared/local /var/www/site-shop/local
    ```
 
-4. Проверьте, что веб-сервер имеет права на запись в `/home/www/shared/`. Это необходимо для установки обновлений и загрузки файлов.
+4. Проверьте, что веб-сервер имеет права на запись в `/var/www/shared/`. Это необходимо для установки обновлений и загрузки файлов.
 
-5. Разместите уникальные файлы второго сайта в папке `/home/www/site_shop/`.
+5. Разместите уникальные файлы второго сайта в папке `/var/www/site-shop/`.
 
-**Вариант 2**. Создайте ссылки  напрямую из корня второго сайта в каталоги первого.
+**Вариант 2.** Создайте ссылки напрямую из корня второго сайта в каталоги первого.
 
-1. Создайте файл `symlink.php` в корне второго сайта `/home/www/site_shop/`.
+{% note warning "" %}
 
-    ```php
-    <html>
-    <head><title>Создание символических ссылок</title></head>
-    <body>
-    <?php
-    error_reporting(E_ALL & ~E_NOTICE);
-    @ini_set("display_errors", 1);
+Скрипт `symlink.php` предназначен для однократного запуска из командной строки. Проверка `PHP_SAPI` запрещает вызов через браузер. Выполняйте скрипт от имени пользователя веб-сервера и удалите файл сразу после проверки ссылок.
 
-    $path = rtrim($_POST['path'] ?? '../site_main', "/\\");
-    $strError = '';
+{% endnote %}
 
-    if ($_POST['create'])
-    {
-        // Формируем абсолютный путь
-        $full_path = preg_match("#^/#", $path) ? $path : realpath($_SERVER['DOCUMENT_ROOT'].'/'.$path);
+1. Создайте файл `/var/www/site-shop/symlink.php`:
 
-        if (file_exists($_SERVER["DOCUMENT_ROOT"]."/bitrix"))
-        {
-            $strError = "В текущей папке уже существует папка bitrix.";
-        }
-        elseif (is_dir($full_path))
-        {
-            if (is_dir($full_path."/bitrix"))
-            {
-                // Создаем ссылки
-                if (!symlink($path."/bitrix", $_SERVER["DOCUMENT_ROOT"]."/bitrix"))
-                {
-                    $strError = 'Не удалось создать ссылку на папку bitrix.';
-                }
-                elseif (!symlink($path."/upload", $_SERVER["DOCUMENT_ROOT"]."/upload"))
-                {
-                    $strError = 'Не удалось создать ссылку на папку upload.';
-                }
-                elseif (!symlink($path."/local", $_SERVER["DOCUMENT_ROOT"]."/local"))
-                {
-                    $strError = 'Не удалось создать ссылку на папку local.';
-                }
-                else
-                {
-                    echo "<font color='green'>Символические ссылки успешно созданы.</font>";
-                }
-            }
-            else
-            {
-                $strError = 'Указанный путь не содержит папку bitrix.';
-            }
-        }
-        else
-        {
-            $strError = 'Неверно указан путь или ошибка прав доступа.';
-        }
+   ```php
+   <?php
+   if (PHP_SAPI !== 'cli')
+   {
+       http_response_code(403);
+       exit('Доступ запрещен.');
+   }
 
-        if ($strError)
-        {
-            echo '<font color="red">' . $strError . '</font><br>Путь: ' . htmlspecialchars($full_path);
-        }
-    }
-    ?>
-    <form method="post">
-        Путь к папке с ядром:<br>
-        <input type="text" name="path" value="<?= htmlspecialchars($path) ?>" size="50"><br><br>
-        <input type="submit" value="Создать ссылки" name="create">
-    </form>
-    </body>
-    </html>
-    ```
+   $sourceRoot = '/var/www/site-main';
+   $targetRoot = __DIR__;
+   $directories = ['bitrix', 'upload', 'local'];
 
-2. Проверьте права доступа. Скрипт `symlink.php` должен принадлежать пользователю, от которого работает веб-сервер.
+   // Проверяем все пути до создания ссылок.
+   foreach ($directories as $directory)
+   {
+       $source = $sourceRoot . '/' . $directory;
+       $target = $targetRoot . '/' . $directory;
 
-3. Откройте в браузере `http://shop.company.ru/symlink.php`, где `shop.company.ru` — это доменное имя второго сайта. Укажите путь к корневой папке первого сайта и нажмите Создать ссылки.
+       if (!is_dir($source))
+       {
+           fwrite(STDERR, 'Исходная папка не найдена: ' . $source . PHP_EOL);
+           exit(1);
+       }
 
-4. Проверьте, что в корне второго сайта появились символические ссылки на папки `bitrix`, `upload` и `local`. Удалите служебный файл `symlink.php`.
+       if (file_exists($target) || is_link($target))
+       {
+           fwrite(STDERR, 'Путь уже занят: ' . $target . PHP_EOL);
+           exit(1);
+       }
+   }
+
+   foreach ($directories as $directory)
+   {
+       if (!symlink($sourceRoot . '/' . $directory, $targetRoot . '/' . $directory))
+       {
+           fwrite(STDERR, 'Не удалось создать ссылку: ' . $directory . PHP_EOL);
+           exit(1);
+       }
+   }
+
+   echo 'Символические ссылки успешно созданы.' . PHP_EOL;
+   ```
+
+2. Проверьте права доступа. Пользователь веб-сервера должен иметь доступ к исходным папкам и право записи в `/var/www/site-shop/`.
+
+3. В командной строке от имени пользователя веб-сервера запустите скрипт:
+
+   ```bash prompt="$"
+   $ php /var/www/site-shop/symlink.php
+   ```
+
+4. Проверьте, что в корне второго сайта появились символические ссылки на папки `bitrix`, `upload` и `local`. Сразу удалите служебный файл `symlink.php`. Если скрипт завершился с ошибкой после создания части ссылок, проверьте их перед повторным запуском: существующие пути он не перезаписывает.
 
 5. Откройте `http://shop.company.ru/bitrix/admin/` и войдите под учетной записью администратора первого сайта.
 
@@ -433,19 +421,19 @@ Bitrix Framework поддерживает два режима многосайт
 
 После изменения конфигурации перезапустите Apache.
 
-Чтобы разделить информацию без доступа к файлу `httpd.conf`, выполните три действия.
+Чтобы задать для второго сайта отдельный путь к папкам `php_interface` и `templates` без доступа к файлу `httpd.conf`, выполните три действия.
 
 1. Создайте в корне второго сайта папку `/bitrix_personal/`.
 
-2. Сделайте символические ссылки на `/bitrix/php_interface/` и `/bitrix/templates/`
+2. В папке `/bitrix_personal/` создайте ссылки `php_interface` и `templates` на `/var/www/site-main/bitrix/php_interface/` и `/var/www/site-main/bitrix/templates/` соответственно.
 
-3. Добавьте в `.htaccess` каждого сайта:
+3. Добавьте в `.htaccess` второго сайта:
 
    ```apache
-   SetEnv BX_PERSONAL_ROOT /bitrix/bitrix_personal
+   SetEnv BX_PERSONAL_ROOT /bitrix_personal
    ```
 
-Это позволяет использовать индивидуальные шаблоны и настройки без изменения глобальной конфигурации сервера.
+Значение `BX_PERSONAL_ROOT` задает путь относительно корня сайта. В этом примере ему соответствует папка `/var/www/site-shop/bitrix_personal/`. Пока `php_interface` и `templates` остаются ссылками, сайты используют общие настройки и шаблоны.
 
 #### Настроить сортировку сайтов
 
@@ -697,23 +685,28 @@ setcookie("PHPSESSID", "", time() - 3600, '/', '.site.ru');
 
    ```php
    <?php
-   AddEventHandler("main", "OnBeforeProlog", "MyOnBeforePrologHandler", 50);
-   function MyOnBeforePrologHandler()
-   {
-       global $USER;
-       if (!is_object($USER))
+   use Bitrix\Main\Engine\CurrentUser;
+   use Bitrix\Main\EventManager;
+
+   EventManager::getInstance()->addEventHandler(
+       'main',
+       'OnBeforeProlog',
+       static function (): void
        {
-           $USER = new CUser();
-       }
-       if (!$USER->IsAdmin())
-       {
-           include($_SERVER["DOCUMENT_ROOT"] . "/coming-soon/underconstruction.html");
-           die();
-       }
-   }
+           if (!CurrentUser::get()->isAdmin())
+           {
+               include $_SERVER['DOCUMENT_ROOT'] . '/coming-soon/underconstruction.html';
+               exit;
+           }
+       },
+       false,
+       50,
+   );
    ```
 
-3. Создайте файл `/coming-soon/underconstruction.html` с информацией для посетителей.
+   Обработчик события `OnBeforeProlog` показывает заглушку всем посетителям, кроме администраторов. Значение `50` задает порядок вызова обработчика.
+
+3. Создайте файл `/coming-soon/underconstruction.html` с информацией для посетителей в корне закрываемого сайта.
 
 {% note warning "" %}
 

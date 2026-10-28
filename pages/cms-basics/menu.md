@@ -31,13 +31,13 @@ description: 'Меню. Основы Bitrix CMS: ключевые объекты
 
 На сайте могут быть разные типы меню. Тип — это идентификатор меню. По нему система определяет, какое меню отображать. Тип не связан с расположением на странице. Один и тот же тип можно использовать в любом месте.
 
-В демонстрационном интернет-магазине из дистрибутива 1С-Битрикс: Управление сайтом есть три типа:
+По умолчанию доступны два типа меню.
 
--  `top` — верхнее,
+-  `top` — Главное меню,
 
--  `left` — левое,
+-  `left` — Меню раздела.
 
--  `bottom` — нижнее.
+В демонстрационном интернет-магазине также используется `bottom` — Нижнее меню. Названия и набор типов зависят от установленного решения и настроек сайта.
 
 Можно добавлять свои типы: `footer`, `mobile` и другие.
 
@@ -79,7 +79,7 @@ description: 'Меню. Основы Bitrix CMS: ключевые объекты
 
 -  `$aMenuLinks` — [массив с данными](./menu#%D0%BC%D0%B0%D1%81%D1%81%D0%B8%D0%B2-$amenulinks) о каждом пункте меню. Массивом можно управлять через административный интерфейс.
 
--  `$sMenuTemplate` — абсолютный путь к файлу с шаблоном меню `тип.menu_template.php`.  Переменная используется редко, если шаблон нужно подключить через API, а не компонент.
+-  `$sMenuTemplate` — путь от корня сайта к файлу с шаблоном меню `тип.menu_template.php`. Переменную используют при выводе меню через API без компонента.
 
 {% cut "Пример файла .тип.menu.php" %}
 
@@ -87,53 +87,53 @@ description: 'Меню. Основы Bitrix CMS: ключевые объекты
 <?php
 $aMenuLinks = [
     [
-        "Новости",
-        "news/",
+        'Новости',
+        'news/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Как купить",
-        "about/howto/",
+        'Как купить',
+        'about/howto/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Доставка",
-        "about/delivery/",
+        'Доставка',
+        'about/delivery/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "О магазине",
-        "about/",
+        'О магазине',
+        'about/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Гарантия",
-        "about/guaranty/",
+        'Гарантия',
+        'about/guaranty/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Контакты",
-        "about/contacts/",
+        'Контакты',
+        'about/contacts/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Книги",
-        "/books/",
+        'Книги',
+        '/books/',
         [],
         [],
-        ""
+        ''
     ]
 ];
 ?>
@@ -149,62 +149,75 @@ $aMenuLinks = [
 
 ```php
 <?php
+use Bitrix\Iblock\IblockSiteTable;
+use Bitrix\Main\Application;
 use Bitrix\Main\Loader;
 
-if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
 global $APPLICATION;
-// Подготовим массив для дополнительных пунктов меню
 $aMenuLinksExt = [];
-if(Loader::includeModule('iblock'))
+if (Loader::includeModule('iblock'))
 {
-    // Фильтр для выборки инфоблоков типа catalog и привязанных к текущему сайту
-    $arFilter = [
-        "TYPE" => "catalog",
-        "SITE_ID" => SITE_ID,
-    ];
-    // Получаем список инфоблоков, сортируем по полю SORT, затем по ID
-    $dbIBlock = CIBlock::GetList(['SORT' => 'ASC', 'ID' => 'ASC'], $arFilter);
-    $dbIBlock = new CIBlockResult($dbIBlock);
-    if ($arIBlock = $dbIBlock->GetNext())
+    $taggedCache = Application::getInstance()->getTaggedCache();
+    if (defined('BX_COMP_MANAGED_CACHE'))
     {
-        if(defined("BX_COMP_MANAGED_CACHE"))
-        {
-            $GLOBALS["CACHE_MANAGER"]->RegisterTag("iblock_id_".$arIBlock["ID"]);
-        }
-        // Если инфоблок активен, подключаем компонент для генерации меню из его разделов
-        if ($arIBlock["ACTIVE"] == "Y")
-        {
-            // Подключаем компонент menu.sections
-            $aMenuLinksExt = $APPLICATION->IncludeComponent(
-                "bitrix:menu.sections",
-                "bootstrap_v4",
-                [
-                    "IS_SEF" => "Y",
-                    "SEF_BASE_URL" => "",
-                    "SECTION_PAGE_URL" => $arIBlock['SECTION_PAGE_URL'],
-                    "DETAIL_PAGE_URL" => $arIBlock['DETAIL_PAGE_URL'],
-                    "IBLOCK_TYPE" => $arIBlock['IBLOCK_TYPE_ID'],
-                    "IBLOCK_ID" => $arIBlock['ID'],
-                    "DEPTH_LEVEL" => "3",
-                    "CACHE_TYPE" => "N",
-                ],
-                false,
-                ['HIDE_ICONS' => 'Y']
-            );
-        }
+        $taggedCache->registerTag('iblock_id_new');
     }
-    if (defined("BX_COMP_MANAGED_CACHE"))
+
+    $iblockResult = IblockSiteTable::getList([
+        'select' => [
+            'ID' => 'IBLOCK.ID',
+            'IBLOCK_TYPE_ID' => 'IBLOCK.IBLOCK_TYPE_ID',
+            'SECTION_PAGE_URL' => 'IBLOCK.SECTION_PAGE_URL',
+            'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
+        ],
+        'filter' => [
+            '=SITE_ID' => SITE_ID,
+            '=IBLOCK.IBLOCK_TYPE_ID' => 'catalog',
+            '=IBLOCK.ACTIVE' => 'Y',
+        ],
+        'order' => ['IBLOCK.SORT' => 'ASC', 'IBLOCK.ID' => 'ASC'],
+        'limit' => 1,
+    ]);
+    $iblock = $iblockResult->fetch();
+
+    if ($iblock)
     {
-        $GLOBALS["CACHE_MANAGER"]->RegisterTag("iblock_id_new");
+        if (defined('BX_COMP_MANAGED_CACHE'))
+        {
+            $taggedCache->registerTag('iblock_id_' . $iblock['ID']);
+        }
+
+        $aMenuLinksExt = $APPLICATION->IncludeComponent(
+            'bitrix:menu.sections',
+            '',
+            [
+                'IS_SEF' => 'Y',
+                'SEF_BASE_URL' => '',
+                'SECTION_PAGE_URL' => $iblock['SECTION_PAGE_URL'],
+                'DETAIL_PAGE_URL' => $iblock['DETAIL_PAGE_URL'],
+                'IBLOCK_TYPE' => $iblock['IBLOCK_TYPE_ID'],
+                'IBLOCK_ID' => $iblock['ID'],
+                'DEPTH_LEVEL' => 3,
+                'CACHE_TYPE' => 'N',
+            ],
+            false,
+            ['HIDE_ICONS' => 'Y']
+        );
     }
 }
-// Объединяем основное меню с динамическими пунктами
 $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
-?>
 ```
 
 {% endcut %}
+
+Пример подключает модуль `iblock`, выбирает первый активный инфоблок типа `catalog`, привязанный к текущему сайту, и добавляет его разделы к статическим пунктам. Задайте шаблоны адресов разделов и элементов в настройках инфоблока.
+
+Кеш вложенного компонента выключен. Чтобы хранить результат, включите кеш `bitrix:menu`. Теги регистрируются через `TaggedCache` в области кеширования родительского компонента, поэтому отдельно вызывать `startTagCache()` и `endTagCache()` в этом файле не нужно.
 
 ### Массив \$aMenuLinks
 
@@ -224,32 +237,32 @@ $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
 <?php
 $aMenuLinks = [
     [
-        "Новости",
-        "news/",
+        'Новости',
+        'news/',
         [],
         [],
         "CSite::InDir('/index.php')"
     ],
     [
-        "Как купить",
-        "about/howto/",
+        'Как купить',
+        'about/howto/',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Доставка",
-        "about/delivery/",
+        'Доставка',
+        'about/delivery/',
         [],
         [],
         "CSite::InDir('/personal/')"
     ],
     [
-        "Гарантия",
-        "about/guaranty/",
+        'Гарантия',
+        'about/guaranty/',
         [],
         [],
-        "CSite::InGroup(array(1,6))"
+        'CSite::InGroup([1, 6])'
     ],
 ];
 ?>
@@ -265,9 +278,11 @@ $aMenuLinks = [
 
 -  Статическое меню заменяет статическое.
 
--  Динамическое меню заменяет только другое динамическое.
+-  Файл `.тип.menu_ext.php` заменяет наследуемый файл `.тип.menu_ext.php`. Поиск статического файла от этого не меняется.
 
--  Пустой файл `.тип.menu.php` переопределяет меню как пустое. Это приводит к отсутствию меню в разделе.
+-  Пустой массив `$aMenuLinks = [];` в файле `.тип.menu.php` убирает наследуемые статические пункты. При включенном `USE_EXT` динамический файл по-прежнему может добавить свои пункты.
+
+Например, в корне сайта находятся `/.top.menu.php` и `/.top.menu_ext.php`. Если создать `/about/.top.menu_ext.php`, в разделе `/about/` система возьмет статические пункты из корня и выполнит динамический файл из `/about/`. Корневой `.top.menu_ext.php` она не выполнит. Чтобы сохранить статические пункты, добавляйте к `$aMenuLinks` новые элементы через `array_merge()`. Присваивание нового массива заменит уже загруженные пункты.
 
 #### Как работает поиск файла меню
 
@@ -279,7 +294,7 @@ $aMenuLinks = [
 
 3. главном разделе сайта.
 
-Поиск останавливается при первом найденном файле, независимо от содержимого.
+Система ищет `.тип.menu.php` и `.тип.menu_ext.php` независимо. Для каждого поиск останавливается при первом найденном файле, независимо от содержимого. Динамический файл выполняется после статического и только при `USE_EXT = Y`.
 
 ## Управление меню в интерфейсе
 
@@ -362,7 +377,7 @@ $aMenuLinks = [
 Дополнительные параметры передаются в шаблон с помощью массива `$PARAMS` в виде пар `имя => значение`. Например:
 
 ```php
-if ($PARAMS["SEPARATOR"] === "Y")
+if ($PARAMS['SEPARATOR'] === 'Y')
 {
     // выводим разделитель
 }
@@ -378,7 +393,7 @@ if ($PARAMS["SEPARATOR"] === "Y")
 
 ## Компоненты
 
-Чтобы отобразить меню на сайте, нужно подключить компоненты Меню `bitrix:menu` и Пункты меню `bitrix:menu.sections`.
+Для вывода меню подключите компонент Меню `bitrix:menu`. Компонент Пункты меню `bitrix:menu.sections` нужны, если в файле `.тип.menu_ext.php` вы получаете пункты из разделов инфоблока.
 
 {% note tip "" %}
 
@@ -398,7 +413,11 @@ if ($PARAMS["SEPARATOR"] === "Y")
 
 ![](./_images/menu-36.png){width=700px height=577px}
 
-Стандартные шаблоны компонента `bitrix:menu` поддерживают до четырех уровней вложенности. Чтобы создать меню с большим количеством уровней, скопируйте и отредактируйте компонент.
+Компонент `bitrix:menu` поддерживает от одного до четырех уровней вложенности. Параметр `MAX_LEVEL` вне диапазона от `1` до `4` компонент сбрасывает в `1`. Замена шаблона не меняет это ограничение.
+
+Для многоуровневого меню из файлов задайте `ROOT_MENU_TYPE` для первого уровня и `CHILD_MENU_TYPE` для остальных. Ссылки родительских пунктов должны вести на папки и заканчиваться `/`. Компонент ищет дочернее меню только в папке соответствующего пункта, без наследования из родительских разделов.
+
+Чтобы назначить отдельный тип каждому уровню, передайте в вызове компонента `MENU_TYPES`, например `['top', 'left', 'submenu']`. Этот массив заменяет `ROOT_MENU_TYPE` и `CHILD_MENU_TYPE`. Если уровней больше, чем типов в массиве, компонент использует последний тип для оставшихся уровней.
 
 Чтобы вывести пункты динамического меню, в настройках компонента отметьте опцию *Подключать файлы с именами вида .тип\_меню.menu_ext.php*.
 
@@ -434,7 +453,7 @@ if ($PARAMS["SEPARATOR"] === "Y")
 
 ### Примеры системных шаблонов
 
--  `.default` — вертикальный шаблон. Подходит для главного меню. Все уровни вложенности отображаются на одном уровне.
+-  `.default` — вертикальный шаблон без визуального разделения уровней. При `MAX_LEVEL = 1` он пропускает пункты с `DEPTH_LEVEL > 1`. При большем `MAX_LEVEL` выводит полученные пункты общим списком.
 
 -  `tree` — древовидный вертикальный шаблон. Передает структуру сайта.
 
@@ -448,7 +467,7 @@ if ($PARAMS["SEPARATOR"] === "Y")
 
 1. Определите структуру HTML — решите, будет ли меню списком, таблицей или блоками.
 
-2. Создайте файл `template.php`-- используйте массив `$arResult` компонента `bitrix:menu`.
+2. Создайте файл `template.php` — используйте массив `$arResult` компонента `bitrix:menu`.
 
 3. Добавьте CSS-файлы — сделайте активные пункты заметными, настройте поведение при наведении.
 
@@ -462,27 +481,38 @@ if ($PARAMS["SEPARATOR"] === "Y")
 
 -  Эпилог — закрытие тегов.
 
-Пример шаблона `.default`:
+**Пример.** Шаблон на основе `.default` с экранированием данных:
 
 ```php
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();?>
-<?php if (!empty($arResult)):?>
+<?php
+use Bitrix\Main\Text\HtmlFilter;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
+?>
+<?php if (!empty($arResult)): ?>
 <ul class="left-menu">
 <?php
-foreach($arResult as $arItem):
-    if($arParams["MAX_LEVEL"] == 1 && $arItem["DEPTH_LEVEL"] > 1)
+foreach ($arResult as $arItem):
+    if ((int)$arParams['MAX_LEVEL'] === 1 && $arItem['DEPTH_LEVEL'] > 1)
+    {
         continue;
+    }
 ?>
-    <?php if($arItem["SELECTED"]): ?>
-        <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
-    <?php else: ?>
-        <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
-    <?php endif; ?>
+    <li>
+        <a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"<?php if ($arItem['SELECTED']): ?> class="selected"<?php endif; ?>><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a>
+    </li>
 
 <?php endforeach; ?>
 </ul>
 <?php endif; ?>
 ```
+
+Компонент `bitrix:menu` не экранирует `TEXT`, `LINK` и значения `PARAMS` при подготовке `$arResult`. Перед выводом в текст HTML или значение атрибута используйте `Bitrix\Main\Text\HtmlFilter::encode()`. В примерах ниже добавьте `use Bitrix\Main\Text\HtmlFilter;` в начало `template.php`. Экранирование не проверяет адрес ссылки, поэтому храните в меню только разрешенные адреса, например пути сайта и ссылки с протоколом HTTPS.
+
+Компонент `bitrix:menu.sections` передает уже экранированные названия разделов. В примерах для `TEXT` третий аргумент `HtmlFilter::encode()` равен `false`, чтобы повторно не кодировать HTML-сущности. Неэкранированные символы функция при этом обработает.
 
 ### Как работает массив \$arResult
 
@@ -492,7 +522,7 @@ foreach($arResult as $arItem):
 
 -  `LINK` — ссылка.
 
--  `SELECTED` — принимает `true`, если пользователь на этой странице, иначе — `false`.
+-  `SELECTED` — признак выделенного пункта. Для внутренних ссылок компонент проверяет, начинается ли адрес текущей страницы с `LINK` или одной из `ADDITIONAL_LINKS`. Если подходят несколько пунктов, при `ALLOW_MULTI_SELECT = N` выбирает совпадение с самой длинной ссылкой. При `ALLOW_MULTI_SELECT = Y` допускает выделение нескольких пунктов. Для ссылок с параметрами запроса также проверяет их значения.
 
 -  `PERMISSION` — уровень доступа на страницу по ссылке. Возможные значения:
 
@@ -504,13 +534,25 @@ foreach($arResult as $arItem):
 
    -  `W` — запись,
 
-   -  `X` — полный доступ.
+   -  `X` — полный доступ,
+
+   -  `Z` — ссылка без проверки файловых прав, например внешний адрес, `mailto:` или якорь.
 
 -  `ITEM_TYPE` — тип ссылки: `D` — раздел, `P` — страница, `U` — страница с параметрами.
 
 -  `ITEM_INDEX` — порядковый номер пункта.
 
 -  `PARAMS` — дополнительные параметры.
+
+-  `ADDITIONAL_LINKS` — дополнительные ссылки для выделения пункта.
+
+-  `DEPTH_LEVEL` — уровень вложенности пункта, начиная с `1`.
+
+-  `IS_PARENT` — признак родительского пункта с дочерним меню.
+
+-  `CHAIN` — цепочка названий от родительского пункта до текущего. Компонент заполняет ее при рекурсивном обходе многоуровневого меню.
+
+Например, на странице `/about/team/` подходят ссылки `/about/` и `/about/team/`. При одиночном выделении компонент выберет вторую, при множественном могут быть выделены обе. Для дерева разделов инфоблока родительские пункты также могут получить признак выделения.
 
 ### Стили шаблона
 
@@ -536,16 +578,25 @@ foreach($arResult as $arItem):
 
 Права доступа могут влиять на внешний вид меню. В шаблоне можно скрывать элементы, менять стили или добавлять изображения в зависимости от пользователя.
 
+Чтобы текст ссылки не переносился, задайте для класса `menu-link` в `style.css` свойство `white-space: nowrap`.
+
 ```php
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die(); ?>
+<?php
+use Bitrix\Main\Text\HtmlFilter;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
+?>
 <?php if (!empty($arResult)): ?>
 <!-- Если есть пункты меню, выводим блок -->
 <div class="blue-tabs-menu">
     <ul>
-<?php foreach($arResult as $arItem): ?>
-    <?php if ($arItem["PERMISSION"] > "D"): ?>
+<?php foreach ($arResult as $arItem): ?>
+    <?php if ($arItem['PERMISSION'] > 'D'): ?>
         <!-- Показываем пункты, к которым у пользователя есть доступ -->
-        <li><a href="<?= $arItem["LINK"] ?>"><nobr><?= $arItem["TEXT"] ?></nobr></a></li>
+        <li><a href="<?= HtmlFilter::encode($arItem['LINK']) ?>" class="menu-link"><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a></li>
     <?php endif; ?>
 <?php endforeach; ?>
     </ul>
@@ -556,7 +607,7 @@ foreach($arResult as $arItem):
 
 {% note warning "" %}
 
-Проверка значения `$arItem["PERMISSION"]` используется только для меню сайта. Она не применяется к другим компонентам или частям системы.
+Проверка значения `$arItem['PERMISSION']` скрывает ссылку в меню, но не ограничивает доступ к самой странице. Настройте права на страницу отдельно.
 
 {% endnote %}
 
@@ -602,7 +653,7 @@ foreach($arResult as $arItem):
 
    -  Тип меню для остальных уровней — `Подменю`.
 
-4. В разделе `test_menu` создайте две страницы `new-page-1.php` и `new-page-2.php`. В форме создания отметьте опцию *Добавить пункт меню* и укажите тип `Подменю`.
+4. В разделе `test-menu` создайте две страницы `new-page-1.php` и `new-page-2.php`. В форме создания отметьте опцию *Добавить пункт меню* и укажите тип `Подменю`.
 
 В результате появится дерево с двумя уровнями.
 
@@ -614,18 +665,18 @@ foreach($arResult as $arItem):
 <?php
 $aMenuLinks = [
     [
-        "Новая страница 1",
-        "/test-menu/new-page-1.php",
+        'Новая страница 1',
+        '/test-menu/new-page-1.php',
         [],
         [],
-        ""
+        ''
     ],
     [
-        "Новая страница 2",
-        "/test-menu/new-page-2.php",
+        'Новая страница 2',
+        '/test-menu/new-page-2.php',
         [],
         [],
-        ""
+        ''
     ]
 ];
 ?>
@@ -723,13 +774,14 @@ $aMenuLinks = [
 
 8. Откройте на редактирование файл `.submenu.menu_ext.php` в режиме PHP.
 
-9. Допишите проверку включения кода из ядра:
+9. Перед вызовом компонента добавьте проверку включения кода из ядра:
 
    ```php
-   <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-
-   global $APPLICATION;
-   $aMenuLinksExt = $APPLICATION->IncludeComponent(…
+   <?php
+   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+   {
+       die();
+   }
    ```
 
 10. После вызова компонента допишите код подключения к меню:
@@ -738,27 +790,31 @@ $aMenuLinks = [
     $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
     ```
 
-    В результате код в файле должен быть следующим:
+    Укажите ID созданного инфоблока вместо `4`. В результате файл должен содержать код:
 
     ```php
-    <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+    <?php
+    if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+    {
+        die();
+    }
 
     global $APPLICATION;
     $aMenuLinksExt = $APPLICATION->IncludeComponent(
-        "bitrix:menu.sections",
-        "",
+        'bitrix:menu.sections',
+        '',
         [
-            "CACHE_TIME" => "36000000",
-            "CACHE_TYPE" => "A",
-            "DEPTH_LEVEL" => "2",
-            "DETAIL_PAGE_URL" => "#SECTION_ID#/#ELEMENT_ID#",
-            "IBLOCK_ID" => "4",
-            "IBLOCK_TYPE" => "catalog",
-            "ID" => $_REQUEST["ID"],
-            "IS_SEF" => "N",
-            "SECTION_PAGE_URL" => "#SECTION_ID#/",
-            "SECTION_URL" => "/books/#SECTION_ID#/",
-            "SEF_BASE_URL" => "/books/"
+            'CACHE_TIME' => 36000000,
+            'CACHE_TYPE' => 'A',
+            'DEPTH_LEVEL' => 2,
+            'DETAIL_PAGE_URL' => '#SECTION_ID#/#ELEMENT_ID#',
+            'IBLOCK_ID' => 4,
+            'IBLOCK_TYPE' => 'catalog',
+            'ID' => (int)($_GET['ID'] ?? 0),
+            'IS_SEF' => 'N',
+            'SECTION_PAGE_URL' => '#SECTION_ID#/',
+            'SECTION_URL' => '/books/#SECTION_ID#/',
+            'SEF_BASE_URL' => '/books/',
         ]
     );
     $aMenuLinks = array_merge($aMenuLinks, $aMenuLinksExt);
@@ -777,7 +833,7 @@ $aMenuLinks = [
 
 В результате меню отображает разделы инфоблока.
 
-1. Массив `$aMenuLinks`возвращает пункты `Подменю`.
+1. Массив `$aMenuLinks` содержит пункты `Подменю`.
 
 2. Массив `$aMenuLinksExt` содержит результат работы компонента `bitrix:menu.sections`.
 
@@ -831,32 +887,30 @@ $aMenuLinks = [
 
     ![](./_images/menu-29.png){width=650px height=197px}
 
-11. В шаблоне найдите следующий участок кода:
+11. В цикле `foreach` шаблона найдите блок `<li>`, который выводит ссылку пункта. В шаблоне из раздела «Структура шаблона меню» он выглядит так:
 
     ```php
-    <?php if($arItem["SELECTED"]): ?>
-        <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
-    <?php else:?>
-        <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
-    <?php endif; ?>
+    <li>
+        <a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"<?php if ($arItem['SELECTED']): ?> class="selected"<?php endif; ?>><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a>
+    </li>
     ```
 
 12. Замените его на код:
 
     ```php
-    <?php if($arItem["SELECTED"]): ?>
-        <li>
-            <a href="<?= $arItem["LINK"] ?>">
-                <img src="<?= (array_key_exists("ACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["ACT"]) ? $arItem["PARAMS"]["ACT"] : "/images/menu/default.png") ?>" />
-            </a>
-        </li>
-    <?php else:?>
-        <li>
-            <a href="<?= $arItem["LINK"] ?>">
-                <img src="<?= (array_key_exists("NOACT", $arItem["PARAMS"]) && file_exists($_SERVER["DOCUMENT_ROOT"].$arItem["PARAMS"]["NOACT"]) ? $arItem["PARAMS"]["NOACT"] : "/images/menu/default.png") ?>" />
-            </a>
-        </li>
-    <?php endif; ?>
+    <?php
+    $imageKey = $arItem['SELECTED'] ? 'ACT' : 'NOACT';
+    $image = (string)($arItem['PARAMS'][$imageKey] ?? '');
+    if ($image === '' || !is_file($_SERVER['DOCUMENT_ROOT'] . $image))
+    {
+        $image = '/images/menu/default.png';
+    }
+    ?>
+    <li>
+        <a href="<?= HtmlFilter::encode($arItem['LINK']) ?>">
+            <img src="<?= HtmlFilter::encode($image) ?>" alt="<?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?>">
+        </a>
+    </li>
     ```
 
 13. Сохраните шаблон.
@@ -883,19 +937,19 @@ $aMenuLinks = [
 
    ```Plain text
    Название: target
-   Значение: target="_blank"
+   Значение: _blank
    ```
 
 2. В шаблоне меню замените
 
    ```php
-   <a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a>
+   <a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a>
    ```
 
    на строку
 
    ```php
-   <a href="<?= $arItem["LINK"] ?>" <?= $arItem["PARAMS"]["target"] ?>><?= $arItem["TEXT"] ?></a>
+   <a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"<?php if (($arItem['PARAMS']['target'] ?? '') === '_blank'): ?> target="_blank" rel="noopener noreferrer"<?php endif; ?>><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a>
    ```
 
 ### Показать пункт для неавторизованных пользователей
@@ -937,26 +991,10 @@ $aMenuLinks = [
    Значение: текст подсказки
    ```
 
-2. В шаблоне меню
+2. В шаблоне меню замените ссылку внутри `<li>` на строку с атрибутом `title`:
 
    ```php
-   <?php if ($arItem["SELECTED"]): ?>
-           <li><a href="<?= $arItem["LINK"] ?>" class="selected"><?= $arItem["TEXT"] ?></a></li>
-   <?php else: ?>
-           <li><a href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a></li>
-   <?php endif; ?>
-   ```
-
-   замените первую ссылку в коде на строку
-
-   ```php
-   <a href="<?= $arItem["LINK"] ?>" class="selected" title="<?= $arItem["PARAMS"]["A_TITLE"] ?>"><?= $arItem["TEXT"] ?></a>
-   ```
-
-3. Вторую строку замените на следующую строку
-
-   ```php
-   <a href="<?= $arItem["LINK"] ?>" title="<?= $arItem["PARAMS"]["A_TITLE"] ?>"><?= $arItem["TEXT"] ?></a>
+   <a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"<?php if ($arItem['SELECTED']): ?> class="selected"<?php endif; ?> title="<?= HtmlFilter::encode((string)($arItem['PARAMS']['A_TITLE'] ?? '')) ?>"><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a>
    ```
 
 ### Добавить изображения рядом с пунктами меню
@@ -968,24 +1006,28 @@ $aMenuLinks = [
    Значение: путь к изображению
    ```
 
-2. В шаблоне меню после строки
+2. В шаблоне меню внутри ссылки пункта, сразу после открывающего тега `<a>`, добавьте изображение:
 
    ```php
-   <a href="<?= $arItem["LINK"] ?>">
+   <?php if (!empty($arItem['PARAMS']['IMG'])): ?>
+       <img class="menu-icon" src="<?= HtmlFilter::encode($arItem['PARAMS']['IMG']) ?>" alt="">
+   <?php endif; ?>
    ```
 
-   добавьте строку с изображением
+В `style.css` шаблона добавьте правило:
 
-   ```php
-   <img src="<?= $arItem["PARAMS"]["IMG"] ?>" border="0" />
-   ```
+```css
+.menu-icon {
+    border: 0;
+}
+```
 
 ### Разные изображения для языков сайта
 
-1. Если сайт двуязычный, в шаблоне меню добавьте класс языка.
+1. Если сайт двуязычный, в `header.php` шаблона сайта добавьте класс языка к существующему тегу `<body>`. Сохраните остальные классы этого тега.
 
    ```php
-   <body class="lang-<?= LANG ?>">
+   <body class="lang-<?= \Bitrix\Main\Text\HtmlFilter::encode(LANGUAGE_ID) ?>">
    ```
 
 2. В CSS-файле укажите правила для смены изображений по языку.
@@ -1010,7 +1052,7 @@ $aMenuLinks = [
 Если шаблон сайта простой, можно добавить в код проверку с помощью строк:
 
 ```php
-if ($APPLICATION->GetCurPage() == "/index.php")
+if ($APPLICATION->GetCurPage() === '/index.php')
 {
      // вывод меню для главной страницы
 }
@@ -1024,7 +1066,7 @@ else
 
 1. Скопируйте стандартный шаблон меню tree в шаблон сайта.
 
-2. В файле `template.php` замените `<li class="close">` на `<li>`.
+2. В файле `template.php` уберите условное добавление класса `menu-close` у родительского пункта. Оставьте открывающий тег `<li>` без этого класса.
 
 {% note info "" %}
 
@@ -1034,44 +1076,76 @@ else
 
 ### Меню tree, которое не сворачивается при переходе
 
-Если уровень вложенности меню меньше двух, выполните следующие действия:
-
-1. Скопируйте стандартный шаблон меню tree в шаблон сайта.
-
-2. В файле `template.php` замените `<li class="close">` на
-
-   `<li <?if (!$arItem["SELECTED"]):?>class="close"<?endif?>>`.
-
-Для более глубокой вложенности добавьте следующий код в шаблон:
+Чтобы после перехода на другую страницу дерево раскрывало ветку выбранного пункта, скопируйте шаблон `tree` в шаблон сайта. Сохраните его `style.css` и `script.js`, а `template.php` замените следующим кодом. Пример использует класс `menu-close` и функцию `OpenMenuNode()` из стандартного шаблона.
 
 ```php
-<?php if (!empty($arResult)): ?>
 <?php
-// Определяем, какие пункты меню должны быть открыты для дерева
-$lastLevel = 0;
-$selected = false;
-// Проходим по меню в обратном порядке, чтобы найти выбранный пункт и подсветить его родителей
-foreach(array_reverse($arResult) as $arItem)
+use Bitrix\Main\Text\HtmlFilter;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 {
-    if ($arItem["SELECTED"])
+    die();
+}
+
+// Запоминаем родителей каждого выделенного пункта
+$parents = [];
+$openItems = [];
+foreach ($arResult as $index => $item)
+{
+    $depth = (int)$item['DEPTH_LEVEL'];
+    foreach (array_keys($parents) as $parentDepth)
     {
-        $lastLevel = $arItem["DEPTH_LEVEL"]; // Запоминаем уровень выбранного пункта
-        $selected = true;
+        if ($parentDepth >= $depth)
+        {
+            unset($parents[$parentDepth]);
+        }
     }
-    // Если уже нашли выбранный пункт и поднимаемся выше по дереву
-    if ($selected and $arItem["DEPTH_LEVEL"] < $lastLevel)
+    if ($item['SELECTED'])
     {
-        $arResult[$arItem["ITEM_INDEX"]]["SELECTED"] = true; // Подсвечиваем родителя
-        $lastLevel--; // Переходим на уровень выше
+        $openItems[$index] = true;
+        foreach ($parents as $parentIndex)
+        {
+            $openItems[$parentIndex] = true;
+        }
+    }
+    if ($item['IS_PARENT'])
+    {
+        $parents[$depth] = $index;
     }
 }
 ?>
+<?php if (!empty($arResult)): ?>
 <div class="menu-sitemap-tree">
 <ul>
-<?php
-$previousLevel = 0;
-foreach($arResult as $arItem): ?>
+    <?php $previousLevel = 0; ?>
+    <?php foreach ($arResult as $index => $arItem): ?>
+        <?php if ($previousLevel > $arItem['DEPTH_LEVEL']): ?>
+            <?= str_repeat('</ul></li>', $previousLevel - $arItem['DEPTH_LEVEL']) ?>
+        <?php endif; ?>
+
+        <?php if ($arItem['IS_PARENT']): ?>
+            <li<?php if (empty($openItems[$index])): ?> class="menu-close"<?php endif; ?>>
+                <div class="folder" onclick="OpenMenuNode(this)"></div>
+                <div class="item-text"><a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a></div>
+                <ul>
+        <?php elseif ($arItem['PERMISSION'] > 'D'): ?>
+            <li>
+                <div class="page"></div>
+                <div class="item-text"><a href="<?= HtmlFilter::encode($arItem['LINK']) ?>"><?= HtmlFilter::encode($arItem['TEXT'], ENT_COMPAT, false) ?></a></div>
+            </li>
+        <?php endif; ?>
+
+        <?php $previousLevel = (int)$arItem['DEPTH_LEVEL']; ?>
+    <?php endforeach; ?>
+    <?php if ($previousLevel > 1): ?>
+        <?= str_repeat('</ul></li>', $previousLevel - 1) ?>
+    <?php endif; ?>
+</ul>
+</div>
+<?php endif; ?>
 ```
+
+После перехода открыты все родители выделенного пункта, остальные ветки свернуты. Посетитель по-прежнему может раскрывать и сворачивать их нажатием на значок папки. Пример не сохраняет вручную раскрытые ветки между страницами.
 
 ### Скрыть боковое меню по свойству страницы
 
@@ -1093,34 +1167,61 @@ foreach($arResult as $arItem): ?>
    if ($APPLICATION->GetPageProperty('hide_menu') !== 'Y')
    {
        ob_start();
-       echo 'проверка отложенного меню!';
-       // здесь выводим меню компонентом или другим способом
+       $APPLICATION->IncludeComponent(
+           'bitrix:menu',
+           '.default',
+           [
+               'ROOT_MENU_TYPE' => 'left',
+               'MAX_LEVEL' => 1,
+               'MENU_CACHE_TYPE' => 'N',
+           ]
+       );
        $APPLICATION->SetPageProperty('menu', ob_get_clean());
    }
    ```
 
 {% note info "" %}
 
-Меню выводится в футере, если свойство `hide_menu` не равно `Y`. Если оно установлено, то меню не отображается.
+Код в `footer.php` формирует меню и задает свойство `menu`. Отложенный вызов `ShowProperty()` выводит его на месте в `header.php`. Если свойство `hide_menu` равно `Y`, меню не отображается.
 
 {% endnote %}
 
 ### Кеш меню
 
-Кеш меню зависит от адреса страницы. Если страниц много, размер кеша будет большим. В этом случае рекомендуется отключить кеш в компоненте меню.
+Кеш компонента `bitrix:menu` хранит подготовленные пункты. В настройках компонента по умолчанию выбрано *Не кешировать*. При подключении через PHP задайте нужные параметры в массиве вызова.
 
-1. Включите на сайте режим правки и откройте параметры компонента.
+-  `MENU_CACHE_TYPE` — режим кеширования. `N` отключает кеш, `A` включает автокеширование с учетом общей настройки сайта, `Y` включает кеширование.
 
-2. В параметре Тип кеширования выберите Не кешировать.
+-  `MENU_CACHE_TIME` — срок хранения кеша в секундах. Значение в форме настроек по умолчанию — `3600`.
+
+-  `MENU_CACHE_USE_GROUPS` — учет групп пользователя в ключе кеша. В форме настроек по умолчанию — `Y`.
+
+-  `MENU_CACHE_GET_VARS` — имена значимых GET-параметров. Перечислите переменные, от которых зависят пункты меню.
+
+{% note warning "" %}
+
+Если видимость пунктов зависит от групп пользователей, оставьте `MENU_CACHE_USE_GROUPS = Y`. При `N` посетители разных групп используют общий кеш, в том числе результат проверки условий показа пунктов. Учет групп не разделяет кеш по отдельным пользователям. Для персональных условий отключите кеш или настройте разделение по пользователям через `MENU_CACHE_USE_USERS = Y`.
+
+{% endnote %}
+
+По умолчанию адрес текущей страницы не входит в ключ кеша компонента. В шаблоне сайта один вызов меню может использовать общий кеш на разных страницах. Если состав меню меняется по разделам, передайте скрытый параметр `CACHE_SELECTED_ITEMS = Y` в вызове компонента или отключите кеш через `MENU_CACHE_TYPE = N`.
+
+При `CACHE_SELECTED_ITEMS = Y` компонент добавляет адрес текущей страницы в ключ и кеширует выделение пунктов. Число вариантов кеша растет вместе с числом страниц, сочетаний групп и значимых GET-параметров. Отключение кеша увеличивает число чтений файлов и запросов динамического меню, поэтому выбирайте режим после проверки нагрузки.
+
+Чтобы отключить кеш через интерфейс, включите режим правки, откройте параметры компонента и в поле *Тип кеширования* выберите *Не кешировать*.
 
 ![](./_images/menu-4.png){width=719px height=471px}
+
+После ручного изменения файлов меню откройте *Настройки > Настройки продукта > Автокеширование > Очистка файлов кеша*, выберите *Меню* и выполните очистку. Она удалит и кеш компонента, и управляемый кеш меню для неавторизованных посетителей.
+
+Параметр `?clear_cache=Y` и кнопка *Сбросить кеш* на панели обновляют текущий вариант кеша компонента. При учете групп это вариант для групп текущего пользователя. Такой сброс не заменяет очистку меню для всех посетителей. После вставки или перестановки пунктов проверьте меню также без авторизации, иначе старый управляемый кеш может связать новые названия с прежними ссылками.
 
 ## Ошибки и советы
 
 | Ошибка | Совет |
 | ------ | ----- |
-| Меню не обновилось после изменений | Очистите кеш или отключите его временно |
+| Меню не обновилось после изменений | Откройте *Настройки > Настройки продукта > Автокеширование > Очистка файлов кеша*, выберите *Меню* и выполните очистку |
 | Пункт не отображается | Проверьте условие отображения и права доступа |
-| Появилось лишнее меню | Удалите или переименуйте файл `.тип.menu.php`в подразделе |
+| Появилось лишнее меню | Проверьте файл `.тип.menu.php` в подразделе и отдельно файл `.тип.menu_ext.php`, если подключены динамические пункты |
 | Динамическое меню не работает | Убедитесь, что создали файл `.тип.menu_ext.php` и в параметрах компонента `bitrix:menu` отметили опцию *Подключать файлы с именами вида .тип\_меню.menu_ext.php* |
 

@@ -188,6 +188,16 @@ public function execute(array &$option)
 
 Данные о шагах `steps` и `count` нужны для отображения прогресса в *Градуснике*.
 
+**Пример.** Итератор сохраняет в `last_processed_id` ID последнего обработанного элемента, чтобы продолжить работу со следующего элемента.
+
+Реализуйте в своем классе два метода.
+
+-  `calculateTotalItems()` — возвращает общее количество элементов.
+
+-  `processNextBatch($lastId, 50)` — выбирает до 50 элементов с ID больше `$lastId` по возрастанию ID и обрабатывает их.
+
+   Метод возвращает массив с ключами `last_id` — ID последнего обработанного элемента и `count` — количество обработанных элементов. Если элементов нет, метод возвращает прежний `$lastId` в `last_id` и ноль в `count`.
+
 ```php
 public function execute(array &$option)
 {
@@ -197,7 +207,6 @@ public function execute(array &$option)
         $option['steps'] = 0; // количество выполненных шагов
         $option['count'] = $this->calculateTotalItems(); // общее количество шагов
         $option['last_processed_id'] = 0;
-        $option['processed_ids'] = [];
     }
 
     // Используем сохраненные данные
@@ -209,10 +218,6 @@ public function execute(array &$option)
     // Сохраняем состояние для следующего запуска
     $option['last_processed_id'] = $processed['last_id'];
     $option['steps'] += $processed['count'];
-    $option['processed_ids'] = array_merge(
-        $option['processed_ids'],
-        $processed['ids']
-    );
 
     // Проверяем завершение
     return ($option['steps'] < $option['count'])

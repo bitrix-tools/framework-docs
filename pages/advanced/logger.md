@@ -57,13 +57,19 @@ interface LoggerAwareInterface
 
 ### Файловый логгер
 
-Файловый логгер `\Bitrix\Main\Diag\FileLogger` записывает сообщения в файл `$logFile`, например, `$_SERVER["DOCUMENT_ROOT"]."/log.txt"`. Если размер лога превышает `$maxLogSize`, логгер выполняет однократную ротацию файла. По умолчанию максимальный размер лога составляет 1 Мб. Чтобы отключить ротацию, укажите `$maxLogSize=0`.
+Файловый логгер `\Bitrix\Main\Diag\FileLogger` записывает сообщения в файл `$logFile`, например, `/var/log/php/bitrix.log`. Если размер лога превышает `$maxLogSize`, логгер выполняет однократную ротацию файла. По умолчанию максимальный размер лога составляет 1 Мб. Чтобы отключить ротацию, укажите `$maxLogSize=0`.
+
+{% note warning "" %}
+
+Храните логи за пределами корневого каталога сайта (`DOCUMENT_ROOT`). Файлы внутри этого каталога могут быть доступны по HTTP и раскрывать отладочные данные. В примерах используется каталог `/var/log/php`. Создайте его и предоставьте пользователю, от имени которого работает PHP, права на запись.
+
+{% endnote %}
 
 ```php
 use Bitrix\Main\Diag\FileLogger;
 use Psr\Log\LogLevel;
 
-$logPath = $_SERVER['DOCUMENT_ROOT'] . '/log.txt';
+$logPath = '/var/log/php/bitrix.log';
 $maxLogSize = 0;
 
 $logger = new FileLogger($logPath, $maxLogSize);
@@ -105,7 +111,7 @@ $logger->warning($message);
 -  `callback`, который изменяет поля для записи в таблицу на основе `$context`.
 
 ```php
-use Bitrix\Main\Diag\EventLogger;
+use Bitrix\Main\Diag;
 
 $callback = function (array $context)
 {
@@ -177,7 +183,7 @@ $logger->setFormatter($formatter);
 Плейсхолдеры `{date}`, `{host}`, `{delimiter}` подставляются автоматически, в `$context` их не обязательно передавать.
 
 ```php
-use Bitrix\Main\Diag\Helper;
+use Bitrix\Main\Diag;
 
 $logger->debug(
     "{date} - {host}\n{trace}{delimiter}\n",
@@ -375,10 +381,10 @@ return [
     'loggers' => [
         'value' => [
             'main.HttpClient' => [
-                'constructor' => function (\Bitrix\Main\Web\HttpClient $http, $method, $url)
+                'constructor' => function (\Bitrix\Main\Web\Http\DebugInterface $debug, \Psr\Http\Message\RequestInterface $request)
                 {
-                    $http->setDebugLevel(\Bitrix\Main\Web\HttpDebug::ALL);
-                    return new \Bitrix\Main\Diag\FileLogger('/home/bitrix/www/log.txt');
+                    $debug->setDebugLevel(\Bitrix\Main\Web\HttpDebug::ALL);
+                    return new \Bitrix\Main\Diag\FileLogger('/var/log/php/http.log');
                 },
                 'level' => \Psr\Log\LogLevel::DEBUG,
                 'formatter' => 'formatter.Arguments',
@@ -415,9 +421,9 @@ return [
 
 Класс `\Bitrix\Main\Web\HttpClient` поддерживает PSR-3 логгеры и позволяет настраивать их через секцию `loggers` в `/bitrix/.settings.php`. При обработке асинхронных запросов можно создавать отдельный логгер для каждого запроса. Например, записывать отладку в разные файлы и избегать смешивания логов.
 
-Фабрика передает в замыкание-конструктор два объекта:
+Обработчик HTTP-запроса вызывает фабрику, которая передает в замыкание-конструктор два объекта.
 
--  `\Bitrix\Main\Web\Http\DebugInterface $debug` — управляет уровнем отладки через константы `\Bitrix\Main\Web\HttpDebug`,
+-  `\Bitrix\Main\Web\Http\DebugInterface $debug` — обработчик запроса, управляет уровнем отладки через константы `\Bitrix\Main\Web\HttpDebug`,
 
 -  `\Psr\Http\Message\RequestInterface $request` — текущий HTTP-запрос.
 
@@ -433,7 +439,7 @@ return [
                     $debug->setDebugLevel(\Bitrix\Main\Web\HttpDebug::ALL);
                     // Генерируем уникальное имя файла на основе хеша объекта запроса
                     // Создаем отдельный файловый логгер для текущего запроса
-                    return new \Bitrix\Main\Diag\FileLogger('/home/bitrix/www/httplog'. spl_object_hash($request) . '.txt');
+                    return new \Bitrix\Main\Diag\FileLogger('/var/log/php/httplog' . spl_object_hash($request) . '.txt');
                 },
                 // Записываем все сообщения уровня DEBUG и выше
                 'level' => \Psr\Log\LogLevel::DEBUG,
@@ -458,7 +464,7 @@ return [
                     $debug->setDebugLevel(\Bitrix\Main\Web\HttpDebug::REQUEST_HEADERS);
 
                     // Единый файл для всех внешних вызовов
-                    $logger = new \Bitrix\Main\Diag\FileLogger($_SERVER['DOCUMENT_ROOT'] . '/http.txt');
+                    $logger = new \Bitrix\Main\Diag\FileLogger('/var/log/php/http.log');
 
                     // Назначаем анонимный форматтер
                     $logger->setFormatter(
@@ -506,7 +512,7 @@ return [
 
    -  идентификатор логгера — `main.HttpClient`,
 
-   -  параметры — `[$this, $this->queryMethod, $this->effectiveUrl]`.
+   -  параметры замыкания — `\Bitrix\Main\Web\Http\DebugInterface $debug`, `\Psr\Http\Message\RequestInterface $request`. Фабрику вызывает обработчик запроса и передает `[$this, $this->request]`.
 
 -  Класс `\Bitrix\Main\Service\GeoIp\Manager`:
 
