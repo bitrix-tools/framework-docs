@@ -55,16 +55,16 @@ $templateWords = Numerator::getTemplateWordsForType('DOCUMENT');
 || `PrefixNumberGenerator` | `{PREFIX}` — фиксированный текст, который задан в настройках ||
 |#
 
-Пример преобразования:
+**Пример.** При `start = 3` и `step = 2` последовательные номера — `3`, `5`, `7`. Для первого номера в 2025 году преобразование выглядит так:
 
-```
+```text
 Шаблон:      {PREFIX}__{YEAR}/{NUMBER}--{RANDOM}
                ↓          ↓       ↓         ↓
 Генераторы:  Prefix     Date   Sequent   Random
                ↓          ↓       ↓         ↓
-Значения:    'DOC'     '2025'   '007'   'A3F9K2'
+Значения:    'DOC'     '2025'    '3'    'A3F9K2'
 
-Готовый номер:  DOC__2025/007--A3F9K2
+Готовый номер:  DOC__2025/3--A3F9K2
 ```
 
 ### Дополнительные генераторы
@@ -138,10 +138,12 @@ $settings = Numerator::getSettingsFields('DOCUMENT');
 
 ### Зарегистрировать класс в событии
 
-Зарегистрируйте класс генератора в событии `onNumberGeneratorsClassesCollect`. Достаточно указать имя класса — `TimeNumberGenerator`. Метод `onGeneratorClassesCollect` реализован в базовом классе `\Bitrix\Main\Numerator\Generator\NumberGenerator`.
+Зарегистрируйте класс генератора в событии `onNumberGeneratorsClassesCollect` через [EventManager::registerEventHandler()](../framework/events.md) при установке модуля `mymodule`. Метод `onGeneratorClassesCollect` реализован в базовом классе `\Bitrix\Main\Numerator\Generator\NumberGenerator`.
 
 ```php
-RegisterModuleDependences(
+use Bitrix\Main\EventManager;
+
+EventManager::getInstance()->registerEventHandler(
     'main',
     'onNumberGeneratorsClassesCollect',
     'mymodule',
@@ -360,7 +362,7 @@ $numerator = Numerator::load($numeratorId);
 $config = $numerator->getConfig();
 $config[Numerator::getType()]['name'] = 'Обновленный нумератор';
 
-$result = Numerator::update($id, $config);
+$result = Numerator::update($numeratorId, $config);
 ```
 
 {% note warning "" %}
