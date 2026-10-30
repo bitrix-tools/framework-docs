@@ -128,7 +128,7 @@ Loader::requireModule('module_name');
 
 Система подключает классы ядра автоматически при соблюдении правил.
 
-1. **Имена файлов и классов**. Имя файла должно точно соответствовать имени класса. Например, файл `/lib/MyService.php` содержит класс `MyService`.
+1. **Имена файлов и классов**. Путь внутри `/lib/` повторяет пространство имен после базового пространства модуля и имя класса. Автозагрузчик сначала ищет путь в регистре пространства имен и класса, затем — полностью строчными буквами. Например, класс `Company\Module\MyService` можно разместить в `/lib/MyService.php` или `/lib/myservice.php`, а `Company\Module\Search\IndexManager` — в `/lib/Search/IndexManager.php` или `/lib/search/indexmanager.php`.
 
 2. **Пространства имен**. Класс должен находиться в пространстве имен, которое соответствует идентификатору модуля. Для модуля `company.module` пространство имен будет `Company\Module`.
 
@@ -148,11 +148,12 @@ Loader::requireModule('module_name');
    ```php
    <?php
    use Bitrix\Main\Loader;
+   use Company\Module\MyService;
 
    if (Loader::includeModule('company.module'))
    {
        // Теперь можно использовать классы модуля
-       $service = new \Company\Module\MyService();
+       $service = new MyService();
    }
    ```
 
@@ -161,10 +162,11 @@ Loader::requireModule('module_name');
    ```php
    <?php
    use Bitrix\Main\Loader;
+   use Company\Module\MyService;
 
    Loader::requireModule('company.module');
 
-   $service = new \Company\Module\MyService();
+   $service = new MyService();
    ```
 
 ## Описание модуля {#module-description}
@@ -177,7 +179,7 @@ Loader::requireModule('module_name');
 
 -  `MODULE_ID` — идентификатор модуля.
 
--  `MODULE_VERSION` — версия модуля в формате `XX.XX.XX`.
+-  `MODULE_VERSION` — версия модуля из трех чисел, разделенных точками, например `1.0.0`.
 
 -  `MODULE_VERSION_DATE` — дата выпуска версии в формате `ГГГГ-ММ-ДД ЧЧ:МИ:СС`.
 
@@ -200,7 +202,10 @@ Loader::requireModule('module_name');
 ```php
 <?php
 
+use Bitrix\Main\Application;
+use Bitrix\Main\IO\File;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ModuleManager;
 
 Loc::loadMessages(__FILE__);
 
@@ -230,7 +235,7 @@ class vendor_modulename extends CModule
         $this->InstallDB();
         $this->InstallFiles();
 
-        RegisterModule($this->MODULE_ID);
+        ModuleManager::registerModule($this->MODULE_ID);
     }
 
     public function DoUninstall()
@@ -238,7 +243,7 @@ class vendor_modulename extends CModule
         $this->UnInstallDB();
         $this->UnInstallFiles();
 
-        UnRegisterModule($this->MODULE_ID);
+        ModuleManager::unRegisterModule($this->MODULE_ID);
     }
 
     /**
@@ -250,9 +255,9 @@ class vendor_modulename extends CModule
     {
         global $APPLICATION;
 
-        $db = \Bitrix\Main\Application::getConnection();
+        $db = Application::getConnection();
         $errors = $db->executeSqlBatch(
-            __DIR__ . '/' . $db->getType() . '/install.sql'
+            File::getFileContents(__DIR__ . '/db/' . $db->getType() . '/install.sql')
         );
         if (!empty($errors))
         {
@@ -269,9 +274,11 @@ class vendor_modulename extends CModule
      */
     public function UnInstallDB()
     {
-        $db = \Bitrix\Main\Application::getConnection();
+        global $APPLICATION;
+
+        $db = Application::getConnection();
         $errors = $db->executeSqlBatch(
-            __DIR__ . '/' . $db->getType() . '/uninstall.sql'
+            File::getFileContents(__DIR__ . '/db/' . $db->getType() . '/uninstall.sql')
         );
         if (!empty($errors))
         {
@@ -282,33 +289,34 @@ class vendor_modulename extends CModule
     }
 
     /**
-     * Копирование файлов из папки модуля, в папку /local/ для корректной работы
-     * Это необходимо из-за того что сама директория модуля недоступна для веб-сервера, а файлы должны быть доступны для корректной работы
+     * Копирование ресурсов, компонентов и оберток административных скриптов
      *
      * @return void
      */
     public function InstallFiles()
     {
         CopyDirFiles(__DIR__ . '/js', $_SERVER['DOCUMENT_ROOT'] . '/local/js', true);
-        CopyDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/local/admin', true);
+        CopyDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/admin', true);
         CopyDirFiles(__DIR__ . '/themes', $_SERVER['DOCUMENT_ROOT'] . '/local/themes', true, true);
         CopyDirFiles(__DIR__ . '/components', $_SERVER['DOCUMENT_ROOT'] . '/local/components', true, true);
     }
 
     /**
-     * Удаление файлов модуля из папки /local
+     * Удаление установленных файлов модуля
      *
      * @return void
      */
     public function UnInstallFiles()
     {
         DeleteDirFiles(__DIR__ . '/js', $_SERVER['DOCUMENT_ROOT'] . '/local/js');
-        DeleteDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/local/admin');
+        DeleteDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/admin');
         DeleteDirFiles(__DIR__ . '/themes', $_SERVER['DOCUMENT_ROOT'] . '/local/themes');
         DeleteDirFiles(__DIR__ . '/components', $_SERVER['DOCUMENT_ROOT'] . '/local/components');
     }
 }
 ```
+
+Методы `InstallDB()` и `UnInstallDB()` читают SQL из файлов `/install/db/<тип_БД>/install.sql` и `uninstall.sql`. Метод `executeSqlBatch()` принимает текст запросов, поэтому содержимое файла нужно получить через `File::getFileContents()`.
 
 ### Информация о версии
 
@@ -330,7 +338,7 @@ $arModuleVersion = [
 
 Во время установки система запускает метод `DoInstall()` из класса модуля. Метод выполняет действия, описанные в классе модуля. Например в классе модуля можно описать:
 
--  регистрацию модуля в системе с помощью `RegisterModule()`,
+-  регистрацию модуля в системе с помощью `ModuleManager::registerModule()`,
 
 -  создание необходимых таблиц в базе данных,
 
@@ -378,6 +386,8 @@ $arModuleVersion = [
 
 ```php
 <?php
+use Bitrix\Main\ModuleManager;
+
 class company_module extends CModule
 {
     public $MODULE_ID = 'company.module';
@@ -418,7 +428,7 @@ class company_module extends CModule
         ]);
         $this->InstallFiles();
 
-        RegisterModule($this->MODULE_ID);
+        ModuleManager::registerModule($this->MODULE_ID);
 
         return true;
     }
@@ -433,7 +443,7 @@ class company_module extends CModule
 
 При удалении система запускает метод `DoUninstall()`. Метод выполняет действия, описанные в классе модуля. Например в классе модуля можно описать:
 
--  снятие регистрации модуля через `UnRegisterModule()`,
+-  снятие регистрации модуля через `ModuleManager::unRegisterModule()`,
 
 -  удаление таблиц модуля из базы данных, если нет подтверждения о сохранении данных.
 
@@ -497,6 +507,7 @@ class company_module extends CModule
 ```php
 <?php
 use Bitrix\Main\Application;
+use Bitrix\Main\ModuleManager;
 
 class company_module extends CModule
 {
@@ -528,7 +539,7 @@ class company_module extends CModule
         ]);
         $this->UnInstallFiles();
 
-        UnRegisterModule($this->MODULE_ID);
+        ModuleManager::unRegisterModule($this->MODULE_ID);
 
         $APPLICATION->IncludeAdminFile(
             'Удаление модуля',
@@ -578,7 +589,7 @@ if (!check_bitrix_sessid())
 
 ### Файлы параметров
 
--  `default_option.php` — содержит значения параметров по умолчанию. Система использует эти значения, если параметр еще не сохранен в базе данных.
+Файл `default_option.php` содержит значения параметров по умолчанию. Имя массива состоит из идентификатора модуля с заменой точек на `_` и суффикса `_default_option`. Для модуля `company.module` используйте `$company_module_default_option`.
 
 ```php
 <?php
@@ -590,7 +601,63 @@ $company_module_default_option = [
 ];
 ```
 
--  `options.php` — создает интерфейс для редактирования параметров в административной части. В этом файле размещают HTML-форму и логику сохранения настроек.
+Метод `Option::get()` сначала возвращает сохраненное значение. Если его нет, метод возвращает непустой аргумент `$default`. При `$default`, равном пустой строке, метод ищет значение в `default_option.php`. Если значения нет и в файле, метод возвращает `$default`.
+
+### Страница настроек
+
+Файл `options.php` содержит форму и логику сохранения параметров. Система подключает его из `/bitrix/admin/settings.php` после административного пролога. В этот момент доступны `$APPLICATION`, `$USER`, идентификатор выбранного модуля `$mid` и константа языка интерфейса `LANGUAGE_ID`. Повторно подключать пролог и эпилог в `options.php` не нужно.
+
+Создайте `/local/modules/company.module/options.php`. Для доступа к странице `settings.php` нужна операция `view_other_settings` или `edit_other_settings`. Пользователю также нужен доступ на чтение файла `/bitrix/admin/settings.php`, который определяют права на файлы и каталоги сайта.
+
+В примере пользователь с правом `R` на модуль может просматривать параметры, а с правом `W` и операцией `edit_other_settings` — сохранять их.
+
+Форма отправляет POST-запрос на страницу настроек. Поле `mid` выбирает модуль, а `lang` сохраняет язык интерфейса. Функция `bitrix_sessid_post()` добавляет CSRF-токен, который код проверяет через `check_bitrix_sessid()` перед сохранением.
+
+```php
+<?php
+use Bitrix\Main\Config\Option;
+use Bitrix\Main\Context;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    return;
+}
+
+$moduleId = 'company.module';
+$moduleRight = $APPLICATION->GetGroupRight($moduleId);
+
+if ($moduleRight < 'R')
+{
+    $APPLICATION->AuthForm('Доступ запрещен');
+    return;
+}
+
+$canSave = $moduleRight >= 'W' && $USER->CanDoOperation('edit_other_settings');
+$request = Context::getCurrent()->getRequest();
+
+if ($request->isPost() && $canSave && check_bitrix_sessid())
+{
+    Option::set($moduleId, 'ENABLE_LOG', $request->getPost('ENABLE_LOG') === 'Y' ? 'Y' : 'N');
+}
+
+$enableLog = Option::get($moduleId, 'ENABLE_LOG');
+?>
+<form method="post" action="/bitrix/admin/settings.php">
+    <?= bitrix_sessid_post() ?>
+    <input type="hidden" name="mid" value="<?= htmlspecialcharsbx($moduleId) ?>">
+    <input type="hidden" name="lang" value="<?= htmlspecialcharsbx(LANGUAGE_ID) ?>">
+
+    <p>
+        <label>
+            <input type="checkbox" name="ENABLE_LOG" value="Y"<?= $enableLog === 'Y' ? ' checked' : '' ?><?= !$canSave ? ' disabled' : '' ?>>
+            Включить журналирование
+        </label>
+    </p>
+    <input type="submit" value="Сохранить"<?= !$canSave ? ' disabled' : '' ?>>
+</form>
+```
+
+Вызов `Option::get()` без третьего аргумента использует значение `ENABLE_LOG` из `default_option.php`, пока администратор не сохранит параметр.
 
 ### Работа с параметрами через код
 
@@ -608,7 +675,7 @@ $apiKey = \Bitrix\Main\Config\Option::get('my.module', 'api_key', 'default_value
 
 -  `$name` — имя параметра.
 
--  `$default` — значение по умолчанию, возвращается если параметр не найден.
+-  `$default` — значение для отсутствующего параметра. Непустое значение имеет приоритет перед `default_option.php`.
 
 -  `$siteId` — идентификатор сайта. Если `false`, используется текущий сайт. Не обязательный параметр.
 
@@ -647,20 +714,20 @@ $apiKey = \Bitrix\Main\Config\Option::get('my.module', 'api_key', 'default_value
 
 ## Административные скрипты
 
-Административные скрипты — это PHP-файлы, которые создают интерфейс управления модулем в административной панели. Эти файлы размещаются в папке `/bitrix/modules/ID_модуля/admin/`.
+Административные скрипты — это PHP-файлы, которые создают интерфейс управления модулем в административной панели. Для пользовательского модуля разместите их в папке `/local/modules/ID_модуля/admin/`.
 
 Файлы в папке `/admin/` недоступны для прямого вызова через браузер, поэтому для каждого административного скрипта нужно сделать скрипт-обертку в папке `/bitrix/admin/`.
 
--  Основной скрипт — `/bitrix/modules/company.module/admin/my_page.php`.
+-  Основной скрипт — `/local/modules/company.module/admin/my_page.php`.
 
 -  Обертка — `/bitrix/admin/company_module_my_page.php`.
 
 ```php
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/company.module/admin/my_page.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/local/modules/company.module/admin/my_page.php');
 ```
 
-При установке модуля обертки автоматически копируются из `/install/admin/` в `/bitrix/admin/`.
+Разместите обертки в `/local/modules/company.module/install/admin/`. При установке метод `InstallFiles()` модуля должен скопировать их в `/bitrix/admin/`, как в примере установщика выше. Метод `UnInstallFiles()` удаляет установленные обертки из этой же папки.
 
 Для корректной работы административных скриптов в каждом из них необходимо определить константу `ADMIN_MODULE_NAME`, которая служит идентификатором модуля в административном интерфейсе. Константа связывает административные скрипты модуля с системой.
 
@@ -674,14 +741,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/company.module/admin/m
 
 ```php
 <?php
-define('ADMIN_MODULE_NAME', 'mail');
+define('ADMIN_MODULE_NAME', 'company.module');
 ```
 
-Затем ее нужно подключать в начале каждого административного скрипта.
+Подключите `prolog.php` в начале каждого административного скрипта.
 
 ```php
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/company.module/prolog.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/local/modules/company.module/prolog.php');
 ```
 
 ### Административные списки
@@ -832,9 +899,9 @@ if ($itemIds)
 
 ## Языковые файлы
 
-Языковые файлы хранят текстовые сообщения модуля для разных языков. Они располагаются в папке `/bitrix/modules/ID_модуля/lang/ID_языка/`, повторяя структуру основных файлов.
+Языковые файлы хранят текстовые сообщения модуля для разных языков. Для пользовательского модуля разместите их в папке `/local/modules/ID_модуля/lang/ID_языка/`, повторяя структуру основных файлов.
 
-**Пример.** Структура языковых файлов для `/bitrix/modules/company.module/admin/my_page.php`.
+**Пример.** Структура языковых файлов для `/local/modules/company.module/admin/my_page.php`.
 
 ```
 /local/modules/company.module/
@@ -895,7 +962,7 @@ echo Loc::getMessage('COMPANY_MODULE_PAGE_TITLE');
 
 ```php
 <?php
-// Файл: /bitrix/modules/company.module/admin/menu.php
+// Файл: /local/modules/company.module/admin/menu.php
 
 use Bitrix\Main\Localization\Loc;
 

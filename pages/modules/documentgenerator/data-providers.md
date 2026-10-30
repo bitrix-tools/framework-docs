@@ -27,8 +27,8 @@ SOURCE: OrderDataProvider
 └── ITEMS: ArrayDataProvider
     └── ITEM: LineDataProvider[]
         ├── NAME: string
-        ├── QUANTITY: int
-        └── PRICE: string
+        ├── QUANTITY: float
+        └── PRICE: float
 ```
 
 Для пути `SOURCE.CLIENT.NAME` менеджер сначала получает поле `CLIENT`, создает `ClientDataProvider` и затем запрашивает у него `NAME`. Для поля `SOURCE.ITEMS.ITEM.NAME` тело документа обходит элементы `ArrayDataProvider` и получает `NAME` у каждого `LineDataProvider`.
@@ -428,9 +428,12 @@ function prepareDocumentItems(Event $event): void
 public function hasAccess($userId): bool
 {
     return $this->isLoaded()
-        && OrderAccess::canRead((int)$this->getSource(), (int)$userId);
+        && (int)$userId > 0
+        && $this->order->getUserId() === (int)$userId;
 }
 ```
+
+В этом примере доступ разрешен только покупателю заказа. Свойство `$order` и загрузка заказа показаны в разделе «Создать собственный провайдер» ниже. Если документы должны читать сотрудники, реализуйте проверку их прав отдельно.
 
 Для вложенного провайдера базовая реализация делегирует проверку родительскому, если дочерний объект загружен. Переопределите ее, когда у связанного объекта есть собственная модель доступа.
 
@@ -450,38 +453,55 @@ $number = $provider->getValue('NUMBER');
 
 ## Создать собственный провайдер
 
-Собственный провайдер объединяет загрузку исходного объекта, описание полей и проверку доступа. В примере ниже показан провайдер заказа, который возвращает номер и дату заказа, данные клиента и список позиций. В собственном модуле замените классы примера классами, которые работают с вашими данными и моделью прав.
+Собственный провайдер объединяет загрузку исходного объекта, описание полей и проверку доступа. В примере ниже заказ загружается через `Bitrix\Sale\Order`, данные клиента — через `Bitrix\Main\UserTable`, а позиции — из корзины заказа. Провайдер разрешает чтение только пользователю, чей идентификатор записан в заказе как `USER_ID`.
 
-Методы `OrderRepository::getById()` и `ClientRepository::getById()` возвращают массив данных или `null`, если объект не найден. Для данных заказа используйте внутренние ключи `NUMBER`, `DATE`, `CLIENT_ID` и `ITEM_ROWS`. Ключ `ITEM_ROWS` не совпадает с кодом поля `ITEMS`, поэтому базовый `getValue()` вызовет обработчик поля, а не вернет исходный массив напрямую.
+Для запуска нужны установленные модули `documentgenerator` и `sale`, существующий заказ и авторизация под его покупателем. Поля клиента берутся из учетной записи пользователя, а не из свойств заказа.
 
-Провайдер принимает идентификатор заказа, загружает данные один раз и описывает простое, вложенное и множественное поля.
+Сохраните оба блока с классами в одном файле `/local/php_interface/include/order-data-provider.php`: сначала `OrderDataProvider`, затем `ClientDataProvider` и `LineDataProvider`. Во втором блоке не добавляйте новый открывающий тег PHP. Пространство имен `MyCompany\Orders` используется только в примере.
 
-Пространство имен `MyCompany\Orders` используется только в примере. Замените `MyCompany` пространством имен своего модуля.
+**Пример.** Провайдер принимает идентификатор заказа, загружает номер и дату, а данные клиента и позиции получает при чтении соответствующих полей.
 
 ```php
 <?php
 
 namespace MyCompany\Orders\Document;
 
-use MyCompany\Orders\Access\OrderAccess;
-use MyCompany\Orders\ClientRepository;
-use MyCompany\Orders\OrderRepository;
 use Bitrix\DocumentGenerator\DataProvider;
 use Bitrix\DocumentGenerator\DataProvider\ArrayDataProvider;
 use Bitrix\DocumentGenerator\DataProviderManager;
 use Bitrix\DocumentGenerator\Nameable;
+use Bitrix\Main\Loader;
+use Bitrix\Main\UserTable;
+use Bitrix\Sale\Order;
+use RuntimeException;
 
 class OrderDataProvider extends DataProvider implements Nameable
 {
+    protected ?Order $order = null;
+
     public function __construct($source, array $options = [])
     {
         parent::__construct($source, $options);
 
-        // Загрузить данные заказа по исходному идентификатору
+        if (!Loader::includeModule('sale'))
+        {
+            throw new RuntimeException('Модуль sale не установлен');
+        }
+
         $orderId = (int)$source;
-        $this->data = $orderId > 0
-            ? OrderRepository::getById($orderId)
+        $this->order = $orderId > 0 ? Order::load($orderId) : null;
+        $this->data = $this->order !== null
+            ? [
+                'NUMBER' => $this->order->getField('ACCOUNT_NUMBER'),
+                'DATE' => $this->order->getField('DATE_INSERT'),
+                'CLIENT_ID' => $this->order->getUserId(),
+            ]
             : null;
+    }
+
+    public function isLoaded(): bool
+    {
+        return $this->order !== null;
     }
 
     public static function getLangName(): string
@@ -496,9 +516,9 @@ class OrderDataProvider extends DataProvider implements Nameable
 
     public function hasAccess($userId): bool
     {
-        // Проверить доступ пользователя к загруженному заказу
         return $this->isLoaded()
-            && OrderAccess::canRead((int)$this->getSource(), (int)$userId);
+            && (int)$userId > 0
+            && $this->order->getUserId() === (int)$userId;
     }
 
     public function getFields(): array
@@ -547,8 +567,18 @@ class OrderDataProvider extends DataProvider implements Nameable
     {
         // Создать провайдер для каждой позиции заказа
         $items = [];
-        foreach ($this->data['ITEM_ROWS'] ?? [] as $itemData)
+        if (!$this->isLoaded())
         {
+            return $items;
+        }
+
+        foreach ($this->order->getBasket() as $basketItem)
+        {
+            $itemData = [
+                'NAME' => $basketItem->getField('NAME'),
+                'QUANTITY' => $basketItem->getQuantity(),
+                'PRICE' => $basketItem->getPrice(),
+            ];
             $provider = DataProviderManager::getInstance()->getDataProvider(
                 LineDataProvider::class,
                 $itemData,
@@ -567,9 +597,9 @@ class OrderDataProvider extends DataProvider implements Nameable
 }
 ```
 
-Поля `NUMBER` и `DATE` читаются из `$data` по одноименным ключам. Для `CLIENT` обработчик возвращает идентификатор из `CLIENT_ID`, а для `ITEMS` — провайдеры строк из `ITEM_ROWS`. На основе этих значений менеджер строит следующие уровни дерева.
+Поля `NUMBER` и `DATE` читаются из `$data` по одноименным ключам. Для `CLIENT` обработчик возвращает идентификатор покупателя из `CLIENT_ID`, а для `ITEMS` — провайдеры позиций корзины. Не сохраняйте исходный массив позиций в `$data['ITEMS']`: иначе базовый `getValue()` вернет его напрямую вместо вызова обработчика.
 
-Вложенный провайдер клиента может загружать объект по идентификатору. Провайдер строки принимает подготовленный массив и не выполняет отдельный запрос:
+**Пример.** Вложенный провайдер клиента загружает имя и электронную почту пользователя. Провайдер строки принимает подготовленный массив и не выполняет отдельный запрос:
 
 ```php
 final class ClientDataProvider extends DataProvider
@@ -577,9 +607,15 @@ final class ClientDataProvider extends DataProvider
     public function __construct($source, array $options = [])
     {
         parent::__construct($source, $options);
-        $this->data = (int)$source > 0
-            ? ClientRepository::getById((int)$source)
-            : null;
+        if ((int)$source > 0)
+        {
+            $user = UserTable::getList([
+                'select' => ['NAME', 'EMAIL'],
+                'filter' => ['=ID' => (int)$source],
+                'limit' => 1,
+            ])->fetch();
+            $this->data = $user ?: null;
+        }
     }
 
     public function getFields(): array
@@ -610,7 +646,48 @@ final class LineDataProvider extends DataProvider
 }
 ```
 
-Не выполняйте проверку доступа только по наличию записи. Корневой провайдер должен обращаться к модели прав исходного модуля. Если вложенный объект защищен отдельными правами, добавьте собственный `hasAccess()` и для него.
+Вложенные провайдеры наследуют проверку доступа к заказу. В примере она допускает только покупателя заказа. Если вложенный объект защищен отдельными правами, добавьте собственный `hasAccess()` и для него.
+
+**Пример.** Сохраните следующий код в `/local/check-order-provider.php` и откройте файл на сайте под учетной записью покупателя. Замените `25` идентификатором его заказа. Скрипт проверяет загрузку и доступ, затем выводит номер заказа и имя клиента.
+
+```php
+<?php
+
+use MyCompany\Orders\Document\OrderDataProvider;
+use Bitrix\DocumentGenerator\DataProviderManager;
+use Bitrix\Main\Loader;
+
+require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php';
+
+if (!Loader::includeModule('documentgenerator'))
+{
+    throw new RuntimeException('Модуль documentgenerator не установлен');
+}
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/local/php_interface/include/order-data-provider.php';
+
+$orderId = 25;
+$userId = (int)$USER->GetID();
+$manager = DataProviderManager::getInstance();
+$provider = $manager->getDataProvider(OrderDataProvider::class, $orderId);
+
+if ($provider === null || !$provider->isLoaded())
+{
+    throw new RuntimeException('Заказ не найден');
+}
+
+if ($userId <= 0 || !$manager->checkDataProviderAccess($provider, $userId))
+{
+    throw new RuntimeException('Нет доступа к заказу');
+}
+
+var_dump(
+    $provider->getValue('NUMBER'),
+    $manager->getDataProviderValue($provider, 'CLIENT.NAME')
+);
+```
+
+Для этой проверки регистрация провайдера в реестре модуля не требуется. Перед использованием класса в шаблонах настройте его автозагрузку и зарегистрируйте корневой провайдер.
 
 ### Зарегистрировать корневой провайдер {#register-root-provider}
 
