@@ -81,6 +81,8 @@ items:
     items:
       - name: Конфигурация ядра
         href: /pages/framework/settings.md
+      - name: Как найти причину ошибки скрипта
+        href: /pages/framework/script-error.md
       - name: Архитектура
         href: /pages/framework/architecture.md
       - name: Автозагрузка классов
