@@ -98,9 +98,9 @@ $priceTypes = \Bitrix\Catalog\GroupTable::getList([
 
 Права хранятся в поле `ACCESS`. Возможные значения:
 
--  `ACCESS_VIEW` — пользователь видит цену этого типа,
+-  `GroupAccessTable::ACCESS_VIEW` (`N`) — пользователь видит цену этого типа,
 
--  `ACCESS_BUY` — пользователь может купить товар по цене этого типа.
+-  `GroupAccessTable::ACCESS_BUY` (`Y`) — пользователь может купить товар по цене этого типа.
 
 Чтобы запросить права для нужного типа цены, вызовите метод `getList()`. Передайте `select` со списком нужных полей и `filter` по `CATALOG_GROUP_ID`.
 
@@ -116,12 +116,12 @@ $accessRows = \Bitrix\Catalog\GroupAccessTable::getList([
 
 foreach ($accessRows as $row)
 {
-    if ($row['ACCESS'] === 'ACCESS_VIEW')
+    if ($row['ACCESS'] === \Bitrix\Catalog\GroupAccessTable::ACCESS_VIEW)
     {
         echo "Группа {$row['GROUP_ID']} видит цену\n";
     }
 
-    if ($row['ACCESS'] === 'ACCESS_BUY')
+    if ($row['ACCESS'] === \Bitrix\Catalog\GroupAccessTable::ACCESS_BUY)
     {
         echo "Группа {$row['GROUP_ID']} может покупать по этой цене\n";
     }

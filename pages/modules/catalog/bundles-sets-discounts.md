@@ -249,6 +249,18 @@ if (!\CCatalogProductSet::delete($setId))
 
 Скидка задает правило изменения цены, а купон ограничивает применение скидки кодом. В типичном сценарии разработчик создает скидку на товар, выпускает купон, добавляет код купона в расчет и проверяет, какие скидки доступны товару.
 
+### Выбрать механизм скидок {#choose-discount-mechanism}
+
+`CCatalogDiscount` создает скидки каталога, а `Bitrix\Catalog\DiscountCouponTable` хранит купоны для этих скидок. Правила работы с корзиной создают через `CSaleDiscount`, их купоны хранят в `Bitrix\Sale\Internals\DiscountCouponTable`. Это разные таблицы скидок и купонов: купон каталога нельзя привязать к правилу корзины. Подробнее о правилах корзины — в статье [Правила работы с корзиной](../sale/discounts-coupons.md).
+
+Настройка модуля `sale` «Использовать только правила корзины» (`use_sale_discount_only`) определяет, какой механизм участвует в расчете:
+
+-  `Y` — применяются правила корзины. Скидка и купон каталога, созданные по примерам ниже, не участвуют в расчете. Для нового правила и купона используйте API модуля `sale`.
+
+-  `N` — раздельный режим: в расчете могут участвовать скидки каталога и правила корзины. Примеры в этом разделе относятся к скидкам каталога.
+
+В режиме `Y` метод `CCatalogDiscount::GetDiscountByProduct()` может возвращать подходящие правила корзины, поэтому его результат не подтверждает применение скидки, созданной через `CCatalogDiscount::Add()`.
+
 Порядок работы со скидкой и купоном:
 
 1. Создайте скидку.
@@ -386,7 +398,7 @@ if (!\Bitrix\Sale\DiscountCouponsManager::add('SALE-10-PRODUCT'))
 
 ### Получить список активных скидок {#active-discounts}
 
-После [расчета итоговой цены](availability-prices-subscription.md#final-price) через `GetOptimalPrice()` получите активные скидки методом `CCatalogDiscount::GetDiscountByProduct()`. Он учитывает товар, группы пользователя, доступные типы цен и сайт.
+В раздельном режиме (`use_sale_discount_only = N`) после [расчета итоговой цены](availability-prices-subscription.md#final-price) через `GetOptimalPrice()` получите активные скидки каталога методом `CCatalogDiscount::GetDiscountByProduct()`. Он учитывает товар, группы пользователя, доступные типы цен и сайт.
 
 В примере используются параметры:
 
@@ -436,5 +448,5 @@ foreach ($discounts as $discount)
 
 - Для комплекта вызовите `CCatalogProductSet::getAllSetsByProduct($productId, \CCatalogProductSet::TYPE_SET)`. В результате должен быть комплект с товарами из `ITEMS`.
 - Для набора вызовите `CCatalogProductSet::getAllSetsByProduct($productId, \CCatalogProductSet::TYPE_GROUP)`. В результате должен быть набор с рекомендованными товарами.
-- Для скидки и купона рассчитайте итоговую цену через `CCatalogProduct::GetOptimalPrice()` и проверьте активные скидки через `CCatalogDiscount::GetDiscountByProduct()`. В списке должна быть скидка, созданная в `$discountId`.
+- Для скидки и купона в раздельном режиме рассчитайте итоговую цену через `CCatalogProduct::GetOptimalPrice()` и проверьте активные скидки через `CCatalogDiscount::GetDiscountByProduct()`. В списке должна быть скидка, созданная в `$discountId`.
 - Если метод возвращает `false` или объект результата с ошибками, получите текст ошибки через метод конкретного API: `getErrors()`, `getErrorMessages()` или `$APPLICATION->GetException()`. После ошибки не продолжайте сценарий.
