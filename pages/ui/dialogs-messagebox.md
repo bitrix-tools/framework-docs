@@ -1,6 +1,6 @@
 ---
 title: Окно сообщения
-description: 'Окно сообщения. UI Bitrix Framework: инструменты интерфейса, подключение расширений и примеры использования.'
+description: 'Окно сообщения ui.dialogs.messagebox. UI Bitrix Framework: класс MessageBox, сообщение и запрос подтверждения, параметры окна, наборы кнопок MessageBoxButtons, обработка нажатия и изменение окна после создания.'
 ---
 
 `ui.dialogs.messagebox` — модальное окно для сообщения, подтверждения действия или выбора ответа.
@@ -29,7 +29,7 @@ import { MessageBox, MessageBoxButtons } from 'ui.dialogs.messagebox';
 
 ## Показать сообщение
 
-`MessageBox.alert()` открывает окно с одной кнопкой `OK`.  В первый аргумент передайте строку или DOM-узел, обработчик кнопки `OK` укажите следующим аргументом.
+Метод `MessageBox.alert()` открывает окно с одной кнопкой `OK`. В первый аргумент передайте строку или DOM-узел, обработчик кнопки `OK` укажите следующим аргументом.
 
 ```js
 import { MessageBox } from 'ui.dialogs.messagebox';
@@ -149,13 +149,13 @@ MessageBox.confirm(
 `MessageBox.show(options)` создает окно по объекту настроек и сразу показывает его. Метод используйте, когда нужен один вызов без дальнейшей работы с экземпляром.
 
 ```js
-import { MessageBox } from 'ui.dialogs.messagebox';
+import { MessageBox, MessageBoxButtons } from 'ui.dialogs.messagebox';
 
 MessageBox.show({
     title: 'Заявка отправлена',
     message: 'Ответственный получит уведомление.',
     modal: true,
-    buttons: BX.UI.Dialogs.MessageBoxButtons.OK,
+    buttons: MessageBoxButtons.OK,
 });
 ```
 
@@ -166,12 +166,12 @@ MessageBox.show({
 Если после открытия нужно вызвать `close()`, `setMessage()`, `setTitle()` или изменить кнопки, создайте экземпляр `MessageBox` и вызовите `show()`.
 
 ```js
-import { MessageBox } from 'ui.dialogs.messagebox';
+import { MessageBox, MessageBoxButtons } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
     title: 'Удалить контакт',
     message: 'Контакт будет удален из адресной книги.',
-    buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
+    buttons: MessageBoxButtons.OK_CANCEL,
     okCaption: 'Удалить',
     cancelCaption: 'Отмена',
     onOk: () => {
@@ -216,24 +216,23 @@ messageBox.show();
 || `noCaption` | `string` | Текст кнопки `Нет`. По умолчанию `Нет` ||
 |#
 
-
 ## Выбрать кнопки
 
 В `buttons` передайте строковое значение из `MessageBoxButtons`. Компонент создаст кнопки с локализованными подписями.
 
-#|
-|| **Значение** | **Кнопки в окне** | **Когда использовать** ||
-|| `BX.UI.Dialogs.MessageBoxButtons.OK` | `OK` | Сообщение, которое нужно закрыть одной кнопкой ||
-|| `BX.UI.Dialogs.MessageBoxButtons.CANCEL` | `Отмена` | Действие можно только отменить ||
-|| `BX.UI.Dialogs.MessageBoxButtons.YES` | `Да` | Подтверждение с одной положительной кнопкой ||
-|| `BX.UI.Dialogs.MessageBoxButtons.NO` | `Нет` | Ответ с одной отрицательной кнопкой ||
-|| `BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL` | `OK`, `Отмена` | Подтверждение действия с возможностью отмены ||
-|| `BX.UI.Dialogs.MessageBoxButtons.YES_NO` | `Да`, `Нет` | Выбор между положительным и отрицательным ответом ||
-|| `BX.UI.Dialogs.MessageBoxButtons.YES_CANCEL` | `Да`, `Отмена` | Подтверждение с отменой без отрицательного ответа ||
-|| `BX.UI.Dialogs.MessageBoxButtons.YES_NO_CANCEL` | `Да`, `Нет`, `Отмена` | Выбор ответа с отдельной отменой сценария ||
-|| `BX.UI.Dialogs.MessageBoxButtons.NONE` | нет кнопок | Окно без стандартных кнопок ||
-|#
+| Значение | Кнопки в окне | Когда использовать |
+|---|---|---|
+| `MessageBoxButtons.OK` | `OK` | Сообщение, которое нужно закрыть одной кнопкой |
+| `MessageBoxButtons.CANCEL` | `Отмена` | Действие можно только отменить |
+| `MessageBoxButtons.YES` | `Да` | Подтверждение с одной положительной кнопкой |
+| `MessageBoxButtons.NO` | `Нет` | Ответ с одной отрицательной кнопкой |
+| `MessageBoxButtons.OK_CANCEL` | `OK`, `Отмена` | Подтверждение действия с возможностью отмены |
+| `MessageBoxButtons.YES_NO` | `Да`, `Нет` | Выбор между положительным и отрицательным ответом |
+| `MessageBoxButtons.YES_CANCEL` | `Да`, `Отмена` | Подтверждение с отменой без отрицательного ответа |
+| `MessageBoxButtons.YES_NO_CANCEL` | `Да`, `Нет`, `Отмена` | Выбор ответа с отдельной отменой сценария |
+| `MessageBoxButtons.NONE` | Нет кнопок | Окно без стандартных кнопок |
 
+В модульном JavaScript импортируйте `MessageBoxButtons` из `ui.dialogs.messagebox`, как в примерах статьи. Во встроенном скрипте страницы, где `import` недоступен, тот же объект доступен как `BX.UI.Dialogs.MessageBoxButtons`.
 
 Если выбран `MessageBoxButtons.NONE`, в окне нет стандартных кнопок. Обработчики `onOk`, `onCancel`, `onYes` и `onNo` не сработают при нажатии на стандартную кнопку.
 
@@ -277,11 +276,11 @@ messageBox.show();
 Обработчик получает три аргумента: экземпляр `MessageBox`, кнопку и событие нажатия.
 
 ```js
-import { MessageBox } from 'ui.dialogs.messagebox';
+import { MessageBox, MessageBoxButtons } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
     message: 'Удалить элемент?',
-    buttons: BX.UI.Dialogs.MessageBoxButtons.OK_CANCEL,
+    buttons: MessageBoxButtons.OK_CANCEL,
     onOk: (box, button, event) => {
         return BX.ajax.runAction('example.Item.delete', {
             data: {
@@ -314,11 +313,11 @@ messageBox.show();
 Экземпляр `MessageBox` хранит состояние окна. После создания измените сообщение, заголовок, кнопки и подписи стандартных кнопок.
 
 ```js
-import { MessageBox } from 'ui.dialogs.messagebox';
+import { MessageBox, MessageBoxButtons } from 'ui.dialogs.messagebox';
 
 const messageBox = new MessageBox({
     message: 'Идет проверка данных.',
-    buttons: BX.UI.Dialogs.MessageBoxButtons.OK,
+    buttons: MessageBoxButtons.OK,
 });
 
 messageBox.show();

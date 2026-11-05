@@ -1,6 +1,6 @@
 ---
 title: Иконки
-description: 'Иконки. UI Bitrix Framework: инструменты интерфейса, подключение расширений и примеры использования.'
+description: 'Иконки ui.icon-set. UI Bitrix Framework: класс Icon, параметры и наборы иконок, цвет и поведение, Vue-компонент BIcon, вывод иконки через HTML и список иконок.'
 ---
 
 `ui.icon-set` — это библиотека иконок для интерфейсов Bitrix Framework.

@@ -232,10 +232,9 @@ Toolbar::shuffleButtons(
 use Bitrix\UI\Toolbar\Facade\Toolbar;
 
 Toolbar::addFilter([
-    'FILTER_ID' => 'orders_filter',
+    'FILTER_ID' => 'orders_grid',
     'GRID_ID' => 'orders_grid',
     'FILTER' => [
-        ['id' => 'FIND', 'name' => 'Поиск'],
         ['id' => 'STATUS', 'name' => 'Статус', 'type' => 'list'],
     ],
     'ENABLE_LABEL' => true,
@@ -486,10 +485,9 @@ Toolbar::addButton(
 );
 
 Toolbar::addFilter([
-    'FILTER_ID' => 'orders_filter',
+    'FILTER_ID' => 'orders_grid',
     'GRID_ID' => 'orders_grid',
     'FILTER' => [
-        ['id' => 'FIND', 'name' => 'Поиск'],
         ['id' => 'STATUS', 'name' => 'Статус', 'type' => 'list'],
     ],
 ]);

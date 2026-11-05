@@ -1,6 +1,6 @@
 ---
 title: "Типографика"
-description: 'Типографика. UI Bitrix Framework: инструменты интерфейса, подключение расширений и примеры использования.'
+description: 'Типографика ui.system.typography. UI Bitrix Framework: классы Headline и Text, параметры, классы и размеры шрифта, Vue-компоненты.'
 ---
 
 Типографика задает единый вид заголовков и текстовых фрагментов в интерфейсе. Компонент используют, когда нужно вывести название блока, подпись, описание или короткий текст в одной из стандартных типографических шкал.
@@ -156,7 +156,7 @@ export const TaskSummary = {
 
 Готовые Vue-компоненты уже содержат размер:
 
--  для заголовков — `HeadlineXl`, `HeadlineLg`, `HeadlineMd`, `HeadlineSm`, `HeadlineXs`;
+-  для заголовков — `HeadlineXl`, `HeadlineLg`, `HeadlineMd`, `HeadlineSm`, `HeadlineXs`,
 
 -  для текста — `Text2Xl`, `TextXl`, `TextLg`, `TextMd`, `TextSm`, `TextXs`, `Text2Xs`, `Text3Xs`, `Text4Xs`.
 

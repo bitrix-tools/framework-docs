@@ -1,13 +1,13 @@
 ---
 title: "Скелетон загрузки"
-description: 'Скелетон загрузки. UI Bitrix Framework: инструменты интерфейса, подключение расширений и примеры использования.'
+description: 'Скелетон загрузки ui.system.skeleton. UI Bitrix Framework: заготовка содержимого на время загрузки, функции Line и Circle, отрисовка из шаблона renderSkeleton, замена на данные и использование во Vue.'
 ---
 
 Скелетон загрузки — это визуальная заглушка для области интерфейса, в которой данные еще не готовы к показу. Компонент выводит анимированную линию или круг и помогает сохранить структуру страницы во время загрузки списка, карточки или аватара.
 
 В Bitrix Framework за скелетон отвечает расширение `ui.system.skeleton`. В нем доступны функции `Line`, `Circle` и `renderSkeleton`. Для Vue-компонентов используется отдельное расширение `ui.system.skeleton.vue`.
 
-![](./_images/system-skeleton-2.png){width=389px height=422,5px}
+![](./_images/system-skeleton-2.png){width=389px height=423px}
 
 ## Подключить расширение
 
@@ -141,6 +141,8 @@ import { localStorage } from 'main.core';
 
 localStorage.set('dealTitle', 'Сделка №42');
 ```
+
+**Пример.** HTML-шаблон выводит вместо `{dealTitle}` значение, сохраненное в предыдущем фрагменте.
 
 ```html
 <div class="deal-card-skeleton">

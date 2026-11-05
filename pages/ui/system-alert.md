@@ -1,6 +1,6 @@
 ---
 title: Системный алерт
-description: 'Системный алерт. UI Bitrix Framework: инструменты интерфейса, подключение расширений и примеры использования.'
+description: 'Системный алерт ui.system.alert. UI Bitrix Framework: класс Alert, параметры, кнопка закрытия, изображение, оформление AlertDesign, управление после создания и Vue-компонент.'
 ---
 
 Системный алерт — это блок для уведомлений, предупреждений и ошибок в интерфейсе. В него можно передать короткий текст или готовый DOM-узел. Компонент оформляет сообщение по правилам дизайн-системы: задает фон и рамку, может показать изображение слева и кнопку закрытия.
@@ -32,6 +32,8 @@ import { Alert, AlertDesign } from 'ui.system.alert';
 3. Получите DOM-узел через `render()`.
 
 4. Добавьте полученный узел на страницу.
+
+**Пример.** Алерт с оформлением `AlertDesign.tintedSuccess` показывает сообщение о сохранении настроек.
 
 ```js
 import { Alert, AlertDesign } from 'ui.system.alert';
@@ -155,7 +157,15 @@ document.getElementById('alert-container').append(alert.render());
 
 ## Использовать Vue-компонент
 
-Расширение экспортирует Vue-версию через пространство `Vue`. Компонент принимает `design`, `hasCloseButton`, `leftImage` и генерирует событие `closeButtonClick`.
+Vue-компонент алерта принимает свойства `design`, `hasCloseButton`, `leftImage` и генерирует событие `closeButtonClick`. Текст алерта передайте в слот компонента.
+
+Компонент доступен двумя способами, и оба дают один и тот же компонент:
+
+-  через пространство `Vue` расширения `ui.system.alert` — вместе с классом `Alert` для обычного JavaScript,
+
+-  из отдельного расширения `ui.system.alert.vue`, которое содержит только Vue-компонент.
+
+**Пример.** Компонент регистрирует Vue-версию алерта из `ui.system.alert` под именем `SystemAlert` и выводит предупреждение с кнопкой закрытия.
 
 ```js
 import { Vue, AlertDesign } from 'ui.system.alert';
@@ -173,13 +183,22 @@ export const ExampleComponent = {
     methods: {
         handleClose()
         {
-            // Обработайте закрытие алерта.
+            // Обработайте закрытие алерта
         },
     },
+    template: `
+        <SystemAlert
+            :design="AlertDesign.tintedWarning"
+            :hasCloseButton="true"
+            @closeButtonClick="handleClose"
+        >
+            Проверьте обязательные поля.
+        </SystemAlert>
+    `,
 };
 ```
 
-Используйте зарегистрированный `SystemAlert` в шаблоне.
+**Пример.** Тот же алерт, но компонент импортирован из расширения `ui.system.alert.vue`. Константы `AlertDesign` по-прежнему импортируйте из `ui.system.alert`.
 
 ```js
 import { AlertDesign } from 'ui.system.alert';
@@ -198,7 +217,7 @@ export const ExampleComponent = {
     methods: {
         handleClose()
         {
-            // Обработайте закрытие алерта.
+            // Обработайте закрытие алерта
         },
     },
     template: `
