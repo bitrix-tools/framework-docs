@@ -263,21 +263,21 @@ const dialog = new Dialog({
 
 Динамическую загрузку настройте по типу объекта:
 
-- для стандартного типа объекта используйте настройки из статьи [Стандартные провайдеры](./standard-providers.md);
-- если нужно явно зафиксировать загрузку в конкретном диалоге, передайте `dynamicLoad: true` в `entities`;
+- для стандартного типа объекта используйте настройки из статьи [Стандартные провайдеры](./standard-providers.md),
+- если нужно явно зафиксировать загрузку в конкретном диалоге, передайте `dynamicLoad: true` в `entities`,
 - для типа объекта своего модуля зарегистрируйте провайдер данных и передайте `dynamicLoad: true`.
 
 Выберите провайдер по типу объекта:
 
-- для пользователей, отделов, проектов, чатов и чат-ботов используйте [стандартные провайдеры](./standard-providers.md);
+- для пользователей, отделов, проектов, чатов и чат-ботов используйте [стандартные провайдеры](./standard-providers.md),
 - для собственного типа объекта зарегистрируйте [провайдер данных](./data-providers.md).
 
 Если элементы не загружаются, проверьте:
 
-- `entities[].id` совпадает с `entityId` зарегистрированного провайдера;
-- модуль, который регистрирует провайдер, установлен;
-- метод `isAvailable()` провайдера возвращает `true` для текущего пользователя;
-- для серверного поиска включен `dynamicSearch`;
+- `entities[].id` совпадает с `entityId` зарегистрированного провайдера,
+- модуль, который регистрирует провайдер, установлен,
+- метод `isAvailable()` провайдера возвращает `true` для текущего пользователя,
+- для серверного поиска включен `dynamicSearch`,
 - ошибки загрузки обрабатываются через `onLoadError`, `Entity:onError` или `Entity:{entityId}:onError` из раздела [События Dialog](#events-dialog).
 
 ## Настроить историю недавних элементов
@@ -290,8 +290,8 @@ const dialog = new Dialog({
 
 Недавние элементы делятся на два набора:
 
-- локальный набор относится к текущему `context`; провайдер получает его через `getRecentItems()`;
-- глобальный набор объединяет другие контексты, в которых пользователь выбирал элементы тех же типов объектов; провайдер получает его через `getGlobalRecentItems()`.
+- локальный набор относится к текущему `context`, провайдер получает его через `getRecentItems()`,
+- глобальный набор объединяет другие контексты, в которых пользователь выбирал элементы тех же типов объектов, провайдер получает его через `getGlobalRecentItems()`.
 
 `recentItemsLimit` задает, сколько недавних элементов вернуть. Сервер не возвращает больше `50` элементов.
 
@@ -370,6 +370,8 @@ const dialog = new Dialog({
 });
 ```
 
+**Пример.** Провайдер отключает кеширование ответа, если поисковая строка короче трех символов.
+
 ```php
 use Bitrix\UI\EntitySelector\Dialog;
 use Bitrix\UI\EntitySelector\SearchQuery;
@@ -384,8 +386,6 @@ public function doSearch(SearchQuery $searchQuery, Dialog $dialog): void
 ```
 
 В JavaScript-примере диалог не кеширует короткие числовые запросы, которые совпадают с регулярным выражением.
-
-В PHP-примере провайдер отключает кеширование ответа, если поисковая строка короче трех символов.
 
 Связанные методы: [Entity.getSearchCacheLimits(), Entity.setSearchCacheLimits()](#js-entity). Методы `SearchQuery` описаны в статье [Провайдеры данных](./data-providers.md#searchquery).
 
@@ -437,11 +437,11 @@ const dialog = new Dialog({
 
 Выберите способ по задаче:
 
-- HTML-строка — для статической разметки;
-- DOM-узел — для разметки с обработчиками событий;
-- массив DOM-узлов — для нескольких независимых элементов;
-- `TabOptions.footer` — для футера отдельной вкладки;
-- `DefaultFooter` — для стандартного контейнера с собственным содержимым;
+- HTML-строка — для статической разметки,
+- DOM-узел — для разметки с обработчиками событий,
+- массив DOM-узлов — для нескольких независимых элементов,
+- `TabOptions.footer` — для футера отдельной вкладки,
+- `DefaultFooter` — для стандартного контейнера с собственным содержимым,
 - `BaseFooter` — для полностью своей разметки футера.
 
 ### HTML-строка
@@ -653,6 +653,8 @@ const dialog = new Dialog({
 | `searchTabOptions` | `TabOptions` | Настраивает системную вкладку поиска |
 | `recentTabOptions` | `TabOptions` | Настраивает системную вкладку недавних элементов |
 
+**Пример.** Диалог задает заглушку для вкладки поиска, а для вкладки недавних элементов меняет название и глубину вложенности.
+
 ```js
 const dialog = new Dialog({
     targetNode: button,
@@ -722,13 +724,13 @@ const dialog = new Dialog({
 
 `popupOptions` принимает только параметры:
 
-- `overlay`;
-- `bindOptions`;
-- `targetContainer`;
-- `zIndexOptions`;
-- `events`;
-- `animation`;
-- `className`;
+- `overlay`,
+- `bindOptions`,
+- `targetContainer`,
+- `zIndexOptions`,
+- `events`,
+- `animation`,
+- `className`,
 - `focusTrap`.
 
 Базовое поведение всплывающих окон описано в статье [Всплывающие окна и меню main.popup](../main-popup.md).
@@ -903,6 +905,8 @@ const dialog = new Dialog({
 | `isFrozen()` | Возвращает `true`, если диалог заблокирован |
 | `getPopup()` | Возвращает экземпляр всплывающего окна `main.popup` |
 
+**Пример.** Код находит диалог по `id` и закрывает его, если диалог открыт.
+
 ```js
 const dialog = Dialog.getById('project-dialog');
 
@@ -935,6 +939,8 @@ if (dialog && dialog.isOpen())
 | `getEntityItems(entityId)` | Возвращает элементы одного типа объекта |
 | `getSelectedItems()` | Возвращает выбранные элементы |
 | `deselectAll()` | Снимает выбор со всех выбранных элементов |
+
+**Пример.** Код добавляет элемент в диалог, выбирает его и выводит выбранные элементы в консоль.
 
 ```js
 const item = dialog.addItem({
@@ -1322,6 +1328,8 @@ console.log(dialog.getSelectedItems());
 | `iconOpacity` | Задает прозрачность иконки от `0` до `100` |
 | `arrow` | Показывает стрелку к активному футеру, если у диалога или вкладки есть футер |
 
+**Пример.** Вкладка «Проекты» показывает заглушку с заголовком, подзаголовком и стрелкой к футеру вкладки.
+
 ```js
 const dialog = new Dialog({
     targetNode: button,
@@ -1365,6 +1373,8 @@ const dialog = new Dialog({
 | `render()` | Строит DOM заголовка и вставляет содержимое |
 | `getContent()` | Возвращает содержимое заголовка |
 | `setContent(content)` | Задает содержимое заголовка |
+
+**Пример.** Класс `ProjectHeader` наследует `DefaultHeader` и выводит в заголовке значение `title` из `headerOptions`.
 
 ```js
 import { DefaultHeader } from 'ui.entity-selector';
@@ -1470,42 +1480,4 @@ const dialog = new Dialog({
 | `Entity:onError` | `errors` | При ошибках типов объектов |
 | `Entity:{entityId}:onError` | `errors` | При ошибках конкретного типа объекта |
 
-{% cut "Пример создания элемента из поиска" %}
-
-```js
-const dialog = new Dialog({
-    targetNode: button,
-    enableSearch: true,
-    searchOptions: {
-        allowCreateItem: true,
-        footerOptions: {
-            label: 'Создать проект:',
-        },
-    },
-    events: {
-        'Search:onItemCreateAsync': (event) => {
-            return new Promise((resolve) => {
-                const { searchQuery } = event.getData();
-                const dialog = event.getTarget();
-
-                const item = dialog.addItem({
-                    id: Date.now(),
-                    entityId: 'project',
-                    title: searchQuery.getQuery(),
-                    tabs: 'projects',
-                });
-
-                if (item)
-                {
-                    item.select();
-                }
-
-                dialog.selectTab('projects');
-                resolve();
-            });
-        },
-    },
-});
-```
-
-{% endcut %}
+Пример обработчика события `Search:onItemCreateAsync` приведен в разделе [Создать элемент из поиска](#sozdat-element-iz-poiska).
