@@ -299,6 +299,10 @@ items:
 
   - name: Пользовательский интерфейс UI
     items:
+      - name: JS-ядро main.core и события
+        href: /pages/ui/main-core.md
+      - name: Дизайн-токены и Air Design
+        href: /pages/ui/ui-design-tokens.md
       - name: Типографика
         href: /pages/ui/typography.md
       - name: Иконки
@@ -317,14 +321,20 @@ items:
         href: /pages/ui/ui-forms.md
       - name: Системное поле ввода
         href: /pages/ui/system-input.md
+      - name: Переключатель ui.switcher
+        href: /pages/ui/ui-switcher.md
       - name: Загрузка файлов Uploader
         href: /pages/ui/uploader.md
+      - name: Загрузчик файлов ui.uploader
+        href: /pages/ui/ui-uploader.md
       - name: Поле выбора файлов FileInput
         href: /pages/ui/file-input.md
       - name: Просмотр файлов ui.viewer
         href: /pages/ui/ui-viewer.md
       - name: Выпадающий список ui.select
         href: /pages/ui/ui-select.md
+      - name: Выпадающий список BX.Main.ui.select
+        href: /pages/ui/main-ui-select.md
       - name: Диалог выбора цвета color_picker
         href: /pages/ui/color-picker.md
       - name: Таблица main.ui.grid
@@ -353,6 +363,8 @@ items:
             href: /pages/ui/entity-selector/options.md
       - name: Каталог объектов ui.entity-catalog
         href: /pages/ui/ui-entity-catalog.md
+      - name: Вкладки ui.tabs
+        href: /pages/ui/ui-tabs.md
       - name: Всплывающие окна и меню main.popup
         href: /pages/ui/main-popup.md
       - name: Системное меню
@@ -373,6 +385,10 @@ items:
         href: /pages/ui/ui-tooltip.md
       - name: Системный алерт
         href: /pages/ui/system-alert.md
+      - name: Алерты ui.alerts
+        href: /pages/ui/ui-alerts.md
+      - name: Всплывающие уведомления ui.notification
+        href: /pages/ui/ui-notification.md
       - name: Менеджер уведомлений
         href: /pages/ui/notification-manager.md
       - name: Системная метка
@@ -385,6 +401,8 @@ items:
         href: /pages/ui/ui-counter.md
       - name: Скелетон загрузки
         href: /pages/ui/system-skeleton.md
+      - name: Индикатор загрузки main.loader
+        href: /pages/ui/main-loader.md
       - name: Индикаторы прогресса ui.progressbar и ui.progressround
         href: /pages/ui/ui-progress.md
       - name: Пошаговое выполнение ui.stepprocessing

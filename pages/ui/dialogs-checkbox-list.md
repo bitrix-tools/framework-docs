@@ -29,7 +29,7 @@ description: 'Диалог с флажками ui.dialogs.checkbox-list. UI Bitr
 
 -  `ui.forms` — стили поля поиска и флажков.
 
--  `ui.switcher` — переключатель компактного вида.
+-  [ui.switcher](./ui-switcher.md) — переключатель компактного вида.
 
 -  `ui.vue3` — Vue, на котором построено содержимое окна.
 

@@ -20,6 +20,22 @@ title: Что нового
 
 ### 2026
 
+#### 6 ноября
+
+- Добавили новую статью [Дизайн-токены ui.design-tokens и Air Design](./pages/ui/ui-design-tokens.md).
+- Добавили новую статью [JS-ядро main.core и события](./pages/ui/main-core.md).
+- Добавили новую статью [Выпадающий список BX.Main.ui.select](./pages/ui/main-ui-select.md).
+- Добавили новую статью [Всплывающие уведомления ui.notification](./pages/ui/ui-notification.md).
+- Добавили новую статью [Алерты ui.alerts](./pages/ui/ui-alerts.md).
+- Добавили новую статью [Переключатель ui.switcher](./pages/ui/ui-switcher.md).
+- Добавили новую статью [Индикатор загрузки main.loader](./pages/ui/main-loader.md).
+- Добавили новую статью [Загрузчик файлов ui.uploader](./pages/ui/ui-uploader.md).
+- Добавили новую статью [Вкладки ui.tabs](./pages/ui/ui-tabs.md).
+- Обновили статью [Всплывающие окна и меню main.popup](./pages/ui/main-popup.md#ne-perehvatyvat-esc-u-okna) — добавили опцию `blockBackgroundEsc`, которая управляет перехватом клавиши Esc открытым окном.
+- Обновили статью [Таблица main.ui.grid](./pages/ui/main-ui-grid.md#server-actions) — добавили обработку действий на сервере, редактирование строк, JavaScript API и события таблицы.
+- Обновили статью [Фильтр main.ui.filter](./pages/ui/main-ui-filter.md#upravlyat-filtrom-iz-javascript) — добавили JavaScript API и события фильтра.
+- Обновили статью [Боковая панель main.sidepanel](./pages/ui/main-sidepanel.md#slider-page) — добавили страницу для слайдера на компоненте `ui.sidepanel.wrapper` и прием сообщений между слайдерами.
+
 #### 3 ноября
 
 - Добавили новую статью [Как найти причину ошибки «При выполнении скрипта возникла ошибка»](./pages/framework/script-error.md).

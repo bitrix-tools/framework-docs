@@ -7,6 +7,8 @@ description: "Менеджер уведомлений. UI Bitrix Framework: по
 
 Расширение `ui.notification-manager` само определяет, где показать уведомление: внутри страницы, в браузере или в десктопном приложении.
 
+Если уведомление нужно только на текущей странице, например о результате действия пользователя, используйте расширение [ui.notification](./ui-notification.md) и его метод `Center.notify()`.
+
 Для локального уведомления вызовите `Notifier.notify()` в JavaScript. Если сообщение нужно вывести именно внутри страницы, используйте `Notifier.notifyViaBrowserProvider()`.
 
 Чтобы отправить уведомление пользователю с сервера, создайте объект `Bitrix\UI\NotificationManager\Notification` и передайте его в `Bitrix\UI\NotificationManager\Notifier::notify()`.
@@ -124,6 +126,8 @@ Notifier.notifyViaBrowserProvider({
 
 -  `id` — идентификатор уведомления.
 
+**Пример.** Обработчик выводит в консоль идентификатор уведомления, на которое нажал пользователь.
+
 ```js
 import { Notifier } from 'ui.notification-manager';
 
@@ -141,6 +145,8 @@ Notifier.subscribe('click', (event) => {
 -  `reason` — причина закрытия.
 
 Событие `close` возвращает причину `closed_by_user`, если пользователь закрыл уведомление, или `expired`, если уведомление закрылось автоматически.
+
+**Пример.** Обработчик выводит в консоль идентификатор и причину закрытия уведомления.
 
 ```js
 import { Notifier } from 'ui.notification-manager';
@@ -175,6 +181,8 @@ Notifier.subscribe('close', (event) => {
 -  Модуль `pull` должен быть подключен. Без него `Notifier::notify()` возвращает `false`.
 
 -  На клиенте пользователя должно быть загружено расширение `ui.notification-manager`. Оно получает событие Pull и показывает уведомление.
+
+**Пример.** Код отправляет пользователю уведомление о готовом отчете.
 
 ```php
 use Bitrix\UI\NotificationManager\Notification;
