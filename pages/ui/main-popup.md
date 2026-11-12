@@ -19,20 +19,6 @@ PHP-код только загружает ресурсы расширения �
 
 {% endnote %}
 
-## На этой странице
-
-- [Подключить расширение](#подключить-расширение) — как загрузить `main.popup` из PHP и импортировать классы в JavaScript.
-
-- [Popup](#popup) — окно с произвольным содержимым. Создайте окно, настройте положение, закрытие, кнопки, контейнер и размер кнопки закрытия через `CloseIconSize`.
-
-- [PopupManager](#использовать-popupmanager) — менеджер окон, созданных по идентификатору.
-
-- [Menu](#menu) и `MenuItem` — выпадающее меню, его пункты, вложенные пункты и методы изменения уже созданного меню.
-
-- [MenuManager](#использовать-menumanager) — менеджер меню, созданных по идентификатору.
-
-- [Совместимость](#совместимость-со-старым-кодом) — какие устаревшие глобальные классы могут встретиться в существующих проектах.
-
 ## Подключить расширение
 
 Если вы подключаете расширение из PHP, загрузите `main.popup`.
@@ -101,27 +87,26 @@ popup.show();
 import { Popup } from 'main.popup';
 
 const button = document.getElementById('open-popup-button');
-if (!button)
+
+if (button)
 {
-    return;
+    const content = document.createElement('div');
+    content.textContent = 'Действие применяется только к выбранным элементам.';
+
+    const popup = new Popup({
+        id: 'action-help-popup',
+        bindElement: button,
+        bindOptions: {
+            position: 'top',
+        },
+        content,
+        angle: true,
+        autoHide: true,
+        closeByEsc: true,
+    });
+
+    popup.show();
 }
-
-const content = document.createElement('div');
-content.textContent = 'Действие применяется только к выбранным элементам.';
-
-const popup = new Popup({
-    id: 'action-help-popup',
-    bindElement: button,
-    bindOptions: {
-        position: 'top',
-    },
-    content,
-    angle: true,
-    autoHide: true,
-    closeByEsc: true,
-});
-
-popup.show();
 ```
 
 `bindOptions.position: 'top'` размещает окно над элементом. Если позицию не передать, окно открывается под элементом.
@@ -173,6 +158,8 @@ popup.show();
 -  `closeIconSize` — размер кнопки закрытия. Допустимые значения: `CloseIconSize.SMALL` и `CloseIconSize.LARGE`.
 
 -  `closeByEsc` — закрывает окно по клавише `Esc`. По умолчанию `false`.
+
+-  `blockBackgroundEsc` — отмечает открытое окно как занимающее клавишу `Esc`, чтобы обработчики страницы ее пропускали. По умолчанию `true`. Как это работает, описано в разделе [Не перехватывать Esc у окна](#ne-perehvatyvat-esc-u-okna).
 
 -  `autoHide` — закрывает окно по клику вне области окна. По умолчанию `false`.
 
@@ -240,6 +227,8 @@ popup.show();
 
 `iframe` — это встроенный фрейм со своим документом внутри страницы.
 
+**Пример.** Окно добавляется в элемент `popup-area` и блокирует прокрутку этого контейнера на время показа.
+
 ```js
 import { Popup } from 'main.popup';
 
@@ -263,9 +252,9 @@ popup.show();
 
 ### Добавить кнопки
 
-Для кнопок используйте `Button` из `ui.buttons`.
+Для кнопок используйте класс `Button` из расширения [ui.buttons](./ui-buttons.md). Классы кнопок `main.popup` оставлены для совместимости с существующим кодом.
 
-Классы кнопок `main.popup` оставлены для совместимости с существующим кодом. При клике можно выполнить действие и закрыть окно через экземпляр `Popup`.
+**Пример.** Окно подтверждения выводит кнопки «Удалить» и «Отмена». Обработчик `onclick` каждой кнопки закрывает окно через экземпляр `Popup`.
 
 ```js
 import { Popup } from 'main.popup';
@@ -346,6 +335,8 @@ popup.show();
 
 -  `removeOverlay()` — удаляет затемнение страницы, если оно было создано.
 
+**Пример.** Окно сначала показывает строку «Идет загрузка.». Затем код заменяет содержимое DOM-узлом с текстом «Загрузка завершена.» и пересчитывает положение окна.
+
 ```js
 import { Popup } from 'main.popup';
 
@@ -362,6 +353,57 @@ result.textContent = 'Загрузка завершена.';
 
 popup.setContent(result);
 popup.adjustPosition();
+```
+
+### Не перехватывать Esc у окна
+
+На странице бывает свой обработчик клавиши `Esc`, который закрывает панель, сбрасывает выделение или выходит из режима редактирования. Пока поверх страницы открыто окно, нажатие `Esc` относится к окну, и обработчику страницы его нужно пропустить. Для этого `main.popup` отмечает окна, которые занимают клавишу.
+
+{% note info "" %}
+
+Опция `blockBackgroundEsc` и методы `shouldBlockBackgroundEsc()` и `PopupManager.isAnyPopupBlockingBackgroundEscShown()` появились в главном модуле версии 26.900.0.
+
+{% endnote %}
+
+-  Опция `blockBackgroundEsc` — по умолчанию `true`, и открытое окно занимает клавишу `Esc`. Передайте `false` окну, которое не должно мешать обработчикам страницы, например подсказке.
+
+-  Метод `shouldBlockBackgroundEsc()` — возвращает значение опции `blockBackgroundEsc` для экземпляра окна.
+
+-  Статический метод `PopupManager.isAnyPopupBlockingBackgroundEscShown()` — возвращает `true`, если открыто хотя бы одно окно, у которого `blockBackgroundEsc` не равен `false`. Менеджер учитывает все окна, созданные через `new Popup()` и `PopupManager.create()`.
+
+Опция не меняет поведение самого окна. Закрытие окна по `Esc` задает параметр `closeByEsc`. Значение флага читает код страницы, который сам обрабатывает `Esc`. В продукте так поступают мессенджер и редактор блок-схем `ui.block-diagram`.
+
+**Пример.** Обработчик страницы закрывает панель по `Esc`, только если поверх нее нет окна, которое занимает клавишу.
+
+```js
+import { PopupManager } from 'main.popup';
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || PopupManager.isAnyPopupBlockingBackgroundEscShown())
+    {
+        return;
+    }
+
+    // Своя функция страницы
+    closeSettingsPanel();
+});
+```
+
+**Пример.** Окно-подсказка не занимает `Esc`: пока оно открыто, клавиша по-прежнему закрывает панель из предыдущего примера.
+
+```js
+import { Popup } from 'main.popup';
+
+const hint = new Popup({
+    id: 'settings-hint-popup',
+    bindElement: document.getElementById('settings-help'),
+    content: 'Изменения применяются после сохранения.',
+    angle: true,
+    autoHide: true,
+    blockBackgroundEsc: false,
+});
+
+hint.show();
 ```
 
 ### Обработать события Popup
@@ -387,39 +429,54 @@ const popup = new Popup({
 popup.show();
 ```
 
-Основные события `Popup`:
+Окно вызывает события в пространстве имен `BX.Main.Popup`. У большинства событий есть старое имя, под которым их подписывает существующий код.
 
--  `onInit` — вызывается при инициализации окна.
+| Событие | Когда срабатывает | Старое имя |
+|---|---|---|
+| `onInit` | При инициализации окна | `onPopupWindowInit` |
+| `onAfterInit` | После создания служебных элементов окна | `onPopupWindowIsInitialized` |
+| `onFirstShow` | При первом показе | `onPopupFirstShow` |
+| `onBeforeShow` | Перед показом | Нет |
+| `onShow` | При показе | `onPopupShow` |
+| `onAfterShow` | После показа | `onAfterPopupShow` |
+| `onClose` | При закрытии | `onPopupClose` |
+| `onAfterClose` | После закрытия | `onPopupAfterClose` |
+| `onDestroy` | При удалении | `onPopupDestroy` |
+| `onBeforeAdjustPosition` | Перед пересчетом положения | Нет |
+| `onDragStart`, `onDrag`, `onDragEnd` | При перетаскивании | `onPopupDragStart`, `onPopupDrag`, `onPopupDragEnd` |
+| `onResizeStart`, `onResize`, `onResizeEnd` | При изменении размера | `onPopupResizeStart`, `onPopupResize`, `onPopupResizeEnd` |
+| `onFullscreenEnter` | При переходе окна в полноэкранный режим браузера | `onPopupFullscreenEnter` |
+| `onFullscreenLeave` | При выходе окна из полноэкранного режима браузера | `onPopupFullscreenLeave` |
 
--  `onAfterInit` — вызывается после создания служебных элементов окна.
+### Подписаться на событие по старому имени
 
--  `onFirstShow` — вызывается при первом показе.
+Старые имена зарегистрированы как синонимы новых. Подписка по старому имени получает то же событие, что и подписка по новому. Такие подписки встречаются в существующем коде и в других расширениях. Окно, созданное через `new Popup()`, продолжает с ними работать.
 
--  `onBeforeShow` — вызывается перед показом.
+Старое имя работает в трех местах:
 
--  `onShow` — вызывается при показе.
+-  в объекте `events` параметров окна,
 
--  `onAfterShow` — вызывается после показа.
+-  в подписке на конкретное окно `BX.addCustomEvent(popup, 'onPopupClose', handler)`,
 
--  `onClose` — вызывается при закрытии.
+-  в глобальной подписке `BX.addCustomEvent('onPopupShow', handler)`, которая получает событие от всех окон страницы.
 
--  `onAfterClose` — вызывается после закрытия.
+Обработчик, подписанный через `BX.addCustomEvent()`, получает не объект `BaseEvent`, а аргументы в старом формате. Для большинства событий это один аргумент — экземпляр окна. Событие `onPopupWindowInit` передает идентификатор окна, элемент привязки и параметры, а `onPopupWindowIsInitialized` — идентификатор и экземпляр окна. У событий `onPopupFullscreenEnter` и `onPopupFullscreenLeave` старого формата нет, и обработчик получает `BaseEvent`.
 
--  `onDestroy` — вызывается при удалении.
+**Пример.** Глобальный обработчик старого формата узнает о закрытии любого окна страницы и получает его экземпляр первым аргументом.
 
--  `onBeforeAdjustPosition` — вызывается перед пересчетом положения.
+```js
+BX.addCustomEvent('onPopupClose', (popup) => {
+    console.log('Закрыто окно', popup.getId());
+});
+```
 
--  `onDragStart`, `onDrag`, `onDragEnd` — вызываются при перетаскивании.
-
--  `onResizeStart`, `onResize`, `onResizeEnd` — вызываются при изменении размера.
-
--  `onFullscreenEnter` — вызывается при переходе окна в полноэкранный режим браузера.
-
--  `onFullscreenLeave` — вызывается при выходе окна из полноэкранного режима браузера.
+В новом коде подписывайтесь по новым именам через `events` или метод `subscribe()`. Обработчик получает объект `BaseEvent` с методом `getTarget()`.
 
 ## Использовать PopupManager
 
-`PopupManager` хранит созданные окна и помогает получать их по идентификатору. Используйте его, если окно должно быть доступно из разных обработчиков.
+Класс `PopupManager` хранит созданные окна и возвращает их по идентификатору. Используйте его, если окно должно быть доступно из разных обработчиков.
+
+**Пример.** Код создает окно `shared-popup` через менеджер и показывает его. Затем код получает то же окно по идентификатору и закрывает его.
 
 ```js
 import { PopupManager } from 'main.popup';
@@ -453,6 +510,8 @@ samePopup.close();
 -  `getCurrentPopup()` — возвращает последнее показанное окно, которое отслеживает менеджер.
 
 -  `isAnyPopupShown()` — проверяет, открыто ли хотя бы одно окно.
+
+-  `isAnyPopupBlockingBackgroundEscShown()` — проверяет, открыто ли хотя бы одно окно, которое занимает клавишу `Esc`. Подробнее — в разделе [Не перехватывать Esc у окна](#ne-perehvatyvat-esc-u-okna).
 
 -  `getPopups()` — возвращает массив созданных окон.
 
@@ -652,6 +711,8 @@ menu.show();
 
 -  `toggle()` — переключает состояние меню: закрывает открытое меню и показывает закрытое.
 
+**Пример.** Код создает меню с пунктом «Обновить», добавляет пункт «Скопировать ссылку» и показывает меню.
+
 ```js
 import { Menu } from 'main.popup';
 
@@ -715,7 +776,9 @@ if (copyItem)
 
 ## Использовать MenuManager
 
-`MenuManager` хранит меню по идентификатору и показывает только одно текущее меню через `show()`.
+Класс `MenuManager` хранит меню по идентификатору и показывает только одно текущее меню через `show()`.
+
+**Пример.** Код показывает меню `row-actions-menu` через метод `MenuManager.show()`, затем получает текущее меню.
 
 ```js
 import { MenuManager } from 'main.popup';

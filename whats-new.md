@@ -22,6 +22,7 @@ title: Что нового
 
 #### 12 ноября
 
+- Добавили новую статью [Пошаговый тур ui.tour](./pages/ui/ui-tour.md).
 - Добавили новую статью [Значения свойств элементов инфоблока](./pages/modules/iblocks/property-values.md).
 - Добавили новую статью [Создание и настройка инфоблоков](./pages/modules/iblocks/setup.md).
 - Добавили новую статью [Работа с разделами инфоблока](./pages/modules/iblocks/sections.md).
@@ -33,6 +34,22 @@ title: Что нового
 - Добавили новую статью [Вывод данных инфоблока компонентами](./pages/modules/iblocks/components.md).
 - Обновили статью [Как выбрать API инфоблоков](./pages/modules/iblocks/api.md) — теперь это статья о выборе между D7 и классическим API с заменами методов классического API.
 - Обновили статьи [Введение и базовые концепции](./pages/modules/iblocks/overview.md), [Схема работы инфоблоков и основные объекты](./pages/modules/iblocks/architecture.md) и [Производительность и частые ошибки](./pages/modules/iblocks/performance.md) модуля Информационные блоки.
+
+#### 6 ноября
+
+- Добавили новую статью [Дизайн-токены ui.design-tokens и Air Design](./pages/ui/ui-design-tokens.md).
+- Добавили новую статью [JS-ядро main.core и события](./pages/ui/main-core.md).
+- Добавили новую статью [Выпадающий список BX.Main.ui.select](./pages/ui/main-ui-select.md).
+- Добавили новую статью [Всплывающие уведомления ui.notification](./pages/ui/ui-notification.md).
+- Добавили новую статью [Алерты ui.alerts](./pages/ui/ui-alerts.md).
+- Добавили новую статью [Переключатель ui.switcher](./pages/ui/ui-switcher.md).
+- Добавили новую статью [Индикатор загрузки main.loader](./pages/ui/main-loader.md).
+- Добавили новую статью [Загрузчик файлов ui.uploader](./pages/ui/ui-uploader.md).
+- Добавили новую статью [Вкладки ui.tabs](./pages/ui/ui-tabs.md).
+- Обновили статью [Всплывающие окна и меню main.popup](./pages/ui/main-popup.md#ne-perehvatyvat-esc-u-okna) — добавили опцию `blockBackgroundEsc`, которая управляет перехватом клавиши Esc открытым окном.
+- Обновили статью [Таблица main.ui.grid](./pages/ui/main-ui-grid.md#server-actions) — добавили обработку действий на сервере, редактирование строк, JavaScript API и события таблицы.
+- Обновили статью [Фильтр main.ui.filter](./pages/ui/main-ui-filter.md#upravlyat-filtrom-iz-javascript) — добавили JavaScript API и события фильтра.
+- Обновили статью [Боковая панель main.sidepanel](./pages/ui/main-sidepanel.md#slider-page) — добавили страницу для слайдера на компоненте `ui.sidepanel.wrapper` и прием сообщений между слайдерами.
 
 #### 3 ноября
 
