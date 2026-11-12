@@ -297,18 +297,18 @@ $teams = (new NodeDataBuilder())
 
 ### Выбрать узлы по активности
 
-Чтобы выбрать узлы по активности, передайте в параметр `active` логическое значение или элемент перечисления `NodeActiveFilter`.
+Чтобы выбрать узлы по активности, передайте в параметр `active` логическое значение или элемент перечисления `NodeActiveFilter`. По умолчанию параметр равен `true`.
 
 #|
 || **Значение** | **Условие в NodeFilter** ||
 || `true` | `GLOBAL_ACTIVE = true` ||
 || `false` | `GLOBAL_ACTIVE = false` ||
 || `NodeActiveFilter::ALL` | Условие активности не добавляется ||
-|| `NodeActiveFilter::ONLY_ACTIVE` | `GLOBAL_ACTIVE = true` ||
-|| `NodeActiveFilter::ONLY_GLOBAL_ACTIVE` | `ACTIVE = true` ||
+|| `NodeActiveFilter::ONLY_ACTIVE` | `ACTIVE = true` ||
+|| `NodeActiveFilter::ONLY_GLOBAL_ACTIVE` | `GLOBAL_ACTIVE = true` ||
 |#
 
-Поле `ACTIVE` описывает состояние самого узла, а `GLOBAL_ACTIVE` учитывает состояние его ветки. Таблица фиксирует точное поведение класса `NodeFilter`. Выбирайте значение по создаваемому условию, а не только по названию элемента перечисления.
+Поле `ACTIVE` описывает состояние самого узла. Поле `GLOBAL_ACTIVE` равно `true`, только если активны сам узел и все его родители. Значения перечисления работают так же, как параметр `activeFilter` в методах репозитория узлов, — см. [Выбрать узлы по активности](./nodes.md).
 
 ### Ограничить выборку правами пользователя {#restrict-by-user-access}
 
