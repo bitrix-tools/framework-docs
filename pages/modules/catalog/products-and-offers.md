@@ -25,7 +25,7 @@ description: 'Работа с товарами и торговыми предл�
 
 -  `CODE` — символьный код для обращения в коде,
 
--  `API_CODE` — код для работы через ORM инфоблоков, код должен быть уникальным в рамках типа инфоблоков,
+-  `API_CODE` — код для работы через ORM инфоблоков, код должен быть уникальным среди всех инфоблоков, без него у инфоблока нет ORM-класса элементов — подробнее в разделе [Создать инфоблок](./../iblocks/setup.md#create-iblock),
 
 -  `ACTIVE` — признак активности: `Y` или `N`,
 
@@ -44,7 +44,7 @@ $productIblockId = $iblock->Add([
 
 if (!$productIblockId)
 {
-    throw new \RuntimeException($iblock->getLastError()->getMessage());
+    throw new \RuntimeException($iblock->getLastError());
 }
 ```
 
@@ -94,6 +94,8 @@ if (!$result)
 
 2. Добавьте к нему товарные параметры через `\Bitrix\Catalog\Model\Product::add()`.
 
+Поля элемента, привязка к разделам и картинки описаны в разделе [Добавить элемент](./../iblocks/elements.md#add-element).
+
 Пока не выполнен второй шаг, элемент инфоблока не считается товаром каталога.
 
 Параметры товарной записи:
@@ -119,7 +121,7 @@ $productId = $element->Add([
 
 if (!$productId)
 {
-    throw new \RuntimeException($element->LAST_ERROR);
+    throw new \RuntimeException($element->getLastError());
 }
 
 $result = \Bitrix\Catalog\Model\Product::add([
@@ -202,7 +204,7 @@ $serviceId = $element->Add([
 
 if (!$serviceId)
 {
-    throw new \RuntimeException($element->LAST_ERROR);
+    throw new \RuntimeException($element->getLastError());
 }
 
 $productResult = \Bitrix\Catalog\Model\Product::add([
@@ -278,7 +280,7 @@ $productIblockId = $iblock->Add([
 
 if (!$productIblockId)
 {
-    throw new \RuntimeException($iblock->getLastError()->getMessage());
+    throw new \RuntimeException($iblock->getLastError());
 }
 
 $offerIblockId = $iblock->Add([
@@ -292,7 +294,7 @@ $offerIblockId = $iblock->Add([
 
 if (!$offerIblockId)
 {
-    throw new \RuntimeException($iblock->getLastError()->getMessage());
+    throw new \RuntimeException($iblock->getLastError());
 }
 ```
 
@@ -332,7 +334,7 @@ $skuPropertyId = $property->Add([
 
 if (!$skuPropertyId)
 {
-    throw new \RuntimeException($property->LAST_ERROR);
+    throw new \RuntimeException($property->getLastError());
 }
 ```
 
@@ -401,7 +403,7 @@ $productId = $element->Add([
 
 if (!$productId)
 {
-    throw new \RuntimeException($element->LAST_ERROR);
+    throw new \RuntimeException($element->getLastError());
 }
 
 $result = \Bitrix\Catalog\Model\Product::add([
@@ -445,7 +447,7 @@ $offerId = $element->Add([
 
 if (!$offerId)
 {
-    throw new \RuntimeException($element->LAST_ERROR);
+    throw new \RuntimeException($element->getLastError());
 }
 
 $result = \Bitrix\Catalog\Model\Product::add([
@@ -562,7 +564,7 @@ while ($offer = $offersIterator->Fetch())
 
 ### Изменить карточку товара
 
-Чтобы изменить поля элемента инфоблока, используйте `CIBlockElement::Update()`. Метод подходит для названия, символьного кода, активности и свойств карточки. Передайте идентификатор элемента инфоблока и массив полей.
+Чтобы изменить поля элемента инфоблока, используйте `CIBlockElement::Update()`. Метод подходит для названия, символьного кода и активности карточки. Передайте идентификатор элемента инфоблока и массив полей, подробнее — в разделе [Изменить элемент](./../iblocks/elements.md#update-element). Если передать в `Update()` ключ `PROPERTY_VALUES`, метод удалит значения всех непереданных нефайловых свойств. Отдельные свойства меняйте способами из раздела [Записать значения](./../iblocks/property-values.md#write-values).
 
 Для простого товара или родительской карточки передайте `$productId`. Родительскую карточку обновляйте, когда нужно изменить общее описание товара: название, код, активность или свойства, которые относятся ко всем вариантам.
 
@@ -578,7 +580,7 @@ $updated = $element->Update($productId, [
 
 if (!$updated)
 {
-    throw new \RuntimeException($element->LAST_ERROR);
+    throw new \RuntimeException($element->getLastError());
 }
 ```
 
@@ -623,7 +625,7 @@ if (!$result->isSuccess())
 
 ### Удалить простой товар
 
-Для простого товара без предложений используйте `CIBlockElement::Delete()`. В метод передайте идентификатор элемента инфоблока.
+Для простого товара без предложений используйте `CIBlockElement::Delete()`. В метод передайте идентификатор элемента инфоблока. Что удаляет метод и как удалить товар в транзакции, описано в разделе [Удалить элемент](./../iblocks/elements.md#delete-element).
 
 ```php
 if (!\CIBlockElement::Delete($productId))

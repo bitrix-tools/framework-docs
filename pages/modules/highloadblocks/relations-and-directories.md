@@ -422,7 +422,7 @@ else
 
     if (!$propertyId)
     {
-        throw new \RuntimeException($property->LAST_ERROR);
+        throw new \RuntimeException($property->getLastError());
     }
 }
 ```
@@ -468,28 +468,25 @@ if ($directoryItem === null)
 
 ### Получить данные справочника
 
-Значение свойства информационного блока содержит `UF_XML_ID`. Сначала прочитайте свойство элемента, затем запросите динамический класс справочника по полученным значениям.
+Значение свойства информационного блока содержит `UF_XML_ID`. Сначала прочитайте свойство элемента через ORM-класс информационного блока, затем запросите динамический класс справочника по полученным значениям. Переменная `$elementClass` содержит ORM-класс элементов информационного блока, способ получить его описан в разделе [Получить ORM-класс элементов](./../iblocks/property-values.md#get-orm-class).
 
 ```php
-$propertyResult = \CIBlockElement::GetProperty(
-    $iblockId,
-    $elementId,
-    'sort',
-    'asc',
-    ['CODE' => 'COLOR']
-);
+$element = $elementClass::getByPrimary($elementId, [
+    'select' => ['ID', 'COLOR'],
+])->fetchObject();
 
-$propertyValues = [];
-
-while ($property = $propertyResult->Fetch())
+if ($element === null)
 {
-    if ((string)$property['VALUE'] !== '')
-    {
-        $propertyValues[] = (string)$property['VALUE'];
-    }
+    throw new \RuntimeException('Элемент не найден');
 }
 
-$propertyValues = array_values(array_unique($propertyValues));
+$propertyValues = [];
+$colorXmlId = (string)($element->get('COLOR')?->getValue() ?? '');
+
+if ($colorXmlId !== '')
+{
+    $propertyValues[] = $colorXmlId;
+}
 $directoryItemsByXmlId = [];
 
 if ($propertyValues !== [])
@@ -525,7 +522,7 @@ if ($missingXmlIds !== [])
 }
 ```
 
-Код одинаково обрабатывает одиночное и множественное свойство. Для списка элементов соберите значения всех элементов, удалите дубли и запросите справочник один раз. Сохраните соответствие элемента и его значений отдельно, а записи справочника возьмите из словаря `$directoryItemsByXmlId`.
+Код читает одиночное свойство. Для множественного свойства метод `get('COLOR')` возвращает коллекцию. Переберите ее и соберите значения методом `getValue()`. Для списка элементов соберите значения всех элементов, удалите дубли и запросите справочник один раз, пример приведен в разделе [Получить записи справочника для списка](./../iblocks/element-queries.md#directory-values). Сохраните соответствие элемента и его значений отдельно, а записи справочника возьмите из словаря `$directoryItemsByXmlId`.
 
 ### Обновить настройку после переименования таблицы
 
@@ -539,7 +536,7 @@ if ($missingXmlIds !== [])
 
 2. Создайте объект `CIBlockProperty` и вызовите метод `Update()`.
 
-3. Проверьте возвращенное логическое значение. Текст ошибки доступен в свойстве `LAST_ERROR` объекта.
+3. Проверьте возвращенное логическое значение. Текст ошибки возвращает метод `getLastError()` объекта.
 
 4. Прочитайте свойство элемента и убедитесь, что каждому сохраненному `UF_XML_ID` соответствует запись блока.
 

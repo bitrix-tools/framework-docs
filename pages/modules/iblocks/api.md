@@ -1,1518 +1,188 @@
 ---
-title: Работа с инфоблоками через API
-description: 'Работа с инфоблоками через API. Модуль инфоблоков Bitrix: структура данных, ключевые объекты и практические рекомендации.'
+title: Как выбрать API инфоблоков
+description: "Выбор между D7 (ORM) и классическим API модуля Информационные блоки. Какие задачи выполняет ORM, где остается классический API и почему. Замены методов CIBlockElement::GetList(), GetByID(), Add(), Update(), SetPropertyValuesEx(), GetProperty(), CIBlockSection::GetList(), CIBlock::GetList(), CIBlockProperty::GetList(), CIBlockPropertyEnum::GetList() и ссылки на статьи цикла."
 ---
 
-Информационный блок — это набор данных в связанных между собой таблицах: элементы, свойства, разделы, права, SEO. Если обновить только одну таблицу, данные потеряют согласованность. В классическом API некоторые функции работают автоматически. В ORM их нужно вызывать вручную. Поэтому для корректной работы используйте классическое API и D7 вместе.
+Модуль Информационные блоки дает два слоя API.
 
-## Границы ORM и классического API
+-  D7 — объектное ядро Bitrix Framework с ORM, подробнее — в статье [Концепции ORM](./../../orm/orm-concepts.md). В модуле это ORM-классы `IblockTable`, `PropertyTable`, `PropertyEnumerationTable`, `TypeTable`, классы пространства имен `Bitrix\Iblock\InheritedProperty` для SEO-шаблонов и ORM-классы, которые система создает для каждого инфоблока, — `Element{ApiCode}Table` для элементов и `Section{ID}Table` для разделов. Запросы строятся объектами, результат приходит объектами с типизированными методами.
 
-Информационные блоки используют два слоя API:
+-  Классический API — классы `CIBlock`, `CIBlockElement`, `CIBlockSection`, `CIBlockProperty`, `CIBlockPropertyEnum`, `CIBlockRights`. Методы принимают и возвращают массивы.
 
--  D7 ORM — для повседневной работы с данными: добавление, чтение, обновление элементов, разделов. ORM типизирован и дает автоподсказки в редакторе.
+Правило выбора — используйте D7 там, где он выполняет задачу полностью. Классический API остается там, где D7-метода нет или он выполняет только часть работы. Например, ORM-метод `save()` элемента не обновляет поиск, не вызывает события и не применяет настройки полей инфоблока. Такие случаи одинаковы для обеих [версий хранения свойств](./overview.md#property-storage-versions) и собраны в разделе [Распределить задачи между D7 и классическим API](#api-boundaries).
 
--  Классическое API — для инфраструктурных задач: создание типов и инфоблоков, свойств, управление правами, индексация поиска, ресайз изображений, копирование структуры.
+Перед работой с любым слоем подключите модуль методом `Bitrix\Main\Loader::includeModule('iblock')`.
 
-ORM не заменяет классическое API. Эти два слоя дополняют друг друга.
+Если в проекте уже есть код на классическом API, найдите метод в разделе [Заменить методы классического API](#classic-replacements). Для каждого метода указаны замена, особенности перехода и статья с примерами.
 
-### Когда использовать классическое API
+## Распределить задачи между D7 и классическим API {#api-boundaries}
 
-| Задача                                   | Метод и инструмент                                              |
-|------------------------------------------|-----------------------------------------------------------------|
-| Создать тип инфоблоков                   | `CIBlockType::Add()`                                            |
-| Создать инфоблок                         | `CIBlock::Add()`                                                |
-| Добавить свойство                        | `CIBlockProperty::Add()`                                        |
-| Назначить простые права доступа          | `CIBlockElement::SetPermission()`                               |
-| Добавить элемент в полнотекстовый поиск  | `CIBlockElement::UpdateSearch($id)`                             |
-| Сделать миниатюру изображения            | `CFile::ResizeImage($fileId, [...])`                            |
-| Скопировать инфоблок со всеми свойствами | XML-экспорт или `CIBlock::Add()` и `CIBlockProperty::GetList()` |
+| Задача | API | Почему | Подробно |
+|---|---|---|---|
+| Создать тип инфоблоков | D7 `TypeTable::add()` и `TypeLanguageTable::add()` | Методы создают тип полностью | [Создать тип инфоблоков](./setup.md#create-type) |
+| Удалить тип инфоблоков | Классический `CIBlockType::Delete()` | Метод `TypeTable::delete()` удаляет инфоблоки типа без их свойств | [Удалить инфоблок и тип](./setup.md#delete) |
+| Создать, изменить и удалить инфоблок | Классический `CIBlock::Add()`, `Update()`, `Delete()` | Метод `IblockTable::add()` не создает таблицы значений свойств для версии хранения 2, не привязывает инфоблок к сайтам, не назначает права и не вызывает событие `OnAfterIBlockAdd`. Метод `IblockTable::delete()` оставляет свойства, элементы и разделы | [Выбрать API для настройки](./setup.md#choose-api) |
+| Добавить, изменить и удалить свойство | Классический `CIBlockProperty` | Методы `PropertyTable` не меняют таблицу значений инфоблока версии 2 | [Добавить свойства](./setup.md#iblock-properties) |
+| Добавить вариант списка | D7 `PropertyEnumerationTable::add()` | Метод добавляет вариант полностью | [Добавить варианты в существующий список](./setup.md#add-enum-values) |
+| Назначить права доступа | Классический `CIBlock::SetPermission()`, `CIBlockRights` | D7-методов для прав нет | [Настроить права доступа](./setup.md#permissions) |
+| Получить элементы, выбрать список | D7 `Element{ApiCode}Table` | Поля и значения свойств приходят одним запросом объектами, фильтр по свойствам и разделам задается методами запроса | [Выборка элементов инфоблока](./element-queries.md) |
+| Получить список с проверкой прав пользователя | Классический `CIBlockElement::GetList()` с `'CHECK_PERMISSIONS' => 'Y'` в фильтре | ORM-запрос права не проверяет | [Проверить права пользователя](./elements.md#check-permissions) |
+| Добавить, изменить и удалить элемент | Классический `CIBlockElement::Add()`, `Update()`, `Delete()` | ORM-методы не заполняют внешний код, признак привязки к разделам и авторов, не обновляют поиск, не вызывают события классического API, а `delete()` оставляет файлы и SEO-шаблоны | [Выбрать API для записи](./elements.md#choose-write-api) |
+| Изменить значения свойств существующего элемента | D7 `set()` и `save()` объекта элемента или классический `SetPropertyValuesEx()`, если проект обрабатывает его события | Оба способа не сбрасывают тегированный кеш и не обновляют фасетный индекс, если изменились только свойства. ORM не вызывает события классического API | [Значения свойств элементов инфоблока](./property-values.md) |
+| Получить разделы, дерево, путь | D7 `Section{ID}Table` | Класс содержит пользовательские поля `UF_*` и связь с родителем, дерево выбирается одним запросом | [Получить разделы](./sections.md#get-sections) |
+| Добавить, изменить и удалить раздел | Классический `CIBlockSection::Add()`, `Update()`, `Delete()` | ORM-метод `save()` вычисляет у нового раздела `GLOBAL_ACTIVE` неверно — `N` у активного раздела и `Y` у неактивного, а `delete()` не удаляет подразделы и элементы | [Выбрать API для записи](./sections.md#choose-write-api) |
+| Задать и прочитать SEO-шаблоны | D7 `Bitrix\Iblock\InheritedProperty` | Классического API с тем же набором возможностей нет | [SEO-шаблоны инфоблока](./seo.md) |
+| Проиндексировать элемент в поиске | Классический `CIBlockElement::UpdateSearch()` | D7-метода нет. Методы `Add()` и `Update()` индексируют элемент сами | [Отложить обновление кеша и индексов](./elements.md#defer-cache-and-indexes) |
+| Записать товар торгового каталога | `CIBlockElement` для элемента и D7-модели модуля `catalog` для товарных параметров и цен | Товарные данные хранятся в таблицах модуля Торговый каталог | [Как выбрать API торгового каталога](./../catalog/choose-catalog-api.md) |
+| Обработать изменение данных | События классического API | Классические события вызывают только классические методы. ORM-классы вызывают свои события только при записи через ORM | [События классического API](#events) |
 
-## Типы инфоблоков
+### Что выполняет только классический API {#classic-only}
 
-Типы создают один раз, почти никогда не изменяют и используют для однотипных инфоблоков: новости, статьи, вакансии.
+ORM-классы записывают данные в таблицы и, если изменились поля элемента или раздела, сбрасывают тегированный кеш инфоблока. ORM-класс элементов в этом случае обновляет и фасетный индекс элемента. Остальную работу при записи выполняют только классические методы.
 
-### Добавить тип
+Методы `CIBlockElement` и `CIBlockSection`:
 
-Обычно типы добавляют через административный раздел: *Контент > Инфоблоки > Типы инфоблоков*.
+-  вызывают события модуля, например `OnBeforeIBlockElementAdd` и `OnAfterIBlockSectionUpdate`,
 
-Если нужно создать тип программно, используйте классическое API. Оно гарантирует корректное добавление типа и его названий на всех языках.
+-  обновляют поисковый индекс модуля `search`,
 
-```php
-\Bitrix\Main\Loader::includeModule('iblock');
+-  записывают операции в журнал событий, если это включено в настройках полей инфоблока,
 
-$iblockType = new \CIBlockType;
-$result = $iblockType->Add([
-    'ID'       => 'mynews',
-    'SECTIONS' => 'Y',
-    'IN_RSS'   => 'Y',
-    'LANG'     => [
-        'ru' => [
-            'NAME'         => 'Мои новости',
-            'SECTION_NAME' => 'Раздел',
-            'ELEMENT_NAME' => 'Новость',
-        ],
-        'en' => [
-            'NAME'         => 'My news',
-            'SECTION_NAME' => 'Section',
-            'ELEMENT_NAME' => 'News item',
-        ],
-    ],
-]);
+-  уменьшают картинки по настройкам полей инфоблока, если включено масштабирование и в метод передан параметр `$bResizePictures` со значением `true`,
 
-if (!$result)
-{
-    throw new \Exception($iblockType->getLastError()->getMessage());
-}
-```
+-  пересчитывают дисковую квоту, при удалении удаляют файлы, права и SEO-шаблоны.
 
-ORM-метод `TypeTable::add()` работает с таблицей `b_iblock_type`. Он не добавляет названия на языках, потому что они хранятся в отдельной таблице `b_iblock_type_lang`.
+Только методы `CIBlockElement`:
 
-## Инфоблок
+-  заполняют внешний код `XML_ID` и признак привязки к разделам `IN_SECTIONS`,
 
-ORM не поддерживает полное создание инфоблока. Оно добавляет базовую запись в таблицу `b_iblock`, но не привязывает инфоблок к сайту, не назначает права, не включает SEO-наследование и не гарантирует видимость в административном разделе.
+-  поддерживают документооборот, если установлен модуль `workflow`, документооборот включен в настройках инфоблока и в метод передан параметр `$bWorkFlow` со значением `true`.
 
-### Создать инфоблок
+При добавлении методы `CIBlockElement::Add()` и `CIBlockSection::Add()` заполняют авторов `CREATED_BY` и `MODIFIED_BY` значением `ID` текущего пользователя, ORM оставляет эти поля пустыми. При изменении `CIBlockSection::Update()` записывает `MODIFIED_BY` сам, а `CIBlockElement::Update()` — только если поле передано.
 
-Чтобы инфоблок работал на сайте, используйте классический API. В метод `CIBlock::Add` обязательно передайте параметры:
+Полный список различий для элементов приведен в разделе [Выбрать API для записи элементов](./elements.md#choose-write-api), для разделов — в разделе [Выбрать API для записи разделов](./sections.md#choose-write-api).
 
--  `IBLOCK_TYPE_ID` — идентификатор типа инфоблоков. Тип должен существовать.
+## Заменить методы классического API {#classic-replacements}
 
--  `NAME` — название инфоблока.
+Разделы ниже сопоставляют методы классического API и их замены. Подробные таблицы замен параметров и примеры — в статьях, на которые ведут ссылки.
 
--  `LID` — массив идентификаторов сайтов, к которым привязан инфоблок. Без привязки инфоблок не отобразится на сайте.
+### Элементы {#elements}
 
--  `API_CODE` — cимвольный код API необходим для дальнейшей работы с инфоблоком через D7 ORM.
+Элементы читают через ORM-класс инфоблока `Element{ApiCode}Table`, а добавляют, изменяют и удаляют методами `CIBlockElement`. Класс создается по символьному коду API инфоблока, способ описан в разделе [Получить элемент](./elements.md#get-element).
 
-С помощью параметра `GROUP_ID` можно настроить простые права доступа к инфоблоку. В `GROUP_ID` передайте массив из идентификаторов групп и уровней прав доступа.
+#### CIBlockElement::GetList() {#element-getlist}
 
-Идентификаторы групп можно получить с помощью методов класса `\Bitrix\Main\GroupTable` или посмотреть в административном разделе на странице *Настройки > Пользователи > Группы пользователей*. Например, задайте права доступа для групп с идентификаторами `2` и `8`.
+Замена — запрос ORM-класса `query()` или `getList()`. Метод `IblockTable::compileEntity()` принимает символьный код API инфоблока и возвращает описание ORM-класса — объект `Bitrix\Main\ORM\Entity` — или `false`. Имя класса возвращает метод `getDataClass()` этого описания, например `\Bitrix\Iblock\Elements\ElementNewsTable`. Если код API `API_CODE` в настройках инфоблока не задан, ORM-класса элементов нет, подробнее — в разделе [Создать инфоблок](./setup.md#create-iblock). Фильтр по полям, свойствам и разделам, сортировка, постраничная навигация и подсчет описаны в статье [Выборка элементов инфоблока](./element-queries.md). Соответствие условий фильтра и параметров приведено в разделе [Заменить CIBlockElement::GetList()](./element-queries.md#classic-getlist-replacements).
 
-![](./_images/api.png){width=700px height=525px}
+Что учесть при замене.
 
-```php
-\Bitrix\Main\Loader::includeModule('iblock');
+-  ORM-запрос не проверяет права пользователя. Для списка с учетом прав оставьте `CIBlockElement::GetList()` с `'CHECK_PERMISSIONS' => 'Y'` в фильтре.
 
-$iblock = new \CIBlock;
+-  ORM-запрос не проверяет период активности и возвращает копии документооборота. Нужные условия описаны в разделе [Учесть, что отбирает ORM-запрос](./elements.md#orm-query-scope).
 
-$result = $iblock->Add([
-    'IBLOCK_TYPE_ID' => 'mynews',
-    'NAME'           => 'Новости моей компании',
-    'CODE'           => 'mycompany_news',
-    'API_CODE'       => 'News',             // обязательно для объектного ORM
-    'ACTIVE'         => 'Y',
-    'LID'            => ['s1'],             // привязка к сайту с идентификатором s1
-    'GROUP_ID'       => [                   // права доступа
-        2  => \CIBlockRights::PUBLIC_READ,  // Все пользователи — чтение
-        8  => \CIBlockRights::EDIT_ACCESS,  // Контент-редакторы — запись
-    ],
-]);
+-  Фильтр, выборка или сортировка по множественному свойству дает строку на каждое значение. Способы получить один элемент на строку описаны в разделе [Отфильтровать по множественному свойству](./element-queries.md#filter-by-multiple-property).
 
-if (!$result)
-{
-    throw new \Exception($iblock->getLastError()->getMessage());
-}
+-  ORM возвращает значения без HTML-экранирования и без адреса детальной страницы `DETAIL_PAGE_URL`.
 
-$iblockId = $result;
-```
+Записи справочника на Highload-блоке для списка элементов получают способом из статьи [Связи и справочники на Highload-блоках](./../highloadblocks/relations-and-directories.md).
 
-Вызов метода `Add()` добавит в систему инфоблок с идентификатором `$iblockId`.
+#### Фильтр CIBlockElement::GetList() {#element-filter}
 
-{% note info "" %}
+Ключи фильтра с префиксами `=`, `!`, `%`, `><` и другими заменяют методы `where()`, `whereNot()`, `whereLike()`, `whereBetween()` и другие методы условий ORM-запроса. Ключ без префикса в классическом фильтре для строковых полей ищет по шаблону `LIKE`, поэтому прямой заменой будет `whereLike()`, а для точного значения — `where()`. Полная таблица соответствия приведена в разделе [Заменить фильтр](./element-queries.md#classic-filter-replacements).
 
-Чтобы назначить простые права доступа в существующем инфоблоке, используйте метод `CIBlockElement::SetPermission()`.
+#### CIBlockElement::GetByID() {#element-getbyid}
 
-{% endnote %}
+Замена — `getByPrimary($elementId)` и `fetchObject()` ORM-класса инфоблока `Element{ApiCode}Table`. Имя класса возвращает метод `getDataClass()` описания, которое возвращает `IblockTable::compileEntity()` по символьному коду API инфоблока. Без кода API класса нет. ORM-класс ищет элемент только в своем инфоблоке, а классический метод — в любом. Способ описан в разделе [Получить элемент по ID](./elements.md#get-by-id).
 
-Расширенные права настраиваются отдельно с помощью классов:
+#### CIBlockElement::Add() {#element-add}
 
--  `CIBlockRights` — управляет правами на инфоблок,
+Метод остается основным способом добавить элемент. ORM-метод `save()` нового элемента не заполняет внешний код `XML_ID`, авторов, признак привязки к разделам, не применяет настройки полей инфоблока, не обновляет поиск и не вызывает события. Подготовка полей, привязка к разделам и картинки описаны в разделе [Добавить элемент](./elements.md#add-element).
 
--  `CIBlockSectionRights` — для прав на раздел,
+#### CIBlockElement::Update() {#element-update}
 
--  `CIBlockElementRights` — для прав на элемент.
+Метод остается основным способом изменить поля элемента. Если передать ключ `PROPERTY_VALUES`, метод удалит значения всех непереданных нефайловых свойств. Отдельные свойства меняют способами из статьи [Значения свойств элементов инфоблока](./property-values.md#write-values). Изменение полей описано в разделе [Изменить элемент](./elements.md#update-element).
 
-## Свойства инфоблока
+#### CIBlockElement::Delete() {#element-delete}
 
-Чтобы работать со свойствами, используйте методы классического API: `CIBlockProperty::Add`, `CIBlockProperty::Update`, `CIBlockProperty::Delete`. Эти методы работают корректно с обеими версиями инфоблоков.
+Метод остается основным способом удалить элемент. ORM-метод `delete()` оставляет файлы, запись поиска и SEO-шаблоны элемента. Способ описан в разделе [Удалить элемент](./elements.md#delete-element).
 
-{% note warning "" %}
+#### Другие методы CIBlockElement {#ciblockelement}
 
-Для всех свойств обязательно заполните параметр `CODE`. Без него ORM не увидит свойство и методы `get()`, `set()`, `addTo()` не будут работать.
+Замены `GetNext()`, `GetNextElement()`, `GetFields()` и `GetProperties()` приведены в разделе [Заменить методы классического API для чтения](./elements.md#classic-api-replacements). Массовая запись и повторный импорт без дублей описаны в разделе [Записать много элементов](./elements.md#bulk-write).
 
-{% endnote %}
+### Значения свойств {#property-values}
 
-ORM-методы `PropertyTable::add`, `PropertyTable::update`, `PropertyTable::delete` можно использовать только для инфоблоков 1.0.
+Значения свойств существующего элемента читают и записывают через объект ORM-класса. Классические методы записи вызывают свои события, поэтому остаются, если проект эти события обрабатывает. Полная таблица замен приведена в разделе [Заменить методы классического API](./property-values.md#classic-api-replacements).
 
-{% note tip "" %}
+#### CIBlockElement::SetPropertyValuesEx() {#setpropertyvaluesex}
 
-Подробную информацию о свойствах и типах читайте в статье [Схема работы и основные объекты](./architecture.md).
+Замена — `set()` для одиночного свойства или `removeAll()` и `addTo()` для множественного, затем `save()`. Если изменились только свойства, ни ORM, ни классический метод не сбрасывают тегированный кеш компонентов и не обновляют фасетный индекс умного фильтра. Как обновить их вручную, описано в разделе [Обновить кеш и индексы](./property-values.md#refresh-cache-and-indexes).
 
-{% endnote %}
+Если проект обрабатывает события `OnIBlockElementSetPropertyValuesEx` и `OnAfterIBlockElementSetPropertyValuesEx`, оставьте классический метод, способ описан в разделе [Записать значения с событиями классического API](./property-values.md#set-property-values-ex).
 
-### Как добавить свойства базового типа
+#### CIBlockElement::SetPropertyValues() {#setpropertyvalues}
 
-1. Создайте новый экземпляр класса `CIBlockProperty`.
+Замена — `set()` для каждого свойства и `save()`. Если не передать код свойства в четвертом параметре `$PROPERTY_CODE` вызова `SetPropertyValues($elementId, $iblockId, $values, $PROPERTY_CODE)`, классический метод удаляет значения всех непереданных нефайловых свойств. Способы записи описаны в разделе [Записать значения](./property-values.md#write-values).
 
-2. В метод `Аdd()` передайте основные параметры:
+#### CIBlockElement::GetProperty() {#getproperty}
 
-   -  `IBLOCK_ID` — идентификатор инфоблока,
+Замена — запрос ORM-класса `Element{ApiCode}Table` с кодами свойств в `setSelect()`. Классический метод возвращает строку на каждое значение. ORM возвращает объект элемента, где множественное свойство — коллекция значений. Способ описан в разделе [Прочитать свойства элемента](./property-values.md#read-element-properties).
 
-   -  `NAME` — название свойства,
+#### CIBlockElement::GetPropertyValues() {#getpropertyvalues}
 
-   -  `CODE` — символьный код свойства на латинице в верхнем регистре без пробелов,
+Замена — запрос ORM-класса с условием `whereIn('ID', $elementIds)` и кодами свойств в `setSelect()`. Классический метод возвращает ключи по `ID` свойств, ORM — по кодам. Способ описан в разделе [Прочитать свойства многих элементов](./property-values.md#read-many-elements).
 
-   -  `PROPERTY_TYPE` — тип свойства,
+#### CIBlockPropertyEnum::GetList() {#enum-getlist}
 
-   -  `MULTIPLE` — признак множественности.
+Замена — `PropertyEnumerationTable::getList()`. Классический ключ фильтра `EXTERNAL_ID` ищет по `XML_ID`, в ORM используйте условие `=XML_ID`. Поиск варианта описан в разделе [Найти вариант списка](./property-values.md#find-enum-by-xml-id), добавление — в разделе [Добавить варианты в существующий список](./setup.md#add-enum-values).
 
-#### Свойства типа Строка
+### Разделы {#sections}
 
-Например, добавьте два строковых свойства:
+Разделы читают через ORM-класс `Section{ID}Table`, а добавляют, изменяют и удаляют методами `CIBlockSection`. Класс создается методом `Bitrix\Iblock\Model\Section::compileEntityByIblock()`, способ описан в разделе [Получить ORM-класс разделов](./sections.md#get-orm-class).
 
--  Автор — простая одинарная строка,
+#### CIBlockSection::GetList() {#section-getlist}
 
--  Теги — множественное свойство.
+Замена — запрос ORM-класса разделов `query()` или `getList()`. Класс `Section{ID}Table`, где `{ID}` — `ID` инфоблока, возвращает метод `Bitrix\Iblock\Model\Section::compileEntityByIblock()` — полное имя класса, например `\Bitrix\Iblock\Section10Table`, или `null`, если инфоблок с переданным символьным кодом API не найден. Классический метод по умолчанию проверяет права пользователя, ORM-запрос — нет. В классическом фильтре ключ `SECTION_ID` означает родительский раздел, в ORM ему соответствует условие по `IBLOCK_SECTION_ID`. Замены фильтров, `GetTreeList()`, `GetNavChain()` и подсчета элементов приведены в разделе [Заменить методы классического API для чтения](./sections.md#classic-api-replacements).
 
-```php
-// Автор — простая строка
-$authorProp = new \CIBlockProperty;
+#### CIBlockSection::Add(), Update(), Delete() {#ciblocksection}
 
-$result = $authorProp->Add([
-    'IBLOCK_ID'     => $iblockId,
-    'NAME'          => 'Автор',
-    'CODE'          => 'AUTHOR',
-    'PROPERTY_TYPE' => 'S',       // строка
-    'MULTIPLE'      => 'N',       // одно значение
-]);
+Методы `CIBlockSection::Add()`, `Update()` и `Delete()` остаются основным способом записи разделов. ORM-метод `save()` вычисляет у нового раздела признак активности в дереве `GLOBAL_ACTIVE` наоборот — `N` у активного раздела и `Y` у неактивного. Компоненты не показывают активный раздел и показывают неактивный. ORM-метод `delete()` не удаляет подразделы и элементы.
 
-if (!$result)
-{
-    throw new \Exception($authorProp->getLastError()->getMessage());
-}
+Если код работает без авторизованного пользователя, например в агенте или консольном скрипте, передайте в `Delete()` вторым аргументом `false`. Иначе метод проверит права, вернет `true` и раздел не удалит. Запись описана в разделах [Добавить раздел](./sections.md#add-section), [Изменить раздел](./sections.md#update-section) и [Удалить раздел](./sections.md#delete-section).
 
-// Теги — множественная строка
-$tagsProp = new \CIBlockProperty;
+### Инфоблоки, типы и свойства {#create-iblock}
 
-$result = $tagsProp->Add([
-    'IBLOCK_ID'     => $iblockId,
-    'NAME'          => 'Теги',
-    'CODE'          => 'TAGS',
-    'PROPERTY_TYPE' => 'S',
-    'MULTIPLE'      => 'Y',       // несколько значений
-]);
+Тип инфоблоков и варианты списка создают D7-методами, инфоблок, свойства и права — классическим API. Создание и настройка структуры описаны в статье [Создание и настройка инфоблоков](./setup.md).
 
-if (!$result)
-{
-    throw new \Exception($tagsProp->getLastError()->getMessage());
-}
-```
+#### CIBlockType::GetList() {#type-getlist}
 
-#### Свойства типа Файл
+Замена — `Bitrix\Iblock\TypeTable::getList()` или `getByPrimary()` с `ID` типа. Названия типа, его разделов и элементов на разных языках хранит `Bitrix\Iblock\TypeLanguageTable`, отбирайте их условием `=IBLOCK_TYPE_ID`. Создание типа описано в разделе [Создать тип инфоблоков](./setup.md#create-type).
 
-Добавьте два свойства типа Файл: Фото и Галерея.
+#### CIBlock::GetList() {#iblock-getlist}
 
-```php
-// Фото — один файл
-$property = new \CIBlockProperty;
-$property->Add([
-    'IBLOCK_ID'     => $iblockId,
-    'NAME'          => 'Фото',
-    'CODE'          => 'PHOTO',
-    'PROPERTY_TYPE' => 'F',        // файл
-    'MULTIPLE'      => 'N',        // один файл
-]);
+Замена — `IblockTable::getList()`. Чтобы получить `ID` инфоблока по символьному коду `CODE`, используйте `IblockTable::resolveIdByCode()`. По символьному коду API `API_CODE` метод не ищет, для него используйте `IblockTable::getRow()` с условием `=API_CODE`. Способ описан в разделе [Найти инфоблок по коду](./setup.md#find-iblock).
 
-// Галерея — несколько файлов
-$property = new \CIBlockProperty;
-$property->Add([
-    'IBLOCK_ID'     => $iblockId,
-    'NAME'          => 'Галерея',
-    'CODE'          => 'GALLERY',
-    'PROPERTY_TYPE' => 'F',
-    'MULTIPLE'      => 'Y',       // несколько значений
-]);
-```
+#### CIBlockProperty::GetList() {#property-getlist}
 
-#### Свойство типа Список
+Замена — `PropertyTable::getList()` с условием по `IBLOCK_ID`. Способ описан в разделе [Получить свойства инфоблока](./setup.md#get-properties). Для записи свойств оставьте `CIBlockProperty::Add()`, `Update()` и `Delete()`.
 
-1. Вызовите метод `CIBlockProperty::Add()` с параметром `'PROPERTY_TYPE' => 'L'`.
+### SEO-шаблоны {#seo}
 
-2. Добавьте варианты списка через `CIBlockPropertyEnum::Add()`. Обязательно укажите уникальные `XML_ID`, чтобы избежать дублей.
+Шаблоны SEO-свойств задают и читают D7-классами пространства имен `Bitrix\Iblock\InheritedProperty`. Вычисленные значения сохраняются и не пересчитываются сами после `CIBlockElement::Update()` и `CIBlockSection::Update()` — их сбрасывают методом `clearValues()` объектов `ElementValues`, `SectionValues` или `IblockValues`. Синтаксис шаблонов, чтение значений и вывод на странице описаны в статье [SEO-шаблоны инфоблока](./seo.md).
 
-```php
-// добавляем свойство
-$property = new \CIBlockProperty;
-$result = $property->Add([
-    'IBLOCK_ID'     => $iblockId,
-    'NAME'          => 'Источник',
-    'CODE'          => 'SOURCE',
-    'PROPERTY_TYPE' => 'L',        // список
-    'MULTIPLE'      => 'N',
-]);
+#### Передать шаблоны при записи {#iproperty-templates-on-add}
 
-if (!$result)
-{
-    throw new \Exception($property->getLastError()->getMessage());
-}
+Шаблоны можно передать в поле `IPROPERTY_TEMPLATES` методов `Add()` и `Update()` классов `CIBlock`, `CIBlockSection` и `CIBlockElement`. ORM-метод `add()` класса элементов `Element{ApiCode}Table` это поле не сохраняет и не сообщает об ошибке. Формат описан в разделе [Передать шаблоны при записи](./seo.md#iproperty-templates-on-add).
 
-$propId = $result;
+### События классического API {#events}
 
-// добавляем варианты
-$enum = new \CIBlockPropertyEnum;
+События `OnBeforeIBlockElementUpdate`, `OnAfterIBlockElementUpdate` и другие события модуля вызывают только методы классического API. Если элемент изменен через ORM, обработчики этих событий не сработают. Поэтому элементы и разделы записывают методами `CIBlockElement` и `CIBlockSection`, а значения свойств — методом `SetPropertyValuesEx()`, если проект обрабатывает его события. Какие события вызывает каждый способ записи, как подписаться на событие, отменить операцию и избежать рекурсии, описано в статье [События инфоблоков](./events.md).
 
-$enum->Add([
-    'PROPERTY_ID' => $propId,
-    'VALUE'       => 'РИА Новости',
-    'SORT'        => 10,
-    'XML_ID'      => 'ria',         // уникальный код, только латиница
-]);
+## Поля ORM-классов {#fields}
 
-$enum->Add([
-    'PROPERTY_ID' => $propId,
-    'VALUE'       => 'ТАСС',
-    'SORT'        => 20,
-    'XML_ID'      => 'tass',
-]);
-```
+Поля элементов, разделов, свойств и инфоблоков в ORM-классах описаны в статье [Схема работы инфоблоков и основные объекты](./architecture.md).
 
-### Как создать свойство пользовательского типа
+## Вывод данных компонентами {#components}
 
-Чтобы добавить свойство пользовательского типа, в метод `CIBlockProperty::Add()` передайте два параметра для типа.
+Стандартные компоненты `bitrix:news.list` и `bitrix:news.detail` выбирают элементы классическим API с проверкой прав и дат активности. Дополнительные данные для шаблона компонента получают через ORM в `result_modifier.php`, примеры приведены в статье [Вывод данных инфоблока компонентами](./components.md).
 
--  `PROPERTY_TYPE` — определяет тип поля для свойства. Например, строка или список.
-
--  `USER_TYPE` —  задает способ редактирования свойства. Настройки можно указать в параметре `USER_TYPE_SETTINGS`.
-
-#### Свойство типа HTML
-
-Добавьте свойство Итог для вывода с абзацами, списками, выделениями.
-
-```php
-$property = new \CIBlockProperty;
-$result = $property->Add([
-    'IBLOCK_ID'         => $iblockId,
-    'NAME'              => 'Итог',
-    'CODE'              => 'SUMMARY',
-    'PROPERTY_TYPE'     => 'S',       // строка
-    'USER_TYPE'         => 'HTML',    // специальное поле для редактирования текста или кода HTML
-    'MULTIPLE'          => 'N',
-]);
-
-if (!$result)
-{
-    throw new \Exception($property->getLastError()->getMessage());
-}
-```
-
-В результате в ORM можно передать HTML напрямую:
-
-```php
-$element->set('SUMMARY', '<p><b>Вывод:</b> система обновлена</p>');
-```
-
-#### Свойство типа Справочник
-
-Допустим, в системе есть список рубрик, которые хранятся в Highload-блоке.
-
-{% note info "" %}
-
-Highload-блок — это отдельная таблица, которую система создает в базе данных для хранения пользовательской информации. Например, рубрик, брендов, групп товаров.
-
-Настроить Highload-блок можно в административном разделе на странице *Контент > Highload-блоки*.
-
-{% endnote %}
-
-В элементах можно указать рубрику, если создать свойство Рубрика и подключить его к Highload-блоку.
-
-```php
-$property = new \CIBlockProperty;
-$result = $property->Add([
-    'IBLOCK_ID'         => $iblockId,
-    'NAME'              => 'Рубрика',
-    'CODE'              => 'CATEGORY',
-    'PROPERTY_TYPE'     => 'S',         // в базе — строка, хранит UF_XML_ID
-    'USER_TYPE'         => 'directory', // выпадающий список из Highload-блока
-    'MULTIPLE'          => 'N',
-    'USER_TYPE_SETTINGS' => [
-        'TABLE_NAME' => 'b_news_categories', // название таблицы Highload-блока
-    ],
-]);
-
-if (!$result)
-{
-    throw new \Exception($property->getLastError()->getMessage());
-}
-```
-
-После добавления найдите нужную рубрику и укажите ее `UF_XML_ID`:
-
-```php
-// Например, у рубрики Безопасность UF_XML_ID = 'security'
-$element->set('CATEGORY', 'security');
-```
-
-## Разделы
-
-ORM позволяет работать с разделами как с полноценными объектами: создавать, читать, обновлять, удалять, использовать пользовательские поля `UF_*`.
-
-{% note tip "" %}
-
-О том, как создать пользовательские поля к разделам инфоблока читайте в статье [Пользовательские поля](./../../cms-basics/userfields.md).
-
-{% endnote %}
-
-### Скомпилировать сущность разделов
-
-Скомпилируйте ORM-класс для разделов инфоблока один раз в начале скрипта.
-
-```php
-// News — значение поля «Символьный код API» из настроек инфоблока
-$sectionNewsClass = \Bitrix\Iblock\Model\Section::compileEntityByIblock('News');
-```
-
-В результате получите класс вида `\Bitrix\Iblock\Section{ID}Table`, где `{ID}` — числовой идентификатор инфоблока. Например, `\Bitrix\Iblock\Section10Table`.
-
-Используйте этот класс для всех операций с разделами.
-
-{% note warning "" %}
-
-Не используйте `\Bitrix\Iblock\SectionTable`. Он работает только с базовыми полями.
-
-{% endnote %}
-
-### Создать раздел
-
-Чтобы создать раздел, вызовите `createObject()` у скомпилированного класса `$sectionNewsClass` и укажите:
-
--  `setIblockId($iblockId)` — идентификатор инфоблока,
-
--  `setName('Название')` — название раздела,
-
--  `setCode('symbolic_code')` — символьный код раздела,
-
--  `setActive(true/false)` — признак активности.
-
-```php
-$section = $sectionNewsClass::createObject()
-    ->setIblockId($iblockId)
-    ->setName('Мероприятия')
-    ->setCode('events')
-    ->setActive(true)
-    ->save()
-;
-
-$eventsSectionId = $section->getId();
-```
-
-### Получить раздел по символьному коду
-
-Информацию по разделу можно получить, например, по символьному коду. Нужные поля укажите в `setSelect()`.
-
-```php
-// получаем раздел Мероприятия
-$section = $sectionNewsClass::query()
-    ->setSelect(['NAME', 'ACTIVE'])
-    ->where('CODE', 'events')
-    ->setLimit(1)
-    ->fetchObject()
-;
-if ($section)
-{
-    echo "Раздел: " . $section->getName(); // Мероприятия
-    echo "Активен: " . ($section->getActive() ? 'да' : 'нет');
-}
-```
-
-### Создать вложенный раздел
-
-1. Найдите родительский раздел по символьному коду `CODE`.
-
-2. Укажите идентификатор родителя через `setIblockSectionId()`.
-
-```php
-// находим раздел Мероприятия
-$parentSection = $sectionNewsClass::query()
-    ->setSelect(['ID'])
-    ->where('CODE', 'events')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($parentSection)
-{
-    // создаем вложенный раздел Выставки
-    $exhibitionSection = $sectionNewsClass::createObject()
-        ->setIblockId($iblockId)
-        ->setName('Выставки')
-        ->setCode('exhibitions')
-        ->setIblockSectionId($parentSection->getId()) // привязка к родителю
-        ->setActive(true)
-        ->save()
-    ;
-
-    $exhibitionSectionId = $exhibitionSection->getId();
-}
-```
-
-### Выбрать разделы по фильтру
-
-Чтобы выполнить фильтрацию по разделам, используйте `fetchCollection()`.
-
-```php
-$sections = $sectionNewsClass::query()
-    ->setSelect(['ID', 'NAME', 'CODE'])
-    ->where('ACTIVE', 'Y')
-    ->setOrder(['NAME' => 'ASC'])
-    ->setLimit(10)
-    ->fetchCollection()
-;
-
-foreach ($sections as $item)
-{
-    echo $item->getName() . "\n";
-}
-```
-
-### Получить родительский раздел
-
-Чтобы получить родительский раздел, добавьте в выборку связь `PARENT_SECTION`.
-
-```php
-// находим вложенный раздел Выставки и его родителя Мероприятия за один запрос
-$exhibitionSection = $sectionNewsClass::query()
-    ->setSelect([
-        'ID',
-        'NAME',
-        'PARENT_SECTION', // загружаем родителя
-    ])
-    ->where('CODE', 'exhibitions')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($exhibitionSection)
-{
-    $parent = $exhibitionSection->getParentSection(); // метод возвращает объект родителя
-    if ($parent)
-    {
-        echo "Родительский раздел: " . $parent->getName(); // Мероприятия
-    }
-}
-```
-
-{% note info "" %}
-
-Без `PARENT_SECTION` в `setSelect()` метод `getParentSection()` вернет `null`.
-
-{% endnote %}
-
-### Обновить раздел
-
-1. Получите объект раздела с помощью `query()`.
-
-2. Укажите новые данные.
-
-3. Вызовите метод `save()`.
-
-```php
-// обновим раздел Выставки
-$exhibitionSection = $sectionNewsClass::query()
-    ->where('CODE', 'exhibitions')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($exhibitionSection)
-{
-    $exhibitionSection
-        ->setName('Выставки 2025-2026') // изменим название раздела
-        ->setActive(false) // и деактивируем его
-    ;
-
-    $result = $exhibitionSection->save();
-
-    if (!$result->isSuccess())
-    {
-        foreach ($result->getErrors() as $error)
-        {
-            echo $error->getMessage() . "\n";
-        }
-    }
-}
-```
-
-{% note info "" %}
-
-Статический метод `update()` обновляет только базовые поля: `NAME`, `CODE`, `ACTIVE`. Для `UF_*` и сложной логики используйте объект.
-
-{% endnote %}
-
-### Создать раздел с **пользовательскими** полями
-
-Например, у разделов инфоблока есть пользовательское поле `UF_MANAGER`. Это строка с именем ответственного менеджера.
-
-Укажите значение пользовательского поля при создании раздела через метод `set()`.
-
-```php
-$conferenceSection = $sectionNewsClass::createObject()
-    ->setIblockId($iblockId)
-    ->setName('Конференции')
-    ->setCode('conferences')
-    ->set('UF_MANAGER', 'Ирина Сидорова') // ← значение UF-поля
-    ->setActive(true)
-    ->save()
-;
-```
-
-### Получить пользовательские поля раздела
-
-Чтобы получить пользовательское поле `UF_MANAGER`, добавьте `'UF_*'` в `setSelect()`.
-
-```php
-$conferenceSection = $sectionNewsClass::query()
-    ->setSelect(['ID', 'NAME', 'UF_*']) // загружаем все UF-поля
-    ->where('CODE', 'conferences')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($conferenceSection)
-{
-    $manager = $conferenceSection->get('UF_MANAGER'); // строка
-    echo "Ответственный: " . $manager; // Ирина Сидорова
-}
-```
-
-### Удалить раздел
-
-Чтобы удалить раздел со всем содержимым, используйте классическое API. Метод `\CIBlockSection::Delete()` работает следующим образом:
-
--  рекурсивно удаляет все дочерние разделы,
-
--  удаляет все элементы в разделе и подразделах,
-
--  обновляет кеши и индексы.
-
-```php
-// удаляем раздел Выставки
-\CIBlockSection::Delete($exhibitionSectionId);
-```
-
-ORM-метод `$section->delete()` применяйте для специфических сценариев, когда требуется самостоятельная обработка дочерних данных.
-
--  Метод удаляет только сам раздел.
-
--  Дочерние разделы и элементы остаются в базе, но теряют привязку к дереву и не отображаются на сайте.
-
--  Элементы остаются в результатах поиска, потому что ORM не обновляет полнотекстовый поиск.
-
-```php
-// удаляем раздел Конференции
-$conferenceSection = $sectionNewsClass::query()
-    ->where('CODE', 'conferences')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($conferenceSection)
-{
-    $conferenceSection->delete(); // элементы останутся в базе, но исчезнут из дерева
-}
-```
-
-## Элементы
-
-ORM позволяет работать с элементами как с полноценными объектами: создавать, читать, обновлять, удалять, работать со свойствами любого типа.
-
-### Скомпилировать сущность элементов
-
-Скомпилируйте ORM-класс для элементов инфоблока один раз в начале скрипта.
-
-```php
-// News — значение поля «Символьный код API» из настроек инфоблока
-$elementEntity = \Bitrix\Iblock\IblockTable::compileEntity('News');
-
-if (!$elementEntity)
-{
-    throw new \RuntimeException('Не удалось скомпилировать ORM-класс элементов');
-}
-
-$elementNewsClass = $elementEntity->getDataClass();
-```
-
-В результате получите класс вида `\Bitrix\Iblock\Elements\Element{API_CODE}Table`, где `{API_CODE}` — cимвольный код API инфоблока. Например, `\Bitrix\Iblock\Elements\ElementNewsTable`.
-
-Используйте этот класс для работы с элементами и их свойствами.
-
-{% note warning "" %}
-
-Не используйте `\Bitrix\Iblock\ElementTable`. Он работает только с базовыми полями.
-
-{% endnote %}
-
-### Добавить элемент в инфоблок
-
-Чтобы добавить элемент без привязки к разделу, вызовите `createObject()` у скомпилированного  класса `$elementNewsClass` и укажите:
-
--  `setName('Название')` — заголовок элемента,
-
--  `setCode('symbolic_code')` — символьный код элемента,
-
--  `setActive(true/false)` — признак активности,
-
--  `set('CODE', значение)` — значения свойств.
-
-```php
-$element = $elementNewsClass::createObject()
-    ->setName('Обновление системы безопасности')
-    ->setCode('security-update')
-    ->setActive(true)
-    ->set('AUTHOR', 'Ирина Петрова')
-;
-
-$result = $element->save();
-
-if (!$result->isSuccess())
-{
-    foreach ($result->getErrors() as $error)
-    {
-        echo $error->getMessage() . "\n";
-    }
-    return;
-}
-
-$elementId = $element->getId();
-echo "Создана новость c ID={$elementId}";
-```
-
-{% note info "" %}
-
-ORM автоматически проверяет обязательные свойства. Если забыть заполнить обязательное свойство, получите ошибку `Не заполнено обязательное свойство {название свойства`}.
-
-{% endnote %}
-
-### Добавить элемент в раздел
-
-Чтобы добавить элемент в раздел, найдите раздел и укажите его идентификатор через `setIblockSectionId()`.
-
-```php
-// находим раздел Мероприятия
-// $sectionNewsClass — скомпилированный класс разделов
-$parentSection = $sectionNewsClass::query()
-    ->setSelect(['ID'])
-    ->where('CODE', 'events')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($parentSection)
-{
-    $element = $elementNewsClass::createObject()
-        ->setName('Конференция по кибербезопасности')
-        ->setCode('cybersec-conf-2026')
-        ->setActive(true)
-        ->setIblockSectionId($parentSection->getId()) // привязка к разделу
-        ->set('AUTHOR', 'Иван Сидоров')
-    ;
-
-    $element->save();
-}
-```
-
-{% note warning "" %}
-
-Раздел должен существовать. ORM не создает его автоматически.
-
-{% endnote %}
-
-### Установить значения свойств
-
-После создания объекта элемента заполните его свойства. ORM поддерживает все типы.
-
-#### Заполнить обычные свойства: Строка и Список
-
-Для строкового свойства Автор и списка Источник используйте метод `set()`.
-
--  Код свойства укажите в верхнем регистре.
-
--  Для списка передайте идентификатор значения `ID`.
-
-```php
-$element = $elementNewsClass::createObject()
-    ->setName('Новость с автором и источником')
-    ->setCode('news-author-source')
-    ->set('AUTHOR', 'Светлана Пирогова') // строка — текст напрямую
-    ->set('SOURCE', 1) // список — идентификатор значения «РИА Новости»
-;
-
-$element->save();
-```
-
-#### Заполнить множественные свойства
-
-Чтобы добавить значение, например, для множественного строкового свойства Теги, используйте `addTo()`. Метод добавляет одно значение за раз.
-
-```php
-$element = $elementNewsClass::createObject()
-    ->setName('Новость с тегами')
-    ->setCode('news-tags')
-    ->addTo('TAGS', 'безопасность')
-    ->addTo('TAGS', 'обновление')
-    ->addTo('TAGS', '2026')
-;
-
-$element->save();
-```
-
-{% note info "" %}
-
-Чтобы заменить все значения, сначала вызовите `removeAll('TAGS')`, потом `addTo()`.
-
-{% endnote %}
-
-#### Заполнить свойства типа Файл
-
-ORM не работает с файлами так, как со строками или числами. Если для свойства нужно заполнить описание, нельзя передавать `set('PHOTO', 123)`, где `123` — идентификатор файла. ORM ожидает не число, а объект, который хранит `ID` файла и описание.
-
-Используйте класс `Bitrix\Iblock\ORM\PropertyValue`. Он создан специально для свойств, у которых есть дополнительные данные.
-
-1. Сохраните файл через классическое API.
-
-   ```php
-   $fileId = \CFile::SaveFile(\CFile::MakeFileArray($_SERVER["DOCUMENT_ROOT"].'/images/screen.png'), 'iblock');
-   ```
-
-2. Передайте `ID` файла и описание в `PropertyValue`.
-
-   ```php
-   new PropertyValue($fileId, 'Главное фото')
-   ```
-
-3. Установите значение свойства.
-
-   ```php
-   $element->set('PHOTO', new PropertyValue(...));
-   ```
-
-ORM не выполняет ресайз изображений. Чтобы создать миниатюру, вызовите `CFile::ResizeImage()` сразу после `SaveFile()`.
-
-```php
-\CFile::ResizeImage($fileId, [
-    'width'  => 300,
-    'height' => 300,
-], BX_RESIZE_IMAGE_EXACT, true);
-```
-
-Полный пример кода:
-
-```php
-use Bitrix\Iblock\ORM\PropertyValue;
-
-$photoId = \CFile::SaveFile(\CFile::MakeFileArray($_SERVER["DOCUMENT_ROOT"].'/images/main_photo.png'), 'iblock');
-$otherId  = \CFile::SaveFile(\CFile::MakeFileArray($_SERVER["DOCUMENT_ROOT"].'/images/other_photo.png'), 'iblock');
-
-$element = $elementNewsClass::createObject()
-    ->setName('Новость с изображениями')
-    ->setCode('news-image')
-    ->set('PHOTO', new PropertyValue($photoId, 'Главное фото'))
-    ->addTo('GALLERY', new PropertyValue($otherId, 'Дополнительный снимок'))
-;
-
-$element->save();
-```
-
-{% note info "" %}
-
-Для множественных файлов вызывайте `addTo()` каждый раз с новым `PropertyValue`.
-
-{% endnote %}
-
-#### Заполнить HTML-свойство
-
-Для свойства типа HTML передавайте строку с тегами напрямую.
-
-```php
-$element = $elementNewsClass::createObject()
-    ->setName('Новость с итогом')
-    ->set('SUMMARY', '<p><b>Вывод:</b> система защищена от уязвимостей CVE-2026-XXXX.</p>')
-;
-
-$element->save();
-```
-
-Если текст приходит от пользователя, обработайте его:
-
-```php
-$safeHtml = \Bitrix\Main\Text\HtmlFilter::getHtmlEncoder()->encode($userInput);
-```
-
-#### Указать значение из Highload-блока
-
-Свойство типа Справочник хранит `UF_XML_ID` записи Highload-блока, а не `ID`.
-
-Например, в Highload-блоке рубрик новостей есть запись Кибербезопасность. В поле `UF_XML_ID` указано значение `cybersec`.
-
-Чтобы в элементе инфоблока указать рубрику, передайте `UF_XML_ID = 'cybersec'`.
-
-```php
-$element = $elementNewsClass::createObject()
-    ->setName('Новость по кибербезопасности')
-    ->setCode('news-cybersec')
-    ->set('CATEGORY', 'cybersec')
-;
-
-$element->save();
-```
-
-### Выбрать способ получения элементов
-
-В D7 ORM элементы можно получить через `query()` или `getList()`. Оба способа создают ORM-запрос, но принимают параметры в разном формате.
-
-| Способ | Когда использовать |
-|---|---|
-| `$elementNewsClass::query()` | Запрос строится цепочкой методов `setSelect()`, `where()`, `setOrder()` и `setLimit()`. Результат можно получить через `fetchObject()` или `fetchCollection()` |
-| `$elementNewsClass::getList()` | Параметры `select`, `filter`, `order` и `limit` передаются одним массивом. Результат запроса поддерживает `fetch()`, `fetchObject()` и `fetchCollection()` |
-| `CIBlockElement::GetList()` | Классический API с отдельным набором позиционных параметров. Используйте его в существующем коде на классическом API |
-
-Не смешивайте параметры ORM-метода `getList()` и классического метода `CIBlockElement::GetList()`. Несмотря на похожие названия, методы относятся к разным слоям API.
-
-### Получить элемент и свойства через query
-
-Чтобы прочитать элемент, выполните запрос через `query()`. Укажите `setLimit(1)`, если нужен один элемент.
-
-#### Получить базовые поля
-
-Чтобы получить базовые поля, вызовите методы:
-
--  `getName()` — название,
-
--  `getCode()` — символьный код,
-
--  `getActive()` — активность,
-
--  `getIblockSectionId()` — идентификатор раздела.
-
-```php
-$element = $elementNewsClass::query()
-    ->where('CODE', 'security-update')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($element)
-{
-    echo $element->getName(); // Обновление системы безопасности
-}
-```
-
-#### Прочитать обычные свойства
-
-Для свойств укажите код в верхнем регистре. Для списка сначала получите объект значения через `getItem()`.
-
-```php
-$element = $elementNewsClass::query()
-    ->where('CODE', 'news-author-source')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-echo $element->get('AUTHOR')?->getValue(); // Светлана Пирогова
-
-$source = $element->get('SOURCE');
-if ($source)
-{
-    echo $source->getItem()->getValue(); // РИА Новости
-    echo $source->getItem()->getXmlId(); // ria
-}
-```
-
-#### Прочитать множественные свойства
-
-Чтобы получить значения множественного свойства Теги, вызовите `getAll()`. Метод вернет коллекцию значений.
-
-```php
-$element = $elementNewsClass::query()
-    ->where('CODE', 'news-tags')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-foreach ($element->get('TAGS')->getAll() as $tag)
-{
-    echo $tag->getValue() . "\n";
-}
-```
-
-#### Прочитать файлы
-
-1. Вызовите метод `get()`, чтобы получить объект `PropertyValue`.
-
-2. Используйте `getValue()` и `getDescription()`, чтобы получить `ID` файла и описание.
-
-```php
-$element = $elementNewsClass::query()
-    ->where('CODE', 'news-image')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-$photo = $element->get('PHOTO');
-if ($photo)
-{
-    $fileId = $photo->getValue();      // идентификатор сохраненного файла
-    $desc  = $photo->getDescription(); // описание
-    $path  = \CFile::GetPath($fileId);
-}
-```
-
-Для множественного файлового свойства получите коллекцию `PropertyValueCollection`:
-
-```php
-// элемент со свойством GALLERY
-$element = $elementNewsClass::query()
-    ->setSelect(['ID', 'NAME', 'GALLERY'])
-    ->where('CODE', 'news-image')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($element)
-{
-    $gallery = $element->get('GALLERY');
-
-    if ($gallery)
-    {
-        // коллекция PropertyValueCollection
-        foreach ($gallery->getAll() as $other)
-        {
-            $fileId = $other->getValue();
-            $description = $other->getDescription();
-
-            $fileArray = \CFile::GetFileArray($fileId);
-            echo $fileArray['SRC'] . ' — ' . $description . "\n";
-        }
-    }
-}
-```
-
-### Получить список элементов через getList
-
-Метод `getList()` принимает параметры запроса в одном массиве:
-
--  `select` — поля и свойства в результате,
-
--  `filter` — условия отбора,
-
--  `order` — порядок сортировки,
-
--  `limit` — максимальное количество элементов.
-
-Метод возвращает результат ORM-запроса. Вызов `fetchCollection()` преобразует его в коллекцию объектов элементов.
-
-Для фильтрации по списку Источник укажите `SOURCE.VALUE`, а не `SOURCE`.
-
-```php
-// выборка с фильтрацией
-$elements =
-    $elementNewsClass::getList([
-        'select' => ['ID', 'NAME', 'SOURCE'],
-        'filter' => [
-            '=ACTIVE' => 'Y',
-            '=SOURCE.VALUE' => 1, // идентификатор значения свойства Источник
-        ],
-        'order' => ['DATE_ACTIVE_FROM' => 'DESC'],
-        'limit' => 10,
-    ])
-        ->fetchCollection()
-;
-
-foreach ($elements as $element)
-{
-    echo $element->getName() . ': ' . $element->get('SOURCE')->getValue() . "\n";
-}
-```
-
-### Получить данные из Highload-блока через getList
-
-Свойство типа Справочник хранит `UF_XML_ID` записи Highload-блока. Чтобы получить название и другие поля записи, сначала найдите Highload-блок по имени таблицы, затем скомпилируйте его ORM-класс.
-
-#### Скомпилировать ORM-класс Highload-блока
-
-Подключите модуль `highloadblock` и найдите блок, имя таблицы которого указано в настройке `TABLE_NAME` свойства.
-
-```php
-\Bitrix\Main\Loader::includeModule('highloadblock');
-
-$highloadBlock =
-    \Bitrix\Highloadblock\HighloadBlockTable::getList([
-        'select' => ['ID', 'NAME', 'TABLE_NAME'],
-        'filter' => ['=TABLE_NAME' => 'b_news_categories'],
-        'limit' => 1,
-    ])
-        ->fetch()
-;
-
-if (!$highloadBlock)
-{
-    throw new \RuntimeException('Highload-блок рубрик не найден');
-}
-
-$categoryEntity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($highloadBlock);
-$categoryDataClass = $categoryEntity->getDataClass();
-```
-
-Метод `getDataClass()` возвращает имя скомпилированного ORM-класса. Через этот класс можно вызвать `getList()` и работать с полями Highload-блока.
-
-#### Получить одну запись по UF_XML_ID
-
-Сначала получите `UF_XML_ID` из свойства `CATEGORY` элемента инфоблока. Затем передайте его в фильтр `getList()` для Highload-блока.
-
-```php
-$element =
-    $elementNewsClass::query()
-        ->setSelect(['ID', 'NAME', 'CATEGORY'])
-        ->where('CODE', 'news-cybersec')
-        ->setLimit(1)
-        ->fetchObject()
-;
-
-if ($element)
-{
-    $categoryXmlId = $element->get('CATEGORY')?->getValue();
-
-    if ($categoryXmlId)
-    {
-        $category =
-            $categoryDataClass::getList([
-                'select' => ['ID', 'UF_NAME', 'UF_XML_ID'],
-                'filter' => ['=UF_XML_ID' => $categoryXmlId],
-                'limit' => 1,
-            ])
-                ->fetch()
-        ;
-
-        if ($category)
-        {
-            echo $category['UF_NAME']; // Кибербезопасность
-        }
-    }
-}
-```
-
-`UF_XML_ID` связывает значение свойства инфоблока и запись Highload-блока. Числовой `ID` записи для этого сценария не используется.
-
-#### Получить записи для списка элементов
-
-Если нужно вывести несколько элементов, не запрашивайте Highload-блок внутри цикла. Сначала соберите уникальные `UF_XML_ID`, затем получите все записи одним запросом и создайте словарь рубрик.
-
-```php
-$elements =
-    $elementNewsClass::getList([
-        'select' => ['ID', 'NAME', 'CATEGORY'],
-        'filter' => ['=ACTIVE' => 'Y'],
-        'limit' => 10,
-    ])
-        ->fetchCollection()
-;
-
-$categoryXmlIds = [];
-foreach ($elements as $element)
-{
-    $categoryXmlId = $element->get('CATEGORY')?->getValue();
-    if ($categoryXmlId)
-    {
-        $categoryXmlIds[] = $categoryXmlId;
-    }
-}
-
-$categoryXmlIds = array_values(array_unique($categoryXmlIds));
-$categoriesByXmlId = [];
-
-if ($categoryXmlIds !== [])
-{
-    $categories = $categoryDataClass::getList([
-        'select' => ['UF_NAME', 'UF_XML_ID'],
-        'filter' => ['@UF_XML_ID' => $categoryXmlIds],
-    ]);
-
-    while ($category = $categories->fetch())
-    {
-        $categoriesByXmlId[$category['UF_XML_ID']] = $category;
-    }
-}
-
-foreach ($elements as $element)
-{
-    $categoryXmlId = $element->get('CATEGORY')?->getValue();
-    $categoryName = 'Без рубрики';
-
-    if ($categoryXmlId && isset($categoriesByXmlId[$categoryXmlId]))
-    {
-        $categoryName = $categoriesByXmlId[$categoryXmlId]['UF_NAME'];
-    }
-
-    echo $element->getName() . ': ' . $categoryName . "\n";
-}
-```
-
-Код отдельно получает элементы инфоблока и связанные записи Highload-блока. Такой порядок не создает отдельный запрос для каждого элемента.
-
-### Обновить элемент
-
-1. Получите объект элемента с помощью `query()`.
-
-2. Укажите новые данные.
-
-3. Вызовите метод `save()`.
-
-```php
-$element = $elementNewsClass::query()
-    ->where('CODE', 'security-update')
-    ->fetchObject()
-;
-
-if ($element)
-{
-    $element
-        ->setName('Критическое обновление')
-        ->removeAll('TAGS')
-        ->addTo('TAGS', 'критическое')
-    ;
-
-    $element->save();
-}
-```
-
-{% note info "" %}
-
-Статический метод `update($id, [...])` обновляет только базовые поля и не работает со свойствами. Для работы со свойствами используйте объект.
-
-{% endnote %}
-
-### Удалить элемент
-
-Например, удалите элемент Обновление системы безопасности.
-
-1. В методе `delete()` укажите символьный код элемента. Метод удаляет значения свойств и очищает тегированный кеш.
-
-2. Вызовите `CIBlockElement::UpdateSearch()`, чтобы элемент пропал из результатов поиска.
-
-```php
-$element = $elementNewsClass::query()
-    ->where('CODE', 'security-update') // символьный код элемента Обновление системы безопасности
-    ->fetchObject()
-;
-
-if ($element)
-{
-    $element->delete();
-    \CIBlockElement::UpdateSearch($element->getId());
-}
-```
-
-{% note info "" %}
-
-Без `UpdateSearch()` элемент останется в результатах полнотекстового поиска.
-
-{% endnote %}
-
-## Вычисляемые свойства SEO
-
-Свойства SEO — этот заголовок, ключевые слова, описание. Они не хранятся как обычные свойства. Их значения вычисляются динамически по шаблонам:
-
-`{=this.NAME} — Новости` -> `Обновление безопасности — Новости`.
-
-Шаблоны наследуются по цепочке `инфоблок → раздел → элемент`.
-
--  Если у элемента нет своего шаблона, он использует шаблон раздела.
-
--  Если у раздела нет шаблона, он берет шаблон инфоблока.
-
--  Шаблон можно переопределить  на любом уровне.
-
-ORM не работает с полями SEO напрямую. Для управления шаблонами и чтения вычисленных значений используйте классы из пространства `Bitrix\Iblock\InheritedProperty`.
-
-{% note info "" %}
-
-Вычисление происходит один раз и кешируется. Чтобы изменения вступили в силу, вызывайте `clearValues()`.
-
-{% endnote %}
-
-### Задать шаблон для инфоблока
-
-Установите базовые шаблоны для всего инфоблока. Все разделы и элементы будут использовать их, если не заданы собственные.
-
-```php
-use Bitrix\Iblock\InheritedProperty;
-
-$templates = new InheritedProperty\IblockTemplates($iblockId);
-$templates->set([
-    'ELEMENT_META_TITLE' => '{=this.NAME} — #SITE_NAME#',
-    'SECTION_META_TITLE' => '{=this.NAME} — Новости',
-]);
-```
-
-### Переопределить шаблон для раздела
-
-Например, для раздела Мероприятия задайте отдельный формат:
-
-```php
-$templates = new InheritedProperty\SectionTemplates($iblockId, $eventsSectionId);
-$templates->set([
-    'ELEMENT_META_TITLE' => 'Мероприятие: {=this.NAME}',
-]);
-```
-
-Теперь в этом разделе все элементы будут использовать новый шаблон.
-
-### Задать индивидуальный шаблон для элемента
-
-Для особо важных новостей можно задать уникальный заголовок:
-
-```php
-$templates = new InheritedProperty\ElementTemplates($iblockId, $elementId);
-$templates->set([
-    'ELEMENT_META_TITLE' => '❗ Важно: {=this.NAME}',
-]);
-```
-
-Этот шаблон имеет наивысший приоритет и заменит шаблоны инфоблока и раздела.
-
-{% note info "" %}
-
-Чтобы удалить собственный шаблон и вернуться к наследованию, передайте пустую строку:
-
-```php
-$templates->set(['ELEMENT_META_TITLE' => '']);
-```
-
-{% endnote %}
-
-### Прочитать вычисленное значение
-
-Чтобы получить итоговое SEO-поле с учетом наследования, создайте объект `ElementValues` и вызовите `getValues()`:
-
-```php
-$values = new InheritedProperty\ElementValues($iblockId, $elementId);
-$seo = $values->getValues();
-
-echo $seo['ELEMENT_META_TITLE'];
-// Мероприятие: Конференция по кибербезопасности — из шаблона раздела
-```
-
-Метод автоматически соберет цепочку `элемент → раздел → инфоблок` и возьмет первый непустой шаблон.
-
-### Сбросить кеш после изменения
-
-Если вы изменили шаблон на любом уровне, сбросьте кеш. Без этого действия старое значение останется в кеше.
-
-```php
-// после изменения шаблона инфоблока
-$iblockValues = new InheritedProperty\IblockValues($iblockId);
-$iblockValues->clearValues();
-
-// после изменения шаблона раздела
-$sectionValues = new InheritedProperty\SectionValues($iblockId, $sectionId);
-$sectionValues->clearValues();
-
-// после изменения шаблона элемента
-$elementValues = new InheritedProperty\ElementValues($iblockId, $elementId);
-$elementValues->clearValues();
-```
-
-{% note info "" %}
-
-Без `clearValues()` элементы продолжат использовать закешированные значения, даже после перезагрузки страницы.
-
-{% endnote %}
-
-### Передать шаблоны при создании элемента
-
-Чтобы задать SEO-шаблоны сразу при добавлении элемента, используйте `'IPROPERTY_TEMPLATES'` в `CIBlockElement::Add()`:
-
-```php
-$element = new \CIBlockElement;
-$result = $element->Add([
-    'IBLOCK_ID' => $iblockId,
-    'NAME'      => 'Конференция',
-    'ACTIVE'    => 'Y',
-    'IPROPERTY_TEMPLATES' => [
-        'ELEMENT_META_TITLE' => 'Конференция: {=this.NAME}',
-    ],
-]);
-```
-
-{% note warning "" %}
-
-ORM-метод `$element->save()` не поддерживает `IPROPERTY_TEMPLATES`. Используйте классическое API.
-
-{% endnote %}
-
-## Примеры для компонентов
-
-Подготовьте данные для шаблона компонента, например, списка новостей или страницы элемента.
-
-Все примеры ниже используют уже созданные сущности: инфоблок с символьным кодом API `News`, свойства `AUTHOR`, `SOURCE`, `TAGS`, `PHOTO`, раздел `Мероприятия`.
-
-Выполните компиляцию перед запросом:
-
-```php
-\Bitrix\Iblock\IblockTable::compileEntity('News');
-$elementNewsClass = \Bitrix\Iblock\Elements\ElementNewsTable::class;
-```
-
-### Вывести список активных новостей
-
-Получите 10 последних активных новостей с автором и разделом.
-
-Используйте этот код в `result_modifier.php` компонента `bitrix:news.list`.
-
-```php
-$news = $elementNewsClass::query()
-    ->setSelect([
-        'ID',
-        'NAME',
-        'AUTHOR',                       // строка — напрямую
-        'SOURCE.VALUE',                 // список — VALUE, а не SOURCE
-        'DATE_ACTIVE_FROM',
-        'SECTION_' => 'IBLOCK_SECTION', // подгружаем раздел за один запрос
-    ])
-    ->where('ACTIVE', 'Y')
-    ->setOrder(['DATE_ACTIVE_FROM' => 'DESC'])
-    ->setLimit(10)
-    ->fetchCollection()
-;
-
-foreach ($news as $item)
-{
-    $arResult['NEWS'][] = [
-        'ID'      => $item->getId(),
-        'NAME'    => $item->getName(),
-        'AUTHOR'  => $item->get('AUTHOR') ?: '—',
-        'SOURCE'  => $item->get('SOURCE')?->getItem()?->getValue() ?: '—',
-        'DATE'    => $item->getDateActiveFrom()?->format('d.m.Y'),
-        'SECTION' => $item->getIblockSection()?->getName() ?: 'Без раздела',
-    ];
-}
-```
-
-### Вывести новость с разделом, фото и итогом
-
-Подготовьте данные для страницы элемента `bitrix:news.detail`.
-
-Загрузите элемент, его раздел, фото и HTML-свойство `SUMMARY`.
-
-```php
-$element = $elementNewsClass::query()
-    ->setSelect([
-        'ID', 'NAME', 'AUTHOR',
-        'PHOTO.VALUE', 'PHOTO.DESCRIPTION',
-        'SUMMARY', // HTML-свойство
-        'SECTION_' => 'IBLOCK_SECTION',
-    ])
-    ->where('CODE', $arParams['ELEMENT_CODE'] ?? '')
-    ->setLimit(1)
-    ->fetchObject()
-;
-
-if ($element)
-{
-    $arResult['ITEM'] = [
-        'ID'           => $element->getId(),
-        'NAME'         => $element->getName(),
-        'AUTHOR'       => $element->get('AUTHOR'),
-        'SUMMARY_HTML' => $element->get('SUMMARY'), // передаем в шаблон
-    ];
-
-    // Фото
-    $photo = $element->get('PHOTO');
-    if ($photo)
-    {
-        $arResult['ITEM']['PHOTO'] = [
-            'SRC' => \CFile::GetPath($photo->getValue()),
-            'ALT' => $photo->getDescription(),
-        ];
-    }
-
-    // Раздел
-    $section = $element->getIblockSection();
-    if ($section)
-    {
-        $arResult['ITEM']['SECTION_NAME'] = $section->getName();
-        $arResult['ITEM']['SECTION_CODE'] = $section->getCode();
-    }
-}
-```
-
-В шаблоне `template.php` обрабатывайте HTML через `<?= $arResult['ITEM']['SUMMARY_HTML'] ?>`. Если данные ненадежны, предварительно фильтруйте через `HtmlFilter`.
-
-### Сформировать анонс из подробного текста
-
-Если в элементе есть `DETAIL_TEXT`, обрежьте его до 300 символов без тегов. Используйте в компоненте `bitrix:news.list`, когда нужно краткое описание.
-
-```php
-$elements = $elementNewsClass::query()
-    ->setSelect(['ID', 'NAME', 'DETAIL_TEXT'])
-    ->where('ACTIVE', 'Y')
-    ->setLimit(5)
-    ->fetchCollection()
-;
-
-foreach ($elements as $item)
-{
-    $text = $item->getDetailText();
-    if ($text)
-    {
-        $preview = strip_tags($text);
-        $preview = mb_substr($preview, 0, 300);
-        if (mb_strlen($text) > mb_strlen($preview))
-        {
-            $preview .= '…';
-        }
-    }
-    else
-    {
-        $preview = '';
-    }
-
-    $arResult['NEWS'][] = [
-        'NAME' => $item->getName(),
-        'PREVIEW_TEXT' => $preview,
-    ];
-}
-```
-
-### Показать другие новости источника
-
-На странице новости покажите еще пять новостей от того же источника.
-
-```php
-$current = $elementNewsClass::query()
-    ->setSelect(['ID', 'SOURCE'])
-    ->where('CODE', $arParams['ELEMENT_CODE'])
-    ->fetchObject()
-;
-
-if (!$current) return;
-
-$sourceId = $current->get('SOURCE')?->getValue();
-if (!$sourceId) return;
-
-$similar = $elementNewsClass::query()
-    ->setSelect(['ID', 'NAME', 'CODE'])
-    ->where('ACTIVE', 'Y')
-    ->where('SOURCE.VALUE', $sourceId) // фильтр по идентификатору источника
-    ->whereNot('ID', $current->getId())
-    ->setLimit(5)
-    ->fetchCollection()
-;
-
-$arResult['MORE_FROM_SOURCE'] = [];
-foreach ($similar as $item)
-{
-    $arResult['MORE_FROM_SOURCE'][] = [
-        'NAME' => $item->getName(),
-        'URL'  => '/news/' . $item->getCode() . '/', // единый URL-паттерн
-    ];
-}
-```

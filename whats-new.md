@@ -20,6 +20,20 @@ title: Что нового
 
 ### 2026
 
+#### 12 ноября
+
+- Добавили новую статью [Значения свойств элементов инфоблока](./pages/modules/iblocks/property-values.md).
+- Добавили новую статью [Создание и настройка инфоблоков](./pages/modules/iblocks/setup.md).
+- Добавили новую статью [Работа с разделами инфоблока](./pages/modules/iblocks/sections.md).
+- Добавили новую статью [Работа с элементами инфоблока](./pages/modules/iblocks/elements.md).
+- Добавили новую статью [Выборка элементов инфоблока](./pages/modules/iblocks/element-queries.md).
+- Добавили новую статью [SEO-шаблоны инфоблока](./pages/modules/iblocks/seo.md).
+- Добавили новую статью [События инфоблоков](./pages/modules/iblocks/events.md).
+- Добавили новую статью [Фасетный индекс и умный фильтр](./pages/modules/iblocks/faceted-index.md).
+- Добавили новую статью [Вывод данных инфоблока компонентами](./pages/modules/iblocks/components.md).
+- Обновили статью [Как выбрать API инфоблоков](./pages/modules/iblocks/api.md) — теперь это статья о выборе между D7 и классическим API с заменами методов классического API.
+- Обновили статьи [Введение и базовые концепции](./pages/modules/iblocks/overview.md), [Схема работы инфоблоков и основные объекты](./pages/modules/iblocks/architecture.md) и [Производительность и частые ошибки](./pages/modules/iblocks/performance.md) модуля Информационные блоки.
+
 #### 3 ноября
 
 - Добавили новую статью [Как найти причину ошибки «При выполнении скрипта возникла ошибка»](./pages/framework/script-error.md).

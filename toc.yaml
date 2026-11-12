@@ -422,8 +422,26 @@ items:
             href: /pages/modules/iblocks/overview.md
           - name: Схема работы инфоблоков и основные объекты
             href: /pages/modules/iblocks/architecture.md
-          - name: Работа с инфоблоками через API
+          - name: Как выбрать API инфоблоков
             href: /pages/modules/iblocks/api.md
+          - name: Создание и настройка инфоблоков
+            href: /pages/modules/iblocks/setup.md
+          - name: Работа с разделами инфоблока
+            href: /pages/modules/iblocks/sections.md
+          - name: Работа с элементами инфоблока
+            href: /pages/modules/iblocks/elements.md
+          - name: Выборка элементов инфоблока
+            href: /pages/modules/iblocks/element-queries.md
+          - name: Значения свойств элементов инфоблока
+            href: /pages/modules/iblocks/property-values.md
+          - name: SEO-шаблоны инфоблока
+            href: /pages/modules/iblocks/seo.md
+          - name: События инфоблоков
+            href: /pages/modules/iblocks/events.md
+          - name: Фасетный индекс и умный фильтр
+            href: /pages/modules/iblocks/faceted-index.md
+          - name: Вывод данных инфоблока компонентами
+            href: /pages/modules/iblocks/components.md
           - name: Производительность и частые ошибки
             href: /pages/modules/iblocks/performance.md
       - name: Highload-блоки
