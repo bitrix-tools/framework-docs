@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 12 ноября
+
+- Добавили новую статью [Пошаговый тур ui.tour](./pages/ui/ui-tour.md).
+
 #### 6 ноября
 
 - Добавили новую статью [Дизайн-токены ui.design-tokens и Air Design](./pages/ui/ui-design-tokens.md).

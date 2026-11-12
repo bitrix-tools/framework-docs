@@ -383,6 +383,8 @@ items:
         href: /pages/ui/hint.md
       - name: Карточка пользователя ui.tooltip
         href: /pages/ui/ui-tooltip.md
+      - name: Пошаговый тур ui.tour
+        href: /pages/ui/ui-tour.md
       - name: Системный алерт
         href: /pages/ui/system-alert.md
       - name: Алерты ui.alerts
