@@ -20,6 +20,11 @@ title: Что нового
 
 ### 2026
 
+#### 13 ноября
+
+- Добавили новую статью [Корзина, личный кабинет и оплата на сайте](./pages/modules/sale/components.md).
+- Обновили статью [Местоположения и налоги](./pages/modules/sale/locations-taxes.md#location-selector) — добавили поле выбора местоположения в форме на компонентах `sale.location.selector.search` и `sale.location.selector.steps`.
+
 #### 12 ноября
 
 - Добавили новую статью [Пошаговый тур ui.tour](./pages/ui/ui-tour.md).
