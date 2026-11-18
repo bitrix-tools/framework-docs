@@ -67,7 +67,7 @@ AJAX-контроллеры вызываются через `/bitrix/services/ma
 <?php require($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/epilog_after.php'); ?>
 ```
 
-<iframe src="/pages/framework/_images/request-lifecycle.svg" width="100%" height="361px" style="border:none;"></iframe>
+<iframe src="pages/framework/_images/request-lifecycle.svg" width="100%" height="361px" style="border:none;"></iframe>
 
 ### Подготовить контекст {#prepare-context}
 

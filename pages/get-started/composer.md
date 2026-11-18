@@ -75,7 +75,11 @@ Bitrix Framework не читает содержимое `composer.json`. По р
 
 {% endnote %}
 
-Автозагрузчик появится после первой установки зависимостей на следующем шаге.
+{% note warning "" %}
+
+Ядро подключает `vendor/autoload.php` без проверки, что файл существует. Автозагрузчик появится только после установки зависимостей на следующем шаге. Добавьте настройку в `.settings.php` после команды `composer install`, иначе сайт завершится фатальной ошибкой.
+
+{% endnote %}
 
 ### Шаг 3. Подключить стандартные зависимости
 
@@ -85,6 +89,11 @@ Bitrix Framework не читает содержимое `composer.json`. По р
 {
    "require": {
        "wikimedia/composer-merge-plugin": "^2.0"
+   },
+   "config": {
+       "allow-plugins": {
+           "wikimedia/composer-merge-plugin": true
+       }
    },
    "extra": {
        "merge-plugin": {
@@ -100,6 +109,8 @@ Bitrix Framework не читает содержимое `composer.json`. По р
 
 Путь `/path/to/bitrix/` — полный путь к папке `bitrix` на вашем сервере, например, `/home/bitrix/www/bitrix/`.
 
+Блок `allow-plugins` обязателен. Без него Composer блокирует плагин, и команда `composer install --no-interaction` завершается ошибкой.
+
 {% endnote %}
 
 Установите зависимости из папки с `composer.json`:
@@ -110,6 +121,21 @@ $ composer install
 ```
 
 Composer создаст папку `vendor/` рядом с `composer.json` и установит туда зависимости. Автозагрузчик `vendor/autoload.php` подключится автоматически — в коде подключать его вручную не нужно.
+
+{% note warning "" %}
+
+Устанавливайте зависимости без флага `--no-dev`. В файле `bitrix/composer-bx.json` пакет `symfony/console` указан в разделе `require-dev`, и команда `composer install --no-dev` его не устанавливает. Без этого пакета [консольные команды](../framework/console-commands.md) `bitrix.php` не работают и выводят сообщение `Symfony Console is not installed`.
+
+{% endnote %}
+
+Если рядом с `composer.json` уже есть файл `composer.lock`, команда `composer install` устанавливает только пакеты из него. При первом подключении `composer-bx.json` пакетов ядра в lock-файле еще нет, поэтому выполните `composer update`.
+
+**Пример.** Команда обновляет lock-файл и устанавливает пакеты из `composer-bx.json`:
+
+```bash prompt="$"
+$ cd /home/bitrix
+$ composer update
+```
 
 ## Установить сторонние пакеты
 

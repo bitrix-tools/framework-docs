@@ -25,7 +25,7 @@ navigation:
 
       - text: 'Быстрый старт'
         type: 'link'
-        url: '/pages/get-started/install-env.html#docker-obrazy'
+        url: '/pages/get-started/install-env.html#docker-images'
 
       - text: 'Что нового'
         type: 'link'

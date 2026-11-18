@@ -1,6 +1,6 @@
 ---
 title: Компоненты
-description: 'Компоненты. Документация по Bitrix Framework: принципы работы, архитектура и примеры использования.'
+description: 'Как устроены компоненты Bitrix Framework: структура папки, class.php на CBitrixComponent, вызов IncludeComponent, .description.php и .parameters.php, шаблоны, result_modifier.php и component_epilog.php, кеширование и AJAX-действия через runComponentAction.'
 ---
 
 Компоненты в Bitrix Framework — это основной инструмент для отображения информации. Они позволяют настраивать вывод данных и добавлять функциональность в систему.
@@ -11,7 +11,21 @@ description: 'Компоненты. Документация по Bitrix Framewo
 
 ### Как работают компоненты
 
-![](./_images/components-2.png){width=473px height=513px}
+Компонент выполняется в таком порядке:
+
+1. Система передает в логику компонента — `class.php` или `component.php` — массив параметров `$arParams`. Логика выбирает данные и записывает их в массив `$arResult`.
+
+2. Файл шаблона `result_modifier.php`, если он есть, получает `$arParams` и `$arResult` и может изменить `$arResult` перед выводом.
+
+3. Файл `template.php` получает `$arParams` и `$arResult` и формирует HTML.
+
+4. Если кеширование включено, система сохраняет в кеш HTML шаблона и ключи `$arResult`, перечисленные в `setResultCacheKeys()`. Без вызова `setResultCacheKeys()` в кеш попадает весь `$arResult`. При следующем вызове с теми же параметрами система выводит HTML из кеша. Код внутри блока `if ($this->startResultCache())`, `result_modifier.php` и `template.php` при этом не выполняются. Методы `onPrepareComponentParams()` и `executeComponent()` и код вне блока кеширования выполняются на каждом вызове.
+
+   Если вызывался `setResultCacheKeys()`, после подключения шаблона в `$arResult` остаются только перечисленные ключи. Это действует и при выключенном кеше.
+
+5. Файл шаблона `component_epilog.php`, если он есть, выполняется при каждом вызове, в том числе при выводе из кеша. Он получает `$arParams` и сохраненные в кеше ключи `$arResult`.
+
+![Схема выполнения компонента: $arParams передается в class.php, затем $arResult проходит через result_modifier.php и template.php, HTML и $arResult сохраняются в кеш, component_epilog.php получает $arParams и закешированный $arResult](./_images/components-2.png){width=473px height=513px}
 
 ### Когда использовать компоненты
 
@@ -25,7 +39,7 @@ description: 'Компоненты. Документация по Bitrix Framewo
 
 Компонент создает какую-либо область на одной странице. Раздел сайта из нескольких страниц, например новости или каталог товаров, строит комплексный компонент. Он разбирает адрес запроса, выбирает нужную страницу — список элементов, раздел инфоблока или детальную страницу — и подключает ее шаблон, а шаблон вызывает простые компоненты. Так устроены системные компоненты `bitrix:news` и `bitrix:catalog`.
 
-Если раздел только отдает данные по HTTP-маршрутам или AJAX-запросам и не выводит страницы через шаблоны компонентов, используйте [контроллер](./controllers). AJAX-действия внутри компонента описаны в разделе [Работа с контроллерами](#component-controllers).
+Если раздел только отдает данные по HTTP-маршрутам или AJAX-запросам и не выводит страницы через шаблоны компонентов, используйте [контроллер](./controllers.md). AJAX-действия внутри компонента описаны в разделе [Работа с контроллерами](#component-controllers).
 
 На странице может быть несколько компонентов, каждый выполняет свою задачу. Один компонент можно использовать на разных страницах и сайтах в одной установке.
 
@@ -53,7 +67,9 @@ description: 'Компоненты. Документация по Bitrix Framewo
 
 -  Системные компоненты находятся в `/bitrix/components/bitrix/`. Эта папка обновляется системой, изменять ее нельзя.
 
--  Пользовательские компоненты следует хранить в `/local/components/`
+-  Пользовательские компоненты следует хранить в `/local/components/`.
+
+Система ищет компонент сначала в `/local/components/`, затем в `/bitrix/components/`. Если компонент с тем же полным именем есть в обеих папках, используется копия из `/local/components/`.
 
 ### Именование
 
@@ -63,36 +79,40 @@ description: 'Компоненты. Документация по Bitrix Framewo
 
 ### Как подключить компонент {#include-component}
 
-Подключение компонента выполняется так:
+Компонент подключает метод `$APPLICATION->IncludeComponent()` класса `CMain`. Сигнатура метода:
 
 ```php
-<?php
-$APPLICATION->IncludeComponent(
+public function IncludeComponent(
     $componentName,
     $componentTemplate,
-    $arParams = array(),
+    $arParams = [],
     $parentComponent = null,
-    $arFunctionParams = array(),
+    $arFunctionParams = [],
     $returnResult = false
-);
-?>
+)
 ```
 
-1. `$componentName` — полное имя компонента с указанием пространства имен.
+*Обязательные параметры обозначены \*.*
 
-2. `$componentTemplate` — имя шаблона компонента. Если используется шаблон по умолчанию, оставьте пустую строку.
+#|
+|| **Параметр** | **Тип** | **Описание** ||
+|| `$componentName`* | `string` | Полное имя компонента с пространством имен, например `bitrix:menu` ||
+|| `$componentTemplate`* | `string` | Имя шаблона компонента. Пустая строка — шаблон `.default` ||
+|| `$arParams` | `array` | Массив параметров компонента. По умолчанию пустой массив ||
+|| `$parentComponent` | `CBitrixComponent` или `null` | Объект родительского компонента. Передавайте `$component` при вызове внутри шаблона комплексного компонента ||
+|| `$arFunctionParams` | `array` | Настройки вызова. Метод учитывает два ключа:
 
-3. `$arParams` — массив параметров, передаваемых компоненту.
+- `HIDE_ICONS` — если `Y`, в режиме правки не выводятся кнопки управления компонентом,
+- `ACTIVE_COMPONENT` — если `N`, компонент не выполняется ||
+|| `$returnResult` | `bool` | Если `true`, метод возвращает массив `$arResult` компонента. По умолчанию `false` ||
+|#
 
-4. `$parentComponent` — объект родительского компонента или `null`, если родительский компонент отсутствует.
+Метод возвращает:
 
-5. `$arFunctionParams` — настройки вызова компонента. Метод учитывает два ключа массива:
-
-   -  `HIDE_ICONS` — если `Y`, в режиме правки не выводятся кнопки управления компонентом,
-
-   -  `ACTIVE_COMPONENT` — если `N`, компонент не выполняется.
-
-6. `$returnResult` — если `true`, метод возвращает массив `$arResult` компонента. По умолчанию метод возвращает то, что вернул сам компонент, например результат `executeComponent()`.
+-  то, что вернул метод `executeComponent()` компонента, если `$returnResult` равен `false`,
+-  массив `$arResult`, если `$returnResult` равен `true`. Если компонент вызывал `setResultCacheKeys()`, массив содержит только перечисленные ключи,
+-  `false`, если имя компонента некорректно,
+-  `null`, если компонент не найден или выключен ключом `ACTIVE_COMPONENT`.
 
 Пример подключения компонента меню:
 
@@ -116,7 +136,9 @@ $APPLICATION->IncludeComponent(
 
 ## Файл class.php
 
-Файл содержит логику компонента.
+Файл содержит логику компонента. Объявите в нем класс-наследник `CBitrixComponent`. Имя класса произвольное. Система подключает `class.php` и использует объявленный в нем наследник `CBitrixComponent`. Основной метод — `executeComponent()`. Базовая реализация метода только подключает `component.php`, поэтому в классе метод переопределяют.
+
+Метод `startResultCache()` берет время жизни кеша из параметра `CACHE_TIME`. Если параметр не передан, время равно нулю и данные из кеша не читаются. Передайте `CACHE_TIME` при вызове компонента, задайте значение по умолчанию в `onPrepareComponentParams()` или передайте время первым аргументом метода, например `startResultCache(3600)`.
 
 ### Пример файла class.php
 
@@ -130,6 +152,14 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 class MyComponent extends CBitrixComponent
 {
+    public function onPrepareComponentParams($arParams)
+    {
+        // Без CACHE_TIME кеш не работает, задаем значение по умолчанию
+        $arParams['CACHE_TIME'] = (int)($arParams['CACHE_TIME'] ?? 3600);
+
+        return $arParams;
+    }
+
     public function executeComponent()
     {
         // Проверяем кеш. Если кеша нет, startResultCache() вернет true
@@ -153,15 +183,15 @@ class MyComponent extends CBitrixComponent
 
 ### Пояснение к коду
 
-1. Первая строка защищает компонент от прямого доступа для безопасности.
+1. Проверка константы `B_PROLOG_INCLUDED` прерывает выполнение, если файл открыть по прямому адресу.
 
-2. Компоненты используют кеширование для повышения производительности. Если данные закешированы, они извлекаются, ускоряя загрузку.
+2. Метод `startResultCache()` проверяет кеш. Если кеш есть, метод выводит сохраненный HTML и возвращает `false`.
 
-3. Если данных нет в кеше, компонент запрашивает их и формирует массив `$arResult`, который передается в шаблон.
+3. Если кеша нет, метод возвращает `true`. Компонент вызывает `initResult()` и формирует массив `$arResult`.
 
-4. `$this->IncludeComponentTemplate();` подключает шаблон для отображения данных. Шаблон использует массив `$arResult` для генерации HTML.
+4. Метод `includeComponentTemplate()` подключает шаблон. Шаблон использует `$arResult` для генерации HTML.
 
-5. После получения и отображения данных компонент может сохранить их в кеше для последующего использования.
+5. Система сохраняет HTML шаблона и `$arResult` в кеш на время из параметра `CACHE_TIME`.
 
 ## Файл .description.php
 
@@ -221,100 +251,97 @@ $arComponentDescription = [
 
    -  `CHILD` — подчиненная ветка,
 
--  `AREA_BUTTONS` — пользовательские кнопки для режима редактирования,
+-  `AREA_BUTTONS` — пользовательские кнопки для режима редактирования. Ключ `URL` задает действие кнопки, `TITLE` — подпись, `SRC` — путь к значку от папки компонента: система добавляет к нему путь компонента,
 
--  `CACHE_PATH` — если `Y`, отображается кнопка очистки кеша,
+-  `CACHE_PATH` — любое непустое значение показывает в режиме правки кнопку очистки кеша компонента. Кнопку видят пользователи с правом `cache_control`,
 
 -  `COMPLEX` — `Y` для комплексного компонента, для обычного компонента ключ значения не имеет.
 
 ### Особенности
 
 **PATH**. Если этот ключ не задан, компонент не будет отображаться в визуальном редакторе.\
-**Дерево компонентов.** Ограничено тремя уровнями. Чаще всего оно двухуровневое. Служебные названия первого уровня зарезервированы и их использовать нельзя: content, service, communication, e-store, utility.
+**Дерево компонентов.** Ограничено тремя уровнями. Чаще всего оно двухуровневое. Для первого уровня есть стандартные ветки `content`, `service`, `communication`, `e-store` и `utility`. Если указать один из этих кодов в `PATH.ID`, система подставит стандартное название и сортировку ветки. Для собственной ветки задайте свой код и название в ключе `NAME`.
 
-## Файл .parameters.php
+## Файл .parameters.php {#parameters-file}
 
 Файл `.parameters.php` содержит описание входных параметров компонента. Параметры необходимы для создания формы ввода свойств компонента в визуальном редакторе и других инструментах среды Bitrix. Описание параметров не используется при непосредственной работе компонента на странице.
 
 ### Пример файла .parameters.php
 
-**Пример.** Файл получает список типов инфоблоков через классический API `CIBlockType`, как системный компонент `bitrix:news.list`:
+**Пример.** Файл получает список активных типов инфоблоков методом `CIBlockParameters::GetIBlockTypes()`, как системный компонент `bitrix:news.list`. Метод возвращает массив, где ключ — код типа, а значение — строка `[код] название` на текущем языке:
 
 ```php
 <?php
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 
-Loader::includeModule("iblock");
-
-$dbIBlockType = CIBlockType::GetList(
-    ["sort" => "asc"],
-    ["ACTIVE" => "Y"]
-);
-while ($arIBlockType = $dbIBlockType->Fetch())
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 {
-    if ($arIBlockTypeLang = CIBlockType::GetByIDLang($arIBlockType["ID"], LANGUAGE_ID))
-    {
-        $arIblockType[$arIBlockType["ID"]] = "[".$arIBlockType["ID"]."] ".$arIBlockTypeLang["NAME"];
-    }
+    die();
 }
 
+if (!Loader::includeModule('iblock'))
+{
+    return;
+}
+
+$arIblockType = CIBlockParameters::GetIBlockTypes();
+
 $arComponentParameters = [
-    "GROUPS" => [
-        "SETTINGS" => [
-            "NAME" => Loc::getMessage("SETTINGS_PHR")
+    'GROUPS' => [
+        'SETTINGS' => [
+            'NAME' => Loc::getMessage('SETTINGS_PHR'),
         ],
-        "PARAMS" => [
-            "NAME" => Loc::getMessage("PARAMS_PHR")
+        'PARAMS' => [
+            'NAME' => Loc::getMessage('PARAMS_PHR'),
         ],
     ],
-    "PARAMETERS" => [
-        "IBLOCK_TYPE_ID" => [
-            "PARENT" => "SETTINGS",
-            "NAME" => Loc::getMessage("INFOBLOCK_TYPE_PHR"),
-            "TYPE" => "LIST",
-            "ADDITIONAL_VALUES" => "Y",
-            "VALUES" => $arIblockType,
-            "REFRESH" => "Y"
+    'PARAMETERS' => [
+        'IBLOCK_TYPE_ID' => [
+            'PARENT' => 'SETTINGS',
+            'NAME' => Loc::getMessage('INFOBLOCK_TYPE_PHR'),
+            'TYPE' => 'LIST',
+            'ADDITIONAL_VALUES' => 'Y',
+            'VALUES' => $arIblockType,
+            'REFRESH' => 'Y',
         ],
-        "BASKET_PAGE_TEMPLATE" => [
-            "PARENT" => "PARAMS",
-            "NAME" => Loc::getMessage("BASKET_LINK_PHR"),
-            "TYPE" => "STRING",
-            "MULTIPLE" => "N",
-            "DEFAULT" => "/personal/basket.php",
-            "COLS" => 25
+        'BASKET_PAGE_TEMPLATE' => [
+            'PARENT' => 'PARAMS',
+            'NAME' => Loc::getMessage('BASKET_LINK_PHR'),
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N',
+            'DEFAULT' => '/personal/basket.php',
+            'COLS' => 25,
         ],
-        "SET_TITLE" => [],
-        "CACHE_TIME" => [],
-        "VARIABLE_ALIASES" => [
-            "IBLOCK_ID" => [
-                "NAME" => Loc::getMessage("CATALOG_ID_VARIABLE_PHR"),
+        'SET_TITLE' => [],
+        'CACHE_TIME' => [],
+        'VARIABLE_ALIASES' => [
+            'IBLOCK_ID' => [
+                'NAME' => Loc::getMessage('CATALOG_ID_VARIABLE_PHR'),
             ],
-            "SECTION_ID" => [
-                "NAME" => Loc::getMessage("SECTION_ID_VARIABLE_PHR"),
-            ],
-        ],
-        "SEF_MODE" => [
-            "list" => [
-                "NAME" => Loc::getMessage("CATALOG_LIST_PATH_TEMPLATE_PHR"),
-                "DEFAULT" => "index.php",
-                "VARIABLES" => []
-            ],
-            "section1" => [
-                "NAME" => Loc::getMessage("SECTION_LIST_PATH_TEMPLATE_PHR"),
-                "DEFAULT" => "#IBLOCK_ID#",
-                "VARIABLES" => ["IBLOCK_ID"]
-            ],
-            "section2" => [
-                "NAME" => Loc::getMessage("SUB_SECTION_LIST_PATH_TEMPLATE_PHR"),
-                "DEFAULT" => "#IBLOCK_ID#/#SECTION_ID#",
-                "VARIABLES" => ["IBLOCK_ID", "SECTION_ID"]
+            'SECTION_ID' => [
+                'NAME' => Loc::getMessage('SECTION_ID_VARIABLE_PHR'),
             ],
         ],
-    ]
+        'SEF_MODE' => [
+            'list' => [
+                'NAME' => Loc::getMessage('CATALOG_LIST_PATH_TEMPLATE_PHR'),
+                'DEFAULT' => 'index.php',
+                'VARIABLES' => [],
+            ],
+            'section1' => [
+                'NAME' => Loc::getMessage('SECTION_LIST_PATH_TEMPLATE_PHR'),
+                'DEFAULT' => '#IBLOCK_ID#',
+                'VARIABLES' => ['IBLOCK_ID'],
+            ],
+            'section2' => [
+                'NAME' => Loc::getMessage('SUB_SECTION_LIST_PATH_TEMPLATE_PHR'),
+                'DEFAULT' => '#IBLOCK_ID#/#SECTION_ID#',
+                'VARIABLES' => ['IBLOCK_ID', 'SECTION_ID'],
+            ],
+        ],
+    ],
 ];
-?>
 ```
 
 ### Массив \$arComponentParameters
@@ -349,20 +376,29 @@ $arComponentParameters = [
 
 #### Ключ PARAMETERS
 
-Массив параметров компонента. Каждый параметр описывается следующим образом:
+Массив параметров компонента. Ключ элемента — код параметра, по нему значение попадает в `$arParams`. Значение — массив с описанием поля формы:
+
+-  `PARENT` — код группы из `GROUPS`. Если ключ не задан или группа не объявлена в `GROUPS` и не входит в стандартные, система помещает параметр в группу `ADDITIONAL_SETTINGS`,
+-  `NAME` — название параметра на текущем языке,
+-  `TYPE` — тип элемента управления. Значения описаны ниже в разделе о параметре `TYPE`,
+-  `REFRESH` — `Y`, чтобы перезагружать форму после изменения значения,
+-  `MULTIPLE` — `Y` для множественного значения, `N` для одиночного,
+-  `VALUES` — массив значений для списка `TYPE = LIST`, где ключ — значение, а элемент — подпись,
+-  `ADDITIONAL_VALUES` — `Y`, чтобы показать поле для значений, вводимых вручную,
+-  `SIZE` — число строк, если нужен не выпадающий список,
+-  `DEFAULT` — значение по умолчанию,
+-  `COLS` — ширина поля в символах.
+
+**Пример.** Описание параметра-списка с перезагрузкой формы:
 
 ```php
-"код параметра" => [
-   "PARENT" => "код группы",  // если нет — ставится ADDITIONAL_SETTINGS
-   "NAME" => "название параметра на текущем языке",
-   "TYPE" => "тип элемента управления, в котором будет устанавливаться параметр",
-   "REFRESH" => "перегружать настройки или нет после выбора (N/Y)",
-   "MULTIPLE" => "одиночное/множественное значение (N/Y)",
-   "VALUES" => "массив значений для списка (TYPE = LIST)",
-   "ADDITIONAL_VALUES" => "показывать поле для значений, вводимых вручную (Y/N)",
-   "SIZE" => "число строк для списка (если нужен не выпадающий список)",
-   "DEFAULT" => "значение по умолчанию",
-   "COLS" => "ширина поля в символах",
+'IBLOCK_TYPE_ID' => [
+    'PARENT' => 'SETTINGS',
+    'NAME' => Loc::getMessage('INFOBLOCK_TYPE_PHR'),
+    'TYPE' => 'LIST',
+    'VALUES' => $arIblockType,
+    'ADDITIONAL_VALUES' => 'Y',
+    'REFRESH' => 'Y',
 ],
 ```
 
@@ -376,7 +412,7 @@ $arComponentParameters = [
 
 -  `CHECKBOX` — переключатель да/нет,
 
--  `CUSTOM` — [кастомные элементы управления](./components#тип-параметров-custom),
+-  `CUSTOM` — [кастомные элементы управления](#custom-type),
 
 -  `FILE` — выбор файла,
 
@@ -393,10 +429,12 @@ $arComponentParameters = [
 
 **Пример использования параметра REFRESH**
 
-Параметр `REFRESH` позволяет перегружать форму параметров после выбора значения. Это полезно, например, для фильтрации списка инфоблоков по типу.
+Параметр `REFRESH` со значением `Y` перезагружает форму параметров после выбора значения. После перезагрузки файл `.parameters.php` выполняется снова, а текущие значения формы доступны в массиве `$arCurrentValues`. Так можно строить список одного параметра по значению другого.
+
+**Пример.** Фрагмент `.parameters.php` добавляет список свойств выбранного инфоблока. Модуль `iblock` подключен выше в файле через `Loader::includeModule('iblock')`:
 
 ```php
-if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']) > 0)
+if (isset($arCurrentValues['IBLOCK_ID']) && (int)$arCurrentValues['IBLOCK_ID'] > 0)
 {
     $arPropList = [];
     $rsProps = CIBlockProperty::GetList([], ['IBLOCK_ID' => $arCurrentValues['IBLOCK_ID']]);
@@ -416,7 +454,7 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
 
 **Особые параметры**
 
--  `SET_TITLE` и `CACHE_TIME` — cтандартизованные параметры компонентов, которые не требуют полного описания. `SET_TITLE` управляет заголовком страницы, а `CACHE_TIME` определяет время кеширования.
+-  `SET_TITLE` и `CACHE_TIME` — стандартизованные параметры компонентов, которые не требуют полного описания. `SET_TITLE` управляет заголовком страницы, а `CACHE_TIME` определяет время кеширования.
 
 -  `VARIABLE_ALIASES` — описывает переменные, которые комплексный компонент может получать из HTTP-запроса. Каждый элемент массива имеет вид:
 
@@ -436,7 +474,7 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
    ];
    ```
 
-#### Тип параметров CUSTOM
+#### Тип параметров CUSTOM {#custom-type}
 
 В параметре `TYPE` используйте значение `CUSTOM`, когда стандартных настроек компонента недостаточно. Например, в форму настроек нужно добавить интерактивный элемент: кнопку, карту или ползунок.
 
@@ -450,7 +488,7 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
 
 Функция `JS_EVENT` получает объект с данными.
 
-```php
+```javascript
 {
     data: JS_DATA,                      // JS_DATA из .parameters.php
     oCont: td,                          // контейнер для отрисовки интерфейса
@@ -464,43 +502,55 @@ if (isset($arCurrentValues['IBLOCK_ID']) && intval($arCurrentValues['IBLOCK_ID']
 
 Пример массива `$arComponentParameters` с `TYPE=CUSTOM` можно посмотреть в системном компоненте `map.google.view`.
 
-Файл `.parameters.php` содержит параметр `MAP_DATA`.
+**Пример.** Сокращенный файл `.parameters.php` компонента `map.google.view` с параметром `MAP_DATA`. Параметр типа `CUSTOM`, как и остальные параметры, находится внутри ключа `PARAMETERS`:
 
 ```php
+<?php
 use Bitrix\Main\Localization\Loc;
 
 $arComponentParameters = [
-   // ...
-   'MAP_DATA' => [
-       'NAME' => Loc::getMessage('MYMS_PARAM_DATA'),
-       'TYPE' => 'CUSTOM',
-       'JS_FILE' => '/bitrix/components/bitrix/map.google.view/settings/settings.js',
-       'JS_EVENT' => 'OnGoogleMapSettingsEdit',
-       'JS_DATA' => LANGUAGE_ID.'||'.Loc::getMessage('MYMS_PARAM_DATA_SET'),
-       'DEFAULT' => serialize([
-           'google_lat' => Loc::getMessage('MYMS_PARAM_DATA_DEFAULT_LAT'),
-           'google_lon' => Loc::getMessage('MYMS_PARAM_DATA_DEFAULT_LON'),
-           'google_scale' => 13
-       ]),
-       'PARENT' => 'BASE',
+    'GROUPS' => [],
+    'PARAMETERS' => [
+        // ...
+        'MAP_DATA' => [
+            'NAME' => Loc::getMessage('MYMS_PARAM_DATA'),
+            'TYPE' => 'CUSTOM',
+            'JS_FILE' => '/bitrix/components/bitrix/map.google.view/settings/settings.js',
+            'JS_EVENT' => 'OnGoogleMapSettingsEdit',
+            'JS_DATA' => LANGUAGE_ID . '||' . Loc::getMessage('MYMS_PARAM_DATA_SET'),
+            'DEFAULT' => serialize([
+                'google_lat' => Loc::getMessage('MYMS_PARAM_DATA_DEFAULT_LAT'),
+                'google_lon' => Loc::getMessage('MYMS_PARAM_DATA_DEFAULT_LON'),
+                'google_scale' => 13,
+            ]),
+            'PARENT' => 'BASE',
+        ],
+        // ...
     ],
-   // ...
 ];
 ```
 
-Файл с кодом интерфейса — `/bitrix/components/bitrix/map.google.view/settings/settings.js`. Функция `JCEditorOpener` создает кнопку, которая открывает модальное окно с настройками карты.
+Файл с кодом интерфейса — `/bitrix/components/bitrix/map.google.view/settings/settings.js`. Система вызывает функцию `OnGoogleMapSettingsEdit()`, указанную в `JS_EVENT`, и передает в нее объект с данными. Функция создает объект `JCEditorOpener`, а он добавляет в контейнер `oCont` кнопку, которая открывает окно с настройками карты.
+
+**Пример.** Сокращенный код из `settings.js`:
 
 ```javascript
+function OnGoogleMapSettingsEdit(arParams)
+{
+    window.jsGoogleCEOpener = new JCEditorOpener(arParams);
+}
+
 function JCEditorOpener(arParams)
 {
-    this.jsOptions = arParams.data.split('||');
+    this.jsOptions = arParams.data.split('||'); // Значение JS_DATA
     this.arParams = arParams;
-    var obButton = document.createElement('BUTTON');     //создать кнопку
-    this.arParams.oCont.appendChild(obButton);           // добавить в контейнер
 
-    obButton.innerHTML = this.jsOptions[1];              //текст из JS_DATA
+    var obButton = document.createElement('INPUT');
+    obButton.type = 'button';
+    obButton.value = this.jsOptions[1]; // Текст кнопки из JS_DATA
+    this.arParams.oCont.appendChild(obButton);
 
-    obButton.onclick = BX.delegate(this.btnClick, this); // callback
+    obButton.onclick = BX.delegate(this.btnClick, this);
     this.saveData = BX.delegate(this.__saveData, this);
 }
 ```
@@ -541,7 +591,7 @@ $obJSPopup->EndButtons();
 
 Функция `__saveChanges()` собирает, сериализует данные в строку и записывает в `oInput`. Код сериализации можно посмотреть в файле `settings_load.js`. Десериализация происходит  из `$arParams['~MAP_DATA']`.
 
-Все надписи для типа `CUSTOM` выводите через `GetMessage` и размещайте в папке компонента в файле `lang/ru/.parameters.php`.
+Все надписи для типа `CUSTOM` выводите через `Loc::getMessage()` и размещайте в папке компонента в файле `lang/ru/.parameters.php`.
 
 ## Папки локализаций
 
@@ -577,13 +627,13 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 
 Шаблон компонента в Bitrix Framework — это программный код, который преобразует подготовленные компонентом данные в HTML-код для отображения на веб-странице.
 
-#### Виды шаблонов
+### Виды шаблонов
 
 1. **Системные шаблоны**: поставляются вместе с дистрибутивом и находятся в подпапке `templates` папки компонента.
 
-2. **Пользовательские шаблоны**: изменены под нужды конкретного сайта и должны находиться в папках шаблонов сайтов, например, `/local/templates/шаблон_сайта/`. При копировании такого шаблона средствами системы, они будут расположены по следующему пути: `/local/templates/шаблон_сайта/components/namespace/название_компонента/название_шаблона/`.
+2. **Пользовательские шаблоны**: изменены под нужды конкретного сайта и должны находиться в папках шаблонов сайтов, например, `/local/templates/шаблон_сайта/`. При копировании средствами системы шаблон попадает в папку `components/namespace/название_компонента/название_шаблона/` шаблона сайта. Если шаблон сайта лежит в `/local/templates/`, копия появится там, иначе — в `/bitrix/templates/шаблон_сайта/`.
 
-#### Определение шаблонов
+### Определение шаблонов
 
 -  Шаблоны компонента определяются по именам. Шаблон по умолчанию имеет имя `.default`. Остальные шаблоны могут называться произвольно. Если в настройках компонента не указывается имя шаблона, то вызывается шаблон по умолчанию.
 
@@ -591,7 +641,7 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 
 -  Каждый шаблон компонента является неделимым целым. Если требуется изменить системный шаблон под конкретный сайт, то его нужно целиком скопировать в папку шаблона сайта и только потом изменить под потребности проекта.
 
-#### Переменные в шаблоне
+### Переменные в шаблоне {#template-variables}
 
 -  `$templateFile` — путь к шаблону относительно корня сайта.
 
@@ -617,7 +667,7 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 
 В `template.php` переменной `$arLangMessages` нет: система передает массив языковых сообщений только функции стороннего шаблонизатора.
 
-#### Структура шаблона
+### Структура шаблона
 
 -  `/lang/` — файлы языковых сообщений.
 
@@ -635,92 +685,64 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
    <?php
    use Bitrix\Main\Localization\Loc;
 
-   if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+   {
+       die();
+   }
 
    $arTemplateDescription = [
-      "NAME" => Loc::getMessage("ADV_BANNER_NAME"),
-      "DESCRIPTION" => Loc::getMessage("ADV_BANNER_DESC"),
+       'NAME' => Loc::getMessage('MY_TEMPLATE_NAME'),
+       'DESCRIPTION' => Loc::getMessage('MY_TEMPLATE_DESC'),
    ];
-   ?>
    ```
 
--  `.parameters.php` — описание дополнительных параметров шаблона. В примере файл получает типы баннеров через классический API `CAdvType` модуля «Реклама, баннеры»:
+-  `.parameters.php` — описание дополнительных параметров шаблона. Файл заполняет массив `$arTemplateParameters` в том же формате, что и ключ `PARAMETERS` в `.parameters.php` компонента. Визуальный редактор добавляет эти параметры в форму настройки компонента, когда выбран шаблон. Текущие значения параметров формы доступны в массиве `$arCurrentValues`.
+
+   **Пример.** Шаблон добавляет режим отображения и параметр, который зависит от выбранного режима:
 
    ```php
    <?php
    use Bitrix\Main\Localization\Loc;
-   use Bitrix\Main\Loader;
 
-   if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-
-   if (!Loader::includeModule("advertising"))
+   if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
    {
-      return;
+       die();
    }
 
-   $arTypeFields = ["-" => Loc::getMessage("ADV_SELECT_DEFAULT")];
-   $res = CAdvType::GetList($by, $order, Array("ACTIVE" => "Y"),$is_filtered, "Y");
-
-   while (is_object($res) && $ar = $res->GetNext())
-   {
-      $arTypeFields[$ar["SID"]] = "[".$ar["SID"]."] ".$ar["NAME"];
-   }
+   /** @var array $arCurrentValues */
 
    $arTemplateParameters = [
-      "TYPE" => [
-         "NAME" => Loc::getMessage("ADV_TYPE"),
-         "PARENT" => "BASE",
-         "TYPE" => "LIST",
-         "DEFAULT" => "",
-         "VALUES" => $arTypeFields,
-         "ADDITIONAL_VALUES" => "N",
-      ],
-      "NOINDEX" => [
-         "NAME" => Loc::getMessage("adv_banner_params_noindex"),
-         "PARENT" => "BASE",
-         "TYPE" => "CHECKBOX",
-         "DEFAULT" => "N",
-      ],
-      "QUANTITY" => [
-         "NAME" => Loc::getMessage("ADV_QUANTITY"),
-         "PARENT" => "BASE",
-         "TYPE" => "STRING",
-         "DEFAULT" => "1",
-      ],
-      "CACHE_TIME" => ["DEFAULT"=>"0"],
+       'DISPLAY_MODE' => [
+           'NAME' => Loc::getMessage('MY_TEMPLATE_DISPLAY_MODE'),
+           'PARENT' => 'VISUAL',
+           'TYPE' => 'LIST',
+           'VALUES' => [
+               'list' => Loc::getMessage('MY_TEMPLATE_DISPLAY_MODE_LIST'),
+               'tile' => Loc::getMessage('MY_TEMPLATE_DISPLAY_MODE_TILE'),
+           ],
+           'DEFAULT' => 'list',
+           'REFRESH' => 'Y',
+       ],
    ];
 
-   if ($templateProperties['NEED_TEMPLATE'] == 'Y')
+   if (($arCurrentValues['DISPLAY_MODE'] ?? 'list') === 'tile')
    {
-      $templates = ['-' => Loc::getMessage("ADV_NOT_SELECTED")];
-      $arTemplates = CComponentUtil::GetTemplatesList('bitrix:advertising.banner.view');
-
-      if (is_array($arTemplates) && !empty($arTemplates))
-      {
-         foreach ($arTemplates as $template)
-         {
-               $templates[$template['NAME']] = $template['NAME'];
-         }
-      }
-
-      $arTemplateParameters['DEFAULT_TEMPLATE'] = [
-         "NAME" => Loc::getMessage("ADV_DEFAULT_TEMPLATE"),
-         "PARENT" => "BASE",
-         "TYPE" => "LIST",
-         "VALUES" => $templates,
-         "DEFAULT" => '',
-         "ADDITIONAL_VALUES" => "N",
-      ];
-
-      unset($templateProperties['NEED_TEMPLATE']);
+       $arTemplateParameters['TILE_COLUMNS'] = [
+           'NAME' => Loc::getMessage('MY_TEMPLATE_TILE_COLUMNS'),
+           'PARENT' => 'VISUAL',
+           'TYPE' => 'STRING',
+           'DEFAULT' => '3',
+       ];
    }
    ```
+
+   Ключ `REFRESH` со значением `Y` перезагружает форму после изменения параметра, поэтому поле `TILE_COLUMNS` появляется сразу после выбора режима `tile`.
 
 -  `template.php` — основной файл шаблона.
 
 -  Дополнительные ресурсы, например, папка `/images/`.
 
-#### Поиск шаблона системой
+### Поиск шаблона системой {#template-search}
 
 Система ищет подходящий шаблон по алгоритму.
 
@@ -742,7 +764,7 @@ $MESS["SORT_BY1_TIP"] = "Это подсказка для первой сорт�
 
 -  Если шаблон задан именем папки, ищется файл`template.ext`. Расширение ext сначала принимается равным php, а затем расширениям других доступных на сайте движков шаблонизации.
 
-Если компонент вызывается в составе комплексного компонента, то его шаблон сначала ищется в составе шаблона родительского компонента, а потом — в собственных шаблонах. Чтобы это правило работало, при вызове компонентов в составе комлексных компонентов не забывайте указывать четвертым параметром переменную `$component`, указывающую на родительский компонент:
+Если компонент вызывается в составе комплексного компонента, то его шаблон сначала ищется в составе шаблона родительского компонента, а потом — в собственных шаблонах. Чтобы это правило работало, при вызове компонентов в составе комплексных компонентов не забывайте указывать четвертым параметром переменную `$component`, указывающую на родительский компонент:
 
 ```php
 $APPLICATION->IncludeComponent("custom:catalog.element", "", [...], $component);
@@ -760,9 +782,9 @@ $APPLICATION->IncludeComponent("custom:catalog.element", "", [...], $component);
 
 {% endnote %}
 
-#### Работа с AJAX
+### Режим AJAX_MODE
 
-Системные компоненты поддерживают режим AJAX: если в параметрах компонента `AJAX_MODE` равен `Y`, переходы по ссылкам и отправка форм внутри компонента перезагружают только область компонента.
+Если в параметрах компонента `AJAX_MODE` равен `Y`, переходы по ссылкам и отправка форм внутри компонента перезагружают только область компонента. Режим работает для любого компонента, который подключен через `IncludeComponent()`. Отдельные AJAX-действия компонента описаны в разделе [Работа с контроллерами](#component-controllers).
 
 После перезагрузки области система обновляет на странице заголовок и цепочку навигации. Она ищет элементы по `id` во всем документе:
 
@@ -827,7 +849,7 @@ $APPLICATION->IncludeComponent("custom:catalog.element", "", [...], $component);
 **Пример.** Набор ключей в `class.php`:
 
 ```php
-$this->SetResultCacheKeys([
+$this->setResultCacheKeys([
     "ID",
     "IBLOCK_TYPE_ID",
     "LIST_PAGE_URL",
@@ -849,7 +871,12 @@ $this->SetResultCacheKeys([
 **Пример.** `result_modifier.php` добавляет заголовок в `$arResult` и ключ `MY_TITLE` в набор ключей кеша:
 
 ```php
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+<?php
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
 $arResult['MY_TITLE'] = $arResult['NAME'];
 
@@ -866,9 +893,9 @@ $this->getComponent()->setResultCacheKeys(['MY_TITLE']);
 
 ### Переменные в component_epilog.php
 
--  `$arParams` — параметры для чтения и изменения.
+-  `$arParams` — копия параметров компонента. Изменения копии не влияют на компонент.
 
--  `$arResult` — результат для чтения и изменения.
+-  `$arResult` — копия результата компонента. Если компонент вызывал `setResultCacheKeys()`, копия содержит только перечисленные ключи, даже при выключенном кеше. Изменения копии не влияют на компонент.
 
 -  `$componentPath` — путь к папке с компонентом от `DOCUMENT_ROOT`.
 
@@ -893,13 +920,18 @@ $this->getComponent()->setResultCacheKeys(['MY_TITLE']);
 **Пример.** `component_epilog.php` устанавливает заголовок страницы из ключа `MY_TITLE`, который добавил `result_modifier.php`:
 
 ```php
-<?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+<?php
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
+
 global $APPLICATION;
 if (isset($arResult['MY_TITLE']))
 {
     $APPLICATION->SetTitle($arResult['MY_TITLE']);
 }
-?>
 ```
 
 ### Пример работы с переменной \$templateData
@@ -920,7 +952,11 @@ $templateData = [
 
 ```php
 <?php
-if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
 // Проверяем, что $templateData определена и содержит данные
 if (isset($templateData) && is_array($templateData))
@@ -930,26 +966,27 @@ if (isset($templateData) && is_array($templateData))
     $lastUpdated = $templateData['LAST_UPDATED'];
 
     // Например, логируем количество элементов и дату последнего обновления
-    AddMessage2Log("Компонент обработал $itemCount элементов. Последнее обновление: $lastUpdated.");
+    AddMessage2Log("Компонент обработал {$itemCount} элементов. Последнее обновление: {$lastUpdated}.");
 }
-?>
 ```
 
 ### Особенности использования component_epilog.php
 
 Файл `component_epilog.php` подключается сразу после выполнения шаблона. Если в компоненте после подключения шаблона идут другие операции, они выполнятся после `component_epilog.php`. В случае совпадения изменяемых данных выведутся только последние данные, то есть из кода компонента.
 
-Пример:
+**Пример.** Метод `executeComponent()` в `class.php` устанавливает заголовок после подключения шаблона:
 
 ```php
-$this->IncludeComponentTemplate();
-if ($arParams["SET_TITLE"])
+global $APPLICATION;
+
+$this->includeComponentTemplate();
+if ($this->arParams['SET_TITLE'] === 'Y')
 {
-    $APPLICATION->SetTitle($arResult["NAME"]);
+    $APPLICATION->SetTitle($this->arResult['NAME']);
 }
 ```
 
-В этом случае выведутся данные компонента, а не `component_epilog.php`.
+В этом случае выведутся данные компонента, а не `component_epilog.php`. Если компонент вызывал `setResultCacheKeys()`, ключ `NAME` должен входить в набор, иначе после подключения шаблона его в `$arResult` не будет.
 
 ### Особенности подключения языковых файлов
 
@@ -978,7 +1015,7 @@ Loc::getMessage("MY_MESS");
 
 -  `N` — компонент не кеширует данные.
 
-Если параметр не передан или имеет другое значение, компонент использует `A`. Автокеширование включают и отключают на весь сайт в административной части *Настройки > Настройки продукта > Автокеширование*. Обычно автокеширование выключено на этапе разработки и включается перед сдачей проекта.
+Если параметр не передан или имеет другое значение, компонент использует `A`. Автокеширование включают и отключают на весь сайт в административной части *Настройки > Настройки продукта > Автокеширование*. По умолчанию автокеширование включено — опция `component_cache_on` модуля `main` равна `Y`.
 
 Время кеширования в секундах задает параметр `CACHE_TIME`. Если параметр не передан, `startResultCache()` использует время `0`, и компонент не кеширует данные. Указывайте время кеширования для каждого компонента, исходя из потребностей проекта.
 
@@ -1000,11 +1037,24 @@ Loc::getMessage("MY_MESS");
 
 -  смещения часового пояса пользователя, если оно не равно нулю,
 
--  внешних условий, например списка групп пользователя,
+-  дополнительного идентификатора, который передан вторым аргументом `startResultCache()`,
 
 -  номера вызова компонента на странице, если компонент вызван на странице больше одного раза.
 
-Зная эти параметры, можно очистить кеш любого компонента. Иначе кеш сбрасывается по истечении времени кеширования или вручную.
+Группы пользователя система в идентификатор кеша не добавляет. Если результат зависит от прав, передайте группы вторым аргументом.
+
+**Пример.** Отдельный кеш для каждого набора групп пользователя в методе `executeComponent()`:
+
+```php
+global $USER;
+
+if ($this->startResultCache(false, $USER->GetGroups()))
+{
+    // Выборка данных и подключение шаблона
+}
+```
+
+Кеш сбрасывается по истечении времени кеширования или вручную. Метод `$this->clearResultCache()` удаляет кеш текущего вызова компонента. Если кеш создан с дополнительным идентификатором, передайте в `clearResultCache()` тот же идентификатор первым аргументом. Статический метод `CBitrixComponent::clearComponentCache('my:user.card')` — весь кеш компонента.
 
 {% note info "" %}
 
@@ -1012,11 +1062,7 @@ Loc::getMessage("MY_MESS");
 
 {% endnote %}
 
-### Важные моменты
-
--  Избегайте вызова отложенных функций в шаблоне при включенном кешировании.
-
--  Формируйте уникальный `ID` кеша, чтобы избежать избыточных данных и повысить эффективность кеширования.
+При включенном кешировании шаблон выполняется только при записи кеша. Код в шаблоне, который меняет страницу, например устанавливает заголовок через `$APPLICATION->SetTitle()`, при выводе из кеша не сработает. Такой код размещайте в `component_epilog.php` или в `executeComponent()` после блока `if ($this->startResultCache()) { ... }`, вне него. Нужные ключи `$arResult` добавьте в `setResultCacheKeys()`.
 
 ## Работа с контроллерами {#component-controllers}
 
@@ -1026,18 +1072,49 @@ Loc::getMessage("MY_MESS");
 
 Обработчик запросов в классе компонента (файл `class.php`) позволяет инкапсулировать весь код в одном классе, повторно использовать методы, данные и параметры компонента, а также использовать языковые фразы и шаблоны компонента.
 
-Чтобы класс компонента мог обрабатывать запросы, необходимо реализовать интерфейс `\Bitrix\Main\Engine\Contract\Controllerable`, определить метод-действия с суффиксом `Action`, и реализовать метод `configureActions` для настройки доступа к действиям.
+Чтобы класс компонента обрабатывал запросы, выполните три шага:
 
-Вот пример кода, который демонстрирует, как это можно сделать:
+1. Реализуйте в классе интерфейс `\Bitrix\Main\Engine\Contract\Controllerable`.
+
+2. Определите методы-действия с суффиксом `Action`. Действие `greet` вызывает метод `greetAction()`.
+
+3. Реализуйте метод `configureActions()`. Он возвращает массив настроек фильтров для каждого действия.
+
+Если `configureActions()` возвращает пустой массив, к каждому действию применяются [фильтры по умолчанию](./pre-post-filters.md#default-filters). Фильтр `Authentication` пропускает только авторизованных пользователей, `HttpMethod` — только запросы GET и POST, `Csrf` проверяет токен сессии. Чтобы открыть действие для гостей, уберите фильтр аутентификации ключом `-prefilters`:
 
 ```php
-// /local/components/пространство_имен/example/class.php
+public function configureActions()
+{
+    return [
+        'greet' => [
+            '-prefilters' => [
+                \Bitrix\Main\Engine\ActionFilter\Authentication::class,
+            ],
+        ],
+    ];
+}
+```
+
+Чтобы действие возвращало ошибки в ответе, реализуйте в классе интерфейс `\Bitrix\Main\Errorable` с методами `getErrors()` и `getErrorByCode()`. Ошибки из коллекции попадают в ключ `errors` ответа, а статус ответа становится `error`.
+
+При AJAX-запросе система создает объект компонента, вызывает `onPrepareComponentParams()` и сразу вызывает действие. Метод `executeComponent()` и шаблон не выполняются.
+
+**Пример.** Компонент с действием `greet` и действием, которое возвращает ошибку:
+
+```php
+<?php
+// /local/components/my/example/class.php
+use Bitrix\Main\Engine\Contract\Controllerable;
 use Bitrix\Main\Error;
 use Bitrix\Main\ErrorCollection;
+use Bitrix\Main\Errorable;
 
-if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
-class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract\Controllerable, \Bitrix\Main\Errorable
+class ExampleComponent extends CBitrixComponent implements Controllerable, Errorable
 {
     /** @var ErrorCollection */
     protected $errorCollection;
@@ -1070,15 +1147,16 @@ class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\
     }
 
     // Пример обработки ошибок
-    public function showMeYourErrorAction():? string
+    public function showMeYourErrorAction(): ?string
     {
         if (rand(3, 43) === 42)
         {
-            $this->errorCollection[] = new Error('You are so beautiful or so handsome');
+            $this->errorCollection[] = new Error('Random error');
             // В ответе будут ошибки, и статус ответа будет 'error'
             return null;
         }
-        return "Ok";
+
+        return 'Ok';
     }
 
     /**
@@ -1104,12 +1182,18 @@ class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\
 
 ### Реализация в ajax.php
 
-Обработчик контроллера запросов в файле `ajax.php` позволяет создать легковесный обработчик AJAX-запросов, выделяя логику из компонента. Чтобы его реализовать, создайте в корне компонента файл `ajax.php` и определите метод-действия с суффиксом `Action`.
+Обработчик в файле `ajax.php` отделяет обработку AJAX-запросов от логики компонента. Создайте в корне папки компонента файл `ajax.php` и объявите в нем класс-наследник `\Bitrix\Main\Engine\Controller`. Имя класса произвольное, система берет наследник `Controller`, объявленный в файле. Методы-действия называйте с суффиксом `Action`. Параметры компонента в `ajax.php` недоступны, фильтры по умолчанию те же, что у контроллера.
 
-Пример кода для реализации:
+Чтобы вызвать действие из `ajax.php`, передайте в `BX.ajax.runComponentAction()` параметр `mode: 'ajax'` или не передавайте `mode` — это значение по умолчанию.
+
+**Пример.** Контроллер в `ajax.php` с двумя действиями:
 
 ```php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+<?php
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
 
 class ExampleAjaxController extends \Bitrix\Main\Engine\Controller
 {
@@ -1132,11 +1216,15 @@ class ExampleAjaxController extends \Bitrix\Main\Engine\Controller
 
 #### Подготовка параметров для AJAX
 
-Чтобы передать параметры из компонента в JavaScript, необходимо описать их в методе `listKeysSignedParameters`. Это позволяет использовать те же параметры, которые были при отображении компонента на странице.
+Чтобы передать параметры из компонента в JavaScript, перечислите их ключи в методе `listKeysSignedParameters()`. Система подписывает исходные значения этих параметров при подключении компонента, до `onPrepareComponentParams()`. Значения по умолчанию из `onPrepareComponentParams()` в подпись не попадают: при AJAX-запросе метод выполняется снова для распакованных параметров. При AJAX-запросе в режиме `class` система проверяет подпись и собирает `$arParams` только из подписанных ключей. Параметров, которых нет в списке, в действии не будет.
+
+**Пример.** Компонент подписывает два параметра:
 
 ```php
-class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract\Controllerable
+class ExampleComponent extends CBitrixComponent implements Controllerable, Errorable
 {
+    // configureActions(), действия и методы Errorable — как в примере выше
+
     protected function listKeysSignedParameters()
     {
         return [
@@ -1147,30 +1235,69 @@ class ExampleComponent extends \CBitrixComponent implements \Bitrix\Main\Engine\
 }
 ```
 
+Это фрагмент класса из примера выше. Интерфейс `Controllerable` требует метод `configureActions()`, без него PHP выдаст фатальную ошибку.
+
 #### Передача параметров в JavaScript
 
-В шаблоне компонента можно получить подписанные параметры и передать их в ваш JavaScript-класс компонента.
+В шаблоне компонента получите подписанные параметры методом `getSignedParameters()` и передайте их в JavaScript-класс компонента.
+
+**Пример.** Шаблон передает подписанные параметры и имя компонента в JavaScript-класс `BX.ExampleComponent`. Класс объявлен в `script.js` шаблона, который система подключает автоматически:
 
 ```php
-<script type="text/javascript">
-new BX.ExampleComponent({
-    signedParameters: '<?= $this->getComponent()->getSignedParameters() ?>',
-    componentName: '<?= $this->getComponent()->getName() ?>'
-});
+<script>
+    new BX.ExampleComponent({
+        signedParameters: '<?= CUtil::JSEscape($this->getComponent()->getSignedParameters()) ?>',
+        componentName: '<?= CUtil::JSEscape($this->getComponent()->getName()) ?>',
+    });
 </script>
+```
+
+**Пример.** Минимальный класс `BX.ExampleComponent` в `script.js`:
+
+```javascript
+BX.ExampleComponent = class
+{
+    constructor(options)
+    {
+        this.signedParameters = options.signedParameters;
+        this.componentName = options.componentName;
+    }
+
+    greet(person)
+    {
+        return BX.ajax.runComponentAction(this.componentName, 'greet', {
+            mode: 'class',
+            signedParameters: this.signedParameters,
+            data: { person },
+        });
+    }
+};
 ```
 
 #### Выполнение AJAX-запросов
 
-Для выполнения AJAX-запросов используйте `BX.ajax.runComponentAction`, передавая подписанные параметры.
+Для выполнения AJAX-запросов используйте `BX.ajax.runComponentAction()`. Передайте имя компонента, имя действия без суффикса `Action` и объект настроек:
+
+-  `mode` — где находится действие. `class` — метод класса из `class.php`, класс реализует `Controllerable`. `ajax` — метод контроллера из `ajax.php`,
+-  `signedParameters` — подписанные параметры компонента для режима `class`. Без них `$arParams` в действии будет пустым,
+-  `method` — HTTP-метод запроса, по умолчанию `POST`. Для режима `class` с `signedParameters` оставьте `POST`: сервер читает подписанные параметры только из тела запроса,
+-  `data` — данные запроса. Ключи `data` подставляются в одноименные аргументы метода-действия.
+
+Метод возвращает Promise. При успехе ответ содержит `status: 'success'`, результат действия в `data` и пустой массив `errors`. При ошибке Promise отклоняется, а ответ содержит `status: 'error'` и список ошибок в `errors`.
+
+**Пример.** Код внутри метода класса `BX.ExampleComponent` вызывает действие `greet` из `class.php` и обрабатывает ответ и ошибки. Свойства `this.componentName` и `this.signedParameters` класс получил из шаблона:
 
 ```javascript
-BX.ajax.runComponentAction(this.componentName, action, {
+BX.ajax.runComponentAction(this.componentName, 'greet', {
     mode: 'class',
     signedParameters: this.signedParameters,
-    data: data
-    }).then(function (response) {
-    // Обработка ответа
+    data: {
+        person: 'Admin',
+    },
+}).then((response) => {
+    console.log(response.data); // Hi Admin!
+}).catch((response) => {
+    console.error(response.errors);
 });
 ```
 
@@ -1178,19 +1305,27 @@ BX.ajax.runComponentAction(this.componentName, action, {
 
 `$arParams` и `$arResult` — это ключевые переменные для работы с компонентами. Они играют важную роль в передаче данных и результатов между компонентом и его шаблоном.
 
-### \$arParams
+### \$arParams {#arparams}
 
 Переменная `$arParams` — это массив входных параметров компонента. Ключи массива — названия параметров, значения — их содержимое.
 
-Функция `htmlspecialcharsEx` применяется ко всем значениям параметров перед подключением компонента. Исходные значения сохраняются в том же массиве с префиксом `~`. Например, `$arParams["NAME"]` — параметр с примененной функцией `htmlspecialcharsEx`, а `$arParams["~NAME"]` — исходный параметр.
+Перед выполнением компонента система экранирует значения параметров функцией `htmlspecialcharsEx`. Исходные значения сохраняются в том же массиве с префиксом `~`. Например, `$arParams["NAME"]` — экранированное значение, а `$arParams["~NAME"]` — исходное.
 
-`$arParams` — это псевдоним для члена класса компонента. Изменения этой переменной отражаются на члене класса. В начале кода компонента нужно проверить входные параметры, инициализировать неустановленные и привести их к нужному типу. Эти изменения будут доступны в шаблоне, поэтому дублировать подготовку параметров в шаблоне не нужно.
+Экранирование работает по правилам:
+
+-  строка экранируется, только если содержит один из символов `;`, `&`, `<`, `>` или `"`. Функция заменяет `<`, `>`, `"` и уже закодированные сущности, а одиночные `&` и `;` оставляет без изменений,
+-  в параметре-массиве строки первого уровня вложенности экранируются всегда, без проверки символов, а вложенные массивы остаются без изменений,
+-  для компонента с `class.php` экранирование выполняется после `onPrepareComponentParams()`. Внутри этого метода значения еще не экранированы, а ключей с префиксом `~` нет.
+
+В `component.php`, `result_modifier.php` и `template.php` переменная `$arParams` — псевдоним свойства `arParams` компонента. В методах `class.php` локальной переменной `$arParams` нет, обращайтесь к `$this->arParams`.
+
+Проверьте входные параметры, задайте значения по умолчанию и приведите их к нужному типу до основной логики. В `class.php` это делают в методе `onPrepareComponentParams()`, в `component.php` — в начале файла. Эти изменения будут доступны в шаблоне, поэтому дублировать подготовку параметров в шаблоне не нужно.
 
 ### \$arResult
 
-Переменная `$arResult` — это массив с результатами работы компонента для передачи в шаблон. Перед вызовом шаблона инициализируется пустым массивом `array()`.
+Переменная `$arResult` — это массив с результатами работы компонента для передачи в шаблон. При инициализации компонента, до выполнения его логики, `$arResult` — пустой массив.
 
-`$arResult` также является псевдонимом для члена класса компонента. Изменения переменной автоматически отражаются на члене класса, поэтому передавать ее в шаблон не нужно.
+В `component.php`, `result_modifier.php` и `template.php` переменная `$arResult` — псевдоним свойства `arResult` компонента, поэтому передавать ее в шаблон не нужно. В методах `class.php` обращайтесь к `$this->arResult`.
 
 Значения массива `$arResult` автоматически не экранируются. Перед выводом строковых значений в HTML применяйте функцию `htmlspecialcharsbx`.
 
@@ -1203,3 +1338,31 @@ BX.ajax.runComponentAction(this.componentName, action, {
 -  Если написать `$arParams = & $arSomeArray;`, то `$arParams` будет отвязана от члена класса компонента и привязана к `$arSomeArray`. В этом случае изменения `$arParams` не попадут в шаблон.
 
 -  Если написать `unset($arParams);`, это разорвет связь между `$arParams` и членом класса компонента.
+
+## Что делать, если компонент не работает
+
+-  **На странице пусто, метод вернул `false`.** Имя компонента содержит недопустимые символы. В имени разрешены латинские буквы, цифры, `_`, `-` и `.`, двоеточие отделяет пространство имен. Метод `IncludeComponent()` возвращает `false` без сообщения об ошибке.
+
+-  **Ошибка `'<имя>' is not a component`.** В папке компонента нет ни `class.php`, ни `component.php`. Проверьте имя и папку в `/local/components/` или `/bitrix/components/`. Имя без пространства имен, например `menu`, система ищет в корне папки `components/` и тоже выводит эту ошибку. Метод `IncludeComponent()` возвращает `null`.
+
+-  **Ошибка `Cannot find '<шаблон>' template with page '<страница>'`.** Система не нашла файл шаблона по [порядку поиска](#template-search). Запись кеша при этом отменяется.
+
+-  **Изменения в шаблоне или данных не видны.** Компонент выводит HTML из кеша. Очистите кеш компонента или передайте `'CACHE_TYPE' => 'N'`.
+
+-  **После `includeComponentTemplate()` в `$arResult` нет нужного ключа.** Компонент вызывал `setResultCacheKeys()`, и система оставила в `$arResult` только перечисленные ключи. Добавьте нужный ключ в набор.
+
+-  **AJAX-запрос в режиме `class` завершается ошибкой о `Controllerable`.** Класс компонента не реализует интерфейс `\Bitrix\Main\Engine\Contract\Controllerable`.
+
+-  **AJAX-запрос в режиме `ajax` завершается ошибкой `Could not find ajax class`.** В папке компонента нет `ajax.php` или в нем не объявлен наследник `\Bitrix\Main\Engine\Controller`.
+
+-  **Действие возвращает ошибку доступа для гостя.** Сработал фильтр `Authentication` по умолчанию. Уберите его для действия в `configureActions()`.
+
+-  **В действии из `class.php` пустой `$arParams`.** В запрос не переданы подписанные параметры `signedParameters`, запрос отправлен методом `GET` или нужные ключи не перечислены в `listKeysSignedParameters()`.
+
+## Что дальше
+
+-  [Создание компонента](../get-started/create-component.md) — пошаговый пример собственного компонента с параметрами, кешем и шаблоном.
+-  [Контроллеры](./controllers.md) — обработка AJAX-запросов и HTTP-маршрутов вне компонента.
+-  [Пре- и постфильтры](./pre-post-filters.md) — настройка доступа к действиям.
+-  [Кеширование](../performance/caching.md) — механизмы кеширования и их очистка.
+-  [Расширения](./extensions.md) — подключение JS и CSS, которые нужны нескольким компонентам.
