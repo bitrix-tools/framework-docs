@@ -400,7 +400,7 @@ $MESS['USER_CARD_NOT_FOUND'] = 'Пользователь не найден';
 
 ![Папка user.card в /local/components/my/ в файловом менеджере административного раздела](./_images/create-component.png){width=700px height=435px}
 
-## Как добавить компонент на страницу
+## Как добавить компонент на страницу {#add-component-to-page}
 
 Сначала создайте страницу, например `/my-page/index.php`. Порядок описан в статье [Создание страницы](./create-page.md).
 

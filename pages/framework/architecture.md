@@ -49,7 +49,7 @@ Bitrix Framework состоит из независимых модулей, ко
 
 На схеме EventBus — условное обозначение механизма событий `Bitrix\Main\EventManager`, ServiceLocator — класс `Bitrix\Main\DI\ServiceLocator`.
 
-## Обработка запроса
+## Обработка запроса {#request-handling}
 
 Bitrix Framework поддерживает два подхода к обработке запросов.
 

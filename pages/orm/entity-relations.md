@@ -3,7 +3,7 @@ title: Отношения между сущностями
 description: 'Отношения между сущностями. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации.'
 ---
 
-В ORM отношения между сущностями описывают, как данные одной таблицы связаны с данными другой.  Основные типы отношений:
+В ORM отношения между сущностями описывают, как данные одной таблицы связаны с данными другой. Основные типы отношений:
 
 -  1:1, «один к одному». Каждая запись в первой таблице соответствует одной записи во второй таблице.
 
@@ -11,9 +11,18 @@ description: 'Отношения между сущностями. ORM Bitrix Fra
 
 -  N:M, «многие ко многим». Записи в первой таблице могут быть связаны с несколькими записями во второй таблице и наоборот.
 
+Отношения описывают полями из пространства имен `Bitrix\Main\ORM\Fields\Relations` в методе `getMap` сущности. Набор полей зависит от типа отношения.
+
+| Отношение | Поля в сущностях | Где хранится связь |
+|---|---|---|
+| 1:N | `Reference` в сущности на стороне N, `OneToMany` в сущности на стороне 1 | Поле внешнего ключа в таблице на стороне N, например `PUBLISHER_ID` книги |
+| 1:1 | `Reference` в обеих сущностях | Поле внешнего ключа в одной из таблиц, например `COVER_ID` книги |
+| N:M | `ManyToMany` в обеих сущностях | Таблица-связка из первичных ключей двух сущностей |
+| N:M с дополнительными данными | Промежуточная сущность с двумя полями `Reference`, `OneToMany` в исходных сущностях | Таблица промежуточной сущности, например `StoreBookTable` |
+
 ## Пример схемы отношений
 
-Рассмотрим пример с сущностями: книга `Book`, автор `Author`, издательство `Publisher`, обложка `Cover` и магазин `Store`. Схема отношений сущностей:
+В примерах участвуют пять сущностей — книга `Book`, автор `Author`, издательство `Publisher`, обложка `Cover` и магазин `Store`. Схема отношений сущностей:
 
 -  книга принадлежит одному издательству,
 
@@ -23,7 +32,11 @@ description: 'Отношения между сущностями. ORM Bitrix Fra
 
 -  книга продается в нескольких магазинах.
 
-Сущности относятся к модулю `somepartner.mybookscatalog` и находятся в пространстве имен `SomePartner\MyBooksCatalog`. Полное описание `BookTable` и состав полей связанных сущностей смотрите в статье [Концепция ORM](./orm-concepts.md#book-model). Перед обращением к классам подключите модуль вызовом `Loader::includeModule('somepartner.mybookscatalog')` — подробнее в разделе [Подключить модуль сущности](./orm-concepts.md#include-module). Примеры ниже показывают классы частично: только поля, которые нужны для описываемой связи. Обложка `Cover` в основную модель не входит и нужна только для примера связи «один к одному».
+Сущности относятся к модулю `somepartner.mybookscatalog` и находятся в пространстве имен `SomePartner\MyBooksCatalog`. Полное описание `BookTable` и состав полей связанных сущностей смотрите в статье [Концепция ORM](./orm-concepts.md#book-model). Перед обращением к классам подключите модуль вызовом `Loader::includeModule('somepartner.mybookscatalog')` — подробнее в разделе [Подключить модуль сущности](./orm-concepts.md#include-module).
+
+Примеры ниже показывают классы частично, только с полями, которые нужны для описываемой связи. Комментарий `// Остальные поля сущности` в коде заменяет поля из описания модели. Обложка `Cover` в основную модель не входит и нужна только для примера связи «один к одному».
+
+Методы `fetchObject()` и `wakeUpObject()` возвращают объекты системных классов `EO_Book`, `EO_Publisher`, `EO_Author` и других. ORM создает эти классы по описанию сущностей. Методы объектов для полей отношений, например `getPublisher()` и `addToBooks()`, ORM формирует по именам полей — подробнее в статье [Объекты](./objects.md).
 
 {% note info "" %}
 
@@ -33,31 +46,37 @@ description: 'Отношения между сущностями. ORM Bitrix Fra
 
 ## Отношение 1:N, «один ко многим»
 
-Одна запись в таблице может соответствовать множеству записей в другой. В Bitrix Framework для описания таких связей используются специальные конструкторы:
+Одна запись в таблице может соответствовать множеству записей в другой. Такую связь описывают два поля:
 
--  `Reference` для связи «многие к одному»,
+-  `Reference` — сторона «многие к одному», поле в сущности, которая хранит внешний ключ,
 
--  `OneToMany` для связи «один ко многим».
+-  `OneToMany` — сторона «один ко многим», поле в связанной сущности.
 
 Параметры конструктора `Reference`:
 
--  `$name` — имя поля,
+-  `$name` — имя поля, строка,
 
--  `$referenceEntity` — класс связываемой сущности,
+-  `$referenceEntity` — связываемая сущность: имя класса, например `PublisherTable::class`, или объект `Bitrix\Main\ORM\Entity`,
 
--  `$referenceFilter` — обязательное непустое условие соединения таблиц. Префиксы `this.` и `ref.` указывают на поля текущей и связанной сущностей. Дополнительные условия можно включить в этот же фильтр. Доступны INNER JOIN, LEFT JOIN и RIGHT JOIN. По умолчанию используется LEFT JOIN; тип соединения можно изменить методом `configureJoinType`.
+-  `$referenceFilter` — условие соединения таблиц, обычно результат `Join::on()`.
+
+В условии соединения префиксы `this.` и `ref.` указывают на поля текущей и связанной сущностей. Дополнительные условия добавьте в цепочку после `Join::on()` — подробнее в разделе «Условия JOIN» статьи [Выборка данных](./querying-data.md). Пустое условие конструктор не принимает и выбрасывает исключение `Bitrix\Main\ArgumentException`.
+
+Тип соединения поля `Reference` по умолчанию — LEFT JOIN. Метод `configureJoinType()` меняет тип соединения. Метод принимает значения `INNER`, `LEFT`, `LEFT OUTER`, `RIGHT` и `RIGHT OUTER` в любом регистре или константы `Join::TYPE_*`. Четвертый параметр конструктора `$parameters` устарел, вместо него используйте методы `configure*`.
 
 Параметры конструктора `OneToMany`:
 
--  `$name` — имя поля,
+-  `$name` — имя поля, строка,
 
--  `$referenceEntity` — класс связываемой сущности,
+-  `$referenceEntity` — связываемая сущность: имя класса или объект `Bitrix\Main\ORM\Entity`,
 
--  `$referenceName` — имя поля `Reference` в связанной сущности.
+-  `$referenceName` — имя поля `Reference` в связанной сущности, которое указывает на текущую сущность.
+
+Если тип соединения поля `OneToMany` не задан, ORM берет тип соединения поля `Reference`, имя которого передано в `$referenceName`.
 
 ### Пример связи «многие к одному»
 
-Каждая книга издается в одном издательстве, что создает отношение «N книг — 1 издательство». Для реализации этой связи необходимо:
+Каждая книга издается в одном издательстве, что создает отношение «N книг — 1 издательство». Чтобы описать эту связь, нужно:
 
 -  добавить поле `PUBLISHER_ID` в таблицу книг,
 
@@ -65,21 +84,22 @@ description: 'Отношения между сущностями. ORM Bitrix Fra
 
 #### 1\. Определить поле `PUBLISHER_ID`
 
-Добавим поле `PUBLISHER_ID` в класс `BookTable`. Это поле будет указывать на конкретное издательство.
-
-`PUBLISHER_ID` — это внешний ключ, связывающий таблицу книг с таблицей издательств.
+Добавьте в карту полей `BookTable` целочисленное поле `PUBLISHER_ID` — внешний ключ, который хранит ID издательства книги:
 
 ```php
 namespace SomePartner\MyBooksCatalog;
 
+use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
 
-class BookTable extends \Bitrix\Main\ORM\Data\DataManager
+class BookTable extends DataManager
 {
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            new IntegerField('PUBLISHER_ID'), // Поле PUBLISHER_ID, целочисленное
+            // Остальные поля сущности
+
+            new IntegerField('PUBLISHER_ID'), // ID издательства книги
         ];
     }
 }
@@ -87,31 +107,31 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager
 
 #### 2\. Определить связь «многие к одному»
 
-Для описания связи «книги — издательство» используем класс `Reference` из пространства имен `Bitrix\Main\ORM\Fields\Relations`. Этот класс позволяет связать две таблицы по определенному условию.
-
-Условие соединения `Join::on` указывает, что поле `PUBLISHER_ID` в таблице книг должно соответствовать полю `ID` в таблице издательств.
+Опишите в `BookTable` поле `Reference` с именем `PUBLISHER`. Условие `Join::on('this.PUBLISHER_ID', 'ref.ID')` связывает поле `PUBLISHER_ID` книги с полем `ID` издательства. Тип соединения INNER JOIN задан так же, как в описании модели:
 
 ```php
 namespace SomePartner\MyBooksCatalog;
 
+use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 
-class BookTable extends \Bitrix\Main\ORM\Data\DataManager
+class BookTable extends DataManager
 {
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            new IntegerField('PUBLISHER_ID'), // Поле PUBLISHER_ID, целочисленное
+            // Остальные поля сущности
 
-            // Определение связи с таблицей PublisherTable
+            new IntegerField('PUBLISHER_ID'),
+
             (new Reference(
-                'PUBLISHER', // Имя связи
-                PublisherTable::class, // Класс связанной таблицы
-                Join::on('this.PUBLISHER_ID', 'ref.ID') // Условие соединения: связывает PUBLISHER_ID с ID в PublisherTable
+                'PUBLISHER', // Имя поля связи
+                PublisherTable::class, // Связанная сущность
+                Join::on('this.PUBLISHER_ID', 'ref.ID') // Условие соединения
             ))
-                ->configureJoinType('inner'), // Установка типа соединения: INNER JOIN
+                ->configureJoinType('inner'),
         ];
     }
 }
@@ -119,42 +139,38 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager
 
 #### 3\. Получить объект издательства через книгу
 
-Чтобы получить объект сущности `Publisher` через объект `Book`, используем метод `getPublisher()`. Этот метод автоматически загружает связанное издательство.
+Метод `getPublisher()` возвращает объект издательства, если поле `PUBLISHER` загружено. Чтобы загрузить его вместе с книгой, добавьте имя поля в параметр `select`. Если поле не загружено, метод возвращает `null`. Для уже полученной книги издательство загружает метод `fillPublisher()` — подробнее в разделе [Заполнить объект](./objects.md#fill).
+
+**Пример.** Код выбирает книгу с ID 1 вместе с издательством и выводит название издательства.
 
 ```php
 $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1, [
-    'select' => ['*', 'PUBLISHER'], // Выбор всех полей книги и связанных данных издательства
+    'select' => ['*', 'PUBLISHER'], // Все поля книги и поля издательства
 ])->fetchObject();
 
-echo $book->getPublisher()->getTitle(); // Вывод названия издательства
-// Ожидаемый вывод: Publisher Title 253
+echo $book->getPublisher()->getTitle(); // Publisher Title 253
 ```
 
 #### 4\. Установить связь между книгой и издательством
 
-Чтобы установить связь между книгой и издательством, передадим объект `Publisher` в сеттер `setPublisher()`. Значение поля `PUBLISHER_ID` заполнится автоматически.
+Чтобы связать книгу с издательством, передайте объект издательства в метод `setPublisher()`. Метод записывает первичный ключ издательства в поле `PUBLISHER_ID` книги. Метод `save()` книги сохраняет новое значение в базе данных.
+
+**Пример.** Код привязывает книгу с ID 1 к издательству с ID 253. Метод `wakeUpObject()` создает объект издательства по первичному ключу без запроса к базе данных.
 
 ```php
-// Инициализация объекта издательства
 $publisher = \SomePartner\MyBooksCatalog\PublisherTable::wakeUpObject(253);
-// Метод wakeUpObject создает объект с заданным первичным ключом без загрузки данных из базы
 
-// Инициализация объекта книги
-$book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)->fetchObject();
-// Метод getByPrimary загружает объект книги с первичным ключом 1 из базы данных
+$book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)
+    ->fetchObject()
+;
 
-// Установка значения объекта издательства для книги
 $book->setPublisher($publisher);
-// Метод setPublisher устанавливает связь между книгой и издательством
-
-// Сохранение изменений в базе данных
 $book->save();
-// Метод save сохраняет изменения в объекте книги, включая обновленную связь с издательством
 ```
 
 #### 5\. Результат для массивов
 
-Если требуется получить данные в виде массива, результат будет содержать все поля книги и связанные данные издательства.
+**Пример.** Метод `fetch()` возвращает массив с полями книги и полями издательства. Имена полей издательства начинаются с кода сущности книги и имени поля связи `SOMEPARTNER_MYBOOKSCATALOG_BOOK_PUBLISHER_`.
 
 ```php
 $result = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1, [
@@ -180,7 +196,9 @@ Array (
 
 #### 6\. Как использовать алиасы для полей
 
-По умолчанию поля связанной сущности получают уникальные имена, основанные на пространстве имен и имени класса. Чтобы сделать имена более короткими и удобными, можно использовать алиасы. Например, вместо `SOMEPARTNER_MYBOOKSCATALOG_BOOK_PUBLISHER_TITLE` можно использовать `PUB_TITLE`.
+По умолчанию поля связанной сущности получают уникальные имена, основанные на пространстве имен и имени класса. Чтобы получить короткие имена, передайте в `select` префикс ключом массива, а имя поля связи — значением.
+
+**Пример.** Ключ `PUB_` задает префикс для полей издательства. Вместо `SOMEPARTNER_MYBOOKSCATALOG_BOOK_PUBLISHER_TITLE` массив содержит ключ `PUB_TITLE`.
 
 ```php
 $result = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1, [
@@ -206,58 +224,54 @@ Array (
 
 ### Пример связи «один ко многим»
 
-Для двунаправленной связи «один ко многим» рассмотрим пример взаимодействия между двумя таблицами: издательство `Publisher` и книги `Book`. Каждое издательство может иметь множество книг, что соответствует типу связи `OneToMany`.
+Поле `OneToMany` описывает обратную сторону связи «многие к одному». У издательства может быть много книг, и поле `BOOKS` издательства опирается на поле `PUBLISHER` книги из предыдущего примера.
 
 #### 1\. Определить класс PublisherTable
 
-Создадим класс `PublisherTable`, который представляет собой таблицу издательств в базе данных. Этот класс наследуется от `DataManager` — основного класса для работы с данными в Bitrix Framework.
+Опишите в `PublisherTable` поле `BOOKS`. Третий аргумент конструктора — имя поля `Reference` в `BookTable`, которое указывает на издательство:
 
 ```php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Data\DataManager; // Импорт класса DataManager для работы с данными
-use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связей «один ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 
-class PublisherTable extends DataManager // Класс PublisherTable наследует DataManager для работы с данными
+class PublisherTable extends DataManager
 {
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение связи «один ко многим» с таблицей BookTable
-            (new OneToMany('BOOKS', BookTable::class, 'PUBLISHER'))
-                ->configureJoinType('inner') // Установка типа соединения: INNER JOIN
+            // Остальные поля сущности
+
+            new OneToMany('BOOKS', BookTable::class, 'PUBLISHER'),
         ];
     }
 }
 ```
 
+Тип соединения у поля `BOOKS` не задан, поэтому ORM берет его из поля `PUBLISHER` книги — INNER JOIN. Издательство без книг в выборку с полем `BOOKS` не попадет. Чтобы выбирать и такие издательства, вызовите у поля `BOOKS` метод `configureJoinType('left')`.
+
 #### 2\. Выбрать данные через связь
 
-Используем связь, чтобы получить данные из таблицы издательств и связанных с ними книг.
-
-Метод `getByPrimary` возвращает запись по первичному ключу  — в данном случае `ID=253`.
-
-Цикл `foreach` проходит по всем книгам, связанным с текущим издательством, и выводит их названия.
+**Пример.** Код выбирает издательство с ID 253 вместе с книгами и выводит названия книг.
 
 ```php
 $publisher = \SomePartner\MyBooksCatalog\PublisherTable::getByPrimary(253, [
-    'select' => ['*', 'BOOKS'] // Выбор всех полей издательства и связанных данных книг
+    'select' => ['*', 'BOOKS'], // Все поля издательства и поля его книг
 ])->fetchObject();
 
-// Перебор всех книг, связанных с издательством
 foreach ($publisher->getBooks() as $book)
 {
-    echo $book->getTitle(); // Вывод названия каждой книги
+    echo $book->getTitle();
 }
 // Цикл выведет "Title 1" и "Title 2"
 ```
 
-В объектной модели все связанные данные автоматически объединяются в одну коллекцию. Например, если у издательства есть две книги, результат будет представлен в виде одного объекта, содержащего коллекцию этих книг.
+Метод `fetchObject()` возвращает один объект издательства, даже если у него несколько книг. Метод `getBooks()` возвращает коллекцию книг — объект класса `EO_Book_Collection`, если свой класс коллекции не задан. Без поля `BOOKS` в `select` метод `getBooks()` возвращает `null`. Методы коллекции описаны в статье [Коллекции](./collections.md).
 
 #### 3\. Получить данные в виде массива
 
-Если запросить данные в виде массива, то результат будет содержать дублирование данных об издательстве для каждой связанной книги.
+**Пример.** Метод `fetchAll()` возвращает по строке на каждую книгу издательства. Поля издательства повторяются в каждой строке.
 
 ```php
 $data = \SomePartner\MyBooksCatalog\PublisherTable::getByPrimary(253, [
@@ -294,98 +308,86 @@ Array (
 */
 ```
 
+Строк в результате столько, сколько связанных книг. Поэтому ограничение `limit` в запросе со связью 1:N считает строки, а не издательства — как обойти это ограничение, читайте в разделе [Решение проблем](./querying-data.md#decompose) статьи «Выборка данных».
+
 #### 4\. Как добавить объект
 
-Чтобы добавить книгу в коллекцию книг издательства, используйте метод `addToBooks`. Можно передать как существующий, так и новый объект книги. При вызове `save()` у издательства ORM сохраняет добавленные объекты коллекции.
+Чтобы добавить книгу в коллекцию книг издательства, используйте метод `addToBooks()`. Метод принимает существующий или новый объект книги и записывает издательство в поле `PUBLISHER` книги. Метод `save()` издательства сохраняет все объекты коллекции `BOOKS`, в том числе добавленные. Объект книги без изменений запрос на обновление не выполняет.
+
+**Пример.** Код добавляет книгу с ID 2 к издательству с ID 253.
 
 ```php
-// Инициализация объекта издательства
 $publisher = \SomePartner\MyBooksCatalog\PublisherTable::getByPrimary(253)
     ->fetchObject()
 ;
-// Метод getByPrimary загружает объект издательства с первичным ключом 253 из базы данных
 
-// Инициализация объекта книги
 $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(2)
     ->fetchObject()
 ;
-// Метод getByPrimary загружает объект книги с первичным ключом 2 из базы данных
 
-// Добавление книги в коллекцию книг издательства
 $publisher->addToBooks($book);
-// Метод addToBooks добавляет объект книги в коллекцию книг, связанных с издательством
-
-// Сохранение изменений в базе данных
 $publisher->save();
-// Метод save сохраняет изменения в объекте издательства, включая обновленную коллекцию книг
 ```
 
-Для работы с массивами необходимо использовать стандартный метод ORM `add`.
+Без объектов задайте поле `PUBLISHER_ID` книги. Передайте его в `BookTable::add()` при создании книги или в `BookTable::update()` для существующей книги.
 
 #### 5\. Как удалить связь
 
-Чтобы удалить связь со стороны книги, используйте метод `setPublisher(null)` для разрыва связи между книгой и издательством. Это не удаляет книгу из базы данных.
+Со стороны книги связь удаляет вызов `setPublisher(null)`. Метод записывает `null` в поле `PUBLISHER_ID`, запись книги остается в базе данных.
 
-Чтобы удалить связь со стороны издательства, используйте методы `removeFromBooks` или `removeAllBooks`.
+Столбец внешнего ключа должен допускать `NULL`. Метод `createDbTable()` создает столбцы как `NOT NULL`, поэтому для такой таблицы MySQL в строгом режиме вернет ошибку, а в нестрогом режиме запишет в столбец `0`. Если связь нужно удалять, разрешите `NULL` в столбцах `PUBLISHER_ID` и `COVER_ID` при создании таблицы.
+
+**Пример.** Код отвязывает книгу с ID 2 от издательства.
 
 ```php
-// Инициализация объекта книги
-$book = \SomePartner\MyBooksCatalog\Book::wakeUp(2);
-// Метод wakeUp создает объект книги с заданным идентификатором без загрузки данных из базы
-
-// Инициализация объекта издательства
-$publisher = \SomePartner\MyBooksCatalog\PublisherTable::getByPrimary(253, [
-    'select' => ['*', 'BOOKS'] // Выбор всех полей издательства и связанных данных книг
-])->fetchObject();
-
-// Удаление одной конкретной книги из коллекции книг издательства
-$publisher->removeFromBooks($book);
-// Метод removeFromBooks удаляет связь между издательством и указанной книгой
-
-// Удаление всех книг из коллекции книг издательства
-$publisher->removeAllBooks();
-// Метод removeAllBooks удаляет все связи между издательством и его книгами
-
-// Сохранение изменений в базе данных
-$publisher->save();
-// Метод save сохраняет изменения в объекте издательства, обновляя поле PUBLISHER_ID в книгах на пустое значение
+$book = \SomePartner\MyBooksCatalog\BookTable::wakeUpObject(2);
+$book->setPublisher(null);
+$book->save();
 ```
 
-Операции `removeFrom` и `removeAll` недоступны для массивов, потому что они требуют объектной модели для управления связями. Для работы с массивами необходимо использовать стандартные методы ORM `update` и `delete`.
+Со стороны издательства связи удаляют методы `removeFromBooks()` и `removeAllBooks()`. При сохранении издательства ORM записывает `null` в поле `PUBLISHER_ID` отвязанных книг. Если для поля `BOOKS` задана политика удаления `CascadePolicy::FOLLOW`, ORM удаляет отвязанные книги — подробнее в разделе [Сохранение и удаление связанных объектов](#cascade).
 
-#### 6\. Как проверить заполнение поля отношений
+Метод `removeFromBooks()` меняет объект книги, который передан в аргументе. При сохранении издательства ORM сохраняет объект с тем же ID из коллекции `BOOKS`. Поэтому загрузите поле `BOOKS` и передайте в метод объект из коллекции, как в примере ниже. Если коллекция не загружена, ORM сохраняет вместо переданного объекта новый объект книги без изменений и не записывает `null` в поле `PUBLISHER_ID`.
 
-Если вы не уверены, что поле отношений уже загружено, используйте метод `fill`.
+**Пример.** Код выбирает издательство с книгами и отвязывает от него книгу с ID 2.
 
 ```php
-// Инициализация объекта книги
-$book = \SomePartner\MyBooksCatalog\BookTable::wakeUpObject(2);
-// Метод wakeUpObject создает объект книги с заданным идентификатором без загрузки данных из базы
+$publisher = \SomePartner\MyBooksCatalog\PublisherTable::getByPrimary(253, [
+    'select' => ['*', 'BOOKS'],
+])->fetchObject();
 
-// Инициализация объекта издательства с заполнением только первичного ключа
+$book = $publisher->getBooks()->getByPrimary(2);
+
+if ($book)
+{
+    $publisher->removeFromBooks($book);
+    $publisher->save();
+}
+```
+
+Метод `removeAllBooks()` отвязывает все книги издательства. Если поле `BOOKS` не загружено, метод загружает его перед удалением связей.
+
+Методы `removeFrom` и `removeAll` есть только у объектов. Чтобы отвязать книгу без объектов, запишите `null` в поле `PUBLISHER_ID` методом `BookTable::update()`.
+
+#### 6\. Как загрузить поле отношения
+
+Метод `getBooks()` возвращает только загруженные данные. У объекта, созданного методом `wakeUpObject()`, поле `BOOKS` не загружено. Метод `fillBooks()` загружает книги издательства из базы данных и возвращает коллекцию. После загрузки повторный вызов `fillBooks()` не обращается к базе данных. Подробнее о методе `fill` — в разделе [Заполнить объект](./objects.md#fill).
+
+**Пример.** Код создает объект издательства по ID, загружает его книги и выводит их названия.
+
+```php
 $publisher = \SomePartner\MyBooksCatalog\PublisherTable::wakeUpObject(253);
-// Метод wakeUpObject создает объект издательства с заданным идентификатором без загрузки данных из базы
 
-// Заполнение поля отношения книг
-$publisher->fillBooks();
-// Метод fillBooks загружает связанные книги для данного издательства
-
-// Удаление конкретной книги из коллекции книг издательства
-$publisher->removeFromBooks($book);
-// Метод removeFromBooks удаляет связь между издательством и указанной книгой
-
-// Удаление всех книг из коллекции книг издательства
-$publisher->removeAllBooks();
-// Метод removeAllBooks удаляет все связи между издательством и его книгами
-
-// Сохранение изменений в базе данных
-$publisher->save();
-// Метод save сохраняет изменения в объекте издательства, обновляя поле PUBLISHER_ID в книгах на пустое значение
+foreach ($publisher->fillBooks() as $book)
+{
+    echo $book->getTitle();
+}
+// Цикл выведет "Title 1" и "Title 2"
 ```
 
 ## Отношение 1:1, «один к одному»
 
-Отношения 1:1 работают так же, как и 1:N, но с одним отличием: для доступа к связи с обеих сторон в каждом классе описывают поле `Reference` вместо пары `Reference + OneToMany`.
+Отношения 1:1 работают так же, как 1:N, с одним отличием. Для доступа к связи с обеих сторон в каждом классе описывают поле `Reference` вместо пары `Reference` и `OneToMany`.
 
 ### Пример связи «один к одному»
 
@@ -393,45 +395,22 @@ $publisher->save();
 
 #### 1\. Описать сущность Book
 
-Класс `BookTable` представляет таблицу книг в базе данных. Он содержит следующие поля:
-
--  `ID` — первичный ключ таблицы, который автоматически заполняется при создании новой записи,
-
--  `TITLE` — строка, содержащая название книги,
-
--  `COVER_ID` — целое число, которое будет использоваться для связи с таблицей обложек `CoverTable`.
+Добавьте в карту полей `BookTable` целочисленное поле `COVER_ID`, которое хранит ID обложки книги:
 
 ```php
 namespace SomePartner\MyBooksCatalog;
 
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
-use Bitrix\Main\ORM\Fields\StringField;
 
-class BookTable extends DataManager // Класс BookTable наследует DataManager для работы с данными
+class BookTable extends DataManager
 {
-    // Метод для получения имени таблицы
-    public static function getTableName()
-    {
-        return 'my_book'; // Имя таблицы, которая хранит данные о книгах
-    }
-
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение поля ID как первичного ключа с автозаполнением
-            (new IntegerField('ID'))
-                ->configurePrimary(true) // Устанавливает поле как первичный ключ
-                ->configureAutocomplete(true), // Включает автозаполнение
+            // Остальные поля сущности
 
-            // Определение обязательного строкового поля TITLE
-            (new StringField('TITLE'))
-                ->configureRequired(true), // Устанавливает поле как обязательное
-
-            // Определение целочисленного поля COVER_ID
-            (new IntegerField('COVER_ID'))
-            // Это поле может использоваться как ссылка на обложку книги
+            new IntegerField('COVER_ID'), // ID обложки книги
         ];
     }
 }
@@ -439,11 +418,13 @@ class BookTable extends DataManager // Класс BookTable наследует D
 
 #### 2\. Описать сущность Cover
 
-Класс `CoverTable` представляет таблицу обложек в базе данных. Он содержит следующие поля:
+Класс `CoverTable` описывает таблицу обложек. Поля сущности:
 
--  `ID` — первичный ключ таблицы, который автоматически заполняется при создании новой записи,
+-  `ID` — первичный ключ с автоинкрементом,
 
--  `IMAGE_URL` — строка, содержащая URL изображения обложки.
+-  `IMAGE_URL` — адрес изображения обложки, строка.
+
+**Пример.** Класс `CoverTable` с полями `ID` и `IMAGE_URL`.
 
 ```php
 namespace SomePartner\MyBooksCatalog;
@@ -452,26 +433,21 @@ use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\StringField;
 
-class CoverTable extends DataManager // Класс CoverTable наследует DataManager для работы с данными
+class CoverTable extends DataManager
 {
-    // Метод для получения имени таблицы
-    public static function getTableName()
+    public static function getTableName(): string
     {
-        return 'my_cover'; // Имя таблицы, которая хранит данные об обложках
+        return 'my_cover';
     }
 
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение поля ID как первичного ключа с автозаполнением
             (new IntegerField('ID'))
-                ->configurePrimary(true) // Устанавливает поле как первичный ключ
-                ->configureAutocomplete(true), // Включает автозаполнение для поля
+                ->configurePrimary() // Первичный ключ
+                ->configureAutocomplete(), // Автоинкремент
 
-            // Определение строкового поля IMAGE_URL
-            (new StringField('IMAGE_URL'))
-            // Это поле хранит URL изображения обложки
+            new StringField('IMAGE_URL'),
         ];
     }
 }
@@ -479,104 +455,101 @@ class CoverTable extends DataManager // Класс CoverTable наследует
 
 #### 3\. Настроить связь «один к одному»
 
-Для связи «один к одному» между таблицами `BookTable` и `CoverTable` используется поле `Reference`. Это поле позволяет создать связь между таблицами через указанные условия соединения.
+Опишите в `BookTable` поле `Reference` с именем `COVER`. Условие соединения связывает поле `COVER_ID` книги с полем `ID` обложки:
 
 ```php
 namespace SomePartner\MyBooksCatalog;
 
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
-use Bitrix\Main\ORM\Fields\Relations\Reference; // Импорт класса Reference для создания связей между таблицами
-use Bitrix\Main\ORM\Fields\StringField;
-use Bitrix\Main\ORM\Query\Join; // Импорт класса Join для определения условий соединения
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
 
-class BookTable extends DataManager // Класс BookTable наследует DataManager для работы с данными
+class BookTable extends DataManager
 {
-    public static function getTableName()
-    {
-        return 'my_book';
-    }
-
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение поля ID как первичного ключа с автозаполнением
-            (new IntegerField('ID'))
-                ->configurePrimary(true) // Устанавливает поле как первичный ключ
-                ->configureAutocomplete(true), // Включает автозаполнение для поля
+            // Остальные поля сущности
 
-            // Определение обязательного строкового поля TITLE
-            (new StringField('TITLE'))
-                ->configureRequired(true), // Устанавливает поле как обязательное
+            new IntegerField('COVER_ID'),
 
-            // Определение целочисленного поля COVER_ID
-            (new IntegerField('COVER_ID')),
-            // Это поле используется как ссылка на обложку
-
-            // Определение связи с таблицей CoverTable
-            (new Reference(
-                'COVER', // Имя связи
-                CoverTable::class, // Класс таблицы, с которой устанавливается связь
-                Join::on('this.COVER_ID', 'ref.ID') // Условие соединения: связывает COVER_ID с ID в CoverTable
-            ))
-                ->configureJoinType('inner') // Устанавливает тип соединения как внутреннее (inner join)
-            // Это означает, что будут выбраны только те записи, у которых есть соответствующая обложка
+            new Reference('COVER', CoverTable::class, Join::on('this.COVER_ID', 'ref.ID')),
         ];
     }
 }
 ```
 
-Чтобы получить книгу через обложку, добавьте обратное поле `Reference` в `CoverTable`. Оно использует то же поле `COVER_ID` из таблицы книг:
+Чтобы получить книгу через обложку, добавьте обратное поле `Reference` в `CoverTable`. Условие соединения использует то же поле `COVER_ID` книги:
 
 ```php
 namespace SomePartner\MyBooksCatalog;
 
 use Bitrix\Main\ORM\Data\DataManager;
-use Bitrix\Main\ORM\Fields\IntegerField;
-use Bitrix\Main\ORM\Fields\StringField;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 
 class CoverTable extends DataManager
 {
-    public static function getTableName()
-    {
-        return 'my_cover';
-    }
-
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            (new IntegerField('ID'))
-                ->configurePrimary(true)
-                ->configureAutocomplete(true),
-            new StringField('IMAGE_URL'),
+            // Поля ID и IMAGE_URL из предыдущего шага
+
             new Reference('BOOK', BookTable::class, Join::on('this.ID', 'ref.COVER_ID')),
         ];
     }
 }
 ```
 
+Поле `BOOK` обложки служит для выборки. Метод `setBook()` не меняет поле `COVER_ID` книги. Условие связи ссылается на первичный ключ обложки, а ORM не меняет первичный ключ сохраненного объекта. Связь задавайте со стороны книги методом `setCover()`.
+
 Чтобы выполнить пример, добавьте поле `COVER_ID` в таблицу `my_book` и создайте таблицу `my_cover`. При установке модуля включите `CoverTable` в список создаваемых таблиц. Метод `createDbTable()` не добавляет поля в уже существующую таблицу, поэтому для установленного модуля потребуется отдельно изменить схему базы данных. Чтобы каждая обложка соответствовала не более чем одной книге, создайте уникальное ограничение для `my_book.COVER_ID`.
+
+#### 4\. Получить и задать обложку книги
+
+Методы поля `COVER` работают так же, как методы поля `PUBLISHER` в связи «многие к одному». Метод `getCover()` возвращает обложку, если поле `COVER` загружено. Метод `setCover()` записывает ID обложки в поле `COVER_ID` книги.
+
+**Пример.** Код выбирает книгу с ID 1 вместе с обложкой и выводит адрес изображения.
+
+```php
+$book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1, [
+    'select' => ['*', 'COVER'],
+])->fetchObject();
+
+echo $book->getCover()->getImageUrl();
+```
+
+**Пример.** Код привязывает к книге с ID 1 обложку с ID 5.
+
+```php
+$cover = \SomePartner\MyBooksCatalog\CoverTable::wakeUpObject(5);
+
+$book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)
+    ->fetchObject()
+;
+
+$book->setCover($cover);
+$book->save();
+```
 
 ## Отношение N:M, «многие ко многим»
 
-Для описания отношения «многие ко многим» используется поле `ManyToMany`, которое автоматически создает временную сущность для работы с промежуточной таблицей. Эта сущность скрыта от пользователя, но позволяет добавлять, удалять и обновлять связи.
+Отношение «многие ко многим» описывает поле `ManyToMany`. Поле создает временную сущность для работы с промежуточной таблицей. Эта сущность скрыта от разработчика, через нее ORM добавляет и удаляет связи.
 
-В конструктор `ManyToMany` передаются название поля и класс партнерской сущности. Для простых отношений достаточно вызвать метод `configureTableName` и указать имя таблицы, в которой хранятся связующие данные.
+Конструктор `ManyToMany` принимает имя поля и класс связанной сущности. Для простых отношений достаточно вызвать метод `configureTableName` и указать имя таблицы, в которой хранятся связующие данные. Если не задать ни имя таблицы, ни класс сущности-посредника, метод `getMediatorEntity()` поля выбрасывает исключение `Bitrix\Main\ArgumentException` при первом обращении к связи.
 
 Если кроме первичных ключей исходных сущностей есть дополнительные данные, используйте вместо поля `ManyToMany` тип `OneToMany`.
 
 ### Пример простых отношений без вспомогательных данных
 
-Рассмотрим пример, где у книги может быть несколько авторов, а у автора — несколько книг. Для этого создадим две таблицы: книги `BookTable` и авторы `AuthorTable`.
+Рассмотрим пример, где у книги может быть несколько авторов, а у автора — несколько книг. В примере участвуют две сущности — книги `BookTable` и авторы `AuthorTable`.
 
 #### 1\. Описать связь «книга — автор»
 
 Используемые параметры:
 
--  `AUTHORS` — имя свойства, через которое будет осуществляться доступ к связанным авторам,
+-  `AUTHORS` — имя поля, через которое объект книги получает связанных авторов,
 
 -  `AuthorTable::class` — класс таблицы, с которой устанавливается связь,
 
@@ -586,17 +559,18 @@ class CoverTable extends DataManager
 // Файл /local/modules/somepartner.mybookscatalog/lib/booktable.php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
-class BookTable extends \Bitrix\Main\ORM\Data\DataManager // Класс BookTable наследует DataManager для работы с данными
+class BookTable extends DataManager
 {
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение связи «многие ко многим» с таблицей AuthorTable
+            // Остальные поля сущности
+
             (new ManyToMany('AUTHORS', AuthorTable::class))
-                ->configureTableName('my_book_author') // Указание имени таблицы-связки
+                ->configureTableName('my_book_author'), // Имя таблицы-связки
         ];
     }
 }
@@ -606,7 +580,7 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager // Класс BookTabl
 
 Используемые параметры:
 
--  `BOOKS` — имя свойства, через которое будет осуществляться доступ к связанным книгам,
+-  `BOOKS` — имя поля, через которое объект автора получает связанные книги,
 
 -  `BookTable::class` — класс таблицы, с которой устанавливается связь,
 
@@ -616,17 +590,18 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager // Класс BookTabl
 // Файл /local/modules/somepartner.mybookscatalog/lib/authortable.php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
-class AuthorTable extends \Bitrix\Main\ORM\Data\DataManager // Класс AuthorTable наследует DataManager для работы с данными
+class AuthorTable extends DataManager
 {
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение связи «многие ко многим» с таблицей BookTable
+            // Остальные поля сущности
+
             (new ManyToMany('BOOKS', BookTable::class))
-                ->configureTableName('my_book_author') // Указание имени таблицы-связки
+                ->configureTableName('my_book_author'), // Имя таблицы-связки
         ];
     }
 }
@@ -657,152 +632,146 @@ INSERT INTO my_book_author (BOOK_ID, AUTHOR_ID) VALUES
 
 #### 4\. Как выглядит автоматически созданная временная сущность
 
-В памяти автоматически создается временная сущность для работы с промежуточной таблицей. Это типовая сущность с направленными отношениями 1:N к исходным сущностям-партнерам, где:
+ORM создает в памяти сущность-посредник для работы с таблицей-связкой. Для поля `AUTHORS` книги класс посредника называется `MediatorFromBookToAuthorViaAuthorsTable`. Имя складывается из имен двух сущностей и имени поля связи. Поле `BOOKS` автора создает для той же таблицы собственного посредника `MediatorFromAuthorToBookViaBooksTable`.
 
--  `BOOK_ID` и `AUTHOR_ID` — первичные ключи из таблиц `BookTable` и `AuthorTable`,
+Посредник содержит поля:
 
--  `Reference` — ссылки на исходные таблицы.
+-  `BOOK_ID` и `AUTHOR_ID` — первичные ключи книги и автора. Тип поля совпадает с типом первичного ключа исходной сущности,
+
+-  `BOOK` и `AUTHOR` — ссылки `Reference` на исходные сущности. Тип соединения ссылок совпадает с типом соединения поля `ManyToMany`, по умолчанию LEFT JOIN.
+
+Описание посредника в виде класса выглядит так:
 
 ```php
-class ... extends \Bitrix\Main\ORM\Data\DataManager
+class MediatorFromBookToAuthorViaAuthorsTable extends DataManager
 {
-    // Метод для получения имени таблицы
-    public static function getTableName()
+    public static function getTableName(): string
     {
         return 'my_book_author'; // Имя таблицы-связки
     }
 
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение поля BOOK_ID как первичного ключа
             (new IntegerField('BOOK_ID'))
                 ->configurePrimary(true),
 
-            // Определение ссылки на таблицу BookTable
-            (new Reference('BOOK', BookTable::class,
-                Join::on('this.BOOK_ID', 'ref.ID')))
-                ->configureJoinType('inner'),
+            new Reference('BOOK', BookTable::class, Join::on('this.BOOK_ID', 'ref.ID')),
 
-            // Определение поля AUTHOR_ID как первичного ключа
             (new IntegerField('AUTHOR_ID'))
                 ->configurePrimary(true),
 
-            // Определение ссылки на таблицу AuthorTable
-            (new Reference('AUTHOR', AuthorTable::class,
-                Join::on('this.AUTHOR_ID', 'ref.ID')))
-                ->configureJoinType('inner'),
+            new Reference('AUTHOR', AuthorTable::class, Join::on('this.AUTHOR_ID', 'ref.ID')),
         ];
     }
 }
 ```
 
-Имена полей формируются на основе имен сущностей и их первичных ключей.
+Имена полей посредника ORM формирует из имен сущностей и их первичных ключей:
 
-```php
-new IntegerField('BOOK_ID') - snake_case от Book + primary поле ID
-new Reference('BOOK') - snake_case от Book
-new IntegerField('AUTHOR_ID') - snake_case от Author + primary поле ID
-new Reference('AUTHOR') - snake_case от Author
+```text
+BOOK_ID    — имя сущности Book в snake_case и верхнем регистре + поле первичного ключа ID
+BOOK       — имя сущности Book в snake_case и верхнем регистре
+AUTHOR_ID  — имя сущности Author в snake_case и верхнем регистре + поле первичного ключа ID
+AUTHOR     — имя сущности Author в snake_case и верхнем регистре
 ```
 
-#### 5\. Как явно задать имена полей
+#### 5\. Как задать свои имена полей
 
-Если необходимо явно задать имена полей или работать со сложными первичными ключами, используйте конфигурирующие методы `configure`.
+Если имена столбцов таблицы-связки отличаются от стандартных или первичный ключ сущности состоит из нескольких полей, задайте имена методами поля `ManyToMany`:
 
-Метод `configureLocalPrimary` указывает, как будет называться привязка к полю из первичного ключа текущей сущности. Аналогично, `configureRemotePrimary` задает соответствие полей первичного ключа сущности-партнера. Методы `configureLocalReference` и `configureRemoteReference` задают имена референсов к исходным сущностям.
+-  `configureLocalPrimary($fieldName, $mediatorFieldName)` — связывает поле первичного ключа текущей сущности `$fieldName` со столбцом таблицы-связки `$mediatorFieldName`. Для составного ключа вызовите метод для каждого поля ключа,
 
-Описание связи «книга — автор»:
+-  `configureRemotePrimary($fieldName, $mediatorFieldName)` — связывает поле первичного ключа связанной сущности со столбцом таблицы-связки,
+
+-  `configureLocalReference($name)` — задает имя ссылки посредника на текущую сущность,
+
+-  `configureRemoteReference($name)` — задает имя ссылки посредника на связанную сущность.
+
+**Пример.** Поле `AUTHORS` книги работает с таблицей-связкой, где столбцы называются `MY_BOOK_ID` и `MY_AUTHOR_ID`.
 
 ```php
 // Файл /local/modules/somepartner.mybookscatalog/lib/booktable.php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
-class BookTable extends \Bitrix\Main\ORM\Data\DataManager // Класс BookTable наследует DataManager для работы с данными
+class BookTable extends DataManager
 {
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение связи "многие ко многим" с таблицей AuthorTable
+            // Остальные поля сущности
+
             (new ManyToMany('AUTHORS', AuthorTable::class))
-                ->configureTableName('my_book_author') // Указание имени таблицы-связки
-                ->configureLocalPrimary('ID', 'MY_BOOK_ID') // Указание локального первичного ключа и его соответствия в таблице-связке
-                ->configureLocalReference('MY_BOOK') // Указание локальной ссылки
-                ->configureRemotePrimary('ID', 'MY_AUTHOR_ID') // Указание удаленного первичного ключа и его соответствия в таблице-связке
-                ->configureRemoteReference('MY_AUTHOR') // Указание удаленной ссылки
+                ->configureTableName('my_book_author')
+                ->configureLocalPrimary('ID', 'MY_BOOK_ID') // ID книги в таблице-связке
+                ->configureLocalReference('MY_BOOK') // Ссылка посредника на книгу
+                ->configureRemotePrimary('ID', 'MY_AUTHOR_ID') // ID автора в таблице-связке
+                ->configureRemoteReference('MY_AUTHOR'), // Ссылка посредника на автора
         ];
     }
 }
 ```
 
-Описание связи «автор — книга»:
+**Пример.** Поле `BOOKS` автора работает с той же таблицей-связкой. Текущая сущность для этого поля — автор, поэтому локальные и удаленные имена меняются местами.
 
 ```php
 // Файл /local/modules/somepartner.mybookscatalog/lib/authortable.php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Fields\Relations\ManyToMany; // Импорт класса ManyToMany для создания связей «многие ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
-class AuthorTable extends \Bitrix\Main\ORM\Data\DataManager // Класс AuthorTable наследует DataManager для работы с данными
+class AuthorTable extends DataManager
 {
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение связи «многие ко многим» с таблицей BookTable
+            // Остальные поля сущности
+
             (new ManyToMany('BOOKS', BookTable::class))
-                ->configureTableName('my_book_author') // Указание имени таблицы-связки
-                ->configureLocalPrimary('ID', 'MY_AUTHOR_ID') // Указание локального первичного ключа и его соответствия в таблице-связке
-                ->configureLocalReference('MY_AUTHOR') // Указание локальной ссылки
-                ->configureRemotePrimary('ID', 'MY_BOOK_ID') // Указание удаленного первичного ключа и его соответствия в таблице-связке
-                ->configureRemoteReference('MY_BOOK') // Указание удаленной ссылки
+                ->configureTableName('my_book_author')
+                ->configureLocalPrimary('ID', 'MY_AUTHOR_ID') // ID автора в таблице-связке
+                ->configureLocalReference('MY_AUTHOR') // Ссылка посредника на автора
+                ->configureRemotePrimary('ID', 'MY_BOOK_ID') // ID книги в таблице-связке
+                ->configureRemoteReference('MY_BOOK'), // Ссылка посредника на книгу
         ];
     }
 }
 ```
 
-Системная сущность отношений:
+С такими настройками посредник поля `AUTHORS` выглядит так:
 
 ```php
-class ... extends \Bitrix\Main\ORM\Data\DataManager
+class MediatorFromBookToAuthorViaAuthorsTable extends DataManager
 {
-    // Метод для получения имени таблицы
-    public static function getTableName()
+    public static function getTableName(): string
     {
         return 'my_book_author'; // Имя таблицы-связки
     }
 
-    // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
-            // Определение поля MY_BOOK_ID как первичного ключа
             (new IntegerField('MY_BOOK_ID'))
                 ->configurePrimary(true),
 
-            // Определение ссылки на таблицу BookTable
-            (new Reference('MY_BOOK', BookTable::class,
-                Join::on('this.MY_BOOK_ID', 'ref.ID')))
-                ->configureJoinType('inner'),
+            new Reference('MY_BOOK', BookTable::class, Join::on('this.MY_BOOK_ID', 'ref.ID')),
 
-            // Определение поля MY_AUTHOR_ID как первичного ключа
             (new IntegerField('MY_AUTHOR_ID'))
                 ->configurePrimary(true),
 
-            // Определение ссылки на таблицу AuthorTable
-            (new Reference('MY_AUTHOR', AuthorTable::class,
-                Join::on('this.MY_AUTHOR_ID', 'ref.ID')))
-                ->configureJoinType('inner'),
+            new Reference('MY_AUTHOR', AuthorTable::class, Join::on('this.MY_AUTHOR_ID', 'ref.ID')),
         ];
     }
 }
 ```
 
-Как и в случае с `Reference` и `OneToMany`, здесь можно переопределить тип джойна с помощью метода `configureJoinType`. По умолчанию используется тип LEFT.
+Метод `configureJoinType()` поля `ManyToMany` задает тип соединения, который ORM передает обеим ссылкам посредника. По умолчанию — LEFT JOIN.
+
+**Пример.** Поле `AUTHORS` с типом соединения INNER JOIN.
 
 ```php
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
@@ -815,25 +784,19 @@ use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
 #### 6\. Как работать с данными
 
-Работа с данными аналогична отношениям 1:N.
+Связи N:M меняют методы `addTo`, `removeFrom` и `removeAll`, как и связи 1:N. При сохранении объекта ORM добавляет или удаляет записи таблицы-связки. Записи книг и авторов остаются в базе данных. Пример добавления связи — в следующем шаге.
 
-Добавление связи:
-
--  `addToBooks` — добавляет книгу в коллекцию книг автора,
-
--  `save` — сохраняет изменения в базе данных.
+**Пример.** Код удаляет связь автора с ID 18 и книги с ID 1. Метод `save()` удаляет запись из таблицы `my_book_author`.
 
 ```php
-$author = \SomePartner\MyBooksCatalog\AuthorTable::getByPrimary(17)
-    ->fetchObject() // Получаем объект автора с ID 17
+$author = \SomePartner\MyBooksCatalog\AuthorTable::getByPrimary(18)
+    ->fetchObject()
 ;
 
-$book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1)
-    ->fetchObject() // Получаем объект книги с ID 1
-;
+$book = \SomePartner\MyBooksCatalog\BookTable::wakeUpObject(1);
 
-$author->addToBooks($book); // Добавляем книгу к автору
-$author->save(); // Сохраняем изменения
+$author->removeFromBooks($book);
+$author->save();
 ```
 
 Выборка данных:
@@ -841,6 +804,8 @@ $author->save(); // Сохраняем изменения
 -  `'select' => ['*', 'AUTHORS']` — выбирает все поля книги и связанных авторов,
 
 -  `getAuthors()` — возвращает коллекцию авторов.
+
+**Пример.** Код выбирает книгу с ID 2 вместе с авторами и выводит их фамилии.
 
 ```php
 $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(2, [
@@ -856,7 +821,9 @@ foreach ($book->getAuthors() as $author)
 
 #### 7\. Связь между объектами сущностей
 
-Связь со стороны авторов:
+Связь можно добавить с любой стороны. Метод `save()` объекта, у которого вызван `addTo`, добавляет запись в таблицу-связку.
+
+**Пример.** Код добавляет связь со стороны автора — книгу с ID 1 к автору с ID 17.
 
 ```php
 $author = \SomePartner\MyBooksCatalog\AuthorTable::getByPrimary(17)
@@ -871,7 +838,7 @@ $author->addToBooks($book); // Добавляем книгу к автору
 $author->save(); // Сохраняем изменения
 ```
 
-Связь со стороны книг:
+**Пример.** Код добавляет ту же связь со стороны книги — автора с ID 17 к книге с ID 1. Выполните один из двух примеров — оба добавляют одну и ту же запись в таблицу-связку.
 
 ```php
 $author = \SomePartner\MyBooksCatalog\AuthorTable::getByPrimary(17)
@@ -892,11 +859,13 @@ $book->save(); // Сохраняем изменения
 
 #### 1\. Промежуточная таблица
 
-В промежуточной таблице используются параметры:
+Поля промежуточной сущности `StoreBookTable`:
 
 -  `STORE_ID` и `BOOK_ID` — первичные ключи из таблиц `StoreTable` и `BookTable`,
 
 -  `QUANTITY` — дополнительное поле для хранения количества книг.
+
+**Пример.** Класс `StoreBookTable` с составным первичным ключом из полей `STORE_ID` и `BOOK_ID`.
 
 ```php
 namespace SomePartner\MyBooksCatalog;
@@ -910,13 +879,13 @@ use Bitrix\Main\ORM\Query\Join; // Импорт класса Join для опр�
 class StoreBookTable extends DataManager
 {
     // Метод для получения имени таблицы
-    public static function getTableName()
+    public static function getTableName(): string
     {
         return 'my_store_book'; // Имя таблицы, которая хранит данные о книгах в магазинах
     }
 
     // Метод для определения карты полей таблицы
-    public static function getMap()
+    public static function getMap(): array
     {
         return [
             // Определение поля STORE_ID как первичного ключа
@@ -937,7 +906,7 @@ class StoreBookTable extends DataManager
                 Join::on('this.BOOK_ID', 'ref.ID')))
                 ->configureJoinType('inner'),
 
-            // Определение поля QUANTITY для хранения количества Книг
+            // Определение поля QUANTITY для хранения количества книг
             (new IntegerField('QUANTITY'))
                 ->configureDefaultValue(0) // Установка значения по умолчанию
         ];
@@ -945,11 +914,25 @@ class StoreBookTable extends DataManager
 }
 ```
 
-Использование `ManyToMany` ограничено, потому что это поле не предоставляет доступ к вспомогательным данным, таким как `QUANTITY`. С помощью `removeFrom*()` можно удалить связь, а с помощью `addTo*()` — добавить связь со значением `QUANTITY` только по умолчанию, без возможности обновить его.
+Поле `ManyToMany` может работать через описанную сущность-посредник. Для этого передайте ее класс в метод `configureMediatorEntity()`. Имена ссылок посредника по умолчанию — `BOOK` и `STORE`, они совпадают с полями `StoreBookTable`. Если имена другие, задайте их методами `configureLocalReference()` и `configureRemoteReference()`.
+
+Такое поле не дает доступа к вспомогательным данным, таким как `QUANTITY`. Метод `addToStores()` добавляет запись со значением `QUANTITY` по умолчанию, метод `removeFromStores()` удаляет запись. Изменить количество через поле `ManyToMany` нельзя.
+
+**Пример.** Поле `STORES` книги работает через сущность `StoreBookTable`.
+
+```php
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
+
+// В методе getMap класса BookTable
+(new ManyToMany('STORES', StoreTable::class))
+    ->configureMediatorEntity(StoreBookTable::class),
+```
 
 #### 2\. Как работать со вспомогательными данными
 
-Для работы с вспомогательными данными используйте отдельную сущность-посредник.
+Для работы со вспомогательными данными используйте объекты промежуточной сущности `StoreBookTable`.
+
+**Пример.** Код создает запись о наличии книги с ID 1 в магазине с ID 34 в количестве пяти штук.
 
 ```php
 // Объект книги
@@ -970,7 +953,7 @@ $item = \SomePartner\MyBooksCatalog\StoreBookTable::createObject()
 $item->save();
 ```
 
-Обновить количество книг:
+**Пример.** Код меняет количество книги с ID 2 в магазине с ID 33. Первичный ключ `StoreBookTable` составной, поэтому `getByPrimary()` получает массив с ключами `STORE_ID` и `BOOK_ID`.
 
 ```php
 // Объект существующей связи
@@ -984,7 +967,7 @@ $item->setQuantity(12);
 $item->save();
 ```
 
-Удалить связи:
+**Пример.** Код удаляет запись о наличии книги с ID 2 в магазине с ID 33.
 
 ```php
 // Объект существующей связи
@@ -996,7 +979,7 @@ $item = \SomePartner\MyBooksCatalog\StoreBookTable::getByPrimary([
 $item->delete();
 ```
 
-Для массивов используйте стандартные подходы по работе с данными:
+Без объектов используйте методы `add()`, `update()` и `delete()` класса `StoreBookTable`. Первичный ключ передавайте массивом с ключами `STORE_ID` и `BOOK_ID`:
 
 ```php
 // Добавление записи
@@ -1022,21 +1005,18 @@ $item->delete();
 // Файл /local/modules/somepartner.mybookscatalog/lib/booktable.php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связи «один ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 
-// Класс BookTable наследует DataManager для работы с данными
-class BookTable extends \Bitrix\Main\ORM\Data\DataManager
+class BookTable extends DataManager
 {
-    public static function getMap() // Метод определяет карту полей таблицы
+    public static function getMap(): array
     {
         return [
-            // Здесь могут быть другие поля и связи, определенные для таблицы книг
+            // Остальные поля сущности
 
-            // Определение связи «один ко многим» с таблицей StoreBookTable
-            (new OneToMany('STORE_ITEMS', StoreBookTable::class, 'BOOK'))
-            // 'STORE_ITEMS' — имя связи, используемое для доступа к связанным записям
-            // StoreBookTable::class — класс таблицы, с которой устанавливается связь
-            // 'BOOK' — поле в StoreBookTable, используемое для связи с таблицей книг
+            // BOOK — поле Reference в StoreBookTable, которое указывает на книгу
+            new OneToMany('STORE_ITEMS', StoreBookTable::class, 'BOOK'),
         ];
     }
 }
@@ -1048,27 +1028,24 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager
 // Файл /local/modules/somepartner.mybookscatalog/lib/storetable.php
 namespace SomePartner\MyBooksCatalog;
 
-use Bitrix\Main\ORM\Fields\Relations\OneToMany; // Импорт класса OneToMany для создания связи «один ко многим»
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 
-// Класс StoreTable наследует DataManager для работы с данными
-class StoreTable extends \Bitrix\Main\ORM\Data\DataManager
+class StoreTable extends DataManager
 {
-    public static function getMap() // Метод определяет карты полей таблицы
+    public static function getMap(): array
     {
         return [
-            // Здесь могут быть другие поля и связи, определенные для таблицы магазинов
+            // Остальные поля сущности
 
-            // Определение связи «один ко многим» с таблицей StoreBookTable
-            (new OneToMany('BOOK_ITEMS', StoreBookTable::class, 'STORE'))
-            // 'BOOK_ITEMS' — имя связи, используемое для доступа к связанным записям
-            // StoreBookTable::class — класс таблицы, с которой устанавливается связь
-            // 'STORE' — поле в StoreBookTable, используемое для связи с таблицей магазинов
+            // STORE — поле Reference в StoreBookTable, которое указывает на магазин
+            new OneToMany('BOOK_ITEMS', StoreBookTable::class, 'STORE'),
         ];
     }
 }
 ```
 
-Выборка будет аналогична отношениям 1:N, но на этот раз будут возвращаться объекты отношения `StoreBook`, а не сущности-партнера.
+**Пример.** Код выбирает книгу с ID 1 вместе с записями о наличии в магазинах. Метод `getStoreItems()` возвращает коллекцию объектов промежуточной сущности `StoreBookTable`, а не магазинов.
 
 ```php
 $book = \SomePartner\MyBooksCatalog\BookTable::getByPrimary(1, [
@@ -1086,3 +1063,72 @@ foreach ($book->getStoreItems() as $storeItem) // Перебираем все с
     // Пример вывода: store "33" has 4 of book "1"
 }
 ```
+
+## Сохранение и удаление связанных объектов {#cascade}
+
+Методы `save()` и `delete()` объекта обрабатывают не только его запись, но и поля отношений. При удалении поведение задает политика каскадного удаления поля. При сохранении поведение одинаково для всех полей отношений.
+
+### Сохранение
+
+Метод `save()` сначала записывает изменения самого объекта, затем сохраняет связанные объекты:
+
+-  объект из поля `Reference`, если он загружен или задан сеттером,
+
+-  все объекты коллекций `OneToMany` и `ManyToMany`,
+
+-  добавленные и удаленные связи `ManyToMany` — как записи таблицы-связки.
+
+Связанный объект без изменений запрос на обновление не выполняет.
+
+У полей отношений есть метод `configureCascadeSavePolicy()`. Метод принимает константу класса `CascadePolicy` и сохраняет ее в поле, но метод `save()` это значение не учитывает. Отключить сохранение связанных объектов этим методом нельзя.
+
+### Удаление
+
+Метод `configureCascadeDeletePolicy()` поля отношения задает, что метод `delete()` делает со связанными объектами. Метод принимает константу класса `Bitrix\Main\ORM\Fields\Relations\CascadePolicy`:
+
+-  `CascadePolicy::NO_ACTION` — не менять связанные объекты,
+
+-  `CascadePolicy::SET_NULL` — записать `null` в поле ссылки связанных объектов,
+
+-  `CascadePolicy::FOLLOW` — удалить связанные объекты,
+
+-  `CascadePolicy::FOLLOW_ORPHANS` — константа есть в классе, но метод `delete()` ее не обрабатывает.
+
+Политика по умолчанию и ее действие зависят от типа поля.
+
+| Поле | Политика по умолчанию | Что делает `delete()` |
+|---|---|---|
+| `Reference` | `NO_ACTION` | С политикой `FOLLOW` вызывает `delete()` у связанного объекта. С остальными политиками не меняет связанный объект |
+| `OneToMany` | `SET_NULL` | С политикой `SET_NULL` записывает `null` в поле `Reference` связанных объектов. С политикой `FOLLOW` загружает коллекцию и удаляет каждый объект. С политикой `NO_ACTION` не меняет связанные объекты |
+| `ManyToMany` | `NO_ACTION` | Удаляет записи таблицы-связки при любой политике. Связанные объекты остаются в базе данных |
+
+Для `Reference` с политикой `FOLLOW` метод `delete()` берет связанный объект из значения поля и не загружает его из базы данных. Если поле не загружено, вызов завершится ошибкой PHP. Перед удалением загрузите поле, например методом `fillPublisher()`.
+
+Политика `FOLLOW` у поля `OneToMany` действует и на методы `removeFrom` и `removeAll`. При сохранении объекта ORM удаляет отвязанные объекты, а не записывает `null` в их поле ссылки.
+
+Политика `SET_NULL` не отвязывает объекты, у которых поле ссылки входит в первичный ключ. Например, поле `BOOK_ID` входит в первичный ключ `StoreBookTable`, а ORM не меняет первичный ключ сохраненного объекта. После удаления книги записи о ее наличии в магазинах останутся в таблице. Чтобы удалять их вместе с книгой, задайте полю `STORE_ITEMS` политику `FOLLOW`.
+
+**Пример.** Поле `STORE_ITEMS` книги удаляет записи о наличии вместе с книгой.
+
+```php
+use Bitrix\Main\ORM\Fields\Relations\CascadePolicy;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
+
+// В методе getMap класса BookTable
+(new OneToMany('STORE_ITEMS', StoreBookTable::class, 'BOOK'))
+    ->configureCascadeDeletePolicy(CascadePolicy::FOLLOW),
+```
+
+Как проверить результат удаления и какие события срабатывают, читайте в разделе «Удалить объект» статьи [Объекты](./objects.md).
+
+## Что дальше
+
+-  [Объекты](./objects.md) — методы `addTo`, `removeFrom`, `removeAll`, сохранение и удаление объектов,
+
+-  [Коллекции](./collections.md) — работа со значениями полей `OneToMany` и `ManyToMany`,
+
+-  [Выборка данных](./querying-data.md) — выборка связанных данных и условия соединения таблиц,
+
+-  [Концепция ORM](./orm-concepts.md#create-table) — создание таблиц сущностей и таблицы-связки при установке модуля,
+
+-  [Аннотации классов](./annotations.md) — классы `EO_*` и подсказки IDE для методов объектов.
