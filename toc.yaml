@@ -331,6 +331,8 @@ items:
         href: /pages/ui/file-input.md
       - name: Просмотр файлов ui.viewer
         href: /pages/ui/ui-viewer.md
+      - name: Видеоплеер ui.video-player
+        href: /pages/ui/ui-video-player.md
       - name: Выпадающий список ui.select
         href: /pages/ui/ui-select.md
       - name: Выпадающий список BX.Main.ui.select
