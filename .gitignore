@@ -6,3 +6,5 @@ CLAUDE.md
 .claude
 agents.md
 .local-docs-bridge
+.opencode
+opencode.jsonc

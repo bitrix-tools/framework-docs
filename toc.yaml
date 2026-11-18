@@ -668,6 +668,24 @@ items:
             href: /pages/modules/crm/synchronization.md
           - name: Производительность и типовые ошибки CRM
             href: /pages/modules/crm/performance-and-errors.md
+      - name: Задачи
+        items:
+          - name: Введение в модуль Задачи
+            href: /pages/modules/tasks/overview.md
+          - name: Как выбрать API задач
+            href: /pages/modules/tasks/choose-tasks-api.md
+          - name: Создание, изменение и удаление задач
+            href: /pages/modules/tasks/tasks.md
+          - name: Чтение и выборка задач
+            href: /pages/modules/tasks/read-tasks.md
+          - name: Поля, участники и статусы задач
+            href: /pages/modules/tasks/fields-and-constants.md
+          - name: Чат, результаты, файлы и учет времени
+            href: /pages/modules/tasks/chat-and-related-data.md
+          - name: Права доступа к задачам
+            href: /pages/modules/tasks/permissions.md
+          - name: События модуля Задачи
+            href: /pages/modules/tasks/events.md
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам
