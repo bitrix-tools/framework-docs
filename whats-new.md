@@ -20,6 +20,10 @@ title: Что нового
 
 ### 2026
 
+#### 19 ноября
+
+- Добавили новую статью [Обрезка текста ui.textcrop](./pages/ui/ui-textcrop.md).
+
 #### 18 ноября
 
 - Добавили новую статью [Видеоплеер ui.video-player](./pages/ui/ui-video-player.md).

@@ -413,6 +413,8 @@ items:
         href: /pages/ui/ui-stepprocessing.md
       - name: Системный хайлайтер
         href: /pages/ui/system-highlighter.md
+      - name: Обрезка текста ui.textcrop
+        href: /pages/ui/ui-textcrop.md
       - name: Работа с эмодзи
         href: /pages/ui/emoji.md
       - name: Расширение ui.a11y
