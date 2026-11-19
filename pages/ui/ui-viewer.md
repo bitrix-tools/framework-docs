@@ -536,6 +536,8 @@ BX.UI.Viewer.addType('diagram', 'BX.Catalog.Viewer.DiagramItem');
 
 -  [Загрузка файлов Uploader](./uploader.md) — прием файлов от браузера и сохранение их в файловое хранилище.
 
+-  [Видеоплеер ui.video-player](./ui-video-player.md) — плеер, которым просмотрщик показывает видео и аудио, и его вывод прямо на странице.
+
 -  [Боковая панель main.sidepanel](./main-sidepanel.md) — вывод страниц во фрейме поверх текущей.
 
 -  [Расширения](../framework/extensions.md) — подключение JavaScript-расширений Bitrix Framework.

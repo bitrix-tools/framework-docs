@@ -201,7 +201,7 @@ const activeTab = Array.from(tabs.getItems()).find((tab) => tab.isActive());
 
 Метода для уничтожения блока тоже нет. Чтобы убрать блок, удалите его контейнер со страницы, например методом `Dom.remove(tabs.getContainer())` из [main.core](./main-core.md).
 
-## Обработать события
+## Обработать события {#obrabotat-sobytiya}
 
 Класс `Tab` наследует `EventEmitter`. Подпишитесь на события вкладки методом `subscribe()` — подробнее о событиях в статье [JS-ядро main.core и события](./main-core.md#rabotat-s-sobytiyami).
 

@@ -75,7 +75,7 @@ document.getElementById('description-container').append(description);
 
 -  `transform` — строка с преобразованием регистра. Доступны значения `uppercase`, `lowercase`, `capitalize`.
 
--  `wrap` — строка с поведением длинного текста. Доступны значения `truncate`, `break-words`, `break-all`.
+-  `wrap` — строка с поведением длинного текста. Доступны значения `truncate`, `break-words`, `break-all`. Значение `truncate` обрезает текст до одной строки. Чтобы обрезать текст до нескольких строк, используйте [расширение ui.textcrop](./ui-textcrop.md).
 
 -  `className` — дополнительный CSS-класс. Можно передать строку, массив строк или объект, где ключ — имя класса, а логическое значение определяет, нужно ли добавить класс.
 

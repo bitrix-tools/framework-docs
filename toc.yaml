@@ -331,6 +331,8 @@ items:
         href: /pages/ui/file-input.md
       - name: Просмотр файлов ui.viewer
         href: /pages/ui/ui-viewer.md
+      - name: Видеоплеер ui.video-player
+        href: /pages/ui/ui-video-player.md
       - name: Выпадающий список ui.select
         href: /pages/ui/ui-select.md
       - name: Выпадающий список BX.Main.ui.select
@@ -411,6 +413,8 @@ items:
         href: /pages/ui/ui-stepprocessing.md
       - name: Системный хайлайтер
         href: /pages/ui/system-highlighter.md
+      - name: Обрезка текста ui.textcrop
+        href: /pages/ui/ui-textcrop.md
       - name: Работа с эмодзи
         href: /pages/ui/emoji.md
       - name: Расширение ui.a11y
