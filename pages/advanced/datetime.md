@@ -5,9 +5,9 @@ description: 'Дата и время. Продвинутые возможнос�
 
 Bitrix Framework работает с датой и временем с помощью двух классов:
 
--  `Bitrix\Main\Type\Date` — для даты,
+-  [`Bitrix\Main\Type\Date`](../api-reference/main/type/date/index.md) — для даты,
 
--  `Bitrix\Main\Type\DateTime` — для даты и времени.
+-  [`Bitrix\Main\Type\DateTime`](../api-reference/main/type/date-time/index.md) — для даты и времени.
 
 ```php
 use Bitrix\Main\Type\Date;
@@ -24,7 +24,7 @@ echo $datetime->format('d.m.Y H:i:s'); // 25.11.2025 14:30:00
 
 ## Формат вывода
 
-Классы `Date` и `DateTime` выводят дату в формате сайта. Задать формат можно при создании объекта. Если не указать формат, классы возьмут его из региональных настроек.
+Классы [`Date`](../api-reference/main/type/date/index.md) и [`DateTime`](../api-reference/main/type/date-time/index.md) выводят дату в формате сайта. Задать формат можно при создании объекта. Если не указать формат, классы возьмут его из региональных настроек.
 
 Региональные настройки хранит объект `Bitrix\Main\Context\Culture`. Классы получают эти настройки через `\Bitrix\Main\Context::getCurrent()->getCulture()`.
 
@@ -54,7 +54,7 @@ echo $datetime->format('d.m.Y H:i:s'); // 25.11.2025 14:30:00
 
 ## Класс Date
 
-Класс `Bitrix\Main\Type\Date` хранит только дату. Такой формат подходит для даты рождения, сроков акций или других событий без указания времени.
+Класс [`Bitrix\Main\Type\Date`](../api-reference/main/type/date/index.md) хранит только дату. Такой формат подходит для даты рождения, сроков акций или других событий без указания времени.
 
 ### Создать объект даты
 
@@ -74,7 +74,7 @@ echo $datetime->format('d.m.Y H:i:s'); // 25.11.2025 14:30:00
 
 Класс `Date` предоставляет именованные конструкторы для создания объектов из разных источников.
 
--  `createFromPhp(\DateTime $datetime)` — создает объект `Date` из объекта `\DateTime`. Время сбрасывает в `00:00:00`.
+-  `createFromPhp(\DateTime $datetime)` — создает объект `Date` из объекта [`\DateTime`](../api-reference/main/type/date-time/index.md). Время сбрасывает в `00:00:00`.
 
    ```php
    use Bitrix\Main\Type\Date;
@@ -250,7 +250,7 @@ if (Date::isCorrect('31.02.2025', 'd.m.Y'))
 
 ## Класс DateTime
 
-Класс `Bitrix\Main\Type\DateTime` расширяет `Date` — добавляет работу со временем и часовыми поясами.
+Класс [`Bitrix\Main\Type\DateTime`](../api-reference/main/type/date-time/index.md) расширяет [`Date`](../api-reference/main/type/date/index.md) — добавляет работу со временем и часовыми поясами.
 
 ### Создать объект даты и времени
 
@@ -365,7 +365,7 @@ echo $dt->format('d.m.Y H:i'); // 25.11.2025 09:30
 
 ### Методы конвертации времени {#methods}
 
-В классе `DateTime` есть два метода для конвертации времени в нужный часовой пояс.
+В классе [`DateTime`](../api-reference/main/type/date-time/index.md) есть два метода для конвертации времени в нужный часовой пояс.
 
 -  `createFromUserTime($timeString)` — создает объект Даты и времени в часовом поясе сервера из строки с датой и временем в часовом поясе пользователя.
 

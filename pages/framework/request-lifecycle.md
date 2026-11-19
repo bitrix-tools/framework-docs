@@ -192,7 +192,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 2. Завершение буферизации страницы в `CMain::EndBufferContent()`. На этом этапе ядро добавляет HTML для распространения cookie между доменами и выполняет событие `OnEndBufferContent`.
 
-3. Отправка ответа клиенту. Метод `Application::end()` вызывает `Response::send()` и переходит к завершению приложения через `Application::terminate()`.
+3. Отправка ответа клиенту. Метод [`Application::end()`](../api-reference/main/application/end.md) вызывает `Response::send()` и переходит к завершению приложения через [`Application::terminate()`](../api-reference/main/application/terminate.md).
 
 4. Выполнение события `OnAfterEpilog`.
 

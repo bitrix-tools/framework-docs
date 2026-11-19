@@ -1,0 +1,25 @@
+title: Result
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать результат
+    href: construct.md
+  - name: Проверить успех операции
+    href: is-success.md
+  - name: Добавить ошибку
+    href: add-error.md
+  - name: Добавить несколько ошибок
+    href: add-errors.md
+  - name: Получить первую ошибку
+    href: get-error.md
+  - name: Получить ошибки
+    href: get-errors.md
+  - name: Получить тексты ошибок
+    href: get-error-messages.md
+  - name: Получить коллекцию ошибок
+    href: get-error-collection.md
+  - name: Сохранить данные результата
+    href: set-data.md
+  - name: Получить данные результата
+    href: get-data.md

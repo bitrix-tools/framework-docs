@@ -1,0 +1,29 @@
+title: Loc
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Зарегистрировать файл для загрузки фраз
+    href: load-messages.md
+  - name: Получить фразу
+    href: get-message.md
+  - name: Получить фразу во множественном числе
+    href: get-message-plural.md
+  - name: Получить номер формы множественного числа
+    href: get-plural-form.md
+  - name: Загрузить языковой файл
+    href: load-language-file.md
+  - name: Загрузить замены фраз
+    href: load-custom-messages.md
+  - name: Получить текущий язык
+    href: get-current-lang.md
+  - name: Задать текущий язык
+    href: set-current-lang.md
+  - name: Получить язык по умолчанию
+    href: get-default-lang.md
+  - name: Получить загруженные языковые файлы
+    href: get-included-files.md
+  - name: Задать обработчик фраз
+    href: set-message-decorator.md
+  - name: Получить языковой файл фразы
+    href: get-message-source-file.md

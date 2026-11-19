@@ -24,7 +24,7 @@ JavaScript-классы создают интерфейс в браузере и
 
 ## Подключить расширение
 
-Если вы подключаете компонент из PHP, загрузите расширение `ui.entity-selector`. Метод `Extension::load()` добавляет на страницу JavaScript и CSS расширения.
+Если вы подключаете компонент из PHP, загрузите расширение `ui.entity-selector`. Метод [`Extension::load()`](../../api-reference/main/ui/extension/load.md) добавляет на страницу JavaScript и CSS расширения.
 
 ```php
 \Bitrix\Main\UI\Extension::load('ui.entity-selector');

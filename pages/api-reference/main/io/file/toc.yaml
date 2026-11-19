@@ -1,0 +1,21 @@
+title: File
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Проверить, существует ли файл
+    href: is-file-exists.md
+  - name: Прочитать файл
+    href: get-file-contents.md
+  - name: Записать данные в файл
+    href: put-file-contents.md
+  - name: Удалить файл
+    href: delete-file.md
+  - name: Открыть файл
+    href: open.md
+  - name: Переместить указатель файла
+    href: seek.md
+  - name: Закрыть файл
+    href: close.md
+  - name: Получить MIME-тип файла
+    href: get-content-type.md

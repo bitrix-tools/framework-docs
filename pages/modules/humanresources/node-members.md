@@ -5,7 +5,7 @@ description: "Поиск подразделений и команд пользо
 
 Объект `Bitrix\HumanResources\Item\NodeMember` связывает пользователя с подразделением или командой. Для каждого узла объект хранит отдельный набор ролей пользователя.
 
-Сервис `Bitrix\HumanResources\Public\Service\NodeMemberService` находит связи пользователей с узлами и участников с заданной ролью. С его помощью можно дополнить ORM-запрос `Bitrix\Main\UserTable` и получить данные пользователей вместе со сведениями об их подразделениях или командах.
+Сервис `Bitrix\HumanResources\Public\Service\NodeMemberService` находит связи пользователей с узлами и участников с заданной ролью. С его помощью можно дополнить ORM-запрос [`Bitrix\Main\UserTable`](../../api-reference/main/user-table/index.md) и получить данные пользователей вместе со сведениями об их подразделениях или командах.
 
 ## Выбрать метод
 
@@ -17,7 +17,7 @@ description: "Поиск подразделений и команд пользо
 || Получить участников узла с заданным числовым идентификатором роли | `findAllByRoleIdAndNodeId()` | Коллекция участников узла ||
 || Найти узлы пользователя по стандартным ролям | `findByUserIdAndRoleXmlIds()` или `findAllByUserIdAndRoleXmlIds()` сервиса пользователей | Одна связь, `null` или коллекция связей ||
 || Получить подразделения, которыми управляет пользователь | `getManagedDepartmentNodes()` | Коллекция связей с подразделениями ||
-|| Добавить сведения об узлах в запрос к `Bitrix\Main\UserTable` | `injectUserNodeSubquery()` | Дополненный ORM-запрос пользователей ||
+|| Добавить сведения об узлах в запрос к [`Bitrix\Main\UserTable`](../../api-reference/main/user-table/index.md) | `injectUserNodeSubquery()` | Дополненный ORM-запрос пользователей ||
 || Сначала расположить пользователей из тех же подразделений, а руководителей — выше сотрудников | `injectUserNodeSort()` | ORM-запрос с добавленной сортировкой ||
 |#
 
@@ -232,7 +232,7 @@ $managedDepartments = $memberService->getManagedDepartmentNodes(
 
 ## Добавить данные узлов в запрос пользователей
 
-Чтобы получить пользователей из определенных подразделений или команд одним ORM-запросом, используйте `injectUserNodeSubquery()`. Метод дополняет запрос `Bitrix\Main\UserTable` связями с узлами и возвращает измененный объект `Bitrix\Main\ORM\Query\Query`.
+Чтобы получить пользователей из определенных подразделений или команд одним ORM-запросом, используйте `injectUserNodeSubquery()`. Метод дополняет запрос [`Bitrix\Main\UserTable`](../../api-reference/main/user-table/index.md) связями с узлами и возвращает измененный объект [`Bitrix\Main\ORM\Query\Query`](../../api-reference/main/orm/query/query/index.md).
 
 Настройте выборку с помощью параметров:
 
@@ -329,8 +329,8 @@ $users = $query->exec();
 
 ## Выбрать сервис или билдер
 
-Выбирайте сервис `Bitrix\HumanResources\Public\Service\NodeMemberService` для типового поиска связей, выборки по одной роли и расширения запросов `Bitrix\Main\UserTable`. Используйте [`Bitrix\HumanResources\Builder\Structure\NodeMemberDataBuilder`](./data-builders.md#build-member-query), когда один запрос должен объединить несколько фильтров по узлам, пользователям, ролям, иерархии или доступу.
+Выбирайте сервис `Bitrix\HumanResources\Public\Service\NodeMemberService` для типового поиска связей, выборки по одной роли и расширения запросов [`Bitrix\Main\UserTable`](../../api-reference/main/user-table/index.md). Используйте [`Bitrix\HumanResources\Builder\Structure\NodeMemberDataBuilder`](./data-builders.md#build-member-query), когда один запрос должен объединить несколько фильтров по узлам, пользователям, ролям, иерархии или доступу.
 
-Методы поиска и `getManagedDepartmentNodes()` читают существующие связи. Методы `injectUserNodeSubquery()` и `injectUserNodeSort()` изменяют только настройки переданного объекта `Bitrix\Main\ORM\Query\Query`. Запрос загружает данные после вызова `exec()`.
+Методы поиска и `getManagedDepartmentNodes()` читают существующие связи. Методы `injectUserNodeSubquery()` и `injectUserNodeSort()` изменяют только настройки переданного объекта [`Bitrix\Main\ORM\Query\Query`](../../api-reference/main/orm/query/query/index.md). Запрос загружает данные после вызова `exec()`.
 
 Сервис `Bitrix\HumanResources\Public\Service\NodeMemberService` не изменяет роли участников. Для поиска и обхода подразделений и команд используйте [сервис узлов](./nodes.md). Для получения руководителей и подчиненных, проверки управленческих отношений и назначения пользователей в подразделения используйте [сервисы управленческой иерархии](./users-and-hierarchy.md).

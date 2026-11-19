@@ -61,7 +61,7 @@ class BookTable extends DataManager
 }
 ```
 
--  Класс `BookTable` наследует класс `Bitrix\Main\ORM\Data\DataManager` и управляет взаимодействием с базой данной для сущности «Книга».
+-  Класс `BookTable` наследует класс [`Bitrix\Main\ORM\Data\DataManager`](../api-reference/main/orm/data/data-manager/index.md) и управляет взаимодействием с базой данной для сущности «Книга».
 
 -  Метод `getObjectClass` определяет, что каждая запись из таблицы будет представлена как объект класса `Book`.
 
@@ -312,7 +312,7 @@ $book->getTitle(); // текущее значение
 $book->remindActualTitle(); // актуальное значение
 ```
 
-Значения первичного ключа `primary` можно установить только в новых объектах. В существующих объектах изменить его нельзя. Для этого следует создать новый объект и удалить старый. Поля `Bitrix\Main\ORM\Fields\ExpressionField` не изменяются вручную, так как их значения рассчитываются автоматически.
+Значения первичного ключа `primary` можно установить только в новых объектах. В существующих объектах изменить его нельзя. Для этого следует создать новый объект и удалить старый. Поля [`Bitrix\Main\ORM\Fields\ExpressionField`](../api-reference/main/orm/fields/expression-field/index.md) не изменяются вручную, так как их значения рассчитываются автоматически.
 
 Если новое значение не отличается от актуального, оно не изменится. Такое значение не будет включено в SQL-запрос при сохранении.
 
@@ -601,7 +601,7 @@ $author->fill(
 
 -  `SCALAR` — скалярные поля `Bitrix\Main\ORM\Fields\ScalarField`,
 
--  `EXPRESSION` — выражения `Bitrix\Main\ORM\Fields\ExpressionField`,
+-  `EXPRESSION` — выражения [`Bitrix\Main\ORM\Fields\ExpressionField`](../api-reference/main/orm/fields/expression-field/index.md),
 
 -  `USERTYPE` — пользовательские поля,
 

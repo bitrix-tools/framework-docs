@@ -1,0 +1,15 @@
+title: Emoji
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Закодировать эмодзи
+    href: encode.md
+  - name: Восстановить эмодзи
+    href: decode.md
+  - name: Заменить эмодзи своей функцией
+    href: replace.md
+  - name: Получить обработчик сохранения
+    href: get-save-modificator.md
+  - name: Получить обработчик выборки
+    href: get-fetch-modificator.md

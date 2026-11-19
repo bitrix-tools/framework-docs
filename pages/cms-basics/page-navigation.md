@@ -29,7 +29,7 @@ description: 'Постраничная навигация. Основы Bitrix C
 
 -  [`\Bitrix\Main\UI\AdminPageNavigation`](./page-navigation-class.md#класс-adminpagenavigation) — создает навигацию в административном разделе.
 
-Дальше в статье описан базовый класс `PageNavigation`.
+Дальше в статье описан базовый класс [`PageNavigation`](../api-reference/main/ui/page-navigation/index.md).
 
 ## Как настроить объект навигации через API
 
@@ -172,7 +172,7 @@ $APPLICATION->IncludeComponent('bitrix:main.pagenavigation', '.default', [
 
 ### Как кастомизировать шаблон
 
-Чтобы создать собственный шаблон навигации, используйте методы объекта `PageNavigation`. Каждый из них возвращает:
+Чтобы создать собственный шаблон навигации, используйте методы объекта [`PageNavigation`](../api-reference/main/ui/page-navigation/index.md). Каждый из них возвращает:
 
 -  `getRecordCount()` — число записей,
 

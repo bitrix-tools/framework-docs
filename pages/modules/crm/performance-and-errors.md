@@ -188,13 +188,13 @@ if ($companyIds !== [])
 
 ### Различить Result и исключение
 
-Метод `launch()` возвращает `Bitrix\Main\Result`. Общая модель этого объекта описана в статье [Результат работы и ошибки](./../../framework/results-and-errors.md). Для диагностики используйте методы результата.
+Метод `launch()` возвращает [`Bitrix\Main\Result`](../../api-reference/main/result/index.md). Общая модель этого объекта описана в статье [Результат работы и ошибки](./../../framework/results-and-errors.md). Для диагностики используйте методы результата.
 
 -  `isSuccess()` — возвращает `true`, если результат не содержит ошибок.
 
 -  `getErrorMessages()` — возвращает массив сообщений об ошибках.
 
--  `getErrors()` — возвращает массив объектов `Bitrix\Main\Error`.
+-  `getErrors()` — возвращает массив объектов [`Bitrix\Main\Error`](../../api-reference/main/error/index.md).
 
 Объект `Error` предоставляет детали каждой ошибки.
 

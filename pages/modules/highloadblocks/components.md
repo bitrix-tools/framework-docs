@@ -245,7 +245,7 @@ $APPLICATION->IncludeComponent(
 || `tableColumns` | Коды столбцов, которые стандартный шаблон выводит в таблице: `ID` и поля с `SHOW_IN_LIST = Y` ||
 || `sort_id` | Фактическое поле сортировки ||
 || `sort_type` | Фактическое направление `ASC` или `DESC` ||
-|| `nav_object` | Объект `Bitrix\Main\UI\PageNavigation`. Ключ существует только при положительном `ROWS_PER_PAGE` ||
+|| `nav_object` | Объект [`Bitrix\Main\UI\PageNavigation`](../../api-reference/main/ui/page-navigation/index.md). Ключ существует только при положительном `ROWS_PER_PAGE` ||
 || `NAV_STRING`, `NAV_PARAMS`, `NAV_NUM` | Пустые совместимые значения прежнего механизма навигации. Для нового шаблона используйте `nav_object` ||
 |#
 

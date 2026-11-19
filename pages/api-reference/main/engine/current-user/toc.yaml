@@ -1,0 +1,31 @@
+title: CurrentUser
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить текущего пользователя
+    href: get.md
+  - name: Получить имя класса
+    href: class-name.md
+  - name: Получить идентификатор пользователя
+    href: get-id.md
+  - name: Получить логин
+    href: get-login.md
+  - name: Получить адрес электронной почты
+    href: get-email.md
+  - name: Получить имя
+    href: get-first-name.md
+  - name: Получить фамилию
+    href: get-last-name.md
+  - name: Получить отчество
+    href: get-second-name.md
+  - name: Получить имя и фамилию
+    href: get-full-name.md
+  - name: Получить имя по формату из региональных настроек
+    href: get-formatted-name.md
+  - name: Получить группы пользователя
+    href: get-user-groups.md
+  - name: Проверить, администратор ли пользователь
+    href: is-admin.md
+  - name: Проверить право на операцию
+    href: can-do-operation.md

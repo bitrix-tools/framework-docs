@@ -1,0 +1,39 @@
+title: ExpressionField
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Задать тип значения
+    href: configure-value-type.md
+  - name: Задать поле типа значения
+    href: configure-value-field.md
+  - name: Получить класс типа значения
+    href: get-value-type.md
+  - name: Получить поле типа значения
+    href: get-value-field.md
+  - name: Получить выражение
+    href: get-expression.md
+  - name: Получить поля выражения
+    href: get-build-from.md
+  - name: Получить цепочки полей выражения
+    href: get-build-from-chains.md
+  - name: Получить полное выражение
+    href: get-full-expression.md
+  - name: Проверить, есть ли агрегатная функция
+    href: is-aggregated.md
+  - name: Проверить, есть ли подзапрос
+    href: has-subquery.md
+  - name: Проверить, не зависит ли выражение от полей
+    href: is-constant.md
+  - name: Найти агрегатные функции
+    href: check-aggregation.md
+  - name: Проверить строку на подзапрос
+    href: check-subquery.md
+  - name: Удалить подзапросы из выражения
+    href: remove-subqueries.md
+  - name: Привести значение к типу
+    href: cast.md
+  - name: Преобразовать значение из базы данных
+    href: convert-value-from-db.md
+  - name: Преобразовать значение для базы данных
+    href: convert-value-to-db.md

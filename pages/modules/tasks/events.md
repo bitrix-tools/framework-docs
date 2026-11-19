@@ -28,7 +28,7 @@ description: "События модуля Задачи — OnBeforeTaskAdd, OnTa
 
 ## Подписаться на событие {#subscribe}
 
-Обработчик подписывают на событие методом `addEventHandlerCompatible()` объекта `Bitrix\Main\EventManager`. Метод передает обработчику аргументы события как есть, в том числе массив полей по ссылке. Вызов размещают в файле `/local/php_interface/init.php`, чтобы подписка действовала на каждом запросе. Общие правила подписки описаны в статье [События](./../../framework/events.md).
+Обработчик подписывают на событие методом `addEventHandlerCompatible()` объекта [`Bitrix\Main\EventManager`](../../api-reference/main/event-manager/index.md). Метод передает обработчику аргументы события как есть, в том числе массив полей по ссылке. Вызов размещают в файле `/local/php_interface/init.php`, чтобы подписка действовала на каждом запросе. Общие правила подписки описаны в статье [События](./../../framework/events.md).
 
 Метод `addEventHandler()` подписывает обработчик нового типа. Какие аргументы получит такой обработчик, зависит от того, как модуль вызывает событие. Функция `ExecuteModuleEventEx()` не учитывает тип подписки.
 
@@ -36,7 +36,7 @@ description: "События модуля Задачи — OnBeforeTaskAdd, OnTa
 |---|---|---|
 | События задачи | Функцией `ExecuteModuleEventEx()` | Те же аргументы, что и обработчик `addEventHandlerCompatible()` |
 | События `OnBefore...` учета времени | Функцией `ExecuteModuleEventEx()` | Те же аргументы, что и обработчик `addEventHandlerCompatible()` |
-| `OnTaskElapsedTimeAdd`, `OnTaskElapsedTimeUpdate`, `OnTaskElapsedTimeDelete` из команд | Объектом `Bitrix\Main\Event` | Вместо аргументов один объект `Bitrix\Main\Event`. ID и поля записи возвращает его метод `getParameters()` по ключам `0` и `1` |
+| `OnTaskElapsedTimeAdd`, `OnTaskElapsedTimeUpdate`, `OnTaskElapsedTimeDelete` из команд | Объектом [`Bitrix\Main\Event`](../../api-reference/main/event/index.md) | Вместо аргументов один объект `Bitrix\Main\Event`. ID и поля записи возвращает его метод `getParameters()` по ключам `0` и `1` |
 | `OnTaskElapsedTimeAdd`, `OnTaskElapsedTimeUpdate`, `OnTaskElapsedTimeDelete` из классического класса `CTaskElapsedTime` | Функцией `ExecuteModuleEventEx()` | Те же аргументы, что и обработчик `addEventHandlerCompatible()` |
 
 Чтобы обработчик получал аргументы одинаково во всех событиях модуля, подписывайте его методом `addEventHandlerCompatible()`.
@@ -54,7 +54,7 @@ EventManager::getInstance()->addEventHandlerCompatible(
 );
 ```
 
-Класс обработчика должен загружаться автозагрузкой, например автозагрузкой Composer или методом `Bitrix\Main\Loader::registerNamespace()`. Иначе подключите файл класса в `init.php` до подписки.
+Класс обработчика должен загружаться автозагрузкой, например автозагрузкой Composer или методом [`Bitrix\Main\Loader::registerNamespace()`](../../api-reference/main/loader/register-namespace.md). Иначе подключите файл класса в `init.php` до подписки.
 
 В собственном модуле подписку сохраняют в базе данных один раз методом `registerEventHandlerCompatible()` в `InstallDB()` установщика модуля, а удаляют методом `unRegisterEventHandler()` в `UnInstallDB()`. У метода удаления нет суффикса `Compatible`, он удаляет подписку любого типа. Метод `registerEventHandlerCompatible()` принимает имя класса и метода, анонимную функцию ему передать нельзя.
 
@@ -102,7 +102,7 @@ EventManager::getInstance()->unRegisterEventHandler(
 
 Поля в аргументах передаются в формате классического API. Ключи записаны в верхнем регистре, например `TITLE`, `RESPONSIBLE_ID`, `DEADLINE`, а статус и приоритет — числами.
 
-Для статуса используйте константы класса `Bitrix\Tasks\Internals\Task\Status`, например `Status::COMPLETED`. Поле `STATUS` в событиях содержит настоящий статус задачи, а не вычисляемое состояние. Крайний срок `DEADLINE` передается объектом `Bitrix\Main\Type\DateTime` или `0`, если срок снят. Соответствие полей и констант приведено в статье [Поля, участники и статусы задач](./fields-and-constants.md).
+Для статуса используйте константы класса `Bitrix\Tasks\Internals\Task\Status`, например `Status::COMPLETED`. Поле `STATUS` в событиях содержит настоящий статус задачи, а не вычисляемое состояние. Крайний срок `DEADLINE` передается объектом [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md) или `0`, если срок снят. Соответствие полей и констант приведено в статье [Поля, участники и статусы задач](./fields-and-constants.md).
 
 Кто выполнил операцию и в каком контексте, показывают такие параметры.
 
@@ -438,7 +438,7 @@ class UrgentTitleMarker
 
 -  `SOURCE` — источник записи, константа класса `CTaskElapsedItem`. `SOURCE_MANUAL` — время введено вручную, `SOURCE_SYSTEM` — запись добавлена автоматически, например при остановке таймера, `SOURCE_UNDEFINED` — источник неизвестен.
 
--  `CREATED_DATE` — дата создания записи, объект `Bitrix\Main\Type\DateTime`.
+-  `CREATED_DATE` — дата создания записи, объект [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md).
 
 -  `DATE_START` и `DATE_STOP` — начало и конец периода работы, объекты `Bitrix\Main\Type\DateTime`.
 

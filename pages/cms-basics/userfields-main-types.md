@@ -64,7 +64,7 @@ Loader::registerAutoLoadClasses(null, [
 $MESS['VENDOR_CODE_TYPE_DESCRIPTION'] = 'Код';
 ```
 
-Если языковые файлы не нужны, подставьте в `getDescription()` строку с названием типа вместо вызова `Loc::getMessage()`.
+Если языковые файлы не нужны, подставьте в `getDescription()` строку с названием типа вместо вызова [`Loc::getMessage()`](../api-reference/main/localization/loc/get-message.md).
 
 ## Зарегистрировать тип поля
 

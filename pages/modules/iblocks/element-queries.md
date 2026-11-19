@@ -163,11 +163,11 @@ $newsList = $elementNewsClass::query()
 ;
 ```
 
-Поле активности `ACTIVE` хранит `Y` или `N`. Даты сравнивайте с объектом `Bitrix\Main\Type\DateTime`, пример приведен в разделе [Учесть, что отбирает ORM-запрос](./elements.md#orm-query-scope).
+Поле активности `ACTIVE` хранит `Y` или `N`. Даты сравнивайте с объектом [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md), пример приведен в разделе [Учесть, что отбирает ORM-запрос](./elements.md#orm-query-scope).
 
 ### Объединить условия через ИЛИ {#filter-or}
 
-Чтобы выполнилось хотя бы одно из условий, соберите их в объект фильтра `Bitrix\Main\ORM\Query\Query::filter()` с логикой `or` и передайте объект в `where()`.
+Чтобы выполнилось хотя бы одно из условий, соберите их в объект фильтра [`Bitrix\Main\ORM\Query\Query::filter()`](../../api-reference/main/orm/query/query/filter.md) с логикой `or` и передайте объект в `where()`.
 
 **Пример.** Отберите элементы автора «Редакция» или элементы с сортировкой от 500.
 
@@ -364,7 +364,7 @@ foreach ($newsList as $news)
 
 ### Разбить список на страницы {#pagination}
 
-Объект `Bitrix\Main\UI\PageNavigation` хранит номер и размер страницы и вычисляет смещение. Передайте его значения в `setOffset()` и `setLimit()`, а общее число элементов запросите методом `countTotal(true)`.
+Объект [`Bitrix\Main\UI\PageNavigation`](../../api-reference/main/ui/page-navigation/index.md) хранит номер и размер страницы и вычисляет смещение. Передайте его значения в `setOffset()` и `setLimit()`, а общее число элементов запросите методом `countTotal(true)`.
 
 **Пример.** Получите страницу списка из 20 элементов. Номер страницы объект навигации берет из адреса запроса.
 
@@ -437,7 +437,7 @@ $count = (int)$elementNewsClass::query()
 
 ## Сгруппировать элементы {#group}
 
-Чтобы посчитать элементы по значениям поля или свойства, например по вариантам списка, сгруппируйте строки методом `setGroup()` и добавьте вычисляемое поле с функцией `COUNT`. Вычисляемое поле описывает объект `Bitrix\Main\ORM\Fields\ExpressionField`, его регистрирует метод `registerRuntimeField()`.
+Чтобы посчитать элементы по значениям поля или свойства, например по вариантам списка, сгруппируйте строки методом `setGroup()` и добавьте вычисляемое поле с функцией `COUNT`. Вычисляемое поле описывает объект [`Bitrix\Main\ORM\Fields\ExpressionField`](../../api-reference/main/orm/fields/expression-field/index.md), его регистрирует метод `registerRuntimeField()`.
 
 **Пример.** Посчитайте элементы для каждого варианта списка Источник.
 
@@ -563,7 +563,7 @@ $rows = $elementNewsClass::query()
 | `$arOrder` с ключом `PROPERTY_<код>` | `setOrder(['<код>.VALUE' => 'ASC'])` | Сортировка по множественному свойству повторяет элемент для каждого значения. Сортируйте по одиночным свойствам |
 | `$arGroupBy` — пустой массив для подсчета | `queryCountTotal()` или `getCount()` | Классический метод считает элементы, ORM — строки. Для условий по множественному свойству считайте способом из раздела [Посчитать элементы](#count-elements) |
 | `$arGroupBy` с полями или `PROPERTY_<код>` | `setGroup()` и вычисляемое поле с `COUNT` | Пример приведен в разделе [Сгруппировать элементы](#group) |
-| `$arNavStartParams` с `nPageSize` и `iNumPage` | Объект `PageNavigation`, `setOffset()`, `setLimit()` и `countTotal(true)` | Пример приведен в разделе [Разбить список на страницы](#pagination) |
+| `$arNavStartParams` с `nPageSize` и `iNumPage` | Объект [`PageNavigation`](../../api-reference/main/ui/page-navigation/index.md), `setOffset()`, `setLimit()` и `countTotal(true)` | Пример приведен в разделе [Разбить список на страницы](#pagination) |
 | `$arNavStartParams` с `nTopCount` | `setLimit()` | Метод `setLimit()` считает строки, и множественное свойство в выборке дает строку на каждое значение. Классический `nTopCount` ведет себя так же только в инфоблоках, которые хранят свойства в общей таблице |
 | `$arSelectFields` с `PROPERTY_<код>` | `setSelect(['<код>'])` и `get('<код>')` у объекта | Значения свойства возвращает объект значения, подробнее — в разделе [Прочитать значения](./property-values.md#read-values). Для массива строк задайте псевдоним, например `'AUTHOR_VALUE' => 'AUTHOR.VALUE'`. Множественное свойство при `setLimit()` загрузите методом `fill()`, подробнее — в разделе [Получить множественные свойства для ограниченной выборки](#limit-with-multiple-property) |
 | `DETAIL_PAGE_URL` в `$arSelectFields` | Нет метода ORM | Адрес детальной страницы по шаблону инфоблока формируют методы `GetNext()` и `GetNextElement()` классического результата. Для строки ORM-запроса адрес по шаблону возвращает классический метод `CIBlock::ReplaceDetailUrl()`, пример приведен в разделе [Показать другие новости источника](./components.md#more-from-source) |

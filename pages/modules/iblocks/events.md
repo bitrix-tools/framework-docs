@@ -35,9 +35,9 @@ description: "События модуля Информационные блок�
 
 ## Подписаться на событие {#subscribe}
 
-Обработчик подписывают на событие методом `addEventHandlerCompatible()` объекта `Bitrix\Main\EventManager`. Метод передает обработчику аргументы события как есть, в том числе массив полей по ссылке. Вызов размещают в файле `/local/php_interface/init.php`, чтобы подписка действовала на каждом запросе. Регистрация обработчиков описана в статье [События](./../../framework/events.md).
+Обработчик подписывают на событие методом `addEventHandlerCompatible()` объекта [`Bitrix\Main\EventManager`](../../api-reference/main/event-manager/index.md). Метод передает обработчику аргументы события как есть, в том числе массив полей по ссылке. Вызов размещают в файле `/local/php_interface/init.php`, чтобы подписка действовала на каждом запросе. Регистрация обработчиков описана в статье [События](./../../framework/events.md).
 
-Метод `addEventHandlerCompatible()` подходит для событий классического API. Если событие передает обработчику объект `Bitrix\Main\Event`, например `OnTemplateGetFunctionClass` из раздела [Добавить свою функцию шаблона](./seo.md#custom-function), подписывайтесь методом `addEventHandler()`.
+Метод `addEventHandlerCompatible()` подходит для событий классического API. Если событие передает обработчику объект [`Bitrix\Main\Event`](../../api-reference/main/event/index.md), например `OnTemplateGetFunctionClass` из раздела [Добавить свою функцию шаблона](./seo.md#custom-function), подписывайтесь методом `addEventHandler()`.
 
 **Пример.** Подпишите обработчик на изменение элемента в файле `init.php`.
 
@@ -52,7 +52,7 @@ EventManager::getInstance()->addEventHandlerCompatible(
 );
 ```
 
-Класс обработчика должен загружаться автозагрузкой, например автозагрузкой Composer или методом `Bitrix\Main\Loader::registerNamespace()`. Иначе подключите файл класса в `init.php` до подписки.
+Класс обработчика должен загружаться автозагрузкой, например автозагрузкой Composer или методом [`Bitrix\Main\Loader::registerNamespace()`](../../api-reference/main/loader/register-namespace.md). Иначе подключите файл класса в `init.php` до подписки.
 
 В модуле подписку сохраняют в базе данных один раз — в методе `InstallDB()` установщика модуля, а удаляют в `UnInstallDB()`.
 
@@ -397,7 +397,7 @@ if (Loader::includeModule('iblock'))
 }
 ```
 
-Класс `Bitrix\Main\ORM\EventManager` отличается от `Bitrix\Main\EventManager` из раздела [Подписаться на событие](#subscribe). Если оба класса нужны в одном файле, дайте одному из них псевдоним, как в примере. Метод `compileEntity()` возвращает `false`, если инфоблока с таким символьным кодом API нет.
+Класс `Bitrix\Main\ORM\EventManager` отличается от [`Bitrix\Main\EventManager`](../../api-reference/main/event-manager/index.md) из раздела [Подписаться на событие](#subscribe). Если оба класса нужны в одном файле, дайте одному из них псевдоним, как в примере. Метод `compileEntity()` возвращает `false`, если инфоблока с таким символьным кодом API нет.
 
 Обработчики ORM-событий срабатывают только при записи через ORM-класс. Методы `CIBlockElement` их не вызывают. Если элементы проекта пишут оба API, обработчик придется подписать на оба набора событий.
 

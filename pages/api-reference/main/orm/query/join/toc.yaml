@@ -1,0 +1,9 @@
+title: Join
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать условие связи
+    href: on.md
+  - name: Получить типы соединения
+    href: get-types.md

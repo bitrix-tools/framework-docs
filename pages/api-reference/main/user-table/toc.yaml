@@ -1,0 +1,19 @@
+title: UserTable
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить группы пользователя
+    href: get-user-group-ids.md
+  - name: Получить интервал статуса онлайн
+    href: get-seconds-for-limit-online.md
+  - name: Получить типы служебных пользователей
+    href: get-external-user-types.md
+  - name: Получить поля поискового индекса
+    href: get-indexed-fields.md
+  - name: Проверить, нужно ли обновить индекс
+    href: should-reindex.md
+  - name: Обновить запись поискового индекса
+    href: index-record.md
+  - name: Удалить запись поискового индекса
+    href: delete-index-record.md

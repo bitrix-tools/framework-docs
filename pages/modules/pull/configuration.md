@@ -123,7 +123,7 @@ PHP отправляет команды по адресу публикации, 
 
 ### Проверить настройку из PHP
 
-Для проверки в коде приложения подключите модуль `pull` через `Loader::includeModule()` и вызовите `CPullOptions::GetQueueServerStatus()`. Фрагмент выполняется после загрузки ядра Bitrix:
+Для проверки в коде приложения подключите модуль `pull` через [`Loader::includeModule()`](../../api-reference/main/loader/include-module.md) и вызовите `CPullOptions::GetQueueServerStatus()`. Фрагмент выполняется после загрузки ядра Bitrix:
 
 ```php
 use Bitrix\Main\Loader;

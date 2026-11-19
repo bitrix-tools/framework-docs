@@ -157,9 +157,9 @@ $arComponentParameters = [
 
 Если `USER_ID` меньше единицы или пользователь не найден, `$arResult` остается пустым. Тогда компонент отменяет запись кеша методом `abortResultCache()` и выводит ошибку функцией `ShowError()`.
 
-Компонент автоматически подключает только языковой файл `lang/<код языка>/component.php`. Поэтому `class.php` загружает свои фразы сам вызовом `Loc::loadMessages(__FILE__)` класса `Bitrix\Main\Localization\Loc`, а текст ошибки берет из файла `lang/ru/class.php`. Названия в `.description.php` и `.parameters.php` для краткости записаны в примерах прямо в коде, в рабочем компоненте их тоже выносят в языковые файлы.
+Компонент автоматически подключает только языковой файл `lang/<код языка>/component.php`. Поэтому `class.php` загружает свои фразы сам вызовом `Loc::loadMessages(__FILE__)` класса [`Bitrix\Main\Localization\Loc`](../api-reference/main/localization/loc/index.md), а текст ошибки берет из файла `lang/ru/class.php`. Названия в `.description.php` и `.parameters.php` для краткости записаны в примерах прямо в коде, в рабочем компоненте их тоже выносят в языковые файлы.
 
-Скрипт шаблона использует JS-ядро `main.core`. Класс подключает его вызовом `Extension::load('main.core')` класса `Bitrix\Main\UI\Extension` до `startResultCache()`, потому что при выводе из кеша шаблон не выполняется.
+Скрипт шаблона использует JS-ядро `main.core`. Класс подключает его вызовом `Extension::load('main.core')` класса [`Bitrix\Main\UI\Extension`](../api-reference/main/ui/extension/index.md) до `startResultCache()`, потому что при выводе из кеша шаблон не выполняется.
 
 **Пример.** Класс компонента с кешированием результата:
 
@@ -374,7 +374,7 @@ BX.ready(() => {
 
 ### Файл templates/.default/lang/ru/template.php
 
-Файл `templates/.default/lang/ru/template.php` содержит фразы шаблона на русском языке. Языковой файл шаблона лежит в папке `lang/<код языка>/` внутри папки шаблона и называется так же, как файл шаблона. Шаблон подключает свой языковой файл автоматически, поэтому `Loc::getMessage()` в `template.php` работает без вызова `Loc::loadMessages()`. Для другого языка создайте файл с теми же ключами в папке `lang/<код языка>/`, например `lang/en/template.php`.
+Файл `templates/.default/lang/ru/template.php` содержит фразы шаблона на русском языке. Языковой файл шаблона лежит в папке `lang/<код языка>/` внутри папки шаблона и называется так же, как файл шаблона. Шаблон подключает свой языковой файл автоматически, поэтому [`Loc::getMessage()`](../api-reference/main/localization/loc/get-message.md) в `template.php` работает без вызова [`Loc::loadMessages()`](../api-reference/main/localization/loc/load-messages.md). Для другого языка создайте файл с теми же ключами в папке `lang/<код языка>/`, например `lang/en/template.php`.
 
 **Пример.** Языковой файл задает подпись к email по ключу `USER_CARD_EMAIL_LABEL`:
 

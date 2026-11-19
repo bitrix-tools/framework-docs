@@ -1,0 +1,39 @@
+title: Path
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Собрать путь из частей
+    href: combine.md
+  - name: Привести путь к каноническому виду
+    href: normalize.md
+  - name: Получить имя из пути
+    href: get-name.md
+  - name: Получить путь к родительскому каталогу
+    href: get-directory.md
+  - name: Получить расширение файла
+    href: get-extension.md
+  - name: Проверить, абсолютный ли путь
+    href: is-absolute.md
+  - name: Перевести путь от корня сайта в абсолютный путь
+    href: convert-relative-to-absolute.md
+  - name: Перевести путь от корня указанного сайта в абсолютный путь
+    href: convert-site-relative-to-absolute.md
+  - name: Проверить абсолютный путь
+    href: validate.md
+  - name: Проверить имя файла
+    href: validate-filename.md
+  - name: Заменить недопустимые символы имени файла
+    href: replace-invalid-filename.md
+  - name: Заменить недопустимые символы случайными буквами
+    href: randomize-invalid-filename.md
+  - name: Перевести путь в URI
+    href: convert-logical-to-uri.md
+  - name: Перевести путь из кодировки файловой системы в URI
+    href: convert-physical-to-uri.md
+  - name: Перевести URI в путь в кодировке файловой системы
+    href: convert-uri-to-physical.md
+  - name: Перевести путь в кодировку файловой системы
+    href: convert-logical-to-physical.md
+  - name: Перевести путь из кодировки файловой системы в UTF-8
+    href: convert-physical-to-logical.md

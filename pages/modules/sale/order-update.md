@@ -113,7 +113,7 @@ foreach ($orders as $order)
 
 Коды `N` и `P` в примере условные. Замените их кодами статусов заказа из настроек проекта. Поля статуса описаны в статье «Статусы и события», раздел [Поля статуса](./statuses-events.md#status-fields).
 
-Если нужны только отдельные поля заказа, запросите их через `Order::getList($parameters)` без загрузки объектов. В `$parameters` укажите `select` со списком полей и при необходимости `filter`, `order`, `limit`, `offset` и `runtime`. Метод `Order::getList()` возвращает `Bitrix\Main\DB\Result`, а метод `fetch()` — очередной массив полей. Для изменения найденного заказа загрузите объект через `load()`, `loadByAccountNumber()` или `loadByFilter()`.
+Если нужны только отдельные поля заказа, запросите их через `Order::getList($parameters)` без загрузки объектов. В `$parameters` укажите `select` со списком полей и при необходимости `filter`, `order`, `limit`, `offset` и `runtime`. Метод `Order::getList()` возвращает [`Bitrix\Main\DB\Result`](../../api-reference/main/db/result/index.md), а метод `fetch()` — очередной массив полей. Для изменения найденного заказа загрузите объект через `load()`, `loadByAccountNumber()` или `loadByFilter()`.
 
 **Пример.** Код получает номер, стоимость и статус 50 последних заказов покупателя без загрузки объектов.
 
@@ -306,7 +306,7 @@ foreach ($shipmentCollection as $shipment)
 
 1. Согласуйте новое количество с позициями пользовательских отгрузок.
 
-2. Измените позицию корзины и проверьте `Result`.
+2. Измените позицию корзины и проверьте [`Result`](../../api-reference/main/result/index.md).
 
 3. Обновите товарные данные через `$basket->refresh()`.
 

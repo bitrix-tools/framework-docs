@@ -78,7 +78,7 @@ class BookTable extends DataManager
 
 -  Имя таблицы можно задать в методе `getTableName`, например, `my_book`. Если метод не определен, имя таблицы формируется автоматически из неймспейса и названия класса, например, `b_somepartner_mybookscatalog_book`.
 
--  Скалярное поле — объект класса-наследника `Bitrix\Main\ORM\Fields\ScalarField`, оно соответствует колонке таблицы. Например, `IntegerField` — для целых чисел, `StringField` — для строк, `DateField` — для дат. Вычисляемые поля `ExpressionField` и поля связей наследуют другие классы.
+-  Скалярное поле — объект класса-наследника `Bitrix\Main\ORM\Fields\ScalarField`, оно соответствует колонке таблицы. Например, `IntegerField` — для целых чисел, `StringField` — для строк, `DateField` — для дат. Вычисляемые поля [`ExpressionField`](../api-reference/main/orm/fields/expression-field/index.md) и поля связей наследуют другие классы.
 
 -  Метод `getMap()` описывает структуру сущности и возвращает массив полей.
 
@@ -163,7 +163,7 @@ use Bitrix\Main\ORM\Fields\IntegerField;
 
 -  `StringField` — поле для коротких строк.
 
-   Длину колонки и проверку длины задает валидатор `LengthValidator`. При создании таблицы колонка получает тип `varchar` с наименьшим значением `max` из валидаторов `LengthValidator` этого поля. Если таких валидаторов нет, колонка получает тип `varchar(255)`. При записи слишком длинного значения `LengthValidator` возвращает ошибку в объект результата.
+   Длину колонки и проверку длины задает валидатор [`LengthValidator`](../api-reference/main/orm/fields/validators/length-validator/index.md). При создании таблицы колонка получает тип `varchar` с наименьшим значением `max` из валидаторов `LengthValidator` этого поля. Если таких валидаторов нет, колонка получает тип `varchar(255)`. При записи слишком длинного значения `LengthValidator` возвращает ошибку в объект результата.
 
    **Пример.** Поле принимает только латинские буквы, длина значения и колонки — до 100 символов.
 
@@ -239,9 +239,9 @@ use Bitrix\Main\ORM\Fields\IntegerField;
 
    Методы настройки:
 
-   `configureFormat($format)` — задает формат, по которому поле разбирает дату-строку, если значение задают через объект ORM: методом `set()` или сеттером вида `setPublishDate()`. В `add()` и `update()` с массивом данных передавайте объект `Bitrix\Main\Type\Date`: строку валидатор поля отклонит.
+   `configureFormat($format)` — задает формат, по которому поле разбирает дату-строку, если значение задают через объект ORM: методом `set()` или сеттером вида `setPublishDate()`. В `add()` и `update()` с массивом данных передавайте объект [`Bitrix\Main\Type\Date`](../api-reference/main/type/date/index.md): строку валидатор поля отклонит.
 
--  `DatetimeField` — поле для хранения даты и времени.
+-  [`DatetimeField`](../api-reference/main/orm/fields/datetime-field/index.md) — поле для хранения даты и времени.
 
    **Пример.** Поле без учета часовых поясов, по умолчанию — текущие дата и время.
 
@@ -464,7 +464,7 @@ use Bitrix\Main\Type\Date;
 ;
 ```
 
-Метод `configureDefaultValueNow()` задает полю `DatetimeField` текущие дату и время по умолчанию. Метод вычисляет значение при создании объекта записи: при `add()` — в момент вызова, при работе с объектом — в момент вызова `createObject()` или `new`, а не `save()`.
+Метод `configureDefaultValueNow()` задает полю [`DatetimeField`](../api-reference/main/orm/fields/datetime-field/index.md) текущие дату и время по умолчанию. Метод вычисляет значение при создании объекта записи: при `add()` — в момент вызова, при работе с объектом — в момент вызова `createObject()` или `new`, а не `save()`.
 
 ```php
 use Bitrix\Main\ORM\Fields\DatetimeField;
@@ -583,7 +583,7 @@ class BookTable extends DataManager
 
 -  `BooleanField` — `BooleanValidator`, проверяет, что значение допустимо для логического поля,
 
--  `DateField` и `DatetimeField` — `DateValidator`, проверяет, что значение — корректная дата,
+-  `DateField` и [`DatetimeField`](../api-reference/main/orm/fields/datetime-field/index.md) — `DateValidator`, проверяет, что значение — корректная дата,
 
 -  `EnumField` — `EnumValidator`, проверяет, что значение входит в список допустимых.
 
@@ -591,7 +591,7 @@ class BookTable extends DataManager
 
 Остальные стандартные валидаторы добавляйте сами:
 
--  `LengthValidator` — проверяет длину строкового значения. Как валидатор влияет на длину колонки, описано в разделе о `StringField`.
+-  [`LengthValidator`](../api-reference/main/orm/fields/validators/length-validator/index.md) — проверяет длину строкового значения. Как валидатор влияет на длину колонки, описано в разделе о `StringField`.
 
    **Пример.** Название книги — не длиннее 255 символов.
 
@@ -998,7 +998,7 @@ if (Loader::includeModule('somepartner.mybookscatalog'))
 
 {% endnote %}
 
-Вызывайте `createDbTable()` в установщике модуля, в методе `InstallDB()`. Перед вызовом подключите модуль через `Loader::includeModule()`. Установщик из статьи [Создание модуля](./../get-started/create-module.md) регистрирует модуль до вызова `InstallDB()`, поэтому `includeModule()` его подключит.
+Вызывайте `createDbTable()` в установщике модуля, в методе `InstallDB()`. Перед вызовом подключите модуль через [`Loader::includeModule()`](../api-reference/main/loader/include-module.md). Установщик из статьи [Создание модуля](./../get-started/create-module.md) регистрирует модуль до вызова `InstallDB()`, поэтому `includeModule()` его подключит.
 
 Таблицу-связку для поля `ManyToMany` описывает служебная сущность. Метод `getMediatorEntity()` поля связи возвращает эту сущность, а метод `createDbTable()` создает по ней таблицу.
 

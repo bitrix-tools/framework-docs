@@ -699,7 +699,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
 
 На обычной странице публичной части расширение создает экземпляр клиента. Метод `CPullOptions::OnEpilog()` добавляет его запуск при загрузке окна. Для запуска нужны ненулевой идентификатор пользователя и разрешение использовать Pull в текущем разделе. Константа `BX_PULL_SKIP_INIT` и параметр запроса `AJAX_CALL = 'Y'` запрещают автоматический запуск.
 
-Обработчик `OnGetDependentModule` объявляет использование Pull в публичной части, а `/bitrix/footer.php` завершает обработку страницы. Одного вызова `Extension::load()` в произвольном AJAX-фрагменте недостаточно для автоматического запуска клиента.
+Обработчик `OnGetDependentModule` объявляет использование Pull в публичной части, а `/bitrix/footer.php` завершает обработку страницы. Одного вызова [`Extension::load()`](../../api-reference/main/ui/extension/load.md) в произвольном AJAX-фрагменте недостаточно для автоматического запуска клиента.
 
 ### Восстановить данные после подключения {#restore-after-reconnect}
 
@@ -733,7 +733,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
 
 #|
 || **Контекст** | **Зависимость** | **Где подключить** ||
-|| Браузерная страница | `pull.client` | Зависимости JS-расширения или `Extension::load` ||
+|| Браузерная страница | `pull.client` | Зависимости JS-расширения или [`Extension::load`](../../api-reference/main/ui/extension/load.md) ||
 || Веб-страница мобильного приложения | `mobile.pull.client` | Зависимости JS-расширения или `Extension::load` ||
 || JaNative component | `pull/client/events` | Файл `deps.php` ||
 || Offline WebComponent | `pull/client/events` | Раздел `deps` файла `config.php` ||

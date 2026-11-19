@@ -181,7 +181,7 @@ description: "Уведомления по заказам. Штатные пис�
 
 ### Зарегистрировать обработчик
 
-Файл `/local/php_interface/init.php` выполняется при каждом запросе. Добавьте код в него или в подключаемый из него файл. Перед вызовом `EventManager::addEventHandler()` подключите модуль `sale` через `Loader::includeModule()`. Механизм событий описан в статье [События](../../framework/events.md).
+Файл `/local/php_interface/init.php` выполняется при каждом запросе. Добавьте код в него или в подключаемый из него файл. Перед вызовом [`EventManager::addEventHandler()`](../../api-reference/main/event-manager/add-event-handler.md) подключите модуль `sale` через [`Loader::includeModule()`](../../api-reference/main/loader/include-module.md). Механизм событий описан в статье [События](../../framework/events.md).
 
 ```php
 use Bitrix\Main\EventManager;
@@ -197,7 +197,7 @@ if (Loader::includeModule('sale'))
 }
 ```
 
-Обработчик получит объект события `Bitrix\Main\Event`. Реализация функции `sendPaidOrderNotification()` приведена в разделе [Отправить письмо после оплаты](#send-after-paid).
+Обработчик получит объект события [`Bitrix\Main\Event`](../../api-reference/main/event/index.md). Реализация функции `sendPaidOrderNotification()` приведена в разделе [Отправить письмо после оплаты](#send-after-paid).
 
 ### Отправить письмо после оплаты {#send-after-paid}
 
@@ -373,7 +373,7 @@ function sendOrderStatusNotification(Event $event): void
 
 ### Остановить сохранение заказа
 
-События после сохранения подходят для уведомлений, но не для проверки возможности сохранить заказ. Если бизнес-условие должно остановить сохранение, выполните проверку в `OnSaleOrderBeforeSaved` и верните `Bitrix\Main\EventResult` с ошибкой.
+События после сохранения подходят для уведомлений, но не для проверки возможности сохранить заказ. Если бизнес-условие должно остановить сохранение, выполните проверку в `OnSaleOrderBeforeSaved` и верните [`Bitrix\Main\EventResult`](../../api-reference/main/event-result/index.md) с ошибкой.
 
 **Пример.** Обработчик останавливает сохранение заказа с нулевой стоимостью.
 

@@ -1,0 +1,157 @@
+title: Query
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать запрос
+    href: construct.md
+  - name: Выполнить запрос
+    href: exec.md
+  - name: Получить первую строку
+    href: fetch.md
+  - name: Получить все строки
+    href: fetch-all.md
+  - name: Получить первый объект
+    href: fetch-object.md
+  - name: Получить коллекцию
+    href: fetch-collection.md
+  - name: Получить SQL-запрос
+    href: get-query.md
+  - name: Получить последний выполненный запрос
+    href: get-last-query.md
+  - name: Получить сущность запроса
+    href: get-entity.md
+  - name: Вывести отладочные сведения
+    href: dump.md
+  - name: Получить поля выборки
+    href: get-select.md
+  - name: Задать поля выборки
+    href: set-select.md
+  - name: Добавить поле в выборку
+    href: add-select.md
+  - name: Добавить поле запроса
+    href: register-runtime-field.md
+  - name: Включить DISTINCT
+    href: set-distinct.md
+  - name: Проверить DISTINCT
+    href: has-distinct.md
+  - name: Создать выражение
+    href: expr.md
+  - name: Получить фильтр-массив
+    href: get-filter.md
+  - name: Задать фильтр-массив
+    href: set-filter.md
+  - name: Добавить условие в фильтр-массив
+    href: add-filter.md
+  - name: Получить дерево условий
+    href: get-filter-handler.md
+  - name: Создать дерево условий
+    href: filter.md
+  - name: Построить SQL условия
+    href: build-filter-sql.md
+  - name: Получить поля группировки
+    href: get-group.md
+  - name: Задать поля группировки
+    href: set-group.md
+  - name: Добавить поле группировки
+    href: add-group.md
+  - name: Проверить агрегацию
+    href: has-aggregation.md
+  - name: Получить сортировку
+    href: get-order.md
+  - name: Задать сортировку
+    href: set-order.md
+  - name: Добавить поле сортировки
+    href: add-order.md
+  - name: Получить лимит
+    href: get-limit.md
+  - name: Задать лимит
+    href: set-limit.md
+  - name: Получить смещение
+    href: get-offset.md
+  - name: Задать смещение
+    href: set-offset.md
+  - name: Включить подсчет записей
+    href: count-total.md
+  - name: Посчитать записи
+    href: query-count-total.md
+  - name: Объединить запросы
+    href: union.md
+  - name: Объединить запросы с повторами
+    href: union-all.md
+  - name: Задать сортировку объединения
+    href: set-union-order.md
+  - name: Добавить поле сортировки объединения
+    href: add-union-order.md
+  - name: Задать лимит объединения
+    href: set-union-limit.md
+  - name: Задать смещение объединения
+    href: set-union-offset.md
+  - name: Включить кеш выборок
+    href: set-cache-ttl.md
+  - name: Разрешить кеш выборок для запросов со связями
+    href: cache-joins.md
+  - name: Разрешить дублирование строк
+    href: enable-data-doubling.md
+  - name: Запретить дублирование строк
+    href: disable-data-doubling.md
+  - name: Разрешить приватные поля
+    href: enable-private-fields.md
+  - name: Запретить приватные поля
+    href: disable-private-fields.md
+  - name: Проверить разрешение приватных полей
+    href: is-private-fields-enabled.md
+  - name: Проверить приватное поле
+    href: is-field-private.md
+  - name: Задать суффикс псевдонимов таблиц
+    href: set-table-alias-postfix.md
+  - name: Получить суффикс псевдонимов таблиц
+    href: get-table-alias-postfix.md
+  - name: Задать псевдоним основной таблицы
+    href: set-custom-base-table-alias.md
+  - name: Получить псевдоним основной таблицы
+    href: get-init-alias.md
+  - name: Получить замененные псевдонимы
+    href: get-replaced-aliases.md
+  - name: Экранировать имя таблицы
+    href: quote-table-source.md
+  - name: Зарегистрировать цепочку
+    href: register-chain.md
+  - name: Получить цепочку поля
+    href: get-registered-chain.md
+  - name: Получить все цепочки
+    href: get-chains.md
+  - name: Получить цепочки выборки
+    href: get-select-chains.md
+  - name: Получить цепочки фильтра
+    href: get-filter-chains.md
+  - name: Получить цепочки WHERE
+    href: get-where-chains.md
+  - name: Получить цепочки HAVING
+    href: get-having-chains.md
+  - name: Получить цепочки группировки
+    href: get-group-chains.md
+  - name: Получить цепочки сортировки
+    href: get-order-chains.md
+  - name: Получить скрытые цепочки
+    href: get-hidden-chains.md
+  - name: Получить цепочки полей запроса
+    href: get-runtime-chains.md
+  - name: Получить список соединений
+    href: get-join-map.md
+  - name: Проверить обратные связи
+    href: has-back-reference.md
+  - name: Построить цепочки фильтра-массива
+    href: set-filter-chains.md
+  - name: Построить цепочки дерева условий
+    href: set-filter-handler-chains.md
+  - name: Построить сравнение с логическим значением
+    href: boolean-strong-equality-callback.md
+  - name: Построить сравнение с NULL
+    href: null-equality-callback.md
+  - name: Построить условие IN с подзапросом
+    href: data-doubling-callback.md
+  - name: Изменить строку результата
+    href: fetch-data-modification-callback.md
+  - name: Проверить обработчики строк
+    href: is-fetch-modification-required.md

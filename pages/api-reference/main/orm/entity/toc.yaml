@@ -1,0 +1,117 @@
+title: Entity
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить сущность
+    href: get.md
+  - name: Получить сущность через getInstance
+    href: get-instance.md
+  - name: Проверить наличие сущности
+    href: has.md
+  - name: Проверить наличие сущности через isExists
+    href: is-exists.md
+  - name: Создать сущность на лету
+    href: compile-entity.md
+  - name: Создать сущность по запросу
+    href: get-instance-by-query.md
+  - name: Удалить сущность из памяти
+    href: destroy.md
+  - name: Прочитать настройки таблицы
+    href: initialize.md
+  - name: Создать поля сущности
+    href: post-initialize.md
+  - name: Привязать сущность к другому классу
+    href: reinitialize.md
+  - name: Создать поле по описанию
+    href: initialize-field.md
+  - name: Добавить поле в сущность
+    href: add-field.md
+  - name: Получить имя сущности
+    href: get-name.md
+  - name: Получить полное имя сущности
+    href: get-full-name.md
+  - name: Получить пространство имен
+    href: get-namespace.md
+  - name: Получить модуль сущности
+    href: get-module.md
+  - name: Получить класс таблицы
+    href: get-data-class.md
+  - name: Получить код сущности
+    href: get-code.md
+  - name: Получить код языковой фразы
+    href: get-lang-code.md
+  - name: Получить название сущности
+    href: get-title.md
+  - name: Получить соединение
+    href: get-connection.md
+  - name: Получить имя таблицы
+    href: get-db-table-name.md
+  - name: Получить первичный ключ
+    href: get-primary.md
+  - name: Получить поля первичного ключа
+    href: get-primary-array.md
+  - name: Получить поле с автоинкрементом
+    href: get-auto-increment.md
+  - name: Проверить таблицу одиночных пользовательских полей
+    href: is-uts.md
+  - name: Проверить таблицу множественных пользовательских полей
+    href: is-utm.md
+  - name: Получить объект пользовательских полей
+    href: get-uf-id.md
+  - name: Добавить условия по умолчанию
+    href: set-default-scope.md
+  - name: Получить все поля
+    href: get-fields.md
+  - name: Получить поле
+    href: get-field.md
+  - name: Проверить наличие поля
+    href: has-field.md
+  - name: Получить скалярные поля
+    href: get-scalar-fields.md
+  - name: Получить число связей
+    href: get-references-count-to.md
+  - name: Получить связи с сущностью
+    href: get-references-to.md
+  - name: Получить класс объекта
+    href: get-object-class.md
+  - name: Получить короткое имя класса объекта
+    href: get-object-class-name.md
+  - name: Получить имя класса объекта по умолчанию
+    href: get-default-object-class-name.md
+  - name: Получить класс коллекции
+    href: get-collection-class.md
+  - name: Получить короткое имя класса коллекции
+    href: get-collection-class-name.md
+  - name: Получить имя класса коллекции по умолчанию
+    href: get-default-collection-class-name.md
+  - name: Создать объект
+    href: create-object.md
+  - name: Создать коллекцию
+    href: create-collection.md
+  - name: Создать объект из данных
+    href: wake-up-object.md
+  - name: Создать коллекцию из данных
+    href: wake-up-collection.md
+  - name: Создать класс объекта
+    href: compile-object-class.md
+  - name: Создать класс коллекции
+    href: compile-collection-class.md
+  - name: Привести имя к классу таблицы
+    href: normalize-entity-class.md
+  - name: Привести имя к имени сущности
+    href: normalize-name.md
+  - name: Разделить имя на части
+    href: get-entity-class-parts.md
+  - name: Получить SQL создания таблицы
+    href: compile-db-table-structure-dump.md
+  - name: Создать таблицу
+    href: create-db-table.md
+  - name: Прочитать выборку из кеша
+    href: read-from-cache.md
+  - name: Записать выборку в кеш
+    href: write-to-cache.md
+  - name: Получить время жизни кеша
+    href: get-cache-ttl.md
+  - name: Очистить кеш выборок
+    href: clean-cache.md

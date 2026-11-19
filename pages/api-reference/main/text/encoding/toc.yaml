@@ -1,0 +1,13 @@
+title: Encoding
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Перекодировать данные
+    href: convert-encoding.md
+  - name: Перевести строку в UTF-8
+    href: convert-to-utf.md
+  - name: Перевести строку в текущую кодировку
+    href: convert-encoding-to-current.md
+  - name: Проверить кодировку UTF-8
+    href: detect-utf8.md

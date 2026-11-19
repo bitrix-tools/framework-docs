@@ -39,7 +39,7 @@ description: "Как написать сообщение в чат задачи,
 
 -  `CheckListProvider` — чек-листы.
 
-Создайте объект провайдера методом `get()` сервис-локатора `Bitrix\Main\DI\ServiceLocator`, а не оператором `new` — без аргументов конструктора PHP выбросит ошибку `ArgumentCountError`. Подробнее — в статье [Service Locator](./../../framework/service-locator.md).
+Создайте объект провайдера методом `get()` сервис-локатора [`Bitrix\Main\DI\ServiceLocator`](../../api-reference/main/di/service-locator/index.md), а не оператором `new` — без аргументов конструктора PHP выбросит ошибку `ArgumentCountError`. Подробнее — в статье [Service Locator](./../../framework/service-locator.md).
 
 Перед запуском примеров подключите [пролог Bitrix Framework](./../../framework/request-lifecycle.md) и модуль `tasks`. Полный код подключения приведен в примере из раздела [Написать сообщение в чат задачи](#chat-message), в остальных примерах его нет. Каждый пример ниже предполагает, что модуль `tasks` уже подключен.
 

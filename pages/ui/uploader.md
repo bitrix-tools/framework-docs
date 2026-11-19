@@ -19,7 +19,7 @@ description: 'Загрузка файлов Uploader. UI Bitrix Framework: ко�
 \CJSCore::Init(['uploader']);
 ```
 
-Расширение зарегистрировано в `CJSCore`, а не в модуле `ui`, поэтому метод `\Bitrix\Main\UI\Extension::load()` для него не используют.
+Расширение зарегистрировано в `CJSCore`, а не в модуле `ui`, поэтому метод [`\Bitrix\Main\UI\Extension::load()`](../api-reference/main/ui/extension/load.md) для него не используют.
 
 Вместе с расширением подключаются его зависимости: `ajax` для запросов и `dd` для перетаскивания файлов. Загружать их отдельно не нужно.
 

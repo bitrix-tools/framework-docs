@@ -136,7 +136,7 @@ $canEdit = TaskAccessController::can($userId, ActionDictionary::ACTION_TASK_EDIT
 
 - `clearUserErrors()` — удаляет сообщения прошлых проверок. Объект копит сообщения всех проверок сотрудника за время выполнения кода, включая вызовы `can()`. Вызывайте метод перед каждой проверкой, иначе к причине отказа добавятся чужие сообщения.
 
-- `getUserErrors()` — возвращает массив объектов `Bitrix\Main\Error` с текстом для сотрудника.
+- `getUserErrors()` — возвращает массив объектов [`Bitrix\Main\Error`](../../api-reference/main/error/index.md) с текстом для сотрудника.
 
 Сообщение для сотрудника задают не все правила. Его задают, например, проверки чтения, изменения и сохранения задачи, переноса срока, добавления наблюдателей, файлов, изменения результата и обязательного результата. Проверки статуса и удаления сообщений не задают. Если массив пуст, покажите свой текст.
 
@@ -324,7 +324,7 @@ if (!TaskAccessController::can($userId, ActionDictionary::ACTION_TASK_SAVE, $tas
 | `ACTION_TASK_APPROVE`, `ACTION_TASK_DISAPPROVE` | Приемка работы или возврат на доработку задачи, которая ждет контроля постановщика | — | `ApproveTaskCommand`, `DisapproveTaskCommand`. Действие `ACTION_TASK_APPROVE` также заменяет `ACTION_TASK_COMPLETE` перед `CompleteTaskCommand` |
 | `ACTION_TASK_COMPLETE_RESULT` | Выполнено ли требование обязательного результата. Само право на завершение не проверяет | — | `CompleteTaskCommand`, подробнее — в разделе [Завершить задачу с обязательным результатом](#complete-result) |
 | `ACTION_TASK_DEFER`, `ACTION_TASK_RENEW` | Откладывание и возобновление задачи | — | `DeferTaskCommand`, `RenewTaskCommand`, подробнее — в разделе [Сменить статус](./tasks.md#change-status) |
-| `ACTION_TASK_DEADLINE` | Перенос крайнего срока | Массив с ключами `DEADLINE` — новый срок объектом `Bitrix\Main\Type\DateTime` и `DEADLINE_REASON` — причина переноса. Ключ `DEADLINE_REASON` обязателен, только если в задаче включено требование указывать причину переноса. Без ключа `DEADLINE` проверка не учитывает ограничения переноса | `UpdateDeadlineCommand`, подробнее — в разделе [Перенести крайний срок](./tasks.md#update-deadline) |
+| `ACTION_TASK_DEADLINE` | Перенос крайнего срока | Массив с ключами `DEADLINE` — новый срок объектом [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md) и `DEADLINE_REASON` — причина переноса. Ключ `DEADLINE_REASON` обязателен, только если в задаче включено требование указывать причину переноса. Без ключа `DEADLINE` проверка не учитывает ограничения переноса | `UpdateDeadlineCommand`, подробнее — в разделе [Перенести крайний срок](./tasks.md#update-deadline) |
 | `ACTION_TASK_DELEGATE` | Передача задачи новому ответственному | Модель `TaskModel` с новым ответственным, как в разделе [Передать новые данные в проверку](#task-model). Без нее проверка не учитывает нового ответственного | `DelegateCommand`, подробнее — в разделе [Сменить участников](./tasks.md#change-members) |
 | `ACTION_TASK_CHANGE_RESPONSIBLE` | Смена ответственного | Модель `TaskModel` с новым ответственным, как в разделе [Передать новые данные в проверку](#task-model). Без нее проверка не учитывает нового ответственного | `DelegateCommand`. Достаточно, чтобы прошла эта проверка или проверка `ACTION_TASK_DELEGATE` |
 | `ACTION_TASK_CHANGE_ACCOMPLICES` | Смена соисполнителей | Модель `TaskModel` с полным новым списком соисполнителей. Без нее проверка не учитывает новых соисполнителей | `SetAccomplicesCommand`, подробнее — в разделе [Добавить соисполнителя к текущим](./tasks.md#add-accomplice) |

@@ -85,7 +85,7 @@ BX.ajax.runAction('my:module.User.like', { /* данные */ });
 
 -  `/lib/Controller/User.php` — для описания контроллера.
 
-Ниже приведена полная структура модуля после добавления контроллера. Регистр каталогов `Controller` и `Services` соответствует частям пространств имен `My\Module\Controller` и `My\Module\Services`.
+Ниже приведена полная структура модуля после добавления контроллера. Регистр каталогов [`Controller`](../api-reference/main/engine/controller/index.md) и `Services` соответствует частям пространств имен `My\Module\Controller` и `My\Module\Services`.
 
 ```
 /local/modules/my.module/
@@ -216,7 +216,7 @@ class LikeService
 
 В файле `/lib/Controller/User.php` опишите контроллер `User`, который управляет действиями для обработки лайков.
 
-Контроллер наследуется от `\Bitrix\Main\Engine\Controller`. Он не содержит бизнес-логику — только маршрутизацию, валидацию и вызов сервиса.
+Контроллер наследуется от [`\Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md). Он не содержит бизнес-логику — только маршрутизацию, валидацию и вызов сервиса.
 
 Добавьте два метода:
 
@@ -480,7 +480,7 @@ BX.ready(() => {
 
 Внесите изменения в основной класс компонента `/install/components/my/user.card/class.php`:
 
--  подключите `ServiceLocator` и `LikeService`,
+-  подключите [`ServiceLocator`](../api-reference/main/di/service-locator/index.md) и `LikeService`,
 
 -  в выборку пользователя добавьте поле `ID`,
 

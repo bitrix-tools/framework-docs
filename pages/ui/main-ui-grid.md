@@ -65,7 +65,7 @@ $APPLICATION->IncludeComponent(
 | `COLUMNS` | `array` | Обязательный массив колонок. Для совместимости компонент также принимает `HEADERS`, но в новом коде используйте `COLUMNS` |
 | `ROWS` | `array` | Массив строк. Если не передать массив, компонент подготовит пустой набор строк |
 | `SORT` | `array` | Текущая сортировка в формате `['FIELD' => 'asc']` или `['FIELD' => 'desc']` |
-| `NAV_OBJECT` | `Bitrix\Main\UI\PageNavigation` | Объект постраничной навигации |
+| `NAV_OBJECT` | [`Bitrix\Main\UI\PageNavigation`](../api-reference/main/ui/page-navigation/index.md) | Объект постраничной навигации |
 | `TOTAL_ROWS_COUNT` | `int` | Общее количество записей |
 | `AJAX_MODE` | `string` | `Y` включает AJAX-режим компонента. Ядро передает компоненту идентификатор `AJAX_ID`, и грид добавляет его к своим запросам |
 | `AJAX_OPTION_JUMP` | `string` | `N` отключает прокрутку страницы к таблице после AJAX-обновления. По умолчанию прокрутка включена. Действует при `AJAX_MODE`, равном `Y` |
@@ -312,7 +312,7 @@ $APPLICATION->IncludeComponent(
 
 ## Добавить пагинацию
 
-Для постраничной навигации подготовьте объект `Bitrix\Main\UI\PageNavigation`, задайте количество записей и передайте объект в `NAV_OBJECT`.
+Для постраничной навигации подготовьте объект [`Bitrix\Main\UI\PageNavigation`](../api-reference/main/ui/page-navigation/index.md), задайте количество записей и передайте объект в `NAV_OBJECT`.
 
 ```php
 <?php

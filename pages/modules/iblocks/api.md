@@ -72,7 +72,7 @@ ORM-классы записывают данные в таблицы и, есл�
 
 #### CIBlockElement::GetList() {#element-getlist}
 
-Замена — запрос ORM-класса `query()` или `getList()`. Метод `IblockTable::compileEntity()` принимает символьный код API инфоблока и возвращает описание ORM-класса — объект `Bitrix\Main\ORM\Entity` — или `false`. Имя класса возвращает метод `getDataClass()` этого описания, например `\Bitrix\Iblock\Elements\ElementNewsTable`. Если код API `API_CODE` в настройках инфоблока не задан, ORM-класса элементов нет, подробнее — в разделе [Создать инфоблок](./setup.md#create-iblock). Фильтр по полям, свойствам и разделам, сортировка, постраничная навигация и подсчет описаны в статье [Выборка элементов инфоблока](./element-queries.md). Соответствие условий фильтра и параметров приведено в разделе [Заменить CIBlockElement::GetList()](./element-queries.md#classic-getlist-replacements).
+Замена — запрос ORM-класса `query()` или `getList()`. Метод `IblockTable::compileEntity()` принимает символьный код API инфоблока и возвращает описание ORM-класса — объект [`Bitrix\Main\ORM\Entity`](../../api-reference/main/orm/entity/index.md) — или `false`. Имя класса возвращает метод `getDataClass()` этого описания, например `\Bitrix\Iblock\Elements\ElementNewsTable`. Если код API `API_CODE` в настройках инфоблока не задан, ORM-класса элементов нет, подробнее — в разделе [Создать инфоблок](./setup.md#create-iblock). Фильтр по полям, свойствам и разделам, сортировка, постраничная навигация и подсчет описаны в статье [Выборка элементов инфоблока](./element-queries.md). Соответствие условий фильтра и параметров приведено в разделе [Заменить CIBlockElement::GetList()](./element-queries.md#classic-getlist-replacements).
 
 Что учесть при замене.
 

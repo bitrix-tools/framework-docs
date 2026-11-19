@@ -144,7 +144,7 @@ $source = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/upload/import.csv');
 $content = Encoding::convertEncoding($source, 'windows-1251', 'UTF-8');
 ```
 
-Метод `Encoding::convertEncoding()` возвращает данные в целевой кодировке. Принимает строку или массив. Если кодировки совпадают, метод вернет исходные данные без изменений.
+Метод [`Encoding::convertEncoding()`](../api-reference/main/text/encoding/convert-encoding.md) возвращает данные в целевой кодировке. Принимает строку или массив. Если кодировки совпадают, метод вернет исходные данные без изменений.
 
 ## Как работать с базой данных
 
@@ -154,7 +154,7 @@ $content = Encoding::convertEncoding($source, 'windows-1251', 'UTF-8');
 
 ### Параметры подключения
 
-В `/bitrix/.settings.php` секция `connections.default` описывает подключение к базе данных. Для `\Bitrix\Main\DB\MysqliConnection` можно указать ключ `charset`. При подключении ядро передаст значение этого ключа в `mysqli::set_charset()`.
+В `/bitrix/.settings.php` секция `connections.default` описывает подключение к базе данных. Для [`\Bitrix\Main\DB\MysqliConnection`](../api-reference/main/db/mysqli-connection/index.md) можно указать ключ `charset`. При подключении ядро передаст значение этого ключа в `mysqli::set_charset()`.
 
 Для UTF-8-соединения MySQL используйте `utf8`, `utf8mb3` или `utf8mb4`. В новых установках обычно используется `utf8mb4`.
 

@@ -1,0 +1,39 @@
+title: Loader
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Подключить модуль
+    href: include-module.md
+  - name: Подключить модуль или выбросить исключение
+    href: require-module.md
+  - name: Включить или отключить исключение при подключении модуля
+    href: set-require-throw-exception.md
+  - name: Подключить модуль с демо-режимом
+    href: include-shareware-module.md
+  - name: Сбросить результат подключения модуля
+    href: clear-module-cache.md
+  - name: Зарегистрировать каталог пространства имен
+    href: register-namespace.md
+  - name: Удалить регистрацию пространства имен
+    href: unregister-namespace.md
+  - name: Получить зарегистрированные пространства имен
+    href: get-namespaces.md
+  - name: Зарегистрировать файлы классов
+    href: register-auto-load-classes.md
+  - name: Зарегистрировать псевдонимы классов
+    href: register-class-aliases.md
+  - name: Добавить свой автозагрузчик
+    href: register-handler.md
+  - name: Загрузить класс по имени
+    href: auto-load.md
+  - name: Подключить модуль класса и загрузить класс
+    href: require-class.md
+  - name: Получить корень сайта
+    href: get-document-root.md
+  - name: Найти файл в /local/ или /bitrix/
+    href: get-local.md
+  - name: Найти файл в персональном каталоге
+    href: get-personal.md
+  - name: Подключить автозагрузчик Composer
+    href: include-composer-autoload.md

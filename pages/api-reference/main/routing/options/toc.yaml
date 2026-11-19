@@ -1,0 +1,41 @@
+title: Routing\Options
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Задать HTTP-методы маршрута
+    href: methods.md
+  - name: Получить HTTP-методы маршрута
+    href: get-methods.md
+  - name: Задать префикс пути
+    href: prefix.md
+  - name: Проверить, задан ли префикс
+    href: has-prefix.md
+  - name: Получить полный префикс
+    href: get-full-prefix.md
+  - name: Задать имя маршрута
+    href: name.md
+  - name: Проверить, задано ли собственное имя
+    href: has-name.md
+  - name: Получить полное имя маршрута
+    href: get-full-name.md
+  - name: Задать регулярное выражение параметра
+    href: where.md
+  - name: Проверить, задано ли регулярное выражение параметра
+    href: has-where.md
+  - name: Получить регулярные выражения параметров
+    href: get-where.md
+  - name: Задать значение параметра по умолчанию
+    href: default.md
+  - name: Проверить, задано ли значение параметра по умолчанию
+    href: has-default.md
+  - name: Получить значения параметров по умолчанию
+    href: get-default.md
+  - name: Добавить промежуточный обработчик
+    href: middleware.md
+  - name: Задать домен
+    href: domain.md
+  - name: Добавить настройки родительской группы
+    href: merge-with.md
+  - name: Сбросить собственные префикс и имя
+    href: clear-current.md

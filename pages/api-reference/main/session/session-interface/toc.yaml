@@ -1,0 +1,37 @@
+title: SessionInterface
+href: index.md
+items:
+  - name: Обзор интерфейса
+    href: index.md
+  - name: Получить значение по ключу
+    href: get.md
+  - name: Записать значение по ключу
+    href: set.md
+  - name: Проверить, есть ли ключ
+    href: has.md
+  - name: Удалить значение по ключу
+    href: remove.md
+  - name: Удалить все значения
+    href: clear.md
+  - name: Запустить сессию
+    href: start.md
+  - name: Проверить, запущена ли сессия
+    href: is-started.md
+  - name: Проверить, можно ли запустить сессию
+    href: is-accessible.md
+  - name: Сохранить данные и закрыть сессию
+    href: save.md
+  - name: Уничтожить сессию
+    href: destroy.md
+  - name: Получить идентификатор сессии
+    href: get-id.md
+  - name: Задать идентификатор сессии
+    href: set-id.md
+  - name: Сменить идентификатор сессии
+    href: regenerate-id.md
+  - name: Получить имя cookie сессии
+    href: get-name.md
+  - name: Задать имя cookie сессии
+    href: set-name.md
+  - name: Получить обработчик хранения
+    href: get-session-handler.md

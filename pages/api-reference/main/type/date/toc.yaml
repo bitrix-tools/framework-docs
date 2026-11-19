@@ -1,0 +1,31 @@
+title: Date
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать дату
+    href: construct.md
+  - name: Вывести дату по маске
+    href: format.md
+  - name: Сдвинуть дату на интервал
+    href: add.md
+  - name: Установить год, месяц и день
+    href: set-date.md
+  - name: Получить метку времени Unix
+    href: get-timestamp.md
+  - name: Получить интервал между датами
+    href: get-diff.md
+  - name: Вывести дату в формате региональных настроек
+    href: to-string.md
+  - name: Получить формат даты в виде маски PHP
+    href: get-format.md
+  - name: Перевести формат региональных настроек в маску PHP
+    href: convert-format-to-php.md
+  - name: Проверить строку с датой
+    href: is-correct.md
+  - name: Создать дату из объекта PHP
+    href: create-from-php.md
+  - name: Создать дату из метки времени Unix
+    href: create-from-timestamp.md
+  - name: Распознать дату в тексте
+    href: create-from-text.md

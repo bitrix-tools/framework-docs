@@ -1,0 +1,7 @@
+title: Controllerable
+href: index.md
+items:
+  - name: Обзор интерфейса
+    href: index.md
+  - name: Настроить действия
+    href: configure-actions.md

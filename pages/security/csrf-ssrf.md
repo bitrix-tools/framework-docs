@@ -136,7 +136,7 @@ SameSite — это дополнительный атрибут для cookie. �
    setcookie('cookie_name', 'cookie_value', ['samesite' => 'Strict']);
    ```
 
-2. с помощью `\Bitrix\Main\HttpResponse::addCookie`:
+2. с помощью [`\Bitrix\Main\HttpResponse::addCookie`](../api-reference/main/http-response/add-cookie.md):
 
    ```php
    use Bitrix\Main\Application;
@@ -174,7 +174,7 @@ SameSite — это дополнительный атрибут для cookie. �
 
 -  `HttpMethod` — ограничивает допустимые HTTP-методы,
 
--  `Csrf` — проверяет токен функцией `check_bitrix_sessid()` и блокирует действие при ошибке.
+-  [`Csrf`](../api-reference/main/engine/action-filter/csrf/index.md) — проверяет токен функцией `check_bitrix_sessid()` и блокирует действие при ошибке.
 
 Стандартный набор префильтров контроллера уже включает эти проверки и разрешает `GET` и `POST`. Для действия, которое меняет данные, оставьте только `POST`. При задании `prefilters` в `configureActions()` вы заменяете набор по умолчанию, поэтому перечислите все необходимые проверки.
 
@@ -212,7 +212,7 @@ final class Settings extends Controller
 
 Фильтр `Authentication` проверяет только вход пользователя. Проверяйте права на конкретные данные отдельно в действии. Токен также не заменяет проверку прав.
 
-Фильтр `Csrf` работает в области `Controller::SCOPE_AJAX`. Для контроллера, вызванного через HTTP-маршрут вне этой области, предусмотрите проверку токена отдельно.
+Фильтр `Csrf` работает в области [`Controller::SCOPE_AJAX`](../api-reference/main/engine/controller/index.md). Для контроллера, вызванного через HTTP-маршрут вне этой области, предусмотрите проверку токена отдельно.
 
 Настройки и способы подключения фильтров описаны в статье [Пре- и постфильтры](../framework/pre-post-filters.md#default-filters).
 

@@ -1,0 +1,9 @@
+title: PgsqlConnection
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить колонки полнотекстового индекса
+    href: get-table-full-text-fields.md
+  - name: Обработать ошибку подключения
+    href: connection-error-handler.md

@@ -1,0 +1,75 @@
+title: Uri
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать объект адреса
+    href: construct.md
+  - name: Получить адрес целиком
+    href: get-uri.md
+  - name: Получить адрес без фрагмента
+    href: get-locator.md
+  - name: Получить путь со строкой запроса
+    href: get-path-query.md
+  - name: Получить схему
+    href: get-scheme.md
+  - name: Получить хост
+    href: get-host.md
+  - name: Задать хост
+    href: set-host.md
+  - name: Получить порт
+    href: get-port.md
+  - name: Получить имя пользователя
+    href: get-user.md
+  - name: Задать имя пользователя
+    href: set-user.md
+  - name: Получить пароль
+    href: get-pass.md
+  - name: Задать пароль
+    href: set-pass.md
+  - name: Получить учетные данные
+    href: get-user-info.md
+  - name: Получить учетные данные, хост и порт
+    href: get-authority.md
+  - name: Получить путь
+    href: get-path.md
+  - name: Задать путь
+    href: set-path.md
+  - name: Получить строку запроса
+    href: get-query.md
+  - name: Добавить параметры запроса
+    href: add-params.md
+  - name: Удалить параметры запроса
+    href: delete-params.md
+  - name: Получить фрагмент
+    href: get-fragment.md
+  - name: Сделать адрес абсолютным
+    href: to-absolute.md
+  - name: Дополнить относительный адрес
+    href: resolve-relative-uri.md
+  - name: Проверить путь на переход вверх
+    href: is-path-traversal.md
+  - name: Перевести хост в Punycode
+    href: convert-to-punycode.md
+  - name: Перевести хост в Unicode
+    href: convert-to-unicode.md
+  - name: Закодировать строку адреса
+    href: urn-encode.md
+  - name: Раскодировать строку адреса
+    href: urn-decode.md
+  - name: Получить адрес для JSON
+    href: json-serialize.md
+  - name: Получить копию с другой схемой
+    href: with-scheme.md
+  - name: Получить копию с другими учетными данными
+    href: with-user-info.md
+  - name: Получить копию с другим хостом
+    href: with-host.md
+  - name: Получить копию с другим портом
+    href: with-port.md
+  - name: Получить копию с другим путем
+    href: with-path.md
+  - name: Получить копию с другой строкой запроса
+    href: with-query.md
+  - name: Получить копию с другим фрагментом
+    href: with-fragment.md

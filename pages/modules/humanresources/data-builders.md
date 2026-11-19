@@ -659,7 +659,7 @@ $lastMember = (new NodeMemberDataBuilder())
 
 ## Продолжить настройку через ORM
 
-Метод `prepareQuery()` классов `NodeDataBuilder` и `NodeMemberDataBuilder` нужен, когда их возможностей недостаточно, но собранные фильтры нужно сохранить. Метод возвращает настроенный объект `Bitrix\Main\ORM\Query\Query` и не загружает данные.
+Метод `prepareQuery()` классов `NodeDataBuilder` и `NodeMemberDataBuilder` нужен, когда их возможностей недостаточно, но собранные фильтры нужно сохранить. Метод возвращает настроенный объект [`Bitrix\Main\ORM\Query\Query`](../../api-reference/main/orm/query/query/index.md) и не загружает данные.
 
 **Пример.** Код подготавливает запрос активных подразделений, ограничивает результат 50 строками и получает необработанные ORM-данные.
 

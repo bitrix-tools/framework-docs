@@ -3,7 +3,7 @@ title: Выборка данных
 description: 'Выборка данных в ORM Bitrix Framework: параметры getList, операторы фильтра, кеширование выборки, короткие вызовы getById и getRow, области данных setDefaultScope и with*, QueryHelper::decompose для связей 1:N и N:M, методы where* и ConditionTree.'
 ---
 
-Для выборки данных с фильтрацией, группировкой и сортировкой в Bitrix Framework используются метод `getList` и [построитель запросов](./query-builder.md) на объекте `Bitrix\Main\ORM\Query\Query`.
+Для выборки данных с фильтрацией, группировкой и сортировкой в Bitrix Framework используются метод `getList` и [построитель запросов](./query-builder.md) на объекте [`Bitrix\Main\ORM\Query\Query`](../api-reference/main/orm/query/query/index.md).
 
 Какой способ выбрать:
 
@@ -17,7 +17,7 @@ description: 'Выборка данных в ORM Bitrix Framework: параме�
 
 ## Метод getList {#getlist}
 
-Метод `getList` есть у каждого ORM-класса, унаследованного от `Bitrix\Main\ORM\Data\DataManager`, и принимает одинаковый набор параметров. Внутри метод создает объект `Query`, поэтому все возможности `getList` доступны и в [построителе запросов](./query-builder.md).
+Метод `getList` есть у каждого ORM-класса, унаследованного от [`Bitrix\Main\ORM\Data\DataManager`](../api-reference/main/orm/data/data-manager/index.md), и принимает одинаковый набор параметров. Внутри метод создает объект [`Query`](../api-reference/main/orm/query/query/index.md), поэтому все возможности `getList` доступны и в [построителе запросов](./query-builder.md).
 
 Примеры статьи используют сущности модуля `somepartner.mybookscatalog`. Полное описание класса `BookTable` смотрите в статье [Концепция ORM](./orm-concepts.md#book-model). Перед обращением к классу подключите модуль вызовом `Loader::includeModule('somepartner.mybookscatalog')` — подробнее в разделе [Подключить модуль сущности](./orm-concepts.md#include-module). Чтобы не повторять служебные строки, фрагменты ниже опускают подключение модуля и импорт класса:
 
@@ -53,7 +53,7 @@ $result = BookTable::getList([
 | Ключ | Тип | По умолчанию | Назначение |
 |---|---|---|---|
 | `select` | `array` | `['*']` | Поля для выборки, алиасы в виде `'АЛИАС' => 'ПОЛЕ'` |
-| `filter` | `array` или `ConditionTree` | без условий | Условия `WHERE` и `HAVING`: массив с [операторами](#operators) или объект [фильтра ORM](#orm-filter) |
+| `filter` | `array` или [`ConditionTree`](../api-reference/main/orm/query/filter/condition-tree/index.md) | без условий | Условия `WHERE` и `HAVING`: массив с [операторами](#operators) или объект [фильтра ORM](#orm-filter) |
 | `group` | `array` | без группировки | Поля для `GROUP BY` |
 | `order` | `array` или `string` | без сортировки | Поля и направление `ASC` или `DESC` в любом регистре. Другое направление вызывает `ArgumentException` с текстом `Invalid order` |
 | `limit` | `int` | без ограничения | Максимальное количество записей |
@@ -72,7 +72,7 @@ $result = BookTable::getList([
 
 ### Получение данных из результата
 
-Метод `getList` возвращает объект `Bitrix\Main\ORM\Query\Result` — наследник `Bitrix\Main\DB\Result`. Основные методы результата:
+Метод `getList` возвращает объект [`Bitrix\Main\ORM\Query\Result`](../api-reference/main/orm/query/result/index.md) — наследник [`Bitrix\Main\DB\Result`](../api-reference/main/db/result/index.md). Основные методы результата:
 
 | Метод | Что возвращает |
 |---|---|
@@ -168,7 +168,7 @@ BookTable::getList([
 ]);
 ```
 
-При этом выберутся только скалярные поля `ScalarField`. Скалярные поля — это обычные поля таблицы. Вычисляемые поля `ExpressionField` и связи с другими сущностями нужно указывать в запросе. Они создаются на основе выражений и не являются частью таблицы по умолчанию.
+При этом выберутся только скалярные поля `ScalarField`. Скалярные поля — это обычные поля таблицы. Вычисляемые поля [`ExpressionField`](../api-reference/main/orm/fields/expression-field/index.md) и связи с другими сущностями нужно указывать в запросе. Они создаются на основе выражений и не являются частью таблицы по умолчанию.
 
 Символ `*` работает и для связанной сущности: `'PUBLISHER.*'` выбирает все скалярные поля издательства.
 
@@ -226,7 +226,7 @@ BookTable::getList([
 | `>`, `<`, `>=`, `<=` | `>`, `<`, `>=`, `<=` | Значение |
 | `><` | `BETWEEN` | Массив `[MIN, MAX]` |
 | `!><` | `NOT BETWEEN` | Массив `[MIN, MAX]` |
-| `@` | `IN` | Массив или объект `Bitrix\Main\DB\SqlExpression` |
+| `@` | `IN` | Массив или объект [`Bitrix\Main\DB\SqlExpression`](../api-reference/main/db/sql-expression/index.md) |
 | `!@` | `NOT IN` | Массив или объект `Bitrix\Main\DB\SqlExpression` |
 | `%` | `LIKE '%значение%'` | Подстрока. Символы `%` добавляются автоматически, сравнение без учета регистра. Для целочисленных полей — `=` |
 | `!%` | `NOT LIKE '%значение%'` | Подстрока |
@@ -288,7 +288,7 @@ BookTable::getList([
 
 -  `'!=TITLE' => 'x'` для строкового поля дает `(TITLE IS NULL OR TITLE <> 'x')`: записи с `NULL` попадают в выборку,
 
--  даты для полей `DateField` и `DatetimeField` передавайте объектами `Bitrix\Main\Type\Date` и `Bitrix\Main\Type\DateTime`. Строка разбирается в формате даты текущего сайта,
+-  даты для полей `DateField` и `DatetimeField` передавайте объектами [`Bitrix\Main\Type\Date`](../api-reference/main/type/date/index.md) и [`Bitrix\Main\Type\DateTime`](../api-reference/main/type/date-time/index.md). Строка разбирается в формате даты текущего сайта,
 
 -  `'%TITLE' => ''` дает `(TITLE IS NULL OR TITLE = '')`, а не все записи. Не добавляйте условие, если строка поиска пуста.
 
@@ -597,7 +597,7 @@ $result = BookTable::getList([
 $row = $result->fetch();
 ```
 
--  `getCount($filter = [], array $cache = [])` — количество записей по фильтру: массив или объект `ConditionTree`. Возвращает `int`. Не путайте с методом результата `getCount()`, который работает только с `count_total`.
+-  `getCount($filter = [], array $cache = [])` — количество записей по фильтру: массив или объект [`ConditionTree`](../api-reference/main/orm/query/filter/condition-tree/index.md). Возвращает `int`. Не путайте с методом результата `getCount()`, который работает только с `count_total`.
 
 ```php
 $count = BookTable::getCount(['=PUBLISHER_ID' => 1]); // int
@@ -613,7 +613,7 @@ $count = BookTable::getCount(['=PUBLISHER_ID' => 1]); // int
 
 ### Глобальная область данных
 
-Одну таблицу можно описать несколькими сущностями, разделив записи на сегменты. ORM вызывает метод `setDefaultScope` при построении каждого запроса сущности. Метод получает объект `Query` и добавляет в него фильтры и другие параметры.
+Одну таблицу можно описать несколькими сущностями, разделив записи на сегменты. ORM вызывает метод `setDefaultScope` при построении каждого запроса сущности. Метод получает объект [`Query`](../api-reference/main/orm/query/query/index.md) и добавляет в него фильтры и другие параметры.
 
 **Пример.** Два класса делят элементы инфоблоков по `IBLOCK_ID`. Перед использованием подключите модуль: `Loader::includeModule('iblock')`.
 
@@ -763,7 +763,7 @@ public static function decompose(Query $query, $fairLimit = true, $separateRelat
 
 | Параметр | Тип | По умолчанию | Что делает |
 |---|---|---|---|
-| `$query` | `Query` | — | Подготовленный, но не выполненный запрос с `select`, `filter`, `order`, `limit` |
+| `$query` | [`Query`](../api-reference/main/orm/query/query/index.md) | — | Подготовленный, но не выполненный запрос с `select`, `filter`, `order`, `limit` |
 | `$fairLimit` | `bool` | `true` | Разбивает запрос на два этапа: сначала выбирает уникальные первичные ключи основных записей с учетом `LIMIT` и `OFFSET`, затем для найденных ключей выбирает все поля и отношения |
 | `$separateRelations` | `bool` | `true` | Выбирает каждое отношение 1:N или N:M отдельным запросом, что исключает декартово произведение |
 
@@ -800,9 +800,9 @@ foreach ($books as $book)
 
 ## Фильтр ORM {#orm-filter}
 
-Фильтр ORM задает условия выборки вызовами методов `where*` на объекте `Query`, а не массивом. Условия хранятся в объекте `Bitrix\Main\ORM\Query\Filter\ConditionTree`. Такой фильтр удобен, когда условия собираются в коде по шагам. Подробнее об объекте `Query` — в статье [Построитель запросов](./query-builder.md).
+Фильтр ORM задает условия выборки вызовами методов `where*` на объекте [`Query`](../api-reference/main/orm/query/query/index.md), а не массивом. Условия хранятся в объекте [`Bitrix\Main\ORM\Query\Filter\ConditionTree`](../api-reference/main/orm/query/filter/condition-tree/index.md). Такой фильтр удобен, когда условия собираются в коде по шагам. Подробнее об объекте `Query` — в статье [Построитель запросов](./query-builder.md).
 
-Примеры раздела используют системный класс пользователей `\Bitrix\Main\UserTable`.
+Примеры раздела используют системный класс пользователей [`\Bitrix\Main\UserTable`](../api-reference/main/user-table/index.md).
 
 Методы `having*` — псевдонимы методов `where*` с теми же аргументами: `Query` заменяет префикс `having` на `where` и вызывает тот же метод фильтра.
 
@@ -881,7 +881,7 @@ foreach ($books as $book)
 // WHERE JSON_CONTAINS(`main_user`.`SOME_JSON_FIELD`, 4)
 ```
 
-Аргументы выражения аналогичны конструктору поля `ExpressionField` и подставляются через `sprintf`. `SOME_JSON_FIELD` в примере — условное имя поля с JSON.
+Аргументы выражения аналогичны конструктору поля [`ExpressionField`](../api-reference/main/orm/fields/expression-field/index.md) и подставляются через `sprintf`. `SOME_JSON_FIELD` в примере — условное имя поля с JSON.
 
 {% note warning "" %}
 
@@ -964,7 +964,7 @@ foreach ($books as $book)
 
 ### OR и вложенные фильтры
 
-Для хранения условий фильтра используется контейнер `\Bitrix\Main\ORM\Query\Filter\ConditionTree`. Он позволяет добавлять другие экземпляры `ConditionTree` для создания вложенных условий. Новый пустой контейнер создает метод `Query::filter()`.
+Для хранения условий фильтра используется контейнер `\Bitrix\Main\ORM\Query\Filter\ConditionTree`. Он позволяет добавлять другие экземпляры `ConditionTree` для создания вложенных условий. Новый пустой контейнер создает метод [`Query::filter()`](../api-reference/main/orm/query/query/filter.md).
 
 #### Вложенные фильтры
 
@@ -1037,7 +1037,7 @@ use Bitrix\Main\ORM\Fields\ExpressionField;
 // WHERE LENGTH(`main_user`.`LAST_NAME`) > '10'
 ```
 
-Метод `Query::expr()` возвращает хелпер, который строит такие выражения из SQL-функций без ручного описания `ExpressionField`:
+Метод [`Query::expr()`](../api-reference/main/orm/query/query/expr.md) возвращает хелпер, который строит такие выражения из SQL-функций без ручного описания `ExpressionField`:
 
 ```php
 use Bitrix\Main\ORM\Query\Query;
@@ -1097,7 +1097,7 @@ use Bitrix\Main\ORM\Query\Query;
 
 ### Условия JOIN
 
-Референсы — это связи между таблицами, которые позволяют объединять данные из разных таблиц. Они описываются с помощью `Reference`:
+Референсы — это связи между таблицами, которые позволяют объединять данные из разных таблиц. Они описываются с помощью [`Reference`](../api-reference/main/orm/fields/relations/reference/index.md):
 
 ```php
 use Bitrix\Main\GroupTable;
@@ -1139,7 +1139,7 @@ BookTable::query()
 
 ### Формат массива
 
-Для использования фильтра в виде массива существует метод конвертации из массива в объект `\Bitrix\Main\ORM\Query\Filter\ConditionTree::createFromArray`. Формат массива:
+Для использования фильтра в виде массива существует метод конвертации из массива в объект [`\Bitrix\Main\ORM\Query\Filter\ConditionTree::createFromArray`](../api-reference/main/orm/query/filter/condition-tree/create-from-array.md). Формат массива:
 
 ```php
 $filter = [

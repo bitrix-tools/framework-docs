@@ -11,11 +11,11 @@ description: 'Результат работы и ошибки. Документ�
 
 -  исключения не позволяют передать несколько ошибок сразу, например, когда при проверке данных несколько полей неверны.
 
-Используйте объект результата `\Bitrix\Main\Result` для решения проблем. Он позволяет передавать данные и ошибки одновременно.
+Используйте объект результата [`\Bitrix\Main\Result`](../api-reference/main/result/index.md) для решения проблем. Он позволяет передавать данные и ошибки одновременно.
 
 ## Класс \\Bitrix\\Main\\Result
 
-Класс `Result` хранит результаты операций и ошибки. Он помогает определить, прошла ли операция успешно.
+Класс [`Result`](../api-reference/main/result/index.md) хранит результаты операций и ошибки. Он помогает определить, прошла ли операция успешно.
 
 Методы класса:
 
@@ -169,7 +169,7 @@ else
 
 ### Передать ошибки в контроллер
 
-Если сервис возвращает `Result`, проверьте `isSuccess()` внутри действия контроллера `Bitrix\Main\Engine\Controller`. При ошибке вызовите `$this->addErrors($result->getErrors())` и завершите действие через `return null`. Метод `Controller::addErrors()` добавляет ошибки результата в коллекцию контроллера. Стандартный JSON-ответ включит их в поле `errors` и получит статус `error`.
+Если сервис возвращает [`Result`](../api-reference/main/result/index.md), проверьте `isSuccess()` внутри действия контроллера [`Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md). При ошибке вызовите `$this->addErrors($result->getErrors())` и завершите действие через `return null`. Метод `Controller::addErrors()` добавляет ошибки результата в коллекцию контроллера. Стандартный JSON-ответ включит их в поле `errors` и получит статус `error`.
 
 Передавайте объекты ошибок из `getErrors()`. Метод `getErrorMessages()` возвращает строки, которые не подходят для `Controller::addErrors()`.
 
@@ -177,7 +177,7 @@ else
 
 ### Проверить результат операции ORM
 
-Методы `Bitrix\Main\ORM\Data\DataManager` возвращают специализированные объекты результата.
+Методы [`Bitrix\Main\ORM\Data\DataManager`](../api-reference/main/orm/data/data-manager/index.md) возвращают специализированные объекты результата.
 
 -  `add()` возвращает `Bitrix\Main\ORM\Data\AddResult` для добавления записи.
 
@@ -191,7 +191,7 @@ else
 
 ## Класс \\Bitrix\\Main\\ErrorCollection
 
-Класс `ErrorCollection` внутри объекта `Result` собирает ошибки и управляет ими. При необходимости можно работать с этой коллекцией напрямую.
+Класс [`ErrorCollection`](../api-reference/main/error-collection/index.md) внутри объекта [`Result`](../api-reference/main/result/index.md) собирает ошибки и управляет ими. При необходимости можно работать с этой коллекцией напрямую.
 
 Методы класса:
 
@@ -240,7 +240,7 @@ foreach ($errorCollection as $error)
 
 -  Используйте коды ошибок для их идентификации.
 
--  Группируйте ошибки в `ErrorCollection`.
+-  Группируйте ошибки в [`ErrorCollection`](../api-reference/main/error-collection/index.md).
 
 -  Записывайте ошибки в логи при необходимости.
 

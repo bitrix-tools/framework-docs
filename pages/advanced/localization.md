@@ -103,7 +103,7 @@ $MESS['MYMODULE_BUTTON'] = 'Отправить';
 
 ### Использовать языковые сообщения в PHP-коде
 
-Чтобы связать PHP-код с языковыми файлами, используйте методы класса `Bitrix\Main\Localization\Loc`:
+Чтобы связать PHP-код с языковыми файлами, используйте методы класса [`Bitrix\Main\Localization\Loc`](../api-reference/main/localization/loc/index.md):
 
 -  `loadMessages()` — загрузить файл,
 
@@ -117,9 +117,9 @@ $MESS['MYMODULE_BUTTON'] = 'Отправить';
 
 -  шаблон компонента — `/bitrix/components/bitrix/catalog/templates/.default/lang/ru/element.php`.
 
-Система получает фразы из таких файлов через `Loc::getMessage()` без дополнительных действий.
+Система получает фразы из таких файлов через [`Loc::getMessage()`](../api-reference/main/localization/loc/get-message.md) без дополнительных действий.
 
-Подключение файлов вручную через `Loc::loadMessages()` нужно:
+Подключение файлов вручную через [`Loc::loadMessages()`](../api-reference/main/localization/loc/load-messages.md) нужно:
 
 -  для собственных PHP-скриптов вне структуры компонентов, например, файлов в `/local/php_interface/`,
 
@@ -235,7 +235,7 @@ CTranslateUtils::CopyMessage('DEMO_MODULE_MESSAGE', '/home/bitrix/modules/demo/l
 
 Система автоматически создает контекст запроса для каждой страницы. Контекст содержит всю информацию о запросе: язык, региональные настройки, пользователя.
 
--  Получить контекст можно методом `getCurrent` класса `\Bitrix\Main\Context`.
+-  Получить контекст можно методом `getCurrent` класса [`\Bitrix\Main\Context`](../api-reference/main/context/index.md).
 
 -  Получить региональные настройки в контексте текущего запроса можно методом `getCulture`.
 

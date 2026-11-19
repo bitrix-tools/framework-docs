@@ -131,7 +131,7 @@ Bitrix Framework включает готовые команды для разр�
 
    {% endnote %}
 
--  `make:controller` — генерирует класс [контроллера](./controllers.md), который наследуется от `Bitrix\Main\Engine\Controller`. Опция `--actions` задает действия через запятую, значение `crud` создает действия `list`, `get`, `add`, `update` и `delete`.
+-  `make:controller` — генерирует класс [контроллера](./controllers.md), который наследуется от [`Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md). Опция `--actions` задает действия через запятую, значение `crud` создает действия `list`, `get`, `add`, `update` и `delete`.
 
    **Пример.** Команды создают контроллер `Post` с CRUD-действиями и с двумя действиями:
 

@@ -7,7 +7,7 @@ description: 'События. Документация по Bitrix Framework: п
 
 ## Базовое использование
 
-Чтобы создать и отправить событие, используйте класс `Bitrix\Main\Event` и его метод `send`.
+Чтобы создать и отправить событие, используйте класс [`Bitrix\Main\Event`](../api-reference/main/event/index.md) и его метод `send`.
 
 Пример отправки события:
 
@@ -166,7 +166,7 @@ final class TicketClosedEventHandler
 
 ## Результаты событий
 
-Обработчик события может возвращать результат. Это необязательно — можно вернуть `null` или ничего для методов с типом `void`. Если обработчик должен повлиять на дальнейшую логику выполнения, например, запретить операцию или передать дополнительные параметры, используйте `Bitrix\Main\EventResult`.
+Обработчик события может возвращать результат. Это необязательно — можно вернуть `null` или ничего для методов с типом `void`. Если обработчик должен повлиять на дальнейшую логику выполнения, например, запретить операцию или передать дополнительные параметры, используйте [`Bitrix\Main\EventResult`](../api-reference/main/event-result/index.md).
 
 В качестве примера рассмотрим событие `BeforeTicketCloseEvent`. Оно вызывается перед закрытием тикета и позволяет обработчикам проверить, можно ли выполнить операцию. Если любой из обработчиков вернет ошибку, процесс закрытия прервется.
 
@@ -263,7 +263,7 @@ final class BeforeTicketCloseEventHandler
 
 ## Регистрация обработчиков
 
-Чтобы обработчики `BeforeTicketCloseEventHandler` и `TicketClosedEventHandler` начали работать, их нужно зарегистрировать. Используйте для этого объект `Bitrix\Main\EventManager` и его метод `registerEventHandler`:
+Чтобы обработчики `BeforeTicketCloseEventHandler` и `TicketClosedEventHandler` начали работать, их нужно зарегистрировать. Используйте для этого объект [`Bitrix\Main\EventManager`](../api-reference/main/event-manager/index.md) и его метод `registerEventHandler`:
 
 ```php
 \Bitrix\Main\EventManager::getInstance()->registerEventHandler(
@@ -357,7 +357,7 @@ EventManager::getInstance()->addEventHandler(
 
 ## Основные системные события
 
-Выбирайте событие по операции и моменту, когда нужно выполнить код. Для событий классического API используйте режим совместимости, а для событий ORM — класс `Bitrix\Main\ORM\EventManager` и объект `Bitrix\Main\ORM\Event`.
+Выбирайте событие по операции и моменту, когда нужно выполнить код. Для событий классического API используйте режим совместимости, а для событий ORM — класс `Bitrix\Main\ORM\EventManager` и объект [`Bitrix\Main\ORM\Event`](../api-reference/main/orm/event/index.md).
 
 | Событие | Модуль или источник | Когда срабатывает | Для чего использовать |
 | --- | --- | --- | --- |
@@ -372,7 +372,7 @@ EventManager::getInstance()->addEventHandler(
 
 ## Старые события и режим совместимости
 
-В продукте есть события в старом формате, например `OnBeforeUserAdd`. У них нет объекта `Bitrix\Main\Event`, и в обработчик передается произвольный набор аргументов.
+В продукте есть события в старом формате, например `OnBeforeUserAdd`. У них нет объекта [`Bitrix\Main\Event`](../api-reference/main/event/index.md), и в обработчик передается произвольный набор аргументов.
 
 Пример обработчика для старого события:
 

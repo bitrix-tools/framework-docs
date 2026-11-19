@@ -1,0 +1,7 @@
+title: HtmlFilter
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Экранировать HTML
+    href: encode.md

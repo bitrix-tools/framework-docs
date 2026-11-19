@@ -18,7 +18,7 @@ description: 'Пошаговый тур ui.tour: класс Guide, параме�
 
 ## Подключить расширение
 
-В PHP загрузите `ui.tour` методом `Extension::load()`.
+В PHP загрузите `ui.tour` методом [`Extension::load()`](../api-reference/main/ui/extension/load.md).
 
 ```php
 \Bitrix\Main\UI\Extension::load('ui.tour');

@@ -167,7 +167,7 @@ if (!$result->isSuccess())
 
 ### Передать массовую актуализацию в очередь
 
-Для массовой актуализации документов используйте сервис `Bitrix\DocumentGenerator\Service\ActualizeQueue`. Получите сервис из `ServiceLocator`, создайте объект `Bitrix\DocumentGenerator\Service\ActualizeQueue\Task` и передайте его в `addTask()`.
+Для массовой актуализации документов используйте сервис `Bitrix\DocumentGenerator\Service\ActualizeQueue`. Получите сервис из [`ServiceLocator`](../../api-reference/main/di/service-locator/index.md), создайте объект `Bitrix\DocumentGenerator\Service\ActualizeQueue\Task` и передайте его в `addTask()`.
 
 До постановки проверьте право пользователя на исходный объект. Очередь передает идентификатор пользователя в `actualize()`, но не вызывает `Document::hasAccess()`.
 

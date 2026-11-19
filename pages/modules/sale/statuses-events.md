@@ -52,7 +52,7 @@ description: "Статусы и события. Статусы заказа и �
 || `Bitrix\Sale\Internals\StatusTable` | Хранит код, тип, сортировку, признак уведомления, цвет и внешний идентификатор статуса ||
 || `Bitrix\Sale\Internals\StatusLangTable` | Хранит название и описание статуса для конкретного языка ||
 || `CSaleOrderChange` | Читает журнал изменений заказа и формирует описание записи ||
-|| `Bitrix\Main\EventManager` | Регистрирует обработчики событий модуля `sale` ||
+|| [`Bitrix\Main\EventManager`](../../api-reference/main/event-manager/index.md) | Регистрирует обработчики событий модуля `sale` ||
 |#
 
 ### Поля статуса {#status-fields}
@@ -369,7 +369,7 @@ $statusHistoryResult = \CSaleOrderChange::GetList(
 
 ## Подписаться на события заказа и связанных объектов {#order-events}
 
-Чтобы зарегистрировать обработчик, используйте класс `Bitrix\Main\EventManager`. Размещайте постоянную регистрацию в `/local/php_interface/init.php` или в подключаемом из него файле, чтобы код выполнялся на каждом запросе. Общий механизм регистрации описан в статье [События](./../../framework/events.md).
+Чтобы зарегистрировать обработчик, используйте класс [`Bitrix\Main\EventManager`](../../api-reference/main/event-manager/index.md). Размещайте постоянную регистрацию в `/local/php_interface/init.php` или в подключаемом из него файле, чтобы код выполнялся на каждом запросе. Общий механизм регистрации описан в статье [События](./../../framework/events.md).
 
 Основные события передают измененный объект в параметре `ENTITY`.
 
@@ -461,9 +461,9 @@ $statusHistoryResult = \CSaleOrderChange::GetList(
 
 Для вложенных объектов заказа существуют аналогичные пары событий `OnBeforeSale...SetField` и `OnSale...SetField`. Правила для таких пар:
 
--  обработчик события с префиксом `OnBefore` может вернуть `EventResult::SUCCESS` с параметром `VALUE`, чтобы заменить значение,
+-  обработчик события с префиксом `OnBefore` может вернуть [`EventResult::SUCCESS`](../../api-reference/main/event-result/index.md) с параметром `VALUE`, чтобы заменить значение,
 
--  тот же обработчик может вернуть `EventResult::ERROR`, чтобы отменить изменение,
+-  тот же обработчик может вернуть [`EventResult::ERROR`](../../api-reference/main/event-result/index.md), чтобы отменить изменение,
 
 -  событие без префикса `OnBefore` дополнительно получает `OLD_VALUE` и также может заменить `VALUE`, но его результат с ошибкой не отменяет изменение.
 

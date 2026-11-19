@@ -1,0 +1,55 @@
+title: HttpHeaders
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать коллекцию заголовков
+    href: construct.md
+  - name: Добавить значение заголовка
+    href: add.md
+  - name: Заменить значение заголовка
+    href: set.md
+  - name: Получить значение заголовка
+    href: get.md
+  - name: Проверить, есть ли заголовок
+    href: has.md
+  - name: Удалить заголовок
+    href: delete.md
+  - name: Удалить все заголовки
+    href: clear.md
+  - name: Получить заголовки строкой
+    href: to-string.md
+  - name: Получить внутренний массив заголовков
+    href: to-array.md
+  - name: Получить заголовки массивом
+    href: get-headers.md
+  - name: Получить итератор
+    href: get-iterator.md
+  - name: Получить тип содержимого
+    href: get-content-type.md
+  - name: Получить атрибут Content-Type
+    href: get-content-type-attribute.md
+  - name: Получить кодировку
+    href: get-charset.md
+  - name: Получить разделитель частей
+    href: get-boundary.md
+  - name: Получить тип Content-Disposition
+    href: get-content-disposition.md
+  - name: Получить имя файла
+    href: get-filename.md
+  - name: Получить cookie из заголовков Set-Cookie
+    href: get-cookies.md
+  - name: Создать коллекцию из текста заголовков ответа
+    href: create-from-string.md
+  - name: Прочитать строку статуса
+    href: parse-status.md
+  - name: Задать статус
+    href: set-status.md
+  - name: Получить статус
+    href: get-status.md
+  - name: Получить текст статуса
+    href: get-reason-phrase.md
+  - name: Задать версию HTTP
+    href: set-version.md
+  - name: Получить версию HTTP
+    href: get-version.md

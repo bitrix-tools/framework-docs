@@ -510,7 +510,7 @@ foreach ($arResult as $arItem):
 <?php endif; ?>
 ```
 
-Компонент `bitrix:menu` не экранирует `TEXT`, `LINK` и значения `PARAMS` при подготовке `$arResult`. Перед выводом в текст HTML или значение атрибута используйте `Bitrix\Main\Text\HtmlFilter::encode()`. В примерах ниже добавьте `use Bitrix\Main\Text\HtmlFilter;` в начало `template.php`. Экранирование не проверяет адрес ссылки, поэтому храните в меню только разрешенные адреса, например пути сайта и ссылки с протоколом HTTPS.
+Компонент `bitrix:menu` не экранирует `TEXT`, `LINK` и значения `PARAMS` при подготовке `$arResult`. Перед выводом в текст HTML или значение атрибута используйте [`Bitrix\Main\Text\HtmlFilter::encode()`](../api-reference/main/text/html-filter/encode.md). В примерах ниже добавьте `use Bitrix\Main\Text\HtmlFilter;` в начало `template.php`. Экранирование не проверяет адрес ссылки, поэтому храните в меню только разрешенные адреса, например пути сайта и ссылки с протоколом HTTPS.
 
 Компонент `bitrix:menu.sections` передает уже экранированные названия разделов. В примерах для `TEXT` третий аргумент `HtmlFilter::encode()` равен `false`, чтобы повторно не кодировать HTML-сущности. Неэкранированные символы функция при этом обработает.
 

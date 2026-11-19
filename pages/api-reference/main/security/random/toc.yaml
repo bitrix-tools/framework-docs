@@ -1,0 +1,17 @@
+title: Random
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить случайное число
+    href: get-int.md
+  - name: Получить случайную строку
+    href: get-string.md
+  - name: Получить строку по маске наборов
+    href: get-string-by-alphabet.md
+  - name: Получить строку из заданных символов
+    href: get-string-by-charsets.md
+  - name: Получить строку с символами из каждого набора
+    href: get-string-by-array.md
+  - name: Получить случайные байты
+    href: get-bytes.md

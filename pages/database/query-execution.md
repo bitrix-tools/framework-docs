@@ -54,7 +54,7 @@ $db->queryExecute("UPDATE b_user SET ACTIVE = 'Y' WHERE DATE_REGISTER > '2024-01
 
 Методы `query()`, `queryScalar()` и `queryExecute()` принимают необязательный массив `$binds` после SQL-строки. Он передает драйверу дополнительные данные для привязки значений. Обработка массива зависит от драйвера. Например, драйвер Oracle использует его для записи текстовых данных в CLOB-поля.
 
-Передайте в `queryExecute()` массив привязок, который вернул `SqlHelper::prepareUpdate()` вместе с SQL-фрагментом:
+Передайте в `queryExecute()` массив привязок, который вернул [`SqlHelper::prepareUpdate()`](../api-reference/main/db/sql-helper/prepare-update.md) вместе с SQL-фрагментом:
 
 ```php
 $helper = $db->getSqlHelper();
@@ -69,7 +69,7 @@ $db->queryExecute($sql, $binds);
 
 {% note warning "Важно" %}
 
-Параметр `$binds` не обеспечивает защиту от SQL-инъекций. Для значений, которые добавляете в SQL, используйте типизированные плейсхолдеры `SqlExpression` или экранирование через `SqlHelper::forSql()`. Подробнее — в статье [Формирование запросов](sql-helper-and-expression.md).
+Параметр `$binds` не обеспечивает защиту от SQL-инъекций. Для значений, которые добавляете в SQL, используйте типизированные плейсхолдеры `SqlExpression` или экранирование через [`SqlHelper::forSql()`](../api-reference/main/db/sql-helper/for-sql.md). Подробнее — в статье [Формирование запросов](sql-helper-and-expression.md).
 
 {% endnote %}
 
@@ -170,7 +170,7 @@ if ($db->isTableExists('my_table'))
 
 -  `$columnLengths` — массив длин префиксов в формате `'COLUMN_NAME' => длина` для MySQL. По умолчанию `null` — индекс по полным значениям. PostgreSQL игнорирует этот параметр,
 
--  `$indexType` — тип индекса. По умолчанию `null` — обычный индекс. Для уникального индекса передайте `\Bitrix\Main\DB\Connection::INDEX_UNIQUE`.
+-  `$indexType` — тип индекса. По умолчанию `null` — обычный индекс. Для уникального индекса передайте [`\Bitrix\Main\DB\Connection::INDEX_UNIQUE`](../api-reference/main/db/connection/index.md).
 
 Создайте уникальный индекс по столбцу `NAME`:
 
@@ -240,7 +240,7 @@ $fields = $db->getTableFields('my_table');
 
 ## Как работать с результатами запросов
 
-Выполнение запроса на чтение возвращает объект `\Bitrix\Main\DB\Result`, который предоставляет несколько способов работы с данными.
+Выполнение запроса на чтение возвращает объект [`\Bitrix\Main\DB\Result`](../api-reference/main/db/result/index.md), который предоставляет несколько способов работы с данными.
 
 Использовать как итератор:
 

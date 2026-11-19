@@ -1,0 +1,17 @@
+title: Reference
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать поле связи
+    href: construct.md
+  - name: Получить условие связи
+    href: get-reference.md
+  - name: Получить связанные поля
+    href: get-elementals.md
+  - name: Получить имя связанной сущности
+    href: get-data-type.md
+  - name: Получить маску типа поля
+    href: get-type-mask.md
+  - name: Проверить значение поля связи
+    href: validate-value.md

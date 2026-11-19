@@ -49,7 +49,7 @@ foreach ($tracker->getQueries() as $query)
 
 -  `getNode()` — возвращает `null`, если БД не кластеризована.
 
--  `getBinds()` — содержит параметры, переданные в `Connection::query()`.
+-  `getBinds()` — содержит параметры, переданные в [`Connection::query()`](../api-reference/main/db/connection/query.md).
 
 **Пример.** Выбрать три самых медленных запроса.
 

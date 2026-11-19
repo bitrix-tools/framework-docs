@@ -1,0 +1,87 @@
+title: HttpClient
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать HTTP-клиент
+    href: construct.md
+  - name: Отправить GET-запрос
+    href: get.md
+  - name: Отправить POST-запрос
+    href: post.md
+  - name: Отправить HEAD-запрос
+    href: head.md
+  - name: Отправить запрос любым методом
+    href: query.md
+  - name: Скачать файл
+    href: download.md
+  - name: Сохранить ответ в файл
+    href: save-file.md
+  - name: Задать заголовок запроса
+    href: set-header.md
+  - name: Задать несколько заголовков запроса
+    href: set-headers.md
+  - name: Получить заголовки запроса
+    href: get-request-headers.md
+  - name: Удалить заголовки запроса
+    href: clear-headers.md
+  - name: Задать cookie запроса
+    href: set-cookies.md
+  - name: Задать Basic-авторизацию
+    href: set-authorization.md
+  - name: Настроить переход по редиректам
+    href: set-redirect.md
+  - name: Включить или выключить чтение тела ответа
+    href: wait-response.md
+  - name: Решить, читать ли тело ответа
+    href: should-fetch-body.md
+  - name: Задать время ожидания подключения
+    href: set-timeout.md
+  - name: Задать время ожидания чтения ответа
+    href: set-stream-timeout.md
+  - name: Задать версию HTTP
+    href: set-version.md
+  - name: Включить сжатие ответа
+    href: set-compress.md
+  - name: Задать кодировку POST-запроса
+    href: set-charset.md
+  - name: Отключить проверку SSL-сертификата
+    href: disable-ssl-verification.md
+  - name: Разрешить или запретить запросы к частным IP-адресам
+    href: set-private-ip.md
+  - name: Задать HTTP-прокси
+    href: set-proxy.md
+  - name: Задать параметры контекста потока
+    href: set-context-options.md
+  - name: Направить тело ответа в поток
+    href: set-output-stream.md
+  - name: Ограничить размер тела ответа
+    href: set-body-length-max.md
+  - name: Задать сборщик ответа
+    href: set-response-builder.md
+  - name: Получить код статуса ответа
+    href: get-status.md
+  - name: Получить заголовки ответа
+    href: get-headers.md
+  - name: Получить тело ответа
+    href: get-result.md
+  - name: Получить объект ответа
+    href: get-response.md
+  - name: Получить cookie из ответа
+    href: get-cookies.md
+  - name: Получить тип содержимого ответа
+    href: get-content-type.md
+  - name: Получить кодировку ответа
+    href: get-charset.md
+  - name: Получить адрес после редиректов
+    href: get-effective-url.md
+  - name: Получить IP-адрес сервера
+    href: get-peer-address.md
+  - name: Получить ошибки запроса
+    href: get-error.md
+  - name: Отправить запрос PSR-18
+    href: send-request.md
+  - name: Отправить асинхронный запрос
+    href: send-async-request.md
+  - name: Дождаться асинхронных ответов
+    href: wait.md

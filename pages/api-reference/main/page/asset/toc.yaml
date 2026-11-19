@@ -1,0 +1,107 @@
+title: Asset
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить объект
+    href: get-instance.md
+  - name: Создать объект для AJAX
+    href: set-ajax.md
+  - name: Задать режим вывода
+    href: set-mode.md
+  - name: Включить стиль XHTML
+    href: set-xhtml.md
+  - name: Добавить CSS-файл
+    href: add-css.md
+  - name: Добавить JS-файл
+    href: add-js.md
+  - name: Добавить строку
+    href: add-string.md
+  - name: Получить строки
+    href: get-strings.md
+  - name: Получить место строки
+    href: get-location-by-name.md
+  - name: Получить HTML подключения CSS
+    href: get-css.md
+  - name: Получить HTML подключения JS
+    href: get-js.md
+  - name: Получить список файлов для JS-ядра
+    href: show-files-list.md
+  - name: Получить тег CSS
+    href: insert-css.md
+  - name: Получить тег JS
+    href: insert-js.md
+  - name: Отметить вывод строк
+    href: set-show-head-string.md
+  - name: Проверить вывод строк
+    href: get-show-head-string.md
+  - name: Отметить вывод скриптов
+    href: set-show-head-script.md
+  - name: Отметить вывод скриптов в конце страницы
+    href: set-show-body-script.md
+  - name: Получить имя текущего набора
+    href: get-target-name.md
+  - name: Получить текущий набор
+    href: get-target.md
+  - name: Начать набор
+    href: start-target.md
+  - name: Начать набор через startSet
+    href: start-set.md
+  - name: Завершить набор
+    href: stop-target.md
+  - name: Перевести набор в режим COMPOSITE
+    href: composite-target.md
+  - name: Задать набору постоянный файл объединения
+    href: set-unique.md
+  - name: Получить список наборов
+    href: get-target-list.md
+  - name: Получить файлы и строки набора
+    href: get-asset-info.md
+  - name: Разрешить объединение CSS
+    href: enable-optimize-css.md
+  - name: Запретить объединение CSS
+    href: disable-optimize-css.md
+  - name: Разрешить объединение JS
+    href: enable-optimize-js.md
+  - name: Запретить объединение JS
+    href: disable-optimize-js.md
+  - name: Проверить объединение CSS
+    href: optimize-css.md
+  - name: Проверить объединение JS
+    href: optimize-js.md
+  - name: Проверить выделение файлов ядра
+    href: slice-kernel.md
+  - name: Проверить подключение файлов .min
+    href: can-use-minified-assets.md
+  - name: Проверить сжатие gzip
+    href: gzip-enabled.md
+  - name: Записать файл объединения
+    href: write.md
+  - name: Зарегистрировать CSS модуля ядра
+    href: add-css-kernel-info.md
+  - name: Зарегистрировать JS модуля ядра
+    href: add-js-kernel-info.md
+  - name: Проверить CSS ядра
+    href: is-kernel-css.md
+  - name: Проверить JS ядра
+    href: is-kernel-js.md
+  - name: Объединить CSS модулей ядра
+    href: group-css.md
+  - name: Объединить JS модулей ядра
+    href: group-js.md
+  - name: Перенести JS модуля в конец страницы
+    href: move-js.md
+  - name: Включить перенос скриптов в конец body
+    href: set-js-to-body.md
+  - name: Проверить перенос скриптов в конец body
+    href: can-move-js-to-body.md
+  - name: Удалить параметры из пути
+    href: get-asset-path.md
+  - name: Получить метку времени из пути
+    href: get-asset-time.md
+  - name: Получить адрес файла с меткой времени
+    href: get-full-asset-path.md
+  - name: Сделать адрес из CSS абсолютным
+    href: replace-url-css.md
+  - name: Исправить адреса в CSS
+    href: fix-css-includes.md

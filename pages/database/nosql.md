@@ -105,7 +105,7 @@ return [
 
 -  `readTimeout` — задает время ожидания ответа после соединения в секундах.
 
-Секция `session` задает обработчик хранения сессий, а секция `connections` — именованные соединения для вызова `Application::getConnection()`. В текущем ядре параметр таймаута чтения в обеих секциях называется `readTimeout`. Обработчик сессий не использует ключ `read_timeout`.
+Секция `session` задает обработчик хранения сессий, а секция `connections` — именованные соединения для вызова [`Application::getConnection()`](../api-reference/main/application/get-connection.md). В текущем ядре параметр таймаута чтения в обеих секциях называется `readTimeout`. Обработчик сессий не использует ключ `read_timeout`.
 
 ### Как настроить Redis cluster в режиме Master-Slave
 

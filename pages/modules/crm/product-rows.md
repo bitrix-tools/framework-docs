@@ -155,7 +155,7 @@ $item->setIsManualOpportunity(false);
 
 #|
 || **Метод** | **Что меняет** | **Результат** ||
-|| `addToProductRows($productRow)` | Добавляет новый объект `ProductRow` в коллекцию, сохраняя остальные позиции | `Bitrix\Main\Result` ||
+|| `addToProductRows($productRow)` | Добавляет новый объект `ProductRow` в коллекцию, сохраняя остальные позиции | [`Bitrix\Main\Result`](../../api-reference/main/result/index.md) ||
 || `updateProductRow($rowId, $fields)` | Меняет переданные поля строки с ID `$rowId`, которая уже принадлежит элементу | `Bitrix\Main\Result` ||
 || `removeFromProductRows($productRow)` | Удаляет из коллекции переданный объект строки | `void` ||
 || `setProductRowsFromArrays($rows)` | Заменяет набор массивами данных строк с учетом [сравнения содержимого позиций](#replace-or-clear-product-rows) | `Bitrix\Main\Result` ||

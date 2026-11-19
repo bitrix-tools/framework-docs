@@ -35,7 +35,7 @@ description: 'Отношения между сущностями. ORM Bitrix Fra
 
 Одна запись в таблице может соответствовать множеству записей в другой. В Bitrix Framework для описания таких связей используются специальные конструкторы:
 
--  `Reference` для связи «многие к одному»,
+-  [`Reference`](../api-reference/main/orm/fields/relations/reference/index.md) для связи «многие к одному»,
 
 -  `OneToMany` для связи «один ко многим».
 
@@ -89,7 +89,7 @@ class BookTable extends \Bitrix\Main\ORM\Data\DataManager
 
 Для описания связи «книги — издательство» используем класс `Reference` из пространства имен `Bitrix\Main\ORM\Fields\Relations`. Этот класс позволяет связать две таблицы по определенному условию.
 
-Условие соединения `Join::on` указывает, что поле `PUBLISHER_ID` в таблице книг должно соответствовать полю `ID` в таблице издательств.
+Условие соединения [`Join::on`](../api-reference/main/orm/query/join/on.md) указывает, что поле `PUBLISHER_ID` в таблице книг должно соответствовать полю `ID` в таблице издательств.
 
 ```php
 namespace SomePartner\MyBooksCatalog;
@@ -210,7 +210,7 @@ Array (
 
 #### 1\. Определить класс PublisherTable
 
-Создадим класс `PublisherTable`, который представляет собой таблицу издательств в базе данных. Этот класс наследуется от `DataManager` — основного класса для работы с данными в Bitrix Framework.
+Создадим класс `PublisherTable`, который представляет собой таблицу издательств в базе данных. Этот класс наследуется от [`DataManager`](../api-reference/main/orm/data/data-manager/index.md) — основного класса для работы с данными в Bitrix Framework.
 
 ```php
 namespace SomePartner\MyBooksCatalog;
@@ -385,7 +385,7 @@ $publisher->save();
 
 ## Отношение 1:1, «один к одному»
 
-Отношения 1:1 работают так же, как и 1:N, но с одним отличием: для доступа к связи с обеих сторон в каждом классе описывают поле `Reference` вместо пары `Reference + OneToMany`.
+Отношения 1:1 работают так же, как и 1:N, но с одним отличием: для доступа к связи с обеих сторон в каждом классе описывают поле [`Reference`](../api-reference/main/orm/fields/relations/reference/index.md) вместо пары `Reference + OneToMany`.
 
 ### Пример связи «один к одному»
 
@@ -661,7 +661,7 @@ INSERT INTO my_book_author (BOOK_ID, AUTHOR_ID) VALUES
 
 -  `BOOK_ID` и `AUTHOR_ID` — первичные ключи из таблиц `BookTable` и `AuthorTable`,
 
--  `Reference` — ссылки на исходные таблицы.
+-  [`Reference`](../api-reference/main/orm/fields/relations/reference/index.md) — ссылки на исходные таблицы.
 
 ```php
 class ... extends \Bitrix\Main\ORM\Data\DataManager

@@ -1,0 +1,10 @@
+title: Справочник API
+href: index.md
+items:
+  - name: Обзор справочника
+    href: index.md
+  - name: Главный модуль main
+    href: main/index.md
+    include:
+      path: main/toc.yaml
+      mode: link

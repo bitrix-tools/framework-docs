@@ -1376,7 +1376,7 @@ if (!$saveResult->isSuccess())
 
 Параметр `ENTITY` содержит объект `Bitrix\Sale\PropertyValue`. Если меняется значение свойства, параметр `NAME` равен `VALUE`. Параметр `VALUES` содержит прежние значения измененных полей либо поля удаляемого значения.
 
-Используйте `OnBeforeSalePropertyValueSetField`, если значение нужно нормализовать во всех местах, которые меняют объект. Обработчик возвращает новое значение в `Bitrix\Main\EventResult`.
+Используйте `OnBeforeSalePropertyValueSetField`, если значение нужно нормализовать во всех местах, которые меняют объект. Обработчик возвращает новое значение в [`Bitrix\Main\EventResult`](../../api-reference/main/event-result/index.md).
 
 Из объекта события получите:
 

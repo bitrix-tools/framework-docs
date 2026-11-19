@@ -5,7 +5,7 @@ description: 'Конфигурация. Работа с базой данных 
 
 Конфигурация подключения к базе данных в Bitrix Framework хранится в файле `/bitrix/.settings.php` в секции `connections`.
 
-Файл `/bitrix/php_interface/dbconn.php` относится к классическому ядру. Ядро продолжает подключать его при загрузке для совместимости, например для констант и параметров отладки `$DBDebug` и `$DBDebugToFile`. Параметры подключения для `Application::getConnection()` и ORM задавайте в секции `connections` файла `.settings.php`.
+Файл `/bitrix/php_interface/dbconn.php` относится к классическому ядру. Ядро продолжает подключать его при загрузке для совместимости, например для констант и параметров отладки `$DBDebug` и `$DBDebugToFile`. Параметры подключения для [`Application::getConnection()`](../api-reference/main/application/get-connection.md) и ORM задавайте в секции `connections` файла `.settings.php`.
 
 Настройки подключения в `dbconn.php` не заменяют секцию `connections`. При загрузке ядро сбрасывает переменные `$DBHost`, `$DBName`, `$DBLogin` и `$DBPassword` из `dbconn.php`. Сохраняйте сам файл для совместимости. Подробнее о назначении обоих файлов и размещении конфигурации в `/local/` читайте в статье [Конфигурация ядра](../framework/settings.md).
 
@@ -40,9 +40,9 @@ description: 'Конфигурация. Работа с базой данных 
 
 Основные СУБД:
 
--  MySQL — `\Bitrix\Main\DB\MysqliConnection`, требует расширение `mysqli`,
+-  MySQL — [`\Bitrix\Main\DB\MysqliConnection`](../api-reference/main/db/mysqli-connection/index.md), требует расширение `mysqli`,
 
--  PostgreSQL — `\Bitrix\Main\DB\PgsqlConnection`, требует расширение `pgsql` .
+-  PostgreSQL — [`\Bitrix\Main\DB\PgsqlConnection`](../api-reference/main/db/pgsql-connection/index.md), требует расширение `pgsql` .
 
 Дополнительные СУБД:
 
@@ -102,7 +102,7 @@ Key-value хранилища:
 ],
 ```
 
-Чтобы получить конкретное подключение в коде, укажите его название в методе `Application::getConnection`.
+Чтобы получить конкретное подключение в коде, укажите его название в методе [`Application::getConnection`](../api-reference/main/application/get-connection.md).
 
 ```php
 // Получить подключение по умолчанию default
@@ -115,7 +115,7 @@ $redis = \Bitrix\Main\Application::getConnection('redis');
 
 ## Использовать дополнительное соединение в ORM
 
-Метод `DataManager::getConnectionName()` возвращает имя соединения для ORM-класса. По умолчанию он возвращает `default`. Чтобы работать с другой базой данных, добавьте SQL-соединение в секцию `connections` файла `.settings.php` и переопределите метод в своем ORM-классе.
+Метод [`DataManager::getConnectionName()`](../api-reference/main/orm/data/data-manager/get-connection-name.md) возвращает имя соединения для ORM-класса. По умолчанию он возвращает `default`. Чтобы работать с другой базой данных, добавьте SQL-соединение в секцию `connections` файла `.settings.php` и переопределите метод в своем ORM-классе.
 
 Добавьте соединение `reporting` в массив `connections['value']` рядом с `default`:
 
@@ -130,7 +130,7 @@ $redis = \Bitrix\Main\Application::getConnection('redis');
 ],
 ```
 
-Внутри своего класса, который наследует `Bitrix\Main\ORM\Data\DataManager`, добавьте метод:
+Внутри своего класса, который наследует [`Bitrix\Main\ORM\Data\DataManager`](../api-reference/main/orm/data/data-manager/index.md), добавьте метод:
 
 ```php
 public static function getConnectionName()

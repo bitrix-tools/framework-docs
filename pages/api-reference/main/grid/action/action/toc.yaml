@@ -1,0 +1,9 @@
+title: Grid\Action\Action
+href: index.md
+items:
+  - name: Обзор интерфейса
+    href: index.md
+  - name: Получить идентификатор действия грида
+    href: get-id.md
+  - name: Обработать запрос к действию грида
+    href: process-request.md

@@ -37,7 +37,7 @@ PHP и JavaScript используют одинаковые имена: моду
 
 ### Объявить использование модуля в публичной части {#declare-public-dependency}
 
-Обработчик `OnGetDependentModule` сообщает модулю `pull`, что код `example.reports` использует Push and Pull в публичной части. Вызов `Loader::includeModule()` подключает PHP API модуля, но не заменяет обработчик зависимости.
+Обработчик `OnGetDependentModule` сообщает модулю `pull`, что код `example.reports` использует Push and Pull в публичной части. Вызов [`Loader::includeModule()`](../../api-reference/main/loader/include-module.md) подключает PHP API модуля, но не заменяет обработчик зависимости.
 
 Добавьте обработчик в `/local/php_interface/init.php`. Сохраните существующий код файла. Если файла нет, создайте его с открывающим тегом `<?php`.
 

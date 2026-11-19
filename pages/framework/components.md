@@ -591,7 +591,7 @@ $obJSPopup->EndButtons();
 
 Функция `__saveChanges()` собирает, сериализует данные в строку и записывает в `oInput`. Код сериализации можно посмотреть в файле `settings_load.js`. Десериализация происходит  из `$arParams['~MAP_DATA']`.
 
-Все надписи для типа `CUSTOM` выводите через `Loc::getMessage()` и размещайте в папке компонента в файле `lang/ru/.parameters.php`.
+Все надписи для типа `CUSTOM` выводите через [`Loc::getMessage()`](../api-reference/main/localization/loc/get-message.md) и размещайте в папке компонента в файле `lang/ru/.parameters.php`.
 
 ## Папки локализаций
 
@@ -1074,7 +1074,7 @@ if ($this->startResultCache(false, $USER->GetGroups()))
 
 Чтобы класс компонента обрабатывал запросы, выполните три шага:
 
-1. Реализуйте в классе интерфейс `\Bitrix\Main\Engine\Contract\Controllerable`.
+1. Реализуйте в классе интерфейс [`\Bitrix\Main\Engine\Contract\Controllerable`](../api-reference/main/engine/contract/controllerable/index.md).
 
 2. Определите методы-действия с суффиксом `Action`. Действие `greet` вызывает метод `greetAction()`.
 
@@ -1182,7 +1182,7 @@ class ExampleComponent extends CBitrixComponent implements Controllerable, Error
 
 ### Реализация в ajax.php
 
-Обработчик в файле `ajax.php` отделяет обработку AJAX-запросов от логики компонента. Создайте в корне папки компонента файл `ajax.php` и объявите в нем класс-наследник `\Bitrix\Main\Engine\Controller`. Имя класса произвольное, система берет наследник `Controller`, объявленный в файле. Методы-действия называйте с суффиксом `Action`. Параметры компонента в `ajax.php` недоступны, фильтры по умолчанию те же, что у контроллера.
+Обработчик в файле `ajax.php` отделяет обработку AJAX-запросов от логики компонента. Создайте в корне папки компонента файл `ajax.php` и объявите в нем класс-наследник [`\Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md). Имя класса произвольное, система берет наследник `Controller`, объявленный в файле. Методы-действия называйте с суффиксом `Action`. Параметры компонента в `ajax.php` недоступны, фильтры по умолчанию те же, что у контроллера.
 
 Чтобы вызвать действие из `ajax.php`, передайте в `BX.ajax.runComponentAction()` параметр `mode: 'ajax'` или не передавайте `mode` — это значение по умолчанию.
 
@@ -1351,9 +1351,9 @@ BX.ajax.runComponentAction(this.componentName, 'greet', {
 
 -  **После `includeComponentTemplate()` в `$arResult` нет нужного ключа.** Компонент вызывал `setResultCacheKeys()`, и система оставила в `$arResult` только перечисленные ключи. Добавьте нужный ключ в набор.
 
--  **AJAX-запрос в режиме `class` завершается ошибкой о `Controllerable`.** Класс компонента не реализует интерфейс `\Bitrix\Main\Engine\Contract\Controllerable`.
+-  **AJAX-запрос в режиме `class` завершается ошибкой о [`Controllerable`](../api-reference/main/engine/contract/controllerable/index.md).** Класс компонента не реализует интерфейс `\Bitrix\Main\Engine\Contract\Controllerable`.
 
--  **AJAX-запрос в режиме `ajax` завершается ошибкой `Could not find ajax class`.** В папке компонента нет `ajax.php` или в нем не объявлен наследник `\Bitrix\Main\Engine\Controller`.
+-  **AJAX-запрос в режиме `ajax` завершается ошибкой `Could not find ajax class`.** В папке компонента нет `ajax.php` или в нем не объявлен наследник [`\Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md).
 
 -  **Действие возвращает ошибку доступа для гостя.** Сработал фильтр `Authentication` по умолчанию. Уберите его для действия в `configureActions()`.
 

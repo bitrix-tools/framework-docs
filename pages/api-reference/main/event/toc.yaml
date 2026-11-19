@@ -1,0 +1,43 @@
+title: Event
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать событие
+    href: construct.md
+  - name: Получить код модуля события
+    href: get-module-id.md
+  - name: Получить имя события
+    href: get-event-type.md
+  - name: Получить все параметры
+    href: get-parameters.md
+  - name: Заменить все параметры
+    href: set-parameters.md
+  - name: Получить параметр по ключу
+    href: get-parameter.md
+  - name: Записать параметр по ключу
+    href: set-parameter.md
+  - name: Получить фильтр модулей обработчиков
+    href: get-filter.md
+  - name: Задать фильтр модулей обработчиков
+    href: set-filter.md
+  - name: Отправить событие
+    href: send.md
+  - name: Получить отправителя события
+    href: get-sender.md
+  - name: Получить результаты обработчиков
+    href: get-results.md
+  - name: Добавить результат обработчика
+    href: add-result.md
+  - name: Получить исключения обработчиков
+    href: get-exceptions.md
+  - name: Добавить исключение обработчика
+    href: add-exception.md
+  - name: Включить режим отладки
+    href: turn-debug-on.md
+  - name: Проверить режим отладки
+    href: is-debug-on.md
+  - name: Получить отладочные данные
+    href: get-debug-info.md
+  - name: Добавить отладочные данные
+    href: add-debug-info.md

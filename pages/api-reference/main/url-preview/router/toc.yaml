@@ -1,0 +1,11 @@
+title: Router
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Зарегистрировать обработчик предпросмотра
+    href: set-route-handler.md
+  - name: Найти обработчик для адреса
+    href: dispatch.md
+  - name: Очистить кеш маршрутов
+    href: invalidate-route-cache.md

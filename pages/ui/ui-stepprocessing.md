@@ -257,7 +257,7 @@ ProcessManager.create({
 
 ## Написать серверную часть
 
-Шаг вызывает обычное действие контроллера Bitrix Framework — отдельного базового класса для пошагового выполнения расширение не требует. Класс наследуют от `\Bitrix\Main\Engine\Controller`, а имя для параметра `controller` берут то же, что и для метода `BX.ajax.runAction()`: в примерах статьи класс `DocumentExport` модуля `my.content` вызывается как `my:content.DocumentExport`. Как связать пространство имен модуля с этим идентификатором, описано в статье [Контроллеры](../framework/controllers.md).
+Шаг вызывает обычное действие контроллера Bitrix Framework — отдельного базового класса для пошагового выполнения расширение не требует. Класс наследуют от [`\Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md), а имя для параметра `controller` берут то же, что и для метода `BX.ajax.runAction()`: в примерах статьи класс `DocumentExport` модуля `my.content` вызывается как `my:content.DocumentExport`. Как связать пространство имен модуля с этим идентификатором, описано в статье [Контроллеры](../framework/controllers.md).
 
 Действие шага возвращает массив, из которого расширение читает состояние операции.
 

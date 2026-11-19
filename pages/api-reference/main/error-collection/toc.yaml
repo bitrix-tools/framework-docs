@@ -1,0 +1,11 @@
+title: ErrorCollection
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Добавить ошибку
+    href: set-error.md
+  - name: Добавить несколько ошибок
+    href: add.md
+  - name: Найти ошибку по коду
+    href: get-error-by-code.md

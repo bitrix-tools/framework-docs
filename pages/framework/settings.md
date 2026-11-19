@@ -274,7 +274,7 @@ description: 'Конфигурация ядра. Документация по B
 
 ### HTTP-клиент
 
-Секция `http_client_options` задает параметры по умолчанию для класса `Bitrix\Main\Web\HttpClient`: таймауты, прокси, редиректы.
+Секция `http_client_options` задает параметры по умолчанию для класса [`Bitrix\Main\Web\HttpClient`](../api-reference/main/web/http-client/index.md): таймауты, прокси, редиректы.
 
 С версии Главного модуля 23.0.0 `HttpClient` поддерживает стандарт PSR-18, а также работает в режиме обратной совместимости с очередями асинхронных запросов и библиотекой сURL.
 
@@ -503,7 +503,7 @@ description: 'Конфигурация ядра. Документация по B
 ],
 ```
 
-Получить текущее значение можно методом `Bitrix\Main\Localization\Loc::getDefaultLang()`. В метод нужно передать код языка.
+Получить текущее значение можно методом [`Bitrix\Main\Localization\Loc::getDefaultLang()`](../api-reference/main/localization/loc/get-default-lang.md). В метод нужно передать код языка.
 
 1. Метод проверит, есть ли переданный язык в системе.
 
@@ -513,11 +513,11 @@ description: 'Конфигурация ядра. Документация по B
 
 ## Класс Configuration
 
-Управлять настройками через API можно с помощью класса `Bitrix\Main\Config\Configuration`.
+Управлять настройками через API можно с помощью класса [`Bitrix\Main\Config\Configuration`](../api-reference/main/config/configuration/index.md).
 
 ### Создать конфигурационный файл
 
-Если файла `.settings.php` нет, создайте его методом `Configuration::wnc()`.
+Если файла `.settings.php` нет, создайте его методом [`Configuration::wnc()`](../api-reference/main/config/configuration/wnc.md).
 
 ```php
 Bitrix\Main\Config\Configuration::wnc();

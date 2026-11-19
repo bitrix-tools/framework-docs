@@ -1,0 +1,19 @@
+title: Error
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать ошибку
+    href: construct.md
+  - name: Создать ошибку из исключения
+    href: create-from-throwable.md
+  - name: Получить текст ошибки
+    href: get-message.md
+  - name: Получить код ошибки
+    href: get-code.md
+  - name: Получить переводимое сообщение
+    href: get-localizable-message.md
+  - name: Получить дополнительные данные ошибки
+    href: get-custom-data.md
+  - name: Подготовить ошибку для JSON
+    href: json-serialize.md

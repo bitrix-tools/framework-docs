@@ -459,7 +459,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
 
 ## Использование расширений
 
-В PHP загрузите и подключите расширение на странице с помощью метода `\Bitrix\Main\UI\Extension::load`. Этот метод принимает в качестве параметра имя расширения либо массив имен.
+В PHP загрузите и подключите расширение на странице с помощью метода [`\Bitrix\Main\UI\Extension::load`](../api-reference/main/ui/extension/load.md). Этот метод принимает в качестве параметра имя расширения либо массив имен.
 
 ```php
 \Bitrix\Main\UI\Extension::load('main.loader');

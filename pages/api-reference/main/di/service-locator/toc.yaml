@@ -1,0 +1,19 @@
+title: ServiceLocator
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить реестр сервисов
+    href: get-instance.md
+  - name: Получить сервис
+    href: get.md
+  - name: Проверить наличие сервиса
+    href: has.md
+  - name: Зарегистрировать готовый объект
+    href: add-instance.md
+  - name: Зарегистрировать сервис с отложенным созданием
+    href: add-instance-lazy.md
+  - name: Зарегистрировать сервисы модуля
+    href: register-by-module-settings.md
+  - name: Зарегистрировать сервисы сайта
+    href: register-by-global-settings.md

@@ -1,0 +1,17 @@
+title: Router
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Построить URL по имени маршрута
+    href: route.md
+  - name: Добавить строку запроса к URL
+    href: url.md
+  - name: Найти маршрут для запроса
+    href: match.md
+  - name: Получить список маршрутов
+    href: get-routes.md
+  - name: Добавить настройку маршрута
+    href: register-configuration.md
+  - name: Перенести маршруты из настроек
+    href: release-routes.md

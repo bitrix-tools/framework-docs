@@ -247,7 +247,7 @@ foreach ($tasks as $task)
 | `flowId` | ID потока | Задачи потока |
 | `parentId` | ID задачи | Подзадачи задачи |
 | `realStatus` | Константа класса `Bitrix\Tasks\Internals\Task\Status` или массив констант с оператором `in` | Задачи в указанных статусах. Основные константы — новая `Status::NEW`, ждет выполнения `Status::PENDING`, выполняется `Status::IN_PROGRESS`, ждет контроля постановщика `Status::SUPPOSEDLY_COMPLETED`, завершена `Status::COMPLETED`, отложена `Status::DEFERRED` |
-| `deadline`, `createdDate`, `closedDate` | Объект `Bitrix\Main\Type\DateTime` | Задачи по крайнему сроку, дате создания или закрытия |
+| `deadline`, `createdDate`, `closedDate` | Объект [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md) | Задачи по крайнему сроку, дате создания или закрытия |
 | `xmlId` | Строка | Задачи по внешнему коду, точное совпадение |
 | `tag` | Название тега | Задачи с указанным тегом |
 
@@ -460,7 +460,7 @@ $rows = (new TaskList())->getList(
 
 ## Разбить список на страницы {#pagination}
 
-Для постраничного вывода передайте в объект `Pager` размер страницы в аргументе `limit` и смещение в аргументе `offset`. Объект навигации `Bitrix\Main\UI\PageNavigation` вычисляет их по номеру страницы из адреса запроса и передает в компонент постраничной навигации.
+Для постраничного вывода передайте в объект `Pager` размер страницы в аргументе `limit` и смещение в аргументе `offset`. Объект навигации [`Bitrix\Main\UI\PageNavigation`](../../api-reference/main/ui/page-navigation/index.md) вычисляет их по номеру страницы из адреса запроса и передает в компонент постраничной навигации.
 
 Общее число задач для навигации возвращает метод `TaskList::getCount()`, потому что `TaskProvider::getCount()` возвращает `0`. Фильтр для подсчета записывают в формате `TaskList`, с полями в верхнем регистре.
 
@@ -526,7 +526,7 @@ $count = (new TaskList())->getCount(
 
 ## Выбрать список через TaskList {#tasklist}
 
-Класс `Bitrix\Tasks\Provider\TaskList` с запросом `Bitrix\Tasks\Provider\Query\TaskQuery` нужен в случаях из раздела [Учесть ограничения getList()](#v2-limitations). Метод `getList()` класса возвращает массив строк. Каждая строка — ассоциативный массив с ключами полей в верхнем регистре, например `ID`, `TITLE`, `REAL_STATUS`. Статус приходит числом из констант класса `Bitrix\Tasks\Internals\Task\Status`, даты — объектами `Bitrix\Main\Type\DateTime`.
+Класс `Bitrix\Tasks\Provider\TaskList` с запросом `Bitrix\Tasks\Provider\Query\TaskQuery` нужен в случаях из раздела [Учесть ограничения getList()](#v2-limitations). Метод `getList()` класса возвращает массив строк. Каждая строка — ассоциативный массив с ключами полей в верхнем регистре, например `ID`, `TITLE`, `REAL_STATUS`. Статус приходит числом из констант класса `Bitrix\Tasks\Internals\Task\Status`, даты — объектами [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md).
 
 Запрос собирают методами объекта `TaskQuery`.
 
@@ -704,7 +704,7 @@ $countByStatus = array_column($rows, 'CNT', 'STATUS');
 | Второй аргумент — фильтр | `TaskListArrayFilter` | `setWhere()` | Ключ `CHECK_PERMISSIONS` новые классы пропускают. Права отключают аргумент `skipAccessCheck: true` или метод `skipAccessCheck()` |
 | Третий аргумент — поля | `TaskListSelect` | `setSelect()` | С пустым списком полей классический метод возвращал все поля. Новые классы без списка возвращают только ID |
 | `USER_ID` в четвертом аргументе | Аргумент `userId` | Аргумент конструктора `TaskQuery` | Без `USER_ID` классический метод брал текущего пользователя. Новым классам передавайте ID явно |
-| `NAV_PARAMS` в четвертом аргументе | Объект `Pager` | `setLimit()` и `setOffset()` | Номер страницы переведите в смещение или используйте `PageNavigation` из раздела [Разбить список на страницы](#pagination) |
+| `NAV_PARAMS` в четвертом аргументе | Объект `Pager` | `setLimit()` и `setOffset()` | Номер страницы переведите в смещение или используйте [`PageNavigation`](../../api-reference/main/ui/page-navigation/index.md) из раздела [Разбить список на страницы](#pagination) |
 | Результат `CDBResult` и метод `Fetch()` | Коллекция объектов задач | Массив строк | Число всех задач возвращает `TaskList::getCount()` |
 
 ## Проверить результат {#check-result}

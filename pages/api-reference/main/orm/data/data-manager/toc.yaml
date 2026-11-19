@@ -1,0 +1,87 @@
+title: DataManager
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Задать имя таблицы
+    href: get-table-name.md
+  - name: Описать поля
+    href: get-map.md
+  - name: Задать подключение к базе данных
+    href: get-connection-name.md
+  - name: Задать название таблицы
+    href: get-title.md
+  - name: Задать идентификатор пользовательских полей
+    href: get-uf-id.md
+  - name: Проверить таблицу одиночных пользовательских полей
+    href: is-uts.md
+  - name: Проверить таблицу множественных пользовательских полей
+    href: is-utm.md
+  - name: Добавить условия во все запросы
+    href: set-default-scope.md
+  - name: Дополнить сущность после создания
+    href: post-initialize.md
+  - name: Разрешить кеширование выборок
+    href: is-cacheable.md
+  - name: Получить сущность
+    href: get-entity.md
+  - name: Удалить сущность из памяти класса
+    href: unset-entity.md
+  - name: Выбрать записи
+    href: get-list.md
+  - name: Получить одну запись
+    href: get-row.md
+  - name: Выбрать запись по первичному ключу
+    href: get-by-primary.md
+  - name: Выбрать запись по ключу без параметров
+    href: get-by-id.md
+  - name: Получить запись по первичному ключу
+    href: get-row-by-id.md
+  - name: Получить число записей
+    href: get-count.md
+  - name: Создать построитель запроса
+    href: query.md
+  - name: Добавить запись
+    href: add.md
+  - name: Добавить несколько записей
+    href: add-multi.md
+  - name: Изменить запись
+    href: update.md
+  - name: Изменить несколько записей
+    href: update-multi.md
+  - name: Удалить запись
+    href: delete.md
+  - name: Проверить значения полей
+    href: check-fields.md
+  - name: Очистить кеш выборок
+    href: clean-cache.md
+  - name: Передать удаляемый объект
+    href: set-current-deleting-object.md
+  - name: Создать объект новой записи
+    href: create-object.md
+  - name: Создать пустую коллекцию
+    href: create-collection.md
+  - name: Создать объект существующей записи
+    href: wake-up-object.md
+  - name: Создать коллекцию существующих записей
+    href: wake-up-collection.md
+  - name: Получить класс объекта
+    href: get-object-class.md
+  - name: Получить короткое имя класса объекта
+    href: get-object-class-name.md
+  - name: Получить класс коллекции
+    href: get-collection-class.md
+  - name: Получить короткое имя класса коллекции
+    href: get-collection-class-name.md
+  - name: Получить родительский класс объекта
+    href: get-object-parent-class.md
+  - name: Получить родительский класс коллекции
+    href: get-collection-parent-class.md
+  - name: Получить класс построителя запроса
+    href: get-query-class.md
+  - name: Получить класс сущности
+    href: get-entity-class.md
+  - name: Включить шифрование поля
+    href: enable-crypto.md
+  - name: Проверить шифрование поля
+    href: crypto-enabled.md

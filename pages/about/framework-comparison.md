@@ -9,7 +9,7 @@ Bitrix Framework часто ассоциируется с 1C-Битрикс: У�
 
 Контроллер отвечает за обработку запроса и возврат ответа. В Bitrix Framework контроллеры можно реализовать двумя способами:
 
--  через наследование от класса `Bitrix\Main\Engine\Controller` ,
+-  через наследование от класса [`Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md) ,
 
 -  через PHP-скрипты в папке `components`.
 
@@ -73,7 +73,7 @@ Laravel и Yii запускают задачи  через системный cr
 ### События и обработчики
 
 События позволяют одному участку кода реагировать на действия другого.\
-В Bitrix Framework события создают через `\Bitrix\Main\EventManager` с регистрацией обработчиков по коду события. Это аналогично `Event::listen()` в Laravel, `EventDispatcher` в Symfony и `Yii::$app->on()` в Yii.
+В Bitrix Framework события создают через [`\Bitrix\Main\EventManager`](../api-reference/main/event-manager/index.md) с регистрацией обработчиков по коду события. Это аналогично `Event::listen()` в Laravel, `EventDispatcher` в Symfony и `Yii::$app->on()` в Yii.
 
 | Фреймворк | Реализация событий                                                             |
 |-----------|--------------------------------------------------------------------------------|

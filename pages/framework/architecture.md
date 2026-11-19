@@ -41,11 +41,11 @@ Bitrix Framework состоит из независимых модулей, ко
 | События и обработчики | Инфраструктура | Связь бизнес-логики внутри модуля и между модулями без прямых вызовов | Обработчики — в `lib/` модуля | [События](./events.md) |
 | Агенты | Инфраструктура | Задачи, которые выполняются по расписанию | Класс агента — в `lib/` модуля | [Агенты и фоновые задачи](./background-jobs.md) |
 
-Модуль может вызывать публичный API другого модуля напрямую после подключения этого модуля вызовом `\Bitrix\Main\Loader::includeModule()`. Метод возвращает `false`, если модуль не установлен, — проверяйте результат перед вызовом. Чтобы модули меньше зависели от внутренних классов друг друга, связь между ними строят через события и [сервис-локатор](./service-locator.md). Подробнее — в разделе [Взаимодействие модулей](./../modules/architecture.md#vzaimodejstvie-modulej).
+Модуль может вызывать публичный API другого модуля напрямую после подключения этого модуля вызовом [`\Bitrix\Main\Loader::includeModule()`](../api-reference/main/loader/include-module.md). Метод возвращает `false`, если модуль не установлен, — проверяйте результат перед вызовом. Чтобы модули меньше зависели от внутренних классов друг друга, связь между ними строят через события и [сервис-локатор](./service-locator.md). Подробнее — в разделе [Взаимодействие модулей](./../modules/architecture.md#vzaimodejstvie-modulej).
 
 <iframe src="pages/framework/_images/architecture.svg" width="100%" height="341px" style="border:none;"></iframe>
 
-На схеме EventBus — условное обозначение механизма событий `Bitrix\Main\EventManager`, ServiceLocator — класс `Bitrix\Main\DI\ServiceLocator`.
+На схеме EventBus — условное обозначение механизма событий [`Bitrix\Main\EventManager`](../api-reference/main/event-manager/index.md), ServiceLocator — класс [`Bitrix\Main\DI\ServiceLocator`](../api-reference/main/di/service-locator/index.md).
 
 ## Обработка запроса
 
@@ -90,7 +90,7 @@ Bitrix Framework поддерживает два подхода к обрабо�
 
    -  действие контроллера вернуло другой результат — система оборачивает его в JSON `{"status":"success","data":…,"errors":[]}`, при ошибках `status` принимает значение `error`, а ошибки передаются в `errors`,
 
-   -  замыкание вернуло `HttpResponse` — ответ отправляется как есть, массив — как JSON без обертки, строку и другие скалярные значения — телом ответа `HttpResponse`, `null` — ответ не формируется.
+   -  замыкание вернуло [`HttpResponse`](../api-reference/main/http-response/index.md) — ответ отправляется как есть, массив — как JSON без обертки, строку и другие скалярные значения — телом ответа `HttpResponse`, `null` — ответ не формируется.
 
    Подробнее в статье [Контроллеры](./controllers.md).
 

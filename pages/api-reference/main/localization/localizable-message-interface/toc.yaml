@@ -1,0 +1,7 @@
+title: LocalizableMessageInterface
+href: index.md
+items:
+  - name: Обзор интерфейса
+    href: index.md
+  - name: Получить текст на заданном языке
+    href: localize.md

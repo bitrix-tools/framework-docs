@@ -1,0 +1,9 @@
+title: HttpCookies
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Собрать заголовок Cookie
+    href: implode.md
+  - name: Добавить cookie из заголовка Set-Cookie
+    href: add-from-string.md

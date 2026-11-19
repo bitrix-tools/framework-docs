@@ -1,0 +1,43 @@
+title: Grid\Options
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Загрузить настройки грида
+    href: construct.md
+  - name: Получить идентификатор грида
+    href: get-id.md
+  - name: Получить настройки текущего представления
+    href: get-current-options.md
+  - name: Получить сортировку грида
+    href: get-sorting.md
+  - name: Получить видимые колонки
+    href: get-used-columns.md
+  - name: Задать размер страницы
+    href: set-page-size.md
+  - name: Задать ширину колонок
+    href: set-columns-sizes.md
+  - name: Получить колонки с измененной шириной
+    href: get-resized-columns.md
+  - name: Задать свои названия колонок
+    href: set-custom-names.md
+  - name: Задать закрепленные колонки
+    href: set-sticked-columns.md
+  - name: Получить закрепленные колонки
+    href: get-sticked-columns.md
+  - name: Запомнить раскрытые строки
+    href: set-expanded-rows.md
+  - name: Получить раскрытые строки
+    href: get-expanded-rows.md
+  - name: Сбросить раскрытые строки
+    href: reset-expanded-rows.md
+  - name: Запомнить свернутые группы
+    href: set-collapsed-groups.md
+  - name: Получить свернутые группы
+    href: get-collapsed-groups.md
+  - name: Очистить настройки представления
+    href: reset-view.md
+  - name: Удалить представление
+    href: delete-view.md
+  - name: Сохранить настройки грида
+    href: save.md

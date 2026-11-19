@@ -43,7 +43,7 @@ Bitrix Framework состоит из модулей. Каждый модуль �
 
 -  состоит из латинских букв, цифр и точки: с дефисом, пробелом или другим символом, кроме `_`, модуль не появится в списке,
 
--  задан в нижнем регистре: `Loader::includeModule()` приводит имя модуля к нижнему регистру и ищет папку с таким именем,
+-  задан в нижнем регистре: [`Loader::includeModule()`](../api-reference/main/loader/include-module.md) приводит имя модуля к нижнему регистру и ищет папку с таким именем,
 
 -  первый символ не является цифрой: из идентификатора строится имя PHP-класса установщика,
 
@@ -162,9 +162,9 @@ Bitrix Framework состоит из модулей. Каждый модуль �
 
 -  удаление: `UnInstallFiles()` → `UnInstallDB()` → `unRegisterModule()` → `IncludeAdminFile()`.
 
-Метод `ModuleManager::registerModule()` добавляет модуль в список установленных и отправляет событие `OnAfterRegisterModule`. После этого `Loader::includeModule('my.module')` возвращает `true`. Метод `ModuleManager::unRegisterModule()` удаляет агенты модуля и права групп на модуль, исключает модуль из списка установленных и отправляет событие `OnAfterUnRegisterModule`. Обработчики событий модуля метод не удаляет — их удаляют в `UnInstallDB()`.
+Метод [`ModuleManager::registerModule()`](../api-reference/main/module-manager/register-module.md) добавляет модуль в список установленных и отправляет событие `OnAfterRegisterModule`. После этого `Loader::includeModule('my.module')` возвращает `true`. Метод [`ModuleManager::unRegisterModule()`](../api-reference/main/module-manager/un-register-module.md) удаляет агенты модуля и права групп на модуль, исключает модуль из списка установленных и отправляет событие `OnAfterUnRegisterModule`. Обработчики событий модуля метод не удаляет — их удаляют в `UnInstallDB()`.
 
-Если `InstallDB()` обращается к классам модуля через `Loader::includeModule()`, регистрируйте модуль до `InstallDB()`, как в примере. Если `InstallDB()` только выполняет SQL-скрипт, модуль можно регистрировать после, как в статье [Архитектура модулей](./../modules/architecture.md).
+Если `InstallDB()` обращается к классам модуля через [`Loader::includeModule()`](../api-reference/main/loader/include-module.md), регистрируйте модуль до `InstallDB()`, как в примере. Если `InstallDB()` только выполняет SQL-скрипт, модуль можно регистрировать после, как в статье [Архитектура модулей](./../modules/architecture.md).
 
 Методы `DoInstall()` и `DoUninstall()` выполняются только для администратора: проверка `$USER->IsAdmin()`. Для другого пользователя метод передает текст ошибки через `$APPLICATION->ThrowException()` и возвращает `false`. Важно вернуть именно `false`: страница *Установленные решения* считает установку успешной при любом другом значении, в том числе при пустом `return;`.
 
@@ -178,13 +178,13 @@ Bitrix Framework состоит из модулей. Каждый модуль �
 
 Установщик сочетает актуальный объектный API и классический API. Класс `CModule` и метод `$APPLICATION->IncludeAdminFile()` входят в классический контракт установки модулей. Прямой замены для них в актуальном объектном API нет.
 
-Функция `CopyDirFiles()` рекурсивно копирует файлы установки. В классе `Bitrix\Main\IO\Directory` нет метода для такого копирования. Для регистрации модуля, локализации и удаления каталога компонента используются классы `ModuleManager`, `Loc` и `Directory`.
+Функция `CopyDirFiles()` рекурсивно копирует файлы установки. В классе `Bitrix\Main\IO\Directory` нет метода для такого копирования. Для регистрации модуля, локализации и удаления каталога компонента используются классы [`ModuleManager`](../api-reference/main/module-manager/index.md), [`Loc`](../api-reference/main/localization/loc/index.md) и `Directory`.
 
 В метод `InstallFiles()` добавьте вызов `CopyDirFiles`. Он скопирует компонент `my:user.card` из папки установки модуля в рабочую папку `/local/components/`. Аргументы:
 
 1. Исходная папка. Путь строится от `__DIR__`, поэтому копирование работает, где бы ни лежал модуль.
 
-2. Папка назначения — `Application::getDocumentRoot() . '/local/components'`. Метод `Application::getDocumentRoot()` возвращает абсолютный путь к корню сайта.
+2. Папка назначения — `Application::getDocumentRoot() . '/local/components'`. Метод [`Application::getDocumentRoot()`](../api-reference/main/application/get-document-root.md) возвращает абсолютный путь к корню сайта.
 
 3. `true` — перезаписывать существующие файлы.
 
@@ -321,7 +321,7 @@ class my_module extends CModule
 
 #### Файл install/step.php
 
-Файл `/install/step.php` выводит сообщение после установки модуля. Его подключает метод `DoInstall()` через `$APPLICATION->IncludeAdminFile()`. Функция `check_bitrix_sessid()` проверяет идентификатор сессии в запросе и защищает страницу от подделки запроса. Текст сообщения в примере задан строкой для краткости, в рабочем модуле берите его из языкового файла через `Loc::getMessage()`.
+Файл `/install/step.php` выводит сообщение после установки модуля. Его подключает метод `DoInstall()` через `$APPLICATION->IncludeAdminFile()`. Функция `check_bitrix_sessid()` проверяет идентификатор сессии в запросе и защищает страницу от подделки запроса. Текст сообщения в примере задан строкой для краткости, в рабочем модуле берите его из языкового файла через [`Loc::getMessage()`](../api-reference/main/localization/loc/get-message.md).
 
 ```php
 <?php

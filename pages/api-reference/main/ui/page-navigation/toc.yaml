@@ -1,0 +1,43 @@
+title: PageNavigation
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать объект навигации
+    href: construct.md
+  - name: Прочитать параметры навигации из адреса
+    href: init-from-uri.md
+  - name: Задать размер страницы
+    href: set-page-size.md
+  - name: Получить размер страницы
+    href: get-page-size.md
+  - name: Задать допустимые размеры страницы
+    href: set-page-sizes.md
+  - name: Получить допустимые размеры страницы
+    href: get-page-sizes.md
+  - name: Задать номер текущей страницы
+    href: set-current-page.md
+  - name: Получить номер текущей страницы
+    href: get-current-page.md
+  - name: Задать число записей
+    href: set-record-count.md
+  - name: Получить число записей
+    href: get-record-count.md
+  - name: Получить число страниц
+    href: get-page-count.md
+  - name: Получить смещение первой записи
+    href: get-offset.md
+  - name: Получить лимит выборки
+    href: get-limit.md
+  - name: Разрешить показ всех записей
+    href: allow-all-records.md
+  - name: Проверить, разрешен ли показ всех записей
+    href: all-records-allowed.md
+  - name: Проверить, показаны ли все записи
+    href: all-records-shown.md
+  - name: Получить идентификатор навигации
+    href: get-id.md
+  - name: Добавить параметры навигации в адрес
+    href: add-params.md
+  - name: Удалить параметры навигации из адреса
+    href: clear-params.md

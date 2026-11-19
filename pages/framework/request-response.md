@@ -123,7 +123,7 @@ $name = $request->getPost('name');
 $email = $request->getQuery('email');
 ```
 
-Экранируйте данные при выводе в HTML. Метод `getQuery()` может вернуть строку, массив или `null`, поэтому перед выводом email проверьте тип значения. Используйте `htmlspecialcharsbx()` или `\Bitrix\Main\Text\HtmlFilter::encode()` — подробнее в статье [XSS](../security/xss.md).
+Экранируйте данные при выводе в HTML. Метод `getQuery()` может вернуть строку, массив или `null`, поэтому перед выводом email проверьте тип значения. Используйте `htmlspecialcharsbx()` или [`\Bitrix\Main\Text\HtmlFilter::encode()`](../api-reference/main/text/html-filter/encode.md) — подробнее в статье [XSS](../security/xss.md).
 
 Выведите строковое значение email через `htmlspecialcharsbx()`:
 

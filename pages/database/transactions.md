@@ -53,7 +53,7 @@ catch (Throwable $e)
 
 {% note warning "" %}
 
-Если ORM-объект переопределяет соединение через `DataManager::getConnectionName`, то транзакция будет работать только в рамках этого соединения.
+Если ORM-объект переопределяет соединение через [`DataManager::getConnectionName`](../api-reference/main/orm/data/data-manager/get-connection-name.md), то транзакция будет работать только в рамках этого соединения.
 
 {% endnote %}
 

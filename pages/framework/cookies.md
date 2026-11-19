@@ -7,9 +7,9 @@ description: 'Cookie-файлы. Документация по Bitrix Framework:
 
 ## Как установить cookie
 
-Чтобы задать cookie, используйте класс `Bitrix\Main\HttpResponse`.
+Чтобы задать cookie, используйте класс [`Bitrix\Main\HttpResponse`](../api-reference/main/http-response/index.md).
 
-1. Импортируйте классы `Cookie` и `Context`.
+1. Импортируйте классы `Cookie` и [`Context`](../api-reference/main/context/index.md).
 
    ```php
    use Bitrix\Main\Context;
@@ -57,7 +57,7 @@ description: 'Cookie-файлы. Документация по Bitrix Framework:
 
 {% note info "" %}
 
-Если включена опция главного модуля `ask_to_store_cookies`, при добавлении постоянной cookie через `HttpResponse::addCookie()` ядро проверяет согласие посетителя. Пока согласие не получено, срок действия становится `0`: браузеру отправляется сессионная cookie. Проверка включена по умолчанию третьим аргументом метода `$checkExpires`.
+Если включена опция главного модуля `ask_to_store_cookies`, при добавлении постоянной cookie через [`HttpResponse::addCookie()`](../api-reference/main/http-response/add-cookie.md) ядро проверяет согласие посетителя. Пока согласие не получено, срок действия становится `0`: браузеру отправляется сессионная cookie. Проверка включена по умолчанию третьим аргументом метода `$checkExpires`.
 
 {% endnote %}
 

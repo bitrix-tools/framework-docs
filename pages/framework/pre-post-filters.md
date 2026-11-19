@@ -160,9 +160,9 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 ### Фильтр CSRF-защиты
 
-`\Bitrix\Main\Engine\ActionFilter\Csrf`
+[`\Bitrix\Main\Engine\ActionFilter\Csrf`](../api-reference/main/engine/action-filter/csrf/index.md)
 
-Проверяет наличие и корректность CSRF-токена и блокирует действие, если проверка не пройдена. Работает в области `Controller::SCOPE_AJAX` и использует `check_bitrix_sessid()`.
+Проверяет наличие и корректность CSRF-токена и блокирует действие, если проверка не пройдена. Работает в области [`Controller::SCOPE_AJAX`](../api-reference/main/engine/controller/index.md) и использует `check_bitrix_sessid()`.
 
 Для AJAX-действий, которые меняют данные, сочетайте `Csrf` с `Authentication` и `HttpMethod`, разрешающим только `POST`. Метод `BX.ajax.runAction()` автоматически передает токен в заголовке `X-Bitrix-Csrf-Token`. Пример настройки приведен в статье [«CSRF и SSRF»](../security/csrf-ssrf.md#controller-actions).
 
@@ -432,7 +432,7 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 -  `HttpMethod` — разрешает `GET` и `POST`,
 
--  `Csrf` — проверяет CSRF-токен.
+-  [`Csrf`](../api-reference/main/engine/action-filter/csrf/index.md) — проверяет CSRF-токен.
 
 Повторно включать эти проверки для AJAX-действий не нужно. Дополнительная настройка нужна, если действие должно разрешать только `POST`, быть доступным гостям или использовать другие параметры фильтров. Фильтр `Authentication` проверяет только вход пользователя. Права на конкретные данные проверяйте отдельно.
 
@@ -651,4 +651,4 @@ class CustomFilter extends Base
 }
 ```
 
-Обработчики событий вызываются в методе `Bitrix\Main\Engine\Controller::run`.
+Обработчики событий вызываются в методе [`Bitrix\Main\Engine\Controller::run`](../api-reference/main/engine/controller/run.md).

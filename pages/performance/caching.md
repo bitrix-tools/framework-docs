@@ -476,7 +476,7 @@ return array(
 );
 ```
 
-Файл `.settings.php` хранит основной массив настроек. API класса `Bitrix\Main\Config\Configuration` может сохранять изменения в этом файле.
+Файл `.settings.php` хранит основной массив настроек. API класса [`Bitrix\Main\Config\Configuration`](../api-reference/main/config/configuration/index.md) может сохранять изменения в этом файле.
 
 В `.settings_extra.php` можно вычислять значения средствами PHP. Система загружает его после `.settings.php` и заменяет одноименные секции целиком. Поэтому при переопределении `cache` укажите в `.settings_extra.php` всю секцию. API конфигурации не перезаписывает `.settings_extra.php`.
 

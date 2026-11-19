@@ -378,7 +378,7 @@ if ($request->isPost() && check_bitrix_sessid())
 
 ### Проверить ошибки на сервере
 
-Метод `getPendingFiles()` возвращает коллекцию, которую можно перебрать в `foreach`. Ключ элемента — переданный идентификатор, значение — объект `PendingFile`. Метод `isValid()` объекта возвращает `false`, если файл не прошел проверку. Метод `getErrors()` возвращает массив объектов `Bitrix\UI\FileUploader\UploaderError` — наследников `Bitrix\Main\Error` с методами `getCode()` и `getMessage()`.
+Метод `getPendingFiles()` возвращает коллекцию, которую можно перебрать в `foreach`. Ключ элемента — переданный идентификатор, значение — объект `PendingFile`. Метод `isValid()` объекта возвращает `false`, если файл не прошел проверку. Метод `getErrors()` возвращает массив объектов `Bitrix\UI\FileUploader\UploaderError` — наследников [`Bitrix\Main\Error`](../api-reference/main/error/index.md) с методами `getCode()` и `getMessage()`.
 
 Метод `getPendingFiles()` помечает файл одной из двух ошибок:
 

@@ -3,7 +3,7 @@ title: Контроллеры
 description: "Контроллеры Bitrix Framework: создание действий, настройка HTTP-маршрутов и AJAX-вызовов, обработка запросов, ответы и автоваринг."
 ---
 
-Контроллер обрабатывает запрос, вызывает бизнес-логику и возвращает ответ. В Bitrix Framework за контроллеры отвечает класс `Bitrix\Main\Engine\Controller`. Действия контроллера — это методы с суффиксом `Action`, например `listAction`, `getAction`, `addAction`.
+Контроллер обрабатывает запрос, вызывает бизнес-логику и возвращает ответ. В Bitrix Framework за контроллеры отвечает класс [`Bitrix\Main\Engine\Controller`](../api-reference/main/engine/controller/index.md). Действия контроллера — это методы с суффиксом `Action`, например `listAction`, `getAction`, `addAction`.
 
 Действия контроллера можно вызывать через HTTP-маршрут или AJAX-диспетчер `BX.ajax.runAction()`. Оба способа показаны на отдельных контроллерах: `Web\Iblock` обрабатывает HTTP-запросы, а `Ajax\Iblock` — AJAX-вызовы.
 
@@ -415,7 +415,7 @@ BX.ajax.runAction('my:content.Iblock.list', {
 
 ### Получить текущего пользователя
 
-Чтобы получить текущего пользователя, добавьте аргумент `Bitrix\Main\Engine\CurrentUser` в сигнатуру метода-действия контроллера:
+Чтобы получить текущего пользователя, добавьте аргумент [`Bitrix\Main\Engine\CurrentUser`](../api-reference/main/engine/current-user/index.md) в сигнатуру метода-действия контроллера:
 
 ```php
 final class Iblock extends Controller
@@ -500,7 +500,7 @@ BX.ajax.runAction('my:content.Iblock.json', {
 
 ### Получить постраничную навигацию
 
-Чтобы получить объект навигации, добавьте аргумент `Bitrix\Main\UI\PageNavigation`:
+Чтобы получить объект навигации, добавьте аргумент [`Bitrix\Main\UI\PageNavigation`](../api-reference/main/ui/page-navigation/index.md):
 
 ```php
 final class Iblock extends Controller
@@ -664,7 +664,7 @@ BX.ajax.runAction('my:content.Iblock.create', {
 
 -  `Bitrix\Main\Engine\Response\AjaxJson`,
 
--  `Bitrix\Main\HttpResponse`,
+-  [`Bitrix\Main\HttpResponse`](../api-reference/main/http-response/index.md),
 
 -  `Bitrix\Main\Engine\Response\File`,
 
@@ -696,7 +696,7 @@ BX.ajax.runAction('my:content.Iblock.create', {
 
 Чтобы вернуть файлы, используйте классы `Response\File` и `Response\BFile`. `Response\File` возвращает файл с диска, а `Response\BFile` — файл из таблицы файлов.
 
-В первом примере `Bitrix\Main\IO\File` получает файл с диска, а `Response\File` формирует ответ.
+В первом примере [`Bitrix\Main\IO\File`](../api-reference/main/io/file/index.md) получает файл с диска, а `Response\File` формирует ответ.
 
 Маршрут `/content/export/{type}/` передает символьный тип экспорта в параметр `$type` действия `exportAction()`.
 
@@ -1008,7 +1008,7 @@ return [
 
 ## Обработать ошибки
 
-Чтобы вернуть ошибку в стандартном JSON-ответе, добавьте объект `Bitrix\Main\Error` через `addError()`:
+Чтобы вернуть ошибку в стандартном JSON-ответе, добавьте объект [`Bitrix\Main\Error`](../api-reference/main/error/index.md) через `addError()`:
 
 Добавьте метод в `/local/modules/my.content/lib/Infrastructure/Controller/Web/Iblock.php`.
 
@@ -1069,7 +1069,7 @@ final class Iblock extends Controller
 
 Добавьте методы из примеров раздела в `/local/modules/my.content/lib/Infrastructure/Controller/Web/Iblock.php`.
 
-Bitrix Framework поддерживает встроенный автоваринг для `CurrentUser`, `JsonPayload` и `PageNavigation`. Для собственных классов добавьте правило в `getAutoWiredParameters()` или зарегистрируйте сервис в `Bitrix\Main\DI\ServiceLocator`.
+Bitrix Framework поддерживает встроенный автоваринг для [`CurrentUser`](../api-reference/main/engine/current-user/index.md), `JsonPayload` и `PageNavigation`. Для собственных классов добавьте правило в `getAutoWiredParameters()` или зарегистрируйте сервис в [`Bitrix\Main\DI\ServiceLocator`](../api-reference/main/di/service-locator/index.md).
 
 ### Настроить автоваринг кастомных классов
 
@@ -1180,7 +1180,7 @@ http://localhost/content/autowire/1/
 
 ## Использовать сервис-локатор
 
-Если объект нельзя получить с помощью встроенного автоваринга или правила `getAutoWiredParameters()`, система пробует получить его из `Bitrix\Main\DI\ServiceLocator`.
+Если объект нельзя получить с помощью встроенного автоваринга или правила `getAutoWiredParameters()`, система пробует получить его из [`Bitrix\Main\DI\ServiceLocator`](../api-reference/main/di/service-locator/index.md).
 
 Добавьте `serviceAction()` в `/local/modules/my.content/lib/Infrastructure/Controller/Web/Iblock.php`.
 

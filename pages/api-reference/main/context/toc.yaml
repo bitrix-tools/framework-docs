@@ -1,0 +1,37 @@
+title: Context
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить контекст текущего запроса
+    href: get-current.md
+  - name: Получить запрос
+    href: get-request.md
+  - name: Получить ответ
+    href: get-response.md
+  - name: Заменить ответ
+    href: set-response.md
+  - name: Получить данные сервера
+    href: get-server.md
+  - name: Получить переменные окружения
+    href: get-environment.md
+  - name: Получить приложение
+    href: get-application.md
+  - name: Получить идентификатор сайта
+    href: get-site.md
+  - name: Получить объект сайта
+    href: get-site-object.md
+  - name: Задать сайт
+    href: set-site.md
+  - name: Получить идентификатор языка
+    href: get-language.md
+  - name: Получить объект языка
+    href: get-language-object.md
+  - name: Задать язык
+    href: set-language.md
+  - name: Получить региональные настройки
+    href: get-culture.md
+  - name: Задать региональные настройки
+    href: set-culture.md
+  - name: Задать запрос, ответ, сервер и окружение
+    href: initialize.md

@@ -165,10 +165,10 @@ $downloadUrl = $documentData['downloadUrl'];
 #|
 || **Ключ** | **Тип** | **Описание** ||
 || `id` | `int` | Идентификатор документа ||
-|| `downloadUrl` | `Bitrix\Main\Web\Uri` | Ссылка на исходный файл ||
+|| `downloadUrl` | [`Bitrix\Main\Web\Uri`](../../api-reference/main/web/uri/index.md) | Ссылка на исходный файл ||
 || `title` | `string` | Название документа ||
 || `number` | `string` | Номер документа ||
-|| `createTime` | `Bitrix\Main\Type\DateTime` | Дата и время создания ||
+|| `createTime` | [`Bitrix\Main\Type\DateTime`](../../api-reference/main/type/date-time/index.md) | Дата и время создания ||
 || `updateTime` | `Bitrix\Main\Type\DateTime` | Дата и время последнего обновления ||
 || `createdBy` | `int` или `null` | Идентификатор пользователя, который создал документ ||
 || `updatedBy` | `int` или `null` | Идентификатор пользователя, который обновил документ ||

@@ -1,0 +1,13 @@
+title: SqlExpression
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать SQL-выражение
+    href: construct.md
+  - name: Собрать SQL-фрагмент
+    href: compile.md
+  - name: Получить соединение
+    href: get-connection.md
+  - name: Задать соединение
+    href: set-connection.md

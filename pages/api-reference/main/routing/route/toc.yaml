@@ -1,0 +1,29 @@
+title: Route
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать маршрут
+    href: construct.md
+  - name: Получить шаблон URL маршрута
+    href: get-uri.md
+  - name: Получить обработчик маршрута
+    href: get-controller.md
+  - name: Получить настройки маршрута
+    href: get-options.md
+  - name: Задать настройки маршрута
+    href: set-options.md
+  - name: Получить значение параметра маршрута
+    href: get-parameter-value.md
+  - name: Получить значения параметров маршрута
+    href: get-parameters-values.md
+  - name: Проверить путь по шаблону маршрута
+    href: match.md
+  - name: Построить регулярное выражение маршрута
+    href: compile.md
+  - name: Получить параметры шаблона маршрута
+    href: get-parameters.md
+  - name: Получить данные маршрута для кеша
+    href: get-compile-cache.md
+  - name: Загрузить данные маршрута из кеша
+    href: compile-from-cache.md

@@ -1,0 +1,35 @@
+title: SessionLocalStorage
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать хранилище
+    href: construct.md
+  - name: Получить имя хранилища
+    href: get-name.md
+  - name: Получить ключ хранения
+    href: get-unique-name.md
+  - name: Задать ключ хранения
+    href: set-unique-name.md
+  - name: Получить значение по ключу
+    href: get.md
+  - name: Записать значение по ключу
+    href: set.md
+  - name: Получить все данные
+    href: get-data.md
+  - name: Заменить все данные
+    href: set-data.md
+  - name: Удалить все данные
+    href: clear.md
+  - name: Проверить ключ через isset
+    href: offset-exists.md
+  - name: Прочитать значение через синтаксис массива
+    href: offset-get.md
+  - name: Записать значение через синтаксис массива
+    href: offset-set.md
+  - name: Удалить значение через unset
+    href: offset-unset.md
+  - name: Получить число элементов
+    href: count.md
+  - name: Получить итератор
+    href: get-iterator.md

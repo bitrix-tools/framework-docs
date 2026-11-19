@@ -1,0 +1,27 @@
+title: EventManager
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить объект
+    href: get-instance.md
+  - name: Заменить объект
+    href: set-instance.md
+  - name: Добавить обработчик на время запроса
+    href: add-event-handler.md
+  - name: Добавить обработчик в режиме совместимости
+    href: add-event-handler-compatible.md
+  - name: Удалить обработчик, добавленный на время запроса
+    href: remove-event-handler.md
+  - name: Зарегистрировать обработчик
+    href: register-event-handler.md
+  - name: Зарегистрировать обработчик в режиме совместимости
+    href: register-event-handler-compatible.md
+  - name: Удалить регистрацию обработчика
+    href: un-register-event-handler.md
+  - name: Сбросить кеш обработчиков
+    href: clear-loaded-handlers.md
+  - name: Найти обработчики события
+    href: find-event-handlers.md
+  - name: Отправить событие обработчикам
+    href: send.md

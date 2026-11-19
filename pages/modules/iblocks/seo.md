@@ -81,7 +81,7 @@ SEO-свойства инфоблока — заголовок окна брау
 
 ### Добавить свою функцию шаблона {#custom-function}
 
-Свою функцию шаблона добавляют обработчиком события `OnTemplateGetFunctionClass` модуля `iblock`. Подпишите обработчик методом `addEventHandler()` объекта `Bitrix\Main\EventManager`, а не `addEventHandlerCompatible()` — обработчик получает объект `Bitrix\Main\Event`. Где разместить подписку, описано в статье [События инфоблоков](./events.md#subscribe).
+Свою функцию шаблона добавляют обработчиком события `OnTemplateGetFunctionClass` модуля `iblock`. Подпишите обработчик методом `addEventHandler()` объекта [`Bitrix\Main\EventManager`](../../api-reference/main/event-manager/index.md), а не `addEventHandlerCompatible()` — обработчик получает объект [`Bitrix\Main\Event`](../../api-reference/main/event/index.md). Где разместить подписку, описано в статье [События инфоблоков](./events.md#subscribe).
 
 -  Событие вызывается только для имен, которых нет среди встроенных функций. Встроенную функцию переопределить нельзя.
 

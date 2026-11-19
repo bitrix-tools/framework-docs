@@ -3,7 +3,7 @@ title: Операции с сущностями и события
 description: "Операции с сущностями. ORM Bitrix Framework: ключевые концепции, примеры и рекомендации."
 ---
 
-Сущность ORM связывает PHP-класс с таблицей базы данных. Через класс-наследник `DataManager` можно добавлять, обновлять и удалять записи, проверять результат операции и подключать обработчики событий.
+Сущность ORM связывает PHP-класс с таблицей базы данных. Через класс-наследник [`DataManager`](../api-reference/main/orm/data/data-manager/index.md) можно добавлять, обновлять и удалять записи, проверять результат операции и подключать обработчики событий.
 
 Правила работы с записью остаются в одном классе:
 
@@ -89,7 +89,7 @@ if (!$result->isSuccess())
 }
 ```
 
-Для полей с типами `DateField` и `DatetimeField` передавайте объекты `Bitrix\Main\Type\Date` и `Bitrix\Main\Type\DateTime`. Поле не примет строку с датой в `add()` и `update()`. Указывайте формат строки вторым аргументом конструктора, например `'Y-m-d'`: без него конструктор разбирает строку по формату даты сайта. Подробнее о работе с датами читайте в статье [Дата и время](./../advanced/datetime.md).
+Для полей с типами `DateField` и `DatetimeField` передавайте объекты [`Bitrix\Main\Type\Date`](../api-reference/main/type/date/index.md) и [`Bitrix\Main\Type\DateTime`](../api-reference/main/type/date-time/index.md). Поле не примет строку с датой в `add()` и `update()`. Указывайте формат строки вторым аргументом конструктора, например `'Y-m-d'`: без него конструктор разбирает строку по формату даты сайта. Подробнее о работе с датами читайте в статье [Дата и время](./../advanced/datetime.md).
 
 ### Обновить запись
 
@@ -238,7 +238,7 @@ BookTable::deleteByFilter([
 
 Возможности обработчика зависят от типа события:
 
--  в `OnBeforeAdd` и `OnBeforeUpdate` можно вернуть `EventResult`, чтобы изменить поля, исключить поля из операции или прервать операцию ошибкой,
+-  в `OnBeforeAdd` и `OnBeforeUpdate` можно вернуть [`EventResult`](../api-reference/main/event-result/index.md), чтобы изменить поля, исключить поля из операции или прервать операцию ошибкой,
 
 -  в `OnBeforeDelete` через `EventResult` можно вернуть ошибку и прервать удаление,
 
@@ -248,15 +248,15 @@ BookTable::deleteByFilter([
 
 Регистрация обработчика связывает событие сущности с обработчиком, который выполнится при операции.
 
-`Bitrix\Main\ORM\EventManager` регистрирует обработчик для конкретного класса сущности и события. Обработчик получает объект `Bitrix\Main\ORM\Event`.
+`Bitrix\Main\ORM\EventManager` регистрирует обработчик для конкретного класса сущности и события. Обработчик получает объект [`Bitrix\Main\ORM\Event`](../api-reference/main/orm/event/index.md).
 
 Обработчик можно подключить тремя способами:
 
--  статическим методом класса-наследника `DataManager` — для правил самой сущности: нормализации полей, обязательных проверок, запрета удаления,
+-  статическим методом класса-наследника [`DataManager`](../api-reference/main/orm/data/data-manager/index.md) — для правил самой сущности: нормализации полей, обязательных проверок, запрета удаления,
 
--  через `EventManager::addEventHandler()` — для временной регистрации,
+-  через [`EventManager::addEventHandler()`](../api-reference/main/event-manager/add-event-handler.md) — для временной регистрации,
 
--  через `EventManager::registerEventHandler()` — для постоянной регистрации обработчиков модуля или интеграции.
+-  через [`EventManager::registerEventHandler()`](../api-reference/main/event-manager/register-event-handler.md) — для постоянной регистрации обработчиков модуля или интеграции.
 
 {% note info "" %}
 
@@ -400,9 +400,9 @@ class BookTable extends DataManager
 }
 ```
 
-Метод `addError()` прерывает операцию и добавляет ошибку в объект результата. Метод принимает только объекты `Bitrix\Main\ORM\EntityError` и `Bitrix\Main\ORM\Fields\FieldError`. Если передать объект `Bitrix\Main\Error`, PHP выбросит `TypeError`.
+Метод `addError()` прерывает операцию и добавляет ошибку в объект результата. Метод принимает только объекты `Bitrix\Main\ORM\EntityError` и `Bitrix\Main\ORM\Fields\FieldError`. Если передать объект [`Bitrix\Main\Error`](../api-reference/main/error/index.md), PHP выбросит `TypeError`.
 
-Тексты ошибок в примерах получает метод `Loc::getMessage()`. Он сам подключает языковой файл для файла, из которого его вызвали. Для класса в `/local/modules/somepartner.mybookscatalog/lib/booktable.php` фразы `BOOK_ERROR_*` храните в файле `/local/modules/somepartner.mybookscatalog/lang/ru/lib/booktable.php`. Как устроены языковые файлы, читайте в статье [Локализация](./../advanced/localization.md).
+Тексты ошибок в примерах получает метод [`Loc::getMessage()`](../api-reference/main/localization/loc/get-message.md). Он сам подключает языковой файл для файла, из которого его вызвали. Для класса в `/local/modules/somepartner.mybookscatalog/lib/booktable.php` фразы `BOOK_ERROR_*` храните в файле `/local/modules/somepartner.mybookscatalog/lang/ru/lib/booktable.php`. Как устроены языковые файлы, читайте в статье [Локализация](./../advanced/localization.md).
 
 **Пример.** Обработчик прерывает обновление ошибкой, которая относится к полю `ISBN`.
 
@@ -512,7 +512,7 @@ use Bitrix\Main\ORM\Fields\TextField;
 
 ## Вычисляемые значения {#sql-expression}
 
-`Bitrix\Main\DB\SqlExpression` задает значение поля через SQL-выражение. Используйте его, когда новое значение зависит от текущего значения в базе данных.
+[`Bitrix\Main\DB\SqlExpression`](../api-reference/main/db/sql-expression/index.md) задает значение поля через SQL-выражение. Используйте его, когда новое значение зависит от текущего значения в базе данных.
 
 Например, чтобы увеличить `READERS_COUNT` на 1, передайте в `update` выражение `?# + 1`. Так база изменит текущее значение поля без отдельной выборки записи.
 

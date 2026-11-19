@@ -686,6 +686,11 @@ items:
             href: /pages/modules/tasks/permissions.md
           - name: События модуля Задачи
             href: /pages/modules/tasks/events.md
+  - name: Справочник API
+    href: /pages/api-reference/index.md
+    include:
+      path: pages/api-reference/toc.yaml
+      mode: link
   - name: Обратная связь
     href: feedback.md
   - name: Контрибьюторам

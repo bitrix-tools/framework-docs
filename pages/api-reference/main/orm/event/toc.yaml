@@ -1,0 +1,13 @@
+title: Event
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить сущность события
+    href: get-entity.md
+  - name: Перенести ошибки обработчиков в результат
+    href: get-errors.md
+  - name: Применить изменения полей к массиву
+    href: merge-fields.md
+  - name: Применить изменения полей к объекту
+    href: merge-object-fields.md

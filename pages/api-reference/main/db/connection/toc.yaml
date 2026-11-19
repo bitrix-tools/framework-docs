@@ -1,0 +1,101 @@
+title: Connection
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить адрес сервера
+    href: get-host.md
+  - name: Получить имя пользователя базы данных
+    href: get-login.md
+  - name: Получить имя базы данных
+    href: get-database.md
+  - name: Проверить отложенное подключение
+    href: is-deferred.md
+  - name: Проверить постоянное подключение
+    href: is-persistent.md
+  - name: Проверить кодировку utf8mb4
+    href: is-utf8mb4.md
+  - name: Задать идентификатор узла
+    href: set-node-id.md
+  - name: Получить идентификатор узла
+    href: get-node-id.md
+  - name: Получить тип базы данных
+    href: get-type.md
+  - name: Получить версию сервера
+    href: get-version.md
+  - name: Получить SqlHelper
+    href: get-sql-helper.md
+  - name: Выполнить SQL-запрос
+    href: query.md
+  - name: Получить одно значение
+    href: query-scalar.md
+  - name: Выполнить запрос без результата
+    href: query-execute.md
+  - name: Выполнить пакет запросов
+    href: execute-sql-batch.md
+  - name: Разбить текст на запросы
+    href: parse-sql-batch.md
+  - name: Получить число измененных строк
+    href: get-affected-rows-count.md
+  - name: Получить сообщение об ошибке
+    href: get-error-message.md
+  - name: Получить код ошибки
+    href: get-error-code.md
+  - name: Отключить выполнение запросов
+    href: disable-query-executing.md
+  - name: Включить выполнение запросов
+    href: enable-query-executing.md
+  - name: Проверить выполнение запросов
+    href: is-query-executing-enabled.md
+  - name: Получить собранные запросы
+    href: get-disabled-query-executing-dump.md
+  - name: Добавить строку
+    href: add.md
+  - name: Добавить несколько строк
+    href: add-multi.md
+  - name: Получить идентификатор добавленной строки
+    href: get-inserted-id.md
+  - name: Проверить наличие таблицы
+    href: is-table-exists.md
+  - name: Получить описание колонок таблицы
+    href: get-table-fields.md
+  - name: Получить описание колонки
+    href: get-table-field.md
+  - name: Создать таблицу
+    href: create-table.md
+  - name: Переименовать таблицу
+    href: rename-table.md
+  - name: Очистить таблицу
+    href: truncate-table.md
+  - name: Удалить таблицу
+    href: drop-table.md
+  - name: Удалить колонку
+    href: drop-column.md
+  - name: Проверить наличие индекса
+    href: is-index-exists.md
+  - name: Получить имя индекса
+    href: get-index-name.md
+  - name: Создать индекс
+    href: create-index.md
+  - name: Создать первичный ключ
+    href: create-primary-index.md
+  - name: Очистить кеш колонок
+    href: clear-caches.md
+  - name: Начать транзакцию
+    href: start-transaction.md
+  - name: Зафиксировать транзакцию
+    href: commit-transaction.md
+  - name: Откатить транзакцию
+    href: rollback-transaction.md
+  - name: Установить именованную блокировку
+    href: lock.md
+  - name: Снять именованную блокировку
+    href: unlock.md
+  - name: Включить отслеживание запросов
+    href: start-tracker.md
+  - name: Выключить отслеживание запросов
+    href: stop-tracker.md
+  - name: Получить объект отслеживания
+    href: get-tracker.md
+  - name: Задать объект отслеживания
+    href: set-tracker.md

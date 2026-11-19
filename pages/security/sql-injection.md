@@ -5,7 +5,7 @@ description: 'SQL-инъекции. Руководство по безопасн
 
 SQL-инъекция — уязвимость, которая позволяет внедрить вредоносный код через пользовательский ввод. В Bitrix Framework есть два способа работы с базой данных, каждый требует особого подхода к защите:
 
--  **Прямые запросы.** SQL-запросы выполняются напрямую методами класса `CDatabase` или через метод `Application::getConnection`. Разработчик контролирует формирование запросов, поэтому важно тщательно проверять и экранировать пользовательский ввод, чтобы избежать SQL-инъекций.
+-  **Прямые запросы.** SQL-запросы выполняются напрямую методами класса `CDatabase` или через метод [`Application::getConnection`](../api-reference/main/application/get-connection.md). Разработчик контролирует формирование запросов, поэтому важно тщательно проверять и экранировать пользовательский ввод, чтобы избежать SQL-инъекций.
 
 -  **ORM**. Объектная модель снижает риск SQL-инъекций, так как она автоматически обрабатывает данные и защищает от внедрения вредоносного кода. В ORM необходимо проверять права доступа и данные, которые попадают в базу.
 
@@ -70,7 +70,7 @@ $login = $helper->forSql($_GET['login']); // очищаем данные
 $res = $connection->query("SELECT * FROM b_user WHERE LOGIN='$login'");
 ```
 
-1. Метод `Application::getConnection` возвращает объект `MysqliConnection` для выполнения запросов к базе данных.
+1. Метод [`Application::getConnection`](../api-reference/main/application/get-connection.md) возвращает объект `MysqliConnection` для выполнения запросов к базе данных.
 
 2. Функция `getSqlHelper()` получает хелпер для экранирования запросов.
 
@@ -153,7 +153,7 @@ $result = \Bitrix\Main\UserTable::getList([
 
 ### Выражения SqlExpression и ExpressionField
 
-Класс `\Bitrix\Main\DB\SqlExpression` позволяет создавать пользовательские SQL-выражения. Один непроверенный параметр приведет к инъекции.
+Класс [`\Bitrix\Main\DB\SqlExpression`](../api-reference/main/db/sql-expression/index.md) позволяет создавать пользовательские SQL-выражения. Один непроверенный параметр приведет к инъекции.
 
 ```php
 $filterIds = [1, 2, 3, $_GET['id']]; // $_GET['id'] содержит вредоносный код
@@ -185,7 +185,7 @@ $result = UserTable::getList([
 
 Подробнее о типах плейсхолдеров и их использовании — в статье [Формирование запросов](../database/sql-helper-and-expression.md).
 
-Класс `\Bitrix\Main\ORM\Fields\ExpressionField` создает вычисляемые поля. Как и `SqlExpression`, он уязвим к непроверенному вводу.
+Класс [`\Bitrix\Main\ORM\Fields\ExpressionField`](../api-reference/main/orm/fields/expression-field/index.md) создает вычисляемые поля. Как и `SqlExpression`, он уязвим к непроверенному вводу.
 
 ```php
 $filterList = \Bitrix\Disk\Internals\VolumeTable::getList([

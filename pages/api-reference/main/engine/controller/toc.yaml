@@ -1,0 +1,65 @@
+title: Controller
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать контроллер
+    href: construct.md
+  - name: Настроить действия
+    href: configure-actions.md
+  - name: Получить настройки действий
+    href: get-configuration-of-actions.md
+  - name: Получить имена действий
+    href: list-name-actions.md
+  - name: Выполнить действие
+    href: run.md
+  - name: Выполнить действие другого контроллера
+    href: forward.md
+  - name: Получить выполняемое действие
+    href: get-current-action.md
+  - name: Получить имя метода действия
+    href: generate-action-method-name.md
+  - name: Получить полное имя события
+    href: get-full-event-name.md
+  - name: Изменить ответ перед отправкой
+    href: finalize-response.md
+  - name: Вернуть переадресацию
+    href: redirect-to.md
+  - name: Перевести ключи в camelCase
+    href: convert-keys-to-camel-case.md
+  - name: Получить запрос
+    href: get-request.md
+  - name: Получить источники параметров
+    href: get-source-parameters-list.md
+  - name: Задать источники параметров
+    href: set-source-parameters-list.md
+  - name: Получить параметры компонента
+    href: get-unsigned-parameters.md
+  - name: Получить текущего пользователя
+    href: get-current-user.md
+  - name: Задать текущего пользователя
+    href: set-current-user.md
+  - name: Получить область вызова
+    href: get-scope.md
+  - name: Задать область вызова
+    href: set-scope.md
+  - name: Получить модуль контроллера
+    href: get-module-id.md
+  - name: Проверить размещение по PSR-4
+    href: is-located-under-psr4.md
+  - name: Получить адрес действия
+    href: get-action-uri.md
+  - name: Получить полное имя класса
+    href: class-name.md
+  - name: Получить правила автоподстановки
+    href: get-auto-wired-parameters.md
+  - name: Получить основное правило автоподстановки
+    href: get-primary-auto-wired-parameter.md
+  - name: Получить правила автоподстановки по умолчанию
+    href: get-default-auto-wired-parameters.md
+  - name: Получить ошибки
+    href: get-errors.md
+  - name: Проверить, есть ли ошибки
+    href: has-errors.md
+  - name: Получить ошибку по коду
+    href: get-error-by-code.md

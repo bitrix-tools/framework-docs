@@ -73,7 +73,7 @@ description: "Назначение модуля search, выбор механи�
 
 ## Подключение модуля {#include-module}
 
-Подключите модуль перед обращением к его PHP API. Метод `Loader::includeModule()` принимает строковый идентификатор `search` и возвращает `false`, если модуль недоступен.
+Подключите модуль перед обращением к его PHP API. Метод [`Loader::includeModule()`](../../api-reference/main/loader/include-module.md) принимает строковый идентификатор `search` и возвращает `false`, если модуль недоступен.
 
 ```php
 use Bitrix\Main\Loader;
@@ -88,7 +88,7 @@ if (!Loader::includeModule('search'))
 
 ## Как выбрать точку входа {#choose-entry-point}
 
-После выбора модуля `search` определите, нужен ли готовый интерфейс или классический PHP API. Отдельного объектного API в пространстве имен `Bitrix\Search` у модуля нет. Метод `Loader::includeModule()` относится к Главному модулю и только подключает `search`.
+После выбора модуля `search` определите, нужен ли готовый интерфейс или классический PHP API. Отдельного объектного API в пространстве имен `Bitrix\Search` у модуля нет. Метод [`Loader::includeModule()`](../../api-reference/main/loader/include-module.md) относится к Главному модулю и только подключает `search`.
 
 #|
 || **Задача** | **Точка входа** | **Результат** ||

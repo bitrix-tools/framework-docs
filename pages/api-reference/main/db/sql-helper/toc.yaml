@@ -1,0 +1,139 @@
+title: SqlHelper
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Экранировать строку
+    href: for-sql.md
+  - name: Взять имя в кавычки
+    href: quote.md
+  - name: Получить левую кавычку идентификатора
+    href: get-left-quote.md
+  - name: Получить правую кавычку идентификатора
+    href: get-right-quote.md
+  - name: Подготовить двоичные данные
+    href: convert-to-db-binary.md
+  - name: Подготовить текст для полнотекстового поиска
+    href: convert-to-full-text.md
+  - name: Получить длину псевдонима
+    href: get-alias-length.md
+  - name: Получить разделитель запросов
+    href: get-query-delimiter.md
+  - name: Получить функцию текущих даты и времени
+    href: get-current-date-time-function.md
+  - name: Получить функцию текущей даты
+    href: get-current-date-function.md
+  - name: Прибавить секунды к дате
+    href: add-seconds-to-date-time.md
+  - name: Прибавить дни к дате
+    href: add-days-to-date-time.md
+  - name: Отбросить время у даты
+    href: get-datetime-to-date-function.md
+  - name: Отформатировать дату в SQL
+    href: format-date.md
+  - name: Превратить строку в дату
+    href: get-char-to-date-function.md
+  - name: Превратить дату в строку
+    href: get-date-to-char-function.md
+  - name: Получить подстроку в SQL
+    href: get-substr-function.md
+  - name: Склеить строки в SQL
+    href: get-concat-function.md
+  - name: Заменить NULL в SQL
+    href: get-is-null-function.md
+  - name: Получить длину значения в SQL
+    href: get-length-function.md
+  - name: Привести значение к строке
+    href: cast-to-char.md
+  - name: Подготовить текстовую колонку для сортировки
+    href: soft-cast-text-to-char.md
+  - name: Получить функцию случайного числа
+    href: get-random-function.md
+  - name: Получить функцию SHA-1
+    href: get-sha1-function.md
+  - name: Проверить по регулярному выражению в SQL
+    href: get-regexp-operator.md
+  - name: Сравнить по шаблону без учета регистра
+    href: get-ilike-operator.md
+  - name: Получить сортировку по возрастанию
+    href: get-ascending-order.md
+  - name: Получить сортировку по убыванию
+    href: get-descending-order.md
+  - name: Отсортировать по списку строк
+    href: get-order-by-string-field.md
+  - name: Отсортировать по списку чисел
+    href: get-order-by-int-field.md
+  - name: Присвоить значение с проверкой хеша
+    href: get-conditional-assignment.md
+  - name: Подготовить нумерацию строк
+    href: init-row-number.md
+  - name: Получить номер строки в SQL
+    href: get-row-number.md
+  - name: Получить условие полнотекстового поиска
+    href: get-match-function.md
+  - name: Собрать поиск всех слов
+    href: get-match-and-expression.md
+  - name: Собрать поиск любого слова
+    href: get-match-or-expression.md
+  - name: Сослаться на значение добавляемой строки
+    href: values.md
+  - name: Ограничить число строк запроса
+    href: get-top-sql.md
+  - name: Подготовить колонки и значения для INSERT
+    href: prepare-insert.md
+  - name: Подготовить присваивания для UPDATE
+    href: prepare-update.md
+  - name: Подготовить присваивание одной колонки
+    href: prepare-assignment.md
+  - name: Подготовить вставку с обновлением
+    href: prepare-merge.md
+  - name: Подготовить вставку нескольких строк с заменой
+    href: prepare-merge-multiple.md
+  - name: Подготовить вставку из выборки с обновлением
+    href: prepare-merge-select.md
+  - name: Подготовить вставку значений с обновлением
+    href: prepare-merge-values.md
+  - name: Подготовить удаление с ограничением
+    href: prepare-delete-limit.md
+  - name: Подготовить обновление по другой таблице
+    href: prepare-correlated-update.md
+  - name: Подготовить вставку без ошибки дубликата
+    href: get-insert-ignore.md
+  - name: Получить таблицы запроса
+    href: get-query-tables.md
+  - name: Преобразовать значение для SQL
+    href: convert-to-db.md
+  - name: Преобразовать значение из базы данных
+    href: convert-from-db.md
+  - name: Преобразовать целое число для SQL
+    href: convert-to-db-integer.md
+  - name: Преобразовать целое число из базы данных
+    href: convert-from-db-integer.md
+  - name: Преобразовать дробное число для SQL
+    href: convert-to-db-float.md
+  - name: Преобразовать дробное число из базы данных
+    href: convert-from-db-float.md
+  - name: Преобразовать строку для SQL
+    href: convert-to-db-string.md
+  - name: Преобразовать строку из базы данных
+    href: convert-from-db-string.md
+  - name: Преобразовать текст для SQL
+    href: convert-to-db-text.md
+  - name: Преобразовать текст из базы данных
+    href: convert-from-db-text.md
+  - name: Преобразовать дату для SQL
+    href: convert-to-db-date.md
+  - name: Преобразовать дату из базы данных
+    href: convert-from-db-date.md
+  - name: Преобразовать дату и время для SQL
+    href: convert-to-db-date-time.md
+  - name: Преобразовать дату и время из базы данных
+    href: convert-from-db-date-time.md
+  - name: Получить функцию преобразования значения
+    href: get-converter.md
+  - name: Получить тип колонки по полю ORM
+    href: get-column-type-by-field.md
+  - name: Получить поле ORM по типу колонки
+    href: get-field-by-column-type.md
+  - name: Проверить большой тип колонки
+    href: is-big-type.md

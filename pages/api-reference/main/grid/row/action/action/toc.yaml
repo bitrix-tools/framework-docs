@@ -1,0 +1,11 @@
+title: Grid\Row\Action\Action
+href: index.md
+items:
+  - name: Обзор интерфейса
+    href: index.md
+  - name: Получить идентификатор действия строки
+    href: get-id.md
+  - name: Получить пункт меню строки
+    href: get-control.md
+  - name: Обработать запрос к действию строки
+    href: process-request.md

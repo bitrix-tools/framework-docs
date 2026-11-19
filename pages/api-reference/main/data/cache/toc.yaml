@@ -1,0 +1,51 @@
+title: Cache
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать объект кеша
+    href: create-instance.md
+  - name: Создать объект кеша с механизмом хранения
+    href: construct.md
+  - name: Проверить и прочитать кеш
+    href: init-cache.md
+  - name: Получить данные из кеша
+    href: get-vars.md
+  - name: Вывести HTML из кеша
+    href: output.md
+  - name: Отключить кеширование вывода
+    href: no-output.md
+  - name: Начать запись кеша
+    href: start-data-cache.md
+  - name: Сохранить данные в кеш
+    href: end-data-cache.md
+  - name: Отменить запись кеша
+    href: abort-data-cache.md
+  - name: Проверить, идет ли запись кеша
+    href: is-started.md
+  - name: Включить перезапись кеша
+    href: force-rewriting.md
+  - name: Удалить кеш по ключу
+    href: clean.md
+  - name: Удалить кеш каталога
+    href: clean-dir.md
+  - name: Проверить, истек ли кеш
+    href: is-cache-expired.md
+  - name: Получить путь к файлу кеша
+    href: get-path.md
+  - name: Получить часть каталога по имени скрипта
+    href: get-salt.md
+  - name: Создать механизм хранения кеша
+    href: create-cache-engine.md
+  - name: Получить тип механизма хранения
+    href: get-cache-engine-type.md
+  - name: Проверить, нужно ли пропустить чтение кеша
+    href: should-clear-cache.md
+  - name: Пропустить чтение кеша на этом запросе
+    href: set-clear-cache.md
+  - name: Пропустить чтение кеша до конца сессии
+    href: set-clear-cache-session.md
+  - name: Включить сбор статистики кеша
+    href: set-show-cache-stat.md
+  - name: Проверить, включен ли сбор статистики
+    href: get-show-cache-stat.md

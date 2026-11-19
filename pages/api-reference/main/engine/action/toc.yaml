@@ -1,0 +1,33 @@
+title: Action
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать действие
+    href: construct.md
+  - name: Принять настройки действия
+    href: configure.md
+  - name: Получить имя действия
+    href: get-name.md
+  - name: Получить контроллер действия
+    href: get-controller.md
+  - name: Получить описание действия
+    href: get-config.md
+  - name: Получить аргументы действия
+    href: get-arguments.md
+  - name: Заменить аргументы действия
+    href: set-arguments.md
+  - name: Получить объект, который подбирает аргументы
+    href: get-binder.md
+  - name: Выполнить действие
+    href: run-with-source-parameters-list.md
+  - name: Получить текущего пользователя
+    href: get-current-user.md
+  - name: Перевести ключи массива в camelCase
+    href: convert-keys-to-camel-case.md
+  - name: Получить полное имя класса
+    href: class-name.md
+  - name: Получить ошибки действия
+    href: get-errors.md
+  - name: Получить ошибку по коду
+    href: get-error-by-code.md

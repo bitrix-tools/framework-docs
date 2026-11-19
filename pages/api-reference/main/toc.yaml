@@ -1,0 +1,406 @@
+title: Главный модуль main
+href: index.md
+items:
+  - name: Обзор модуля
+    href: index.md
+  - name: Application
+    href: application/index.md
+    include:
+      path: application/toc.yaml
+      mode: link
+  - name: Error
+    href: error/index.md
+    include:
+      path: error/toc.yaml
+      mode: link
+  - name: ErrorCollection
+    href: error-collection/index.md
+    include:
+      path: error-collection/toc.yaml
+      mode: link
+  - name: EventManager
+    href: event-manager/index.md
+    include:
+      path: event-manager/toc.yaml
+      mode: link
+  - name: ModuleManager
+    href: module-manager/index.md
+    include:
+      path: module-manager/toc.yaml
+      mode: link
+  - name: Result
+    href: result/index.md
+    include:
+      path: result/toc.yaml
+      mode: link
+  - name: EventResult
+    href: event-result/index.md
+    include:
+      path: event-result/toc.yaml
+      mode: link
+  - name: UserTable
+    href: user-table/index.md
+    include:
+      path: user-table/toc.yaml
+      mode: link
+  - name: HttpResponse
+    href: http-response/index.md
+    include:
+      path: http-response/toc.yaml
+      mode: link
+  - name: Context
+    href: context/index.md
+    include:
+      path: context/toc.yaml
+      mode: link
+  - name: Event
+    href: event/index.md
+    include:
+      path: event/toc.yaml
+      mode: link
+  - name: Loader
+    href: loader/index.md
+    include:
+      path: loader/toc.yaml
+      mode: link
+  - name: Config
+    items:
+      - name: Configuration
+        href: config/configuration/index.md
+        include:
+          path: config/configuration/toc.yaml
+          mode: link
+      - name: Option
+        href: config/option/index.md
+        include:
+          path: config/option/toc.yaml
+          mode: link
+  - name: Data
+    items:
+      - name: Cache
+        href: data/cache/index.md
+        include:
+          path: data/cache/toc.yaml
+          mode: link
+      - name: LocalStorage\SessionLocalStorage
+        href: data/local-storage/session-local-storage/index.md
+        include:
+          path: data/local-storage/session-local-storage/toc.yaml
+          mode: link
+  - name: DB
+    items:
+      - name: Connection
+        href: db/connection/index.md
+        include:
+          path: db/connection/toc.yaml
+          mode: link
+      - name: MysqliConnection
+        href: db/mysqli-connection/index.md
+        include:
+          path: db/mysqli-connection/toc.yaml
+          mode: link
+      - name: PgsqlConnection
+        href: db/pgsql-connection/index.md
+        include:
+          path: db/pgsql-connection/toc.yaml
+          mode: link
+      - name: Result
+        href: db/result/index.md
+        include:
+          path: db/result/toc.yaml
+          mode: link
+      - name: MysqliResult
+        href: db/mysqli-result/index.md
+        include:
+          path: db/mysqli-result/toc.yaml
+          mode: link
+      - name: PgsqlResult
+        href: db/pgsql-result/index.md
+        include:
+          path: db/pgsql-result/toc.yaml
+          mode: link
+      - name: SqlHelper
+        href: db/sql-helper/index.md
+        include:
+          path: db/sql-helper/toc.yaml
+          mode: link
+      - name: MysqliSqlHelper
+        href: db/mysqli-sql-helper/index.md
+        include:
+          path: db/mysqli-sql-helper/toc.yaml
+          mode: link
+      - name: PgsqlSqlHelper
+        href: db/pgsql-sql-helper/index.md
+        include:
+          path: db/pgsql-sql-helper/toc.yaml
+          mode: link
+      - name: SqlExpression
+        href: db/sql-expression/index.md
+        include:
+          path: db/sql-expression/toc.yaml
+          mode: link
+  - name: DI
+    items:
+      - name: ServiceLocator
+        href: di/service-locator/index.md
+        include:
+          path: di/service-locator/toc.yaml
+          mode: link
+  - name: Engine
+    items:
+      - name: ActionFilter\Base
+        href: engine/action-filter/base/index.md
+        include:
+          path: engine/action-filter/base/toc.yaml
+          mode: link
+      - name: ActionFilter\Csrf
+        href: engine/action-filter/csrf/index.md
+        include:
+          path: engine/action-filter/csrf/toc.yaml
+          mode: link
+      - name: Contract\Controllerable
+        href: engine/contract/controllerable/index.md
+        include:
+          path: engine/contract/controllerable/toc.yaml
+          mode: link
+      - name: CurrentUser
+        href: engine/current-user/index.md
+        include:
+          path: engine/current-user/toc.yaml
+          mode: link
+      - name: Action
+        href: engine/action/index.md
+        include:
+          path: engine/action/toc.yaml
+          mode: link
+      - name: Controller
+        href: engine/controller/index.md
+        include:
+          path: engine/controller/toc.yaml
+          mode: link
+  - name: Grid
+    items:
+      - name: Action\Action
+        href: grid/action/action/index.md
+        include:
+          path: grid/action/action/toc.yaml
+          mode: link
+      - name: Panel\Action\Action
+        href: grid/panel/action/action/index.md
+        include:
+          path: grid/panel/action/action/toc.yaml
+          mode: link
+      - name: Row\Action\Action
+        href: grid/row/action/action/index.md
+        include:
+          path: grid/row/action/action/toc.yaml
+          mode: link
+      - name: Options
+        href: grid/options/index.md
+        include:
+          path: grid/options/toc.yaml
+          mode: link
+  - name: IO
+    items:
+      - name: File
+        href: io/file/index.md
+        include:
+          path: io/file/toc.yaml
+          mode: link
+      - name: Path
+        href: io/path/index.md
+        include:
+          path: io/path/toc.yaml
+          mode: link
+  - name: Localization
+    items:
+      - name: Loc
+        href: localization/loc/index.md
+        include:
+          path: localization/loc/toc.yaml
+          mode: link
+      - name: LocalizableMessageInterface
+        href: localization/localizable-message-interface/index.md
+        include:
+          path: localization/localizable-message-interface/toc.yaml
+          mode: link
+  - name: ORM
+    items:
+      - name: Data\DataManager
+        href: orm/data/data-manager/index.md
+        include:
+          path: orm/data/data-manager/toc.yaml
+          mode: link
+      - name: Entity
+        href: orm/entity/index.md
+        include:
+          path: orm/entity/toc.yaml
+          mode: link
+      - name: Event
+        href: orm/event/index.md
+        include:
+          path: orm/event/toc.yaml
+          mode: link
+      - name: Fields\DatetimeField
+        href: orm/fields/datetime-field/index.md
+        include:
+          path: orm/fields/datetime-field/toc.yaml
+          mode: link
+      - name: Fields\ExpressionField
+        href: orm/fields/expression-field/index.md
+        include:
+          path: orm/fields/expression-field/toc.yaml
+          mode: link
+      - name: Fields\Relations\Reference
+        href: orm/fields/relations/reference/index.md
+        include:
+          path: orm/fields/relations/reference/toc.yaml
+          mode: link
+      - name: Fields\Validators\LengthValidator
+        href: orm/fields/validators/length-validator/index.md
+        include:
+          path: orm/fields/validators/length-validator/toc.yaml
+          mode: link
+      - name: Query\Query
+        href: orm/query/query/index.md
+        include:
+          path: orm/query/query/toc.yaml
+          mode: link
+      - name: Query\Filter\ConditionTree
+        href: orm/query/filter/condition-tree/index.md
+        include:
+          path: orm/query/filter/condition-tree/toc.yaml
+          mode: link
+      - name: Query\Join
+        href: orm/query/join/index.md
+        include:
+          path: orm/query/join/toc.yaml
+          mode: link
+      - name: Query\Result
+        href: orm/query/result/index.md
+        include:
+          path: orm/query/result/toc.yaml
+          mode: link
+  - name: Page
+    items:
+      - name: Asset
+        href: page/asset/index.md
+        include:
+          path: page/asset/toc.yaml
+          mode: link
+  - name: Routing
+    items:
+      - name: Router
+        href: routing/router/index.md
+        include:
+          path: routing/router/toc.yaml
+          mode: link
+      - name: Route
+        href: routing/route/index.md
+        include:
+          path: routing/route/toc.yaml
+          mode: link
+      - name: Options
+        href: routing/options/index.md
+        include:
+          path: routing/options/toc.yaml
+          mode: link
+  - name: Security
+    items:
+      - name: Random
+        href: security/random/index.md
+        include:
+          path: security/random/toc.yaml
+          mode: link
+  - name: Session
+    items:
+      - name: SessionInterface
+        href: session/session-interface/index.md
+        include:
+          path: session/session-interface/toc.yaml
+          mode: link
+  - name: Text
+    items:
+      - name: Emoji
+        href: text/emoji/index.md
+        include:
+          path: text/emoji/toc.yaml
+          mode: link
+      - name: Encoding
+        href: text/encoding/index.md
+        include:
+          path: text/encoding/toc.yaml
+          mode: link
+      - name: HtmlFilter
+        href: text/html-filter/index.md
+        include:
+          path: text/html-filter/toc.yaml
+          mode: link
+  - name: Type
+    items:
+      - name: Collection
+        href: type/collection/index.md
+        include:
+          path: type/collection/toc.yaml
+          mode: link
+      - name: Date
+        href: type/date/index.md
+        include:
+          path: type/date/toc.yaml
+          mode: link
+      - name: DateTime
+        href: type/date-time/index.md
+        include:
+          path: type/date-time/toc.yaml
+          mode: link
+  - name: UI
+    items:
+      - name: Extension
+        href: ui/extension/index.md
+        include:
+          path: ui/extension/toc.yaml
+          mode: link
+      - name: PageNavigation
+        href: ui/page-navigation/index.md
+        include:
+          path: ui/page-navigation/toc.yaml
+          mode: link
+      - name: Filter\Options
+        href: ui/filter/options/index.md
+        include:
+          path: ui/filter/options/toc.yaml
+          mode: link
+  - name: UrlPreview
+    items:
+      - name: Router
+        href: url-preview/router/index.md
+        include:
+          path: url-preview/router/toc.yaml
+          mode: link
+  - name: Web
+    items:
+      - name: HttpClient
+        href: web/http-client/index.md
+        include:
+          path: web/http-client/toc.yaml
+          mode: link
+      - name: HttpCookies
+        href: web/http-cookies/index.md
+        include:
+          path: web/http-cookies/toc.yaml
+          mode: link
+      - name: HttpHeaders
+        href: web/http-headers/index.md
+        include:
+          path: web/http-headers/toc.yaml
+          mode: link
+      - name: Json
+        href: web/json/index.md
+        include:
+          path: web/json/toc.yaml
+          mode: link
+      - name: Uri
+        href: web/uri/index.md
+        include:
+          path: web/uri/toc.yaml
+          mode: link

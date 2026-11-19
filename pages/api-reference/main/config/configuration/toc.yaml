@@ -1,0 +1,47 @@
+title: Configuration
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить значение общей конфигурации
+    href: get-value.md
+  - name: Изменить и сохранить секцию
+    href: set-value.md
+  - name: Получить объект конфигурации
+    href: get-instance.md
+  - name: Получить конфигурацию по пути
+    href: get-instance-by-path.md
+  - name: Сохранить конфигурацию
+    href: save-configuration.md
+  - name: Добавить или изменить секцию
+    href: add.md
+  - name: Добавить защищенную секцию
+    href: add-readonly.md
+  - name: Проверить защиту секции
+    href: is-readonly.md
+  - name: Удалить секцию
+    href: delete.md
+  - name: Получить значение секции объекта
+    href: get.md
+  - name: Проверить наличие секции
+    href: offset-exists.md
+  - name: Получить значение через ArrayAccess
+    href: offset-get.md
+  - name: Изменить секцию через ArrayAccess
+    href: offset-set.md
+  - name: Удалить секцию через ArrayAccess
+    href: offset-unset.md
+  - name: Получить текущее значение итератора
+    href: current.md
+  - name: Перейти к следующей секции
+    href: next.md
+  - name: Получить ключ текущей секции
+    href: key.md
+  - name: Проверить позицию итератора
+    href: valid.md
+  - name: Вернуть итератор к началу
+    href: rewind.md
+  - name: Посчитать секции
+    href: count.md
+  - name: Перенести настройки классического API
+    href: wnc.md

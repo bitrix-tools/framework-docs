@@ -1,0 +1,15 @@
+title: EventResult
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать результат
+    href: construct.md
+  - name: Получить тип результата
+    href: get-type.md
+  - name: Получить данные результата
+    href: get-parameters.md
+  - name: Получить код модуля
+    href: get-module-id.md
+  - name: Получить обработчик
+    href: get-handler.md

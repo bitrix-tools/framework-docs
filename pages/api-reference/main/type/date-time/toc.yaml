@@ -1,0 +1,29 @@
+title: DateTime
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Установить время
+    href: set-time.md
+  - name: Получить часовой пояс объекта
+    href: get-time-zone.md
+  - name: Перевести объект в другой часовой пояс
+    href: set-time-zone.md
+  - name: Перевести объект в часовой пояс сервера
+    href: set-default-time-zone.md
+  - name: Получить смещение часового пояса
+    href: get-offset.md
+  - name: Перевести смещение в строку
+    href: seconds-to-offset.md
+  - name: Перевести время во время пользователя
+    href: to-user-time.md
+  - name: Создать объект из времени пользователя
+    href: create-from-user-time.md
+  - name: Создать объект из строки без исключения
+    href: try-parse.md
+  - name: Проверить перевод во время пользователя
+    href: is-user-time-enabled.md
+  - name: Отключить перевод во время пользователя
+    href: disable-user-time.md
+  - name: Включить перевод во время пользователя
+    href: enable-user-time.md

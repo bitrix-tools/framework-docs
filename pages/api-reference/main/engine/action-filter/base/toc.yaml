@@ -1,0 +1,17 @@
+title: Base
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить имя класса фильтра
+    href: class-name.md
+  - name: Получить области работы фильтра
+    href: list-allowed-scopes.md
+  - name: Привязать фильтр к действию
+    href: bind-action.md
+  - name: Получить действие фильтра
+    href: get-action.md
+  - name: Получить ошибки фильтра
+    href: get-errors.md
+  - name: Найти ошибку фильтра по коду
+    href: get-error-by-code.md

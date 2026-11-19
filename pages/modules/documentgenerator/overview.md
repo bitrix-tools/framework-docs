@@ -88,7 +88,7 @@ description: "Назначение модуля Генератор докуме�
 
 ## Подключение модуля
 
-Перед обращением к API подключите модуль `documentgenerator`. Метод `Loader::includeModule()` возвращает `false`, если модуль недоступен.
+Перед обращением к API подключите модуль `documentgenerator`. Метод [`Loader::includeModule()`](../../api-reference/main/loader/include-module.md) возвращает `false`, если модуль недоступен.
 
 ```php
 use Bitrix\DocumentGenerator\Driver;

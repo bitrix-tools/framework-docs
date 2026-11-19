@@ -132,7 +132,7 @@ $helper->convertToDbDate(new \Bitrix\Main\Type\Date('01.01.2015')); // '2015-01-
 $helper->convertToDbDateTime(new \Bitrix\Main\Type\DateTime('01.01.2015 01:23:45')); // '2015-01-01 01:23:45'
 ```
 
-Два последних метода — `convertToDbDate` и `convertToDbDateTime` — принимают `null` или объекты `Date`/`DateTime`. При других типах данных выбрасывают исключение.
+Два последних метода — `convertToDbDate` и `convertToDbDateTime` — принимают `null` или объекты [`Date`](../api-reference/main/type/date/index.md)/[`DateTime`](../api-reference/main/type/date-time/index.md). При других типах данных выбрасывают исключение.
 
 Получить формат даты для текущей БД:
 

@@ -1,0 +1,21 @@
+title: Collection
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Отсортировать массив по колонкам
+    href: sort-by-column.md
+  - name: Получить значение по вложенному ключу
+    href: get-by-nested-key.md
+  - name: Записать значение по вложенному ключу
+    href: set-by-nested-key.md
+  - name: Удалить элемент по вложенному ключу
+    href: unset-by-nested-key.md
+  - name: Получить первое непустое значение
+    href: first-not-empty.md
+  - name: Оставить положительные целые числа
+    href: normalize-array-values-by-int.md
+  - name: Проверить, ассоциативный ли массив
+    href: is-associative.md
+  - name: Скопировать массив с объектами
+    href: clone.md

@@ -1,0 +1,127 @@
+title: Options
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать объект настроек фильтра
+    href: construct.md
+  - name: Проверить сохраненные настройки
+    href: has-options.md
+  - name: Получить идентификатор фильтра
+    href: get-id.md
+  - name: Получить все настройки фильтра
+    href: get-options.md
+  - name: Прочитать сохраненные настройки
+    href: fetch-options.md
+  - name: Сохранить настройки фильтра
+    href: save.md
+  - name: Сбросить текущий фильтр
+    href: reset.md
+  - name: Удалить настройки фильтра
+    href: destroy.md
+  - name: Получить пресеты
+    href: get-presets.md
+  - name: Заменить пресеты
+    href: set-presets.md
+  - name: Получить пресеты по умолчанию
+    href: get-default-presets.md
+  - name: Заменить пресеты по умолчанию
+    href: set-default-presets.md
+  - name: Найти пресет с ключом default
+    href: find-default-preset-id.md
+  - name: Получить настройки пресета
+    href: get-filter-settings.md
+  - name: Задать настройки пресета
+    href: set-filter-settings.md
+  - name: Задать настройки нескольких пресетов
+    href: set-filter-settings-array.md
+  - name: Удалить пресет
+    href: delete-filter.md
+  - name: Проверить, удален ли пресет
+    href: is-deleted-preset.md
+  - name: Заменить список удаленных пресетов
+    href: set-deleted-presets.md
+  - name: Восстановить пресеты по умолчанию
+    href: restore.md
+  - name: Задать поля пресета
+    href: set-filter-rows.md
+  - name: Убрать поле из пресета
+    href: remove-row-from-preset.md
+  - name: Получить дополнительные поля пресета
+    href: get-additional-preset-fields.md
+  - name: Задать дополнительные поля пресета
+    href: set-additional-preset-fields.md
+  - name: Получить поля всех пресетов
+    href: get-used-fields.md
+  - name: Получить поля пресета
+    href: fetch-preset-fields.md
+  - name: Получить коды полей из значений
+    href: get-rows-from-fields.md
+  - name: Получить текущий пресет
+    href: get-current-filter-id.md
+  - name: Получить закрепленный пресет
+    href: get-default-filter-id.md
+  - name: Получить примененный пресет
+    href: get-session-filter-id.md
+  - name: Задать ключ filter
+    href: set-current-preset.md
+  - name: Задать закрепленный пресет
+    href: set-default-preset.md
+  - name: Закрепить пресет
+    href: pin-preset.md
+  - name: Проверить, закреплен ли пресет
+    href: is-pinned.md
+  - name: Проверить применение закрепленного пресета
+    href: is-use-pin-preset.md
+  - name: Задать применение закрепленного пресета
+    href: set-use-pin-preset.md
+  - name: Получить пресет из кода
+    href: get-current-filter-preset-id.md
+  - name: Задать текущий пресет из кода
+    href: set-current-filter-preset-id.md
+  - name: Проверить пустой пресет
+    href: is-default-filter.md
+  - name: Проверить применение снаружи
+    href: is-set-outside.md
+  - name: Применить значения как временный фильтр
+    href: setup-default-filter.md
+  - name: Получить значения фильтра
+    href: get-filter.md
+  - name: Получить условия для выборки
+    href: get-filter-logic.md
+  - name: Получить строку поиска
+    href: get-search-string.md
+  - name: Получить значения полей из настроек пресета
+    href: fetch-field-values-from-filter-settings.md
+  - name: Проверить ключ поля даты
+    href: is-date-field.md
+  - name: Вычислить границы поля даты
+    href: fetch-date-field-value.md
+  - name: Вычислить границы периода
+    href: calc-dates.md
+  - name: Проверить ключ числового поля
+    href: is-number-field.md
+  - name: Получить значения числового поля
+    href: fetch-number-field-value.md
+  - name: Проверить фильтр в адресе
+    href: is-set-from-request.md
+  - name: Получить значения полей из адреса
+    href: fetch-settings-from-query.md
+  - name: Проверить общие пресеты
+    href: is-use-common-presets.md
+  - name: Получить идентификатор общих пресетов
+    href: get-common-presets-id.md
+  - name: Прочитать общие пресеты
+    href: fetch-common-presets.md
+  - name: Сохранить настройки для всех
+    href: save-for-all.md
+  - name: Сохранить общие настройки
+    href: save-common.md
+  - name: Сохранить настройки для другого пользователя
+    href: save-options-for-user.md
+  - name: Получить настройки всех пользователей
+    href: get-all-user-options.md
+  - name: Проверить общие настройки
+    href: is-common.md
+  - name: Проверить право менять чужие настройки
+    href: is-current-user-edit-other-settings.md

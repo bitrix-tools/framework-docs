@@ -1,0 +1,43 @@
+title: Result
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить строку результата
+    href: fetch.md
+  - name: Получить все строки результата
+    href: fetch-all.md
+  - name: Получить строку без преобразований
+    href: fetch-raw.md
+  - name: Обойти результат в цикле
+    href: get-iterator.md
+  - name: Получить число строк результата
+    href: get-selected-rows-count.md
+  - name: Получить описание колонок результата
+    href: get-fields.md
+  - name: Получить число колонок результата
+    href: get-fields-count.md
+  - name: Получить размер строки
+    href: get-length.md
+  - name: Проверить колонки больших типов
+    href: has-big-fields.md
+  - name: Получить результат драйвера
+    href: get-resource.md
+  - name: Получить сведения о запросе
+    href: get-tracker-query.md
+  - name: Задать общее число строк
+    href: set-count.md
+  - name: Получить общее число строк
+    href: get-count.md
+  - name: Получить функции преобразования
+    href: get-converters.md
+  - name: Задать функции преобразования
+    href: set-converters.md
+  - name: Задать сериализованные колонки
+    href: set-serialized-fields.md
+  - name: Задать переименование колонок
+    href: set-replaced-aliases.md
+  - name: Добавить переименование колонок
+    href: add-replaced-aliases.md
+  - name: Добавить обработку строки
+    href: add-fetch-data-modifier.md

@@ -25,7 +25,7 @@ description: "Работа с заказами, профилями, статис
 
 #|
 || **Данные** | **Основной API** | **Что хранит** ||
-|| Пользователь сайта | `Bitrix\Main\UserTable` | Учетную запись пользователя. Идентификатор записи передают в `USER_ID` ||
+|| Пользователь сайта | [`Bitrix\Main\UserTable`](../../api-reference/main/user-table/index.md) | Учетную запись пользователя. Идентификатор записи передают в `USER_ID` ||
 || Заказ | `Bitrix\Sale\Order` | Покупку и снимок данных, которые действовали при оформлении ||
 || Профиль покупателя | `Bitrix\Sale\OrderUserProperties`, `Bitrix\Sale\Internals\UserPropsTable` | Именованный набор значений свойств для пользователя и типа плательщика ||
 || Значение профиля | `Bitrix\Sale\Internals\UserPropsValueTable` | Связь профиля со свойством заказа и сохраненное значение ||
@@ -476,7 +476,7 @@ if (!\CSaleOrderUserProps::Delete($profileId))
 || `COUNT_PART_PAID_ORDER` | `integer` | Счетчик заказов с ненулевой оплаченной суммой ||
 |#
 
-Метод `BuyerStatistic::calculate()` пересчитывает запись пользователя по заказам и архиву заказов и возвращает `Bitrix\Main\Result`. Если заказов нет, результат содержит предупреждение. Поэтому проверяйте ошибки и предупреждения отдельно.
+Метод `BuyerStatistic::calculate()` пересчитывает запись пользователя по заказам и архиву заказов и возвращает [`Bitrix\Main\Result`](../../api-reference/main/result/index.md). Если заказов нет, результат содержит предупреждение. Поэтому проверяйте ошибки и предупреждения отдельно.
 
 ```php
 use Bitrix\Sale\BuyerStatistic;
@@ -741,7 +741,7 @@ $nextPage = UserTransactTable::getList([
 
 ### События внутреннего счета
 
-Добавление и обновление записи счета вызывают события классического API. Регистрируйте обработчики через `Bitrix\Main\EventManager::addEventHandlerCompatible()`.
+Добавление и обновление записи счета вызывают события классического API. Регистрируйте обработчики через [`Bitrix\Main\EventManager::addEventHandlerCompatible()`](../../api-reference/main/event-manager/add-event-handler-compatible.md).
 
 #|
 || **Событие** | **При каком действии вызывается** | **Параметры обработчика** ||

@@ -1,0 +1,23 @@
+title: Extension
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Подключить расширение
+    href: load.md
+  - name: Зарегистрировать расширение
+    href: register.md
+  - name: Зарегистрировать расширение по конфигурации
+    href: register-assets.md
+  - name: Получить HTML-код расширения
+    href: get-html.md
+  - name: Получить конфигурацию расширения
+    href: get-config.md
+  - name: Получить пространство имен расширения
+    href: get-bundle-config.md
+  - name: Получить файлы расширения
+    href: get-assets.md
+  - name: Получить зависимости расширения
+    href: get-dependency-list.md
+  - name: Получить ресурсы расширений
+    href: get-resource-list.md

@@ -134,7 +134,7 @@ $event->setTemplate(105);
 $result = $event->send(false);
 ```
 
-Метод возвращает объект `\Bitrix\Main\Result`. Получить список ошибок можно кодом:
+Метод возвращает объект [`\Bitrix\Main\Result`](../api-reference/main/result/index.md). Получить список ошибок можно кодом:
 
 ```php
 if (!$result->isSuccess())
@@ -507,7 +507,7 @@ else
 
 ### Обработка ошибок
 
-Методы отправки возвращают объект `Bitrix\Main\Result`. Используйте этот объект для проверки результата операции. Если отправка не удалась, получите список ошибок.
+Методы отправки возвращают объект [`Bitrix\Main\Result`](../api-reference/main/result/index.md). Используйте этот объект для проверки результата операции. Если отправка не удалась, получите список ошибок.
 
 ```php
 $result = \Bitrix\MessageService\Sender\SmsManager::sendMessage($messageFields);

@@ -1,0 +1,75 @@
+title: Application
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить объект приложения
+    href: get-instance.md
+  - name: Проверить, создан ли объект приложения
+    href: has-instance.md
+  - name: Подготовить ядро
+    href: initialize.md
+  - name: Проверить, подготовлено ли ядро
+    href: is-initialized.md
+  - name: Создать контекст запроса
+    href: initialize-context.md
+  - name: Завершить подготовку запроса
+    href: start.md
+  - name: Выполнить контроллер
+    href: run.md
+  - name: Отправить ответ и завершить приложение
+    href: end.md
+  - name: Завершить приложение
+    href: terminate.md
+  - name: Добавить фоновую задачу
+    href: add-background-job.md
+  - name: Получить контекст запроса
+    href: get-context.md
+  - name: Заменить контекст запроса
+    href: set-context.md
+  - name: Получить маршрутизатор
+    href: get-router.md
+  - name: Заменить маршрутизатор
+    href: set-router.md
+  - name: Получить маршрут запроса
+    href: get-current-route.md
+  - name: Проверить, задан ли маршрут
+    href: has-current-route.md
+  - name: Задать маршрут запроса
+    href: set-current-route.md
+  - name: Получить соединение с базой данных
+    href: get-connection.md
+  - name: Получить пул соединений
+    href: get-connection-pool.md
+  - name: Создать объект кеша
+    href: get-cache.md
+  - name: Получить управляемый кеш
+    href: get-managed-cache.md
+  - name: Получить тегированный кеш
+    href: get-tagged-cache.md
+  - name: Получить сессию
+    href: get-session.md
+  - name: Получить сессию ядра
+    href: get-kernel-session.md
+  - name: Получить менеджер сессий
+    href: get-composite-session-manager.md
+  - name: Получить менеджер локальных хранилищ сессии
+    href: get-session-local-storage-manager.md
+  - name: Получить локальное хранилище сессии
+    href: get-local-session.md
+  - name: Получить обработчик ошибок
+    href: get-exception-handler.md
+  - name: Создать журнал ошибок
+    href: create-exception-handler-log.md
+  - name: Создать вывод ошибок
+    href: create-exception-handler-output.md
+  - name: Получить лицензию
+    href: get-license.md
+  - name: Получить менеджер пользовательских полей
+    href: get-user-type-manager.md
+  - name: Получить корневой каталог сайта
+    href: get-document-root.md
+  - name: Получить каталог ядра
+    href: get-personal-root.md
+  - name: Сбросить OPcache
+    href: reset-accelerator.md

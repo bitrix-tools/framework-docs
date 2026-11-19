@@ -179,7 +179,7 @@ echo 'Проиндексировано ' . $indexed . ' из ' . $total . PHP_EO
 
 В консольном скрипте перед примером задайте `$_SERVER['DOCUMENT_ROOT']` — путь к корню сайта — и подключите ядро файлом `/bitrix/modules/main/include/prolog_before.php`.
 
-Если вы строите индекс в веб-запросе или агенте, выполняйте один шаг за запуск. Сохраните `ID` последнего обработанного элемента из метода `getLastElementId()`, например в настройке модуля методом `Bitrix\Main\Config\Option::set()`. Перед следующим вызовом `continueIndex()` передайте сохраненный `ID` в `setLastElementId()`. Метод `startIndex()` вызывайте только на первом шаге, а `endIndex()` — когда `continueIndex()` вернет `0`. Агенты описаны в статье [Агенты и фоновые задачи](./../../framework/background-jobs.md).
+Если вы строите индекс в веб-запросе или агенте, выполняйте один шаг за запуск. Сохраните `ID` последнего обработанного элемента из метода `getLastElementId()`, например в настройке модуля методом [`Bitrix\Main\Config\Option::set()`](../../api-reference/main/config/option/set.md). Перед следующим вызовом `continueIndex()` передайте сохраненный `ID` в `setLastElementId()`. Метод `startIndex()` вызывайте только на первом шаге, а `endIndex()` — когда `continueIndex()` вернет `0`. Агенты описаны в статье [Агенты и фоновые задачи](./../../framework/background-jobs.md).
 
 ## Поддерживать индекс актуальным {#keep-index-actual}
 

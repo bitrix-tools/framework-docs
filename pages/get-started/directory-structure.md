@@ -161,7 +161,7 @@ description: 'Структура проекта на Bitrix Framework: назн�
 
 -  `/local/routes/` — файлы маршрутов. Настройка описана в разделе [Конфигурация роутинга](../framework/routing.md#configuration).
 
--  `/local/js/<пространство имен>/<имя расширения>/` — собственные JS-расширения. Их подключает метод `Bitrix\Main\UI\Extension::load()`, порядок описан в статье [Расширения](../framework/extensions.md). Произвольный скрипт в этой папке автоматически не подключается.
+-  `/local/js/<пространство имен>/<имя расширения>/` — собственные JS-расширения. Их подключает метод [`Bitrix\Main\UI\Extension::load()`](../api-reference/main/ui/extension/load.md), порядок описан в статье [Расширения](../framework/extensions.md). Произвольный скрипт в этой папке автоматически не подключается.
 
 -  `/local/.settings.php` и `/local/.settings_extra.php` — основная и дополнительная конфигурация ядра. Правила загрузки описаны в статье [Конфигурация ядра](../framework/settings.md).
 

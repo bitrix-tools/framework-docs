@@ -1,0 +1,29 @@
+title: HttpResponse
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Добавить заголовок
+    href: add-header.md
+  - name: Заменить коллекцию заголовков
+    href: set-headers.md
+  - name: Получить заголовки ответа
+    href: get-headers.md
+  - name: Добавить cookie
+    href: add-cookie.md
+  - name: Запомнить выбор о постоянных cookie
+    href: allow-persistent-cookies.md
+  - name: Получить cookie ответа
+    href: get-cookies.md
+  - name: Задать статус ответа
+    href: set-status.md
+  - name: Получить код статуса
+    href: get-status.md
+  - name: Задать время для заголовка Last-Modified
+    href: set-last-modified.md
+  - name: Отправить статус, заголовки и cookie
+    href: write-headers.md
+  - name: Создать перенаправление
+    href: redirect-to.md
+  - name: Скопировать заголовки в другой ответ
+    href: copy-headers-to.md

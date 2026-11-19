@@ -1,0 +1,49 @@
+title: Result
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Создать результат ORM-выборки
+    href: construct.md
+  - name: Получить строку массивом
+    href: fetch.md
+  - name: Получить все строки массивом
+    href: fetch-all.md
+  - name: Получить строку без преобразований
+    href: fetch-raw.md
+  - name: Получить строку объектом
+    href: fetch-object.md
+  - name: Получить строки коллекцией
+    href: fetch-collection.md
+  - name: Получить итератор
+    href: get-iterator.md
+  - name: Задать реестр объектов
+    href: set-identity-map.md
+  - name: Получить реестр объектов
+    href: get-identity-map.md
+  - name: Задать служебные поля
+    href: set-hidden-object-fields.md
+  - name: Получить число строк в выборке
+    href: get-selected-rows-count.md
+  - name: Задать общее число строк
+    href: set-count.md
+  - name: Получить общее число строк
+    href: get-count.md
+  - name: Получить описание колонок
+    href: get-fields.md
+  - name: Получить результат драйвера
+    href: get-resource.md
+  - name: Получить сведения для отслеживания
+    href: get-tracker-query.md
+  - name: Получить функции преобразования
+    href: get-converters.md
+  - name: Задать функции преобразования
+    href: set-converters.md
+  - name: Задать сериализованные колонки
+    href: set-serialized-fields.md
+  - name: Задать переименование колонок
+    href: set-replaced-aliases.md
+  - name: Добавить переименование колонок
+    href: add-replaced-aliases.md
+  - name: Добавить обработчик строки
+    href: add-fetch-data-modifier.md

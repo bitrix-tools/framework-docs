@@ -1,0 +1,17 @@
+title: Option
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Получить значение
+    href: get.md
+  - name: Получить сохраненное значение
+    href: get-real-value.md
+  - name: Получить значения по умолчанию
+    href: get-defaults.md
+  - name: Получить параметры модуля
+    href: get-for-module.md
+  - name: Сохранить параметр
+    href: set.md
+  - name: Удалить параметры
+    href: delete.md

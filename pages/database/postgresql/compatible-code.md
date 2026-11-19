@@ -25,7 +25,7 @@ description: 'Как писать код, совместимый с PostgreSQL. 
 
 ## Как адаптировать модуль
 
-Проверьте схему данных, установочные SQL-файлы и прямые запросы модуля. Для работы с базой данных используйте соединение из `Application::getConnection()` и его `SqlHelper`.
+Проверьте схему данных, установочные SQL-файлы и прямые запросы модуля. Для работы с базой данных используйте соединение из [`Application::getConnection()`](../../api-reference/main/application/get-connection.md) и его `SqlHelper`.
 
 ### Схема данных
 
@@ -67,7 +67,7 @@ $connection = \Bitrix\Main\Application::getConnection();
 $result = $connection->query('SELECT "ID" FROM test');
 ```
 
-Если идентификатор нужно квотировать, используйте метод `SqlHelper::quote()`. Подробнее о нем — в статье [Формирование запросов](../sql-helper-and-expression.md).
+Если идентификатор нужно квотировать, используйте метод [`SqlHelper::quote()`](../../api-reference/main/db/sql-helper/quote.md). Подробнее о нем — в статье [Формирование запросов](../sql-helper-and-expression.md).
 
 В MySQL регистр не изменится. В PostgreSQL идентификатор сначала будет приведен к нижнему регистру. После этого он будет обрамлен двойными кавычками. Сформируйте запрос с помощью хелпера:
 
@@ -176,7 +176,7 @@ select '\\Bitrix'
 
 В MySQL запрос вернет `"\Bitrix"`, а в PostgreSQL — `"\\Bitrix"`.
 
-Чтобы избежать различий, экранируйте значение методом `SqlHelper::forSql()` из статьи [Формирование запросов](../sql-helper-and-expression.md):
+Чтобы избежать различий, экранируйте значение методом [`SqlHelper::forSql()`](../../api-reference/main/db/sql-helper/for-sql.md) из статьи [Формирование запросов](../sql-helper-and-expression.md):
 
 ```php
 $connection = \Bitrix\Main\Application::getConnection();
@@ -306,7 +306,7 @@ $sql = 'SELECT ID, ' . $helper->addSecondsToDateTime(60, 'TIMESTAMP_X') . ' AS E
 
 #### date()
 
-Для преобразования даты и времени в дату используйте метод `SqlHelper::getDatetimeToDateFunction()`. Передайте ему SQL-выражение или имя колонки, экранированное через `quote()`. Метод `getCurrentDateFunction()` возвращает текущую дату и не заменяет `date(значение)`.
+Для преобразования даты и времени в дату используйте метод [`SqlHelper::getDatetimeToDateFunction()`](../../api-reference/main/db/sql-helper/get-datetime-to-date-function.md). Передайте ему SQL-выражение или имя колонки, экранированное через `quote()`. Метод `getCurrentDateFunction()` возвращает текущую дату и не заменяет `date(значение)`.
 
 #### rand()
 
@@ -428,7 +428,7 @@ $sql = $helper->prepareDeleteLimit('b_test', ['ID'], "ACTIVE = 'N'", ['TIMESTAMP
 
 ### Вставка в таблицу без автоинкремента
 
-Для таблицы без автоинкремента подготовьте запрос методом `SqlHelper::prepareInsert()` и выполните его через `queryExecute()`. В примере таблица `b_module_table` содержит поля `KEY_ID` и `DATA`, а значение ключа задается в массиве данных:
+Для таблицы без автоинкремента подготовьте запрос методом [`SqlHelper::prepareInsert()`](../../api-reference/main/db/sql-helper/prepare-insert.md) и выполните его через `queryExecute()`. В примере таблица `b_module_table` содержит поля `KEY_ID` и `DATA`, а значение ключа задается в массиве данных:
 
 ```php
 $connection = \Bitrix\Main\Application::getConnection();
@@ -464,7 +464,7 @@ $fields = [
 [ $columns, $values, $binds ] = $helper->prepareInsert('b_user', $fields);
 ```
 
-Если дата уже задана во времени сервера, передайте обычный объект `DateTime`. Результат преобразования пользовательской даты зависит от настроек часового пояса.
+Если дата уже задана во времени сервера, передайте обычный объект [`DateTime`](../../api-reference/main/type/date-time/index.md). Результат преобразования пользовательской даты зависит от настроек часового пояса.
 
 ### Использование двойных кавычек {#double-quotes}
 

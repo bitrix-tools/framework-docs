@@ -1,0 +1,27 @@
+title: ModuleManager
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Проверить, установлен ли модуль
+    href: is-module-installed.md
+  - name: Получить установленные модули
+    href: get-installed-modules.md
+  - name: Получить модули с диска
+    href: get-modules-from-disk.md
+  - name: Получить версию модуля
+    href: get-version.md
+  - name: Получить время изменения файла версии
+    href: get-modification-date-time.md
+  - name: Проверить код модуля
+    href: is-valid-module.md
+  - name: Зарегистрировать модуль
+    href: register-module.md
+  - name: Удалить регистрацию модуля
+    href: un-register-module.md
+  - name: Добавить модуль в список установленных
+    href: add.md
+  - name: Удалить модуль из списка установленных
+    href: delete.md
+  - name: Уменьшить версию модуля
+    href: decrease-version.md

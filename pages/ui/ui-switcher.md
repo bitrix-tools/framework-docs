@@ -11,7 +11,7 @@ description: 'Переключатель ui.switcher: класс Switcher, вы�
 
 ## Подключить расширение
 
-В PHP загрузите `ui.switcher` методом `Extension::load()`.
+В PHP загрузите `ui.switcher` методом [`Extension::load()`](../api-reference/main/ui/extension/load.md).
 
 ```php
 \Bitrix\Main\UI\Extension::load('ui.switcher');
