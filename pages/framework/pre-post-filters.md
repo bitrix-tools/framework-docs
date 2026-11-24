@@ -1,6 +1,6 @@
 ---
 title: Пре- и постфильтры
-description: 'Пре- и постфильтры контроллеров Bitrix Framework: набор по умолчанию Authentication, HttpMethod и Csrf, фильтры Scope, ContentType, Cors и CloseSession, ответ при блокировке действия, собственные фильтры и подмена результата.'
+description: 'Пре- и постфильтры контроллеров Bitrix Framework: набор по умолчанию Authentication, HttpMethod и Csrf, фильтры Scope, ContentType, Cors, CloseSession и CacheResponse, общий набор filters, ответ при блокировке действия, собственные фильтры и подмена результата.'
 ---
 
 Фильтры — обработчики, которые [контроллер](./controllers.md) `\Bitrix\Main\Engine\Controller` вызывает до и после действия (Action). Префильтр проверяет запрос и может заблокировать действие. Постфильтр получает результат действия и может заменить его.
@@ -15,9 +15,11 @@ description: 'Пре- и постфильтры контроллеров Bitrix 
 
 -  дополнить ответ CORS-заголовками или заменить его,
 
+-  [закешировать ответ](#cache-response) и не запускать действие повторно,
+
 -  [проверить собственное условие](#custom-prefilter) до запуска действия.
 
-## Типы фильтров
+## Типы фильтров {#filter-types}
 
 Фильтр — объект класса-наследника `\Bitrix\Main\Engine\ActionFilter\Base`. Тип фильтра определяет, когда контроллер его вызывает.
 
@@ -26,6 +28,8 @@ description: 'Пре- и постфильтры контроллеров Bitrix 
 -  Постфильтры (postfilter) — выполняются после действия, метод `onAfterAction()`. Могут изменить результат.
 
 Контроллер вызывает все префильтры действия, даже если один из них уже заблокировал запрос. Префильтр пропускает запрос, если возвращает `null`. Чтобы заблокировать действие, префильтр возвращает объект `\Bitrix\Main\EventResult` с типом `EventResult::ERROR`. Постфильтры выполняются и после блокировки, результат действия в этом случае равен `null`.
+
+Префильтр может пропустить действие без ошибки. Для этого он возвращает результат метода `\Bitrix\Main\Engine\ActionEventResult::skipAction()`. Контроллер не запускает действие и не добавляет ошибку, затем вызывает постфильтры с результатом `null`. Постфильтр может подставить свой результат, так работает [фильтр кеширования ответа](#cache-response). Если результат так и остался `null`, клиент получит ответ со статусом `success` и `data` со значением `null`.
 
 Фильтр работает только в областях вызова, которые возвращает его метод `listAllowedScopes()`. Класс `Base` разрешает все три области — `Controller::SCOPE_AJAX`, `Controller::SCOPE_REST` и `Controller::SCOPE_CLI`. Часть стандартных фильтров сужает этот список, ограничения указаны в разделе каждого фильтра.
 
@@ -55,7 +59,7 @@ description: 'Пре- и постфильтры контроллеров Bitrix 
 
 ## Основные фильтры
 
-Стандартные фильтры находятся в пространстве имен `\Bitrix\Main\Engine\ActionFilter`. Префильтры `Authentication`, `HttpMethod`, `Csrf`, `Scope` и `ContentType` блокируют действие. Фильтры `CloseSession` и `Cors` действие не блокируют. У каждого фильтра есть атрибут с тем же именем, о разнице между атрибутами — в разделе [«Атрибуты фильтров»](#filter-attributes).
+Стандартные фильтры находятся в пространстве имен `\Bitrix\Main\Engine\ActionFilter`. Префильтры `Authentication`, `HttpMethod`, `Csrf`, `Scope` и `ContentType` блокируют действие. Фильтры `CloseSession`, `Cors` и `CacheResponse` действие не блокируют. У каждого фильтра, кроме `CacheResponse`, есть атрибут с тем же именем, о разнице между атрибутами — в разделе [«Атрибуты фильтров»](#filter-attributes).
 
 ### Фильтр HTTP-методов
 
@@ -467,6 +471,103 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 }
 ```
 
+### Фильтр кеширования ответа {#cache-response}
+
+`\Bitrix\Main\Engine\ActionFilter\CacheResponse`
+
+Сохраняет результат действия в кеш и при повторном запросе отдает его без запуска действия. Фильтр работает в двух фазах, поэтому подключайте его одновременно префильтром и постфильтром — ключом `+filters` или атрибутом `Rule\EnableFilter`, подробнее в разделе [«Дополняющие и вычитающие фильтры»](#filter-modifiers).
+
+-  Как префильтр — проверяет кеш. Если запись найдена, фильтр [пропускает действие](#filter-types) без ошибки.
+
+-  Как постфильтр — подставляет результат из кеша вместо `null` или сохраняет новый результат действия в кеш.
+
+Аргументы:
+
+-  `$ttl` — время жизни записи в секундах. По умолчанию 3600. Значение должно быть больше нуля, иначе конструктор выбрасывает `\Bitrix\Main\Engine\Exception\ActionConfigurationException` с сообщением `CacheResponse TTL must be positive`.
+
+-  `$cacheKeyRequestFields` — массив имен параметров запроса, от которых зависит результат. Фильтр получает значения через `Request::get()`: из GET- и POST-параметров, при совпадении имен — из POST. Поля JSON-тела в этот список не попадают. По умолчанию — пустой массив.
+
+-  `$cacheKeyContextFields` — массив значений перечисления `\Bitrix\Main\Engine\ActionFilter\CacheResponse\ContextField`, которые добавляют в ключ кеша данные окружения. По умолчанию — пустой массив. Значения перечисления:
+
+   -  `ContextField::User` — идентификатор текущего пользователя,
+
+   -  `ContextField::Ip` — IP-адрес клиента,
+
+   -  `ContextField::Site` — идентификатор текущего сайта,
+
+   -  `ContextField::Language` — идентификатор текущего языка,
+
+   -  `ContextField::Host` — имя хоста из запроса.
+
+-  `$cacheKeyAdditionalDataCallback` — функция, которая получает объект действия `\Bitrix\Main\Engine\Action` и возвращает массив дополнительных данных для ключа. Если функция возвращает не массив, фильтр выбрасывает `ActionConfigurationException`. По умолчанию — `null`.
+
+-  `$cachedResponseHeaders` — массив заголовков ответа, которые фильтр сохраняет вместе с телом. По умолчанию — `['Content-Type']`. Пустой массив исключает все заголовки.
+
+Без `$cacheKeyRequestFields` и `$cacheKeyContextFields` все пользователи получают одну запись кеша на действие. Если результат зависит от пользователя, сайта или параметра запроса, добавьте их в ключ.
+
+Фильтр не сохраняет в кеш:
+
+-  результат действия, которое заблокировал префильтр,
+
+-  результат с ошибками действия или контроллера,
+
+-  ответ-перенаправление со статусом 3xx,
+
+-  файлы и архивы — ответы `\Bitrix\Main\Engine\Response\File` и `\Bitrix\Main\Engine\Response\Zip\Archive`.
+
+Значение `null` и пустой результат фильтр кеширует так же, как остальные.
+
+{% note warning "" %}
+
+При попадании в кеш действие не выполняется. Проверку доступа к данным выполняйте в префильтрах, которые стоят в наборе раньше `CacheResponse`, а не внутри метода действия.
+
+{% endnote %}
+
+Чтобы закешировать итоговый результат, ставьте `CacheResponse` последним в списке постфильтров. Постфильтры, которые выполняются до него, при попадании в кеш получают результат `null`.
+
+**Пример.** Действие `list` кеширует ответ на час с фильтрами по умолчанию. Действие `details` хранит отдельную запись для каждого пользователя и значения параметра `code` в течение 10 минут:
+
+```php
+use Bitrix\Main\Engine\ActionFilter\Attribute\Rule\EnableFilter;
+use Bitrix\Main\Engine\ActionFilter\CacheResponse;
+use Bitrix\Main\Engine\ActionFilter\CacheResponse\ContextField;
+
+final class Entity extends \Bitrix\Main\Engine\Controller
+{
+    #[EnableFilter([
+        new CacheResponse(),
+    ])]
+    public function listAction(): array
+    {
+        return [
+            'items' => [],
+        ];
+    }
+
+    #[EnableFilter([
+        new CacheResponse(
+            ttl: 600,
+            cacheKeyRequestFields: ['code'],
+            cacheKeyContextFields: [ContextField::User],
+        ),
+    ])]
+    public function detailsAction(string $code): array
+    {
+        return [
+            'code' => $code,
+        ];
+    }
+}
+```
+
+Записи кеша фильтр хранит отдельно для каждого класса контроллера. Чтобы удалить все записи контроллера после изменения данных, вызовите статический метод `CacheResponse::cleanCacheController()` и передайте в него имя класса контроллера.
+
+**Пример.** Сброс кеша ответов контроллера `Entity`:
+
+```php
+\Bitrix\Main\Engine\ActionFilter\CacheResponse::cleanCacheController(Entity::class);
+```
+
 ## Как использовать фильтры в контроллерах
 
 Фильтры действия задают двумя способами — ключами в методе `configureActions()` или атрибутами метода действия. Для одного действия используйте один способ. Если действие настроено и в `configureActions()`, и атрибутами, конструктор контроллера выбрасывает `\Bitrix\Main\Engine\Exception\ActionConfigurationException` с сообщением `Invalid configuration of actions. Configuration is multiple`.
@@ -527,9 +628,9 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 
 Атрибуты делятся на три группы:
 
--  `Prefilters` и `Postfilters` задают собственный набор фильтров действия вместо набора по умолчанию, как ключи `prefilters` и `postfilters`,
+-  `Prefilters` и `Postfilters` задают собственный набор фильтров действия вместо набора по умолчанию, как ключи `prefilters` и `postfilters`. Атрибут `Filter` задает один общий набор для префильтров и постфильтров, как ключ [`filters`](#common-filters),
 
--  `EnablePrefilters`, `DisablePrefilters`, `EnablePostfilters` и `DisablePostfilters` дополняют и сокращают набор, как ключи `+prefilters`, `-prefilters`, `+postfilters` и `-postfilters`, подробнее в разделе [«Дополняющие и вычитающие фильтры»](#filter-modifiers),
+-  `EnablePrefilters`, `DisablePrefilters`, `EnablePostfilters` и `DisablePostfilters` дополняют и сокращают набор, как ключи `+prefilters`, `-prefilters`, `+postfilters` и `-postfilters`. Атрибуты `EnableFilter` и `DisableFilter` меняют сразу оба набора, как ключи `+filters` и `-filters`. Подробнее в разделе [«Дополняющие и вычитающие фильтры»](#filter-modifiers),
 
 -  атрибуты отдельных фильтров из пространства имен `\Bitrix\Main\Engine\ActionFilter\Attribute\Rule` — `Authentication`, `HttpMethod`, `Csrf`, `CloseSession`, `Scope`, `Cors` и `ContentType` — добавляют фильтр к префильтрам действия, как ключ `+prefilters`. С аргументом `type: FilterType::DisablePrefilter` такой атрибут удаляет фильтр этого класса, как ключ `-prefilters`.
 
@@ -595,6 +696,39 @@ final class Entity extends \Bitrix\Main\Engine\Controller
     protected function getDefaultPreFilters()
     {
         return [];
+    }
+}
+```
+
+### Общий набор префильтров и постфильтров {#common-filters}
+
+Ключ `filters` в `configureActions()` и атрибут `Rule\Filter` задают один список фильтров, который контроллер использует и как префильтры, и как постфильтры. Такой ключ подходит для фильтров, которые работают в обеих фазах, например `Cors` или [`CacheResponse`](#cache-response).
+
+Ключ `filters` заменяет оба набора по умолчанию. Если передать в него только `Cors`, действие выполнится без `Authentication`, `HttpMethod` и `Csrf`. Чтобы добавить фильтр и сохранить проверки по умолчанию, используйте ключ [`+filters`](#filter-modifiers).
+
+Ключ `filters` нельзя совмещать с ключами `prefilters` и `postfilters` в настройке одного действия. При такой настройке конструктор контроллера выбрасывает `\Bitrix\Main\Engine\Exception\ActionConfigurationException` с сообщением `filters cannot be combined with prefilters or postfilters`. Правило действует и для атрибутов `Filter`, `Prefilters` и `Postfilters`.
+
+**Пример.** Действие `index` выполняется только с фильтром `Cors` в обеих фазах. Вход пользователя, HTTP-метод и CSRF-токен фильтры не проверяют:
+
+```php
+use Bitrix\Main\Engine\ActionFilter\Cors;
+
+final class Entity extends \Bitrix\Main\Engine\Controller
+{
+    public function configureActions()
+    {
+        return [
+            'index' => [
+                'filters' => [
+                    new Cors(),
+                ],
+            ],
+        ];
+    }
+
+    public function indexAction()
+    {
+        // ...
     }
 }
 ```
@@ -723,9 +857,74 @@ final class Entity extends \Bitrix\Main\Engine\Controller
 }
 ```
 
+Ключи `+filters` и `-filters` и атрибуты `EnableFilter` и `DisableFilter` меняют сразу оба набора — префильтры и постфильтры. Ключ `+filters` добавляет фильтр в конец обоих наборов, ключ `-filters` удаляет фильтры указанного класса из обоих наборов. Используйте их для фильтров, которые работают в обеих фазах, например [`CacheResponse`](#cache-response).
+
+Контроллер применяет ключи в таком порядке:
+
+1. Удаляет фильтры из `-filters`.
+
+2. Удаляет фильтры из `-prefilters` и `-postfilters`.
+
+3. Добавляет фильтры из `+prefilters` и `+postfilters`.
+
+4. Добавляет фильтры из `+filters`.
+
+**Пример.** Действие `index` получает набор по умолчанию без `Csrf`. Фильтр `CloseSession` добавлен в оба набора и выполняется до и после действия:
+
+```php
+use Bitrix\Main\Engine\ActionFilter\CloseSession;
+use Bitrix\Main\Engine\ActionFilter\Csrf;
+
+final class Entity extends \Bitrix\Main\Engine\Controller
+{
+    public function configureActions()
+    {
+        return [
+            // Итого префильтры Authentication, HttpMethod и CloseSession, постфильтр CloseSession
+            'index' => [
+                '+filters' => [
+                    new CloseSession(),
+                ],
+                '-filters' => [
+                    Csrf::class,
+                ],
+            ],
+        ];
+    }
+
+    public function indexAction()
+    {
+        // ...
+    }
+}
+```
+
+**Пример.** Тот же результат атрибутами `EnableFilter` и `DisableFilter`:
+
+```php
+use Bitrix\Main\Engine\ActionFilter\Attribute\Rule\DisableFilter;
+use Bitrix\Main\Engine\ActionFilter\Attribute\Rule\EnableFilter;
+use Bitrix\Main\Engine\ActionFilter\CloseSession;
+use Bitrix\Main\Engine\ActionFilter\Csrf;
+
+final class Entity extends \Bitrix\Main\Engine\Controller
+{
+    #[EnableFilter([
+        new CloseSession(),
+    ])]
+    #[DisableFilter([
+        Csrf::class,
+    ])]
+    public function indexAction()
+    {
+        // ...
+    }
+}
+```
+
 {% note warning "" %}
 
-В ключи `+prefilters` и `+postfilters` и атрибуты `EnablePrefilters` и `EnablePostfilters` передавайте объекты фильтров. В ключи `-prefilters` и `-postfilters` и атрибуты `DisablePrefilters` и `DisablePostfilters` передавайте имена классов, например `Authentication::class`.
+В ключи `+filters`, `+prefilters` и `+postfilters` и атрибуты `EnableFilter`, `EnablePrefilters` и `EnablePostfilters` передавайте объекты фильтров. В ключи `-filters`, `-prefilters` и `-postfilters` и атрибуты `DisableFilter`, `DisablePrefilters` и `DisablePostfilters` передавайте имена классов, например `Authentication::class`.
 
 {% endnote %}
 

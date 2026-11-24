@@ -335,11 +335,11 @@ BX.ajax.runAction('my:content.Iblock.ping')
 
 5. Выполняет `Controller::processBeforeAction($action)`.
 
-6. Вызывает событие `onBeforeAction`. Обработчик может отменить выполнение.
+6. Вызывает событие `onBeforeAction`. Обработчик может отменить действие с ошибкой или пропустить его без ошибки — вернуть результат метода `ActionEventResult::skipAction()`. Подробнее в статье [Пре- и постфильтры](./pre-post-filters.md#filter-types).
 
-7. Вызывает метод действия `actionNameAction(...)`.
+7. Вызывает метод действия `actionNameAction(...)`, если обработчики на шаге 6 не отменили и не пропустили его.
 
-8. Вызывает событие `onAfterAction`.
+8. Вызывает событие `onAfterAction`. Параметр события `isActionAllowed` равен `true`, если шаги 4–6 завершились без отмены действия. Пропуск через `skipAction()` отменой не считается.
 
 9. Выполняет `Controller::processAfterAction($action, $result)`.
 

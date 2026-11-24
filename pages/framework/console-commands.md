@@ -58,8 +58,12 @@ $ php bitrix.php list
 -  `main:cache:clear`, `main:managed-cache:clear`, `main:tagged-cache:clear` — очищают кеш,
 -  `main:settings:<секция>-get` и `main:settings:<секция>-set`, например `main:settings:cache-get` — читают и меняют секции [`.settings.php`](./settings.md) `cache`, `session`, `crypto`, `smtp`, `exception-handling`, `routing`,
 -  `main:module:list`, `main:site:list`, `main:language:list`, `main:agent:list` — выводят списки модулей, сайтов, языков и агентов,
--  `main:feature:*` — включают и выключают флаги функций,
+-  `main:agent:get <id>` — выводит данные агента по его идентификатору,
+-  `main:event-handler:list <module> <event>` — выводит обработчики события `<event>` модуля `<module>`, которые зарегистрированы в текущем процессе CLI,
+-  `main:feature:enable`, `main:feature:disable`, `main:feature:reset` — включают, выключают и сбрасывают флаги функций,
 -  `main:sql` и `main:php-eval` — выполняют SQL-запрос или PHP-код в окружении сайта. Команды работают, только если константа `BX_LOCAL_CLI_ALLOW_UNSAFE_COMMANDS` определена со значением `true`, иначе выводят ошибку `SQL execution is disabled` или `PHP code execution is disabled`.
+
+Команды `main:settings:<секция>-set` заменяют секцию `.settings.php` целиком. По умолчанию они записывают секцию с флагом [`readonly`](./settings.md), который защищает ее от изменений через API. Чтобы записать секцию без флага, передайте опцию `--no-readonly`. Если секция уже защищена флагом, команда с `--no-readonly` завершается ошибкой `Settings section is readonly; use --readonly to replace it`. Метод [`Configuration::isReadonly()`](../api-reference/main/config/configuration/is-readonly.md) проверяет флаг секции в коде.
 
 Команды `main:*` принимают опцию `--format` со значением `table` или `json`. Формат `json` удобен для разбора вывода скриптом. Описание аргументов каждой команды выводит команда `help`, она описана в разделе [Как получить справку по команде](#kak-poluchit-spravku-po-komande).
 

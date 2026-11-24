@@ -25,6 +25,12 @@ title: Что нового
 - Добавили новую статью [Настройки пользовательского поля ui.userfield и ui.userfieldfactory](./pages/ui/ui-userfield.md).
 - Добавили новую статью [Пульсирующая подсказка spotlight](./pages/ui/spotlight.md).
 - Добавили новую статью [Контентный слайдер ui.sidepanel.layout](./pages/ui/ui-sidepanel-layout.md).
+- Обновили статью [Пре- и постфильтры](./pages/framework/pre-post-filters.md#cache-response) — добавили фильтр кеширования ответа `CacheResponse`, общий набор префильтров и постфильтров `filters`, ключи `+filters` и `-filters`, атрибуты `Rule\Filter`, `Rule\EnableFilter` и `Rule\DisableFilter`, пропуск действия через `ActionEventResult::skipAction()`.
+- Обновили статью [Контроллеры](./pages/framework/controllers.md) — описали пропуск действия в событии `onBeforeAction` и параметр `isActionAllowed` события `onAfterAction`.
+- Обновили статью [Стандартные провайдеры в ui.entity-selector](./pages/ui/entity-selector/standard-providers.md#project-access-codes) — добавили параметры `siteId` и `closed` провайдера `project` и описание провайдера `project-access-codes`.
+- Обновили статью [Консольные команды](./pages/framework/console-commands.md#kak-prosmotret-spisok-komand) — добавили команды `main:agent:get` и `main:event-handler:list`, описали флаг `readonly` в командах `main:settings:<секция>-set`.
+- Обновили статью [Выбор и настройка поискового движка](./pages/modules/search/search-engines.md#opensearch) — указали поддержку OpenSearch 3.x.
+- Обновили справочник API контроллеров — добавили ключи `filters`, `+filters` и `-filters` в методы [Controller::configureActions](./pages/api-reference/main/engine/controller/configure-actions.md) и [Controllerable::configureActions](./pages/api-reference/main/engine/contract/controllerable/configure-actions.md), описали пропуск действия в методе [Controller::run](./pages/api-reference/main/engine/controller/run.md).
 
 #### 19 ноября
 

@@ -29,6 +29,9 @@ public function configureActions()
 | `+prefilters` | Префильтры, которые контроллер добавит к префильтрам действия. Без ключа `prefilters` — к фильтрам по умолчанию |
 | `-prefilters` | Классы префильтров, которые нужно убрать из префильтров действия. Без ключа `prefilters` — из фильтров по умолчанию |
 | `postfilters`, `+postfilters`, `-postfilters` | То же для постфильтров |
+| `filters` | Один список фильтров, который заменяет и префильтры, и постфильтры по умолчанию. Нельзя указывать вместе с `prefilters` или `postfilters` |
+| `+filters` | Фильтры, которые контроллер добавит и к префильтрам, и к постфильтрам действия |
+| `-filters` | Классы фильтров, которые нужно убрать из префильтров и постфильтров действия |
 | `class` | Класс действия — наследник [Action](../action/index.md), если действие описывает отдельный класс |
 | `callable` | Функция, которая выполняет действие |
 | `configure` | Настройки, которые получит метод `configure` класса действия |
@@ -38,6 +41,8 @@ public function configureActions()
 - По умолчанию действие получает три префильтра — `Authentication`, `HttpMethod` и `Csrf`. Они проверяют авторизацию, метод запроса GET или POST и CSRF-токен.
 - Если префильтры разрешают POST, а проверки CSRF среди них нет, контроллер сам добавит ее для POST-запроса.
 - Действие-метод `xxxAction` не нужно объявлять в настройках. Настройки нужны, только чтобы сменить его фильтры.
+- Если в настройках действия есть ключ `filters` вместе с `prefilters` или `postfilters`, конструктор выбросит исключение `ActionConfigurationException` с текстом `filters cannot be combined with prefilters or postfilters`.
+- Сначала контроллер убирает фильтры из `-filters`, затем из `-prefilters` и `-postfilters`. После этого добавляет фильтры из `+prefilters` и `+postfilters`, последними — из `+filters`.
 
 ## Примеры
 
@@ -82,3 +87,4 @@ echo implode(',', $result) . ' ' . implode(',', array_keys($controller->getConfi
 
 - [Controller::getConfigurationOfActions](get-configuration-of-actions.md)
 - [ActionFilter\Base](../action-filter/base/index.md)
+- [Пре- и постфильтры](../../../../framework/pre-post-filters.md)

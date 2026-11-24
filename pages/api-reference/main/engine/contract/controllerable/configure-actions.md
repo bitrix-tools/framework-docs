@@ -29,23 +29,33 @@ public function configureActions();
 || -prefilters<br>`array` | Убирает префильтры действия. Элементы — имена классов фильтров ||
 || +postfilters<br>`array` | Добавляет фильтры к постфильтрам действия. Без ключа `postfilters` — к постфильтрам по умолчанию ||
 || -postfilters<br>`array` | Убирает постфильтры действия. Элементы — имена классов фильтров ||
+|| filters<br>`array` | Заменяет и префильтры, и постфильтры по умолчанию одним списком. Нельзя указывать вместе с `prefilters` или `postfilters` ||
+|| +filters<br>`array` | Добавляет фильтры и к префильтрам, и к постфильтрам действия ||
+|| -filters<br>`array` | Убирает фильтры из префильтров и постфильтров действия. Элементы — имена классов фильтров ||
 |#
 
-Элемент списков `prefilters` и `postfilters` — объект наследника [ActionFilter\Base](../../action-filter/base/index.md) или замыкание. Если метод вернул `null` или пустой массив, все действия получают фильтры по умолчанию.
+Элемент списков `prefilters` и `postfilters` — объект наследника [ActionFilter\Base](../../action-filter/base/index.md) или замыкание. Элемент списков `filters` и `+filters` — объект наследника `ActionFilter\Base`. Если метод вернул `null` или пустой массив, все действия получают фильтры по умолчанию.
 
 ## Исключения
 
 | Исключение | Когда возникает |
 | --- | --- |
-| `Bitrix\Main\Engine\Exception\ActionConfigurationException` | Ключ массива не строка, значение не массив, элемент `prefilters` или `postfilters` не фильтр. Также если у метода-действия есть атрибуты фильтров и одновременно ключ в `configureActions` |
+| `Bitrix\Main\Engine\Exception\ActionConfigurationException` | Ключ массива не строка, значение не массив, элемент `prefilters`, `postfilters`, `filters` или `+filters` не фильтр. Ключ `filters` указан вместе с `prefilters` или `postfilters`, текст ошибки `filters cannot be combined with prefilters or postfilters`. Также если у метода-действия есть атрибуты фильтров и одновременно ключ в `configureActions` |
 
 Контроллер выбрасывает исключение в своем конструкторе, когда читает настройки.
 
 ## Особенности
 
-Контроллер сначала убирает фильтры из списков `-prefilters` и `-postfilters`, затем добавляет фильтры из `+prefilters` и `+postfilters`. Поэтому фильтр, добавленный через `+`, вычитание не убирает.
+Контроллер применяет ключи с модификаторами по порядку.
 
-Контроллер сравнивает фильтры с именами классов через `is_a`, поэтому `-prefilters` убирает и наследников указанного класса. Ключ `-prefilters` с классом `Csrf` убирает и фильтр `Csrf`, который контроллер добавил сам для POST-запроса.
+1. Убирает фильтры из списка `-filters`.
+2. Убирает фильтры из списков `-prefilters` и `-postfilters`.
+3. Добавляет фильтры из `+prefilters` и `+postfilters`.
+4. Добавляет фильтры из `+filters`.
+
+Поэтому фильтр, добавленный через `+`, вычитание не убирает.
+
+Контроллер сравнивает фильтры с именами классов через `is_a`, поэтому `-prefilters` и `-filters` убирают и наследников указанного класса. Ключ `-prefilters` с классом `Csrf` убирает и фильтр `Csrf`, который контроллер добавил сам для POST-запроса.
 
 ## Примеры
 
@@ -87,3 +97,4 @@ print_r($controller->run('list', []));
 - [ActionFilter\Base](../../action-filter/base/index.md)
 - [ActionFilter\Csrf](../../action-filter/csrf/index.md)
 - [Дополняющие и вычитающие фильтры](../../../../../framework/pre-post-filters.md#filter-modifiers)
+- [Общий набор префильтров и постфильтров](../../../../../framework/pre-post-filters.md#common-filters)
