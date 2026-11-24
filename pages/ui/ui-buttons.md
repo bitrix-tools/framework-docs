@@ -21,7 +21,7 @@ JavaScript API создает и меняет кнопку в браузере. 
 
 {% note warning "" %}
 
-Кнопки `ui.buttons` можно передавать в [системный диалог](./system-dialog.md), [окно сообщения](./dialogs-messagebox.md) и [всплывающее окно или меню `main.popup`](./main-popup.md).
+Кнопки `ui.buttons` можно передавать в [системный диалог](./system-dialog.md), [окно сообщения](./dialogs-messagebox.md), [всплывающее окно или меню `main.popup`](./main-popup.md) и в шапку и панель кнопок [контентного слайдера ui.sidepanel.layout](./ui-sidepanel-layout.md).
 
 {% endnote %}
 

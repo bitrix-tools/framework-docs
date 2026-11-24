@@ -462,7 +462,7 @@ echo $USER_FIELD_MANAGER->GetPublicView($userField);
 $html = $USER_FIELD_MANAGER->renderField($userField);
 ```
 
-## Отрисовать форму настроек поля
+## Отрисовать форму настроек поля {#settings-form}
 
 Метод `GetSettingsHTML()` возвращает HTML дополнительных настроек типа поля. Он нужен, когда форму создания или изменения пользовательского поля строит свой код.
 

@@ -313,6 +313,8 @@ items:
         href: /pages/ui/ui-toolbar.md
       - name: Боковая панель main.sidepanel
         href: /pages/ui/main-sidepanel.md
+      - name: Контентный слайдер ui.sidepanel.layout
+        href: /pages/ui/ui-sidepanel-layout.md
       - name: Сетка формы ui.layout-form
         href: /pages/ui/ui-layout-form.md
       - name: Кнопки ui.buttons
@@ -365,6 +367,8 @@ items:
             href: /pages/ui/entity-selector/options.md
       - name: Каталог объектов ui.entity-catalog
         href: /pages/ui/ui-entity-catalog.md
+      - name: Настройки пользовательского поля ui.userfield и ui.userfieldfactory
+        href: /pages/ui/ui-userfield.md
       - name: Вкладки ui.tabs
         href: /pages/ui/ui-tabs.md
       - name: Всплывающие окна и меню main.popup
@@ -387,6 +391,8 @@ items:
         href: /pages/ui/ui-tooltip.md
       - name: Пошаговый тур ui.tour
         href: /pages/ui/ui-tour.md
+      - name: Пульсирующая подсказка spotlight
+        href: /pages/ui/spotlight.md
       - name: Системный алерт
         href: /pages/ui/system-alert.md
       - name: Алерты ui.alerts
