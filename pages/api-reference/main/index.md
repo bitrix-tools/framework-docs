@@ -78,6 +78,7 @@ description: Классы главного модуля Bitrix Framework, сгр
 | [HttpClient](web/http-client/index.md) | `Bitrix\Main\Web` | Отправляет HTTP-запросы к внешним сервисам, скачивает файлы, поддерживает PSR-18 и асинхронные запросы |
 | [HttpCookies](web/http-cookies/index.md) | `Bitrix\Main\Web` | Хранит cookie HTTP-клиента, разбирает заголовки `Set-Cookie` и собирает заголовок `Cookie` |
 | [HttpHeaders](web/http-headers/index.md) | `Bitrix\Main\Web` | Хранит HTTP-заголовки и статус, разбирает `Content-Type`, `Content-Disposition` и `Set-Cookie` |
+| [Etag](web/http/etag/index.md) | `Bitrix\Main\Web\Http` | Заключает тег сущности в кавычки для заголовка `ETag` и сравнивает его с заголовком `If-None-Match` |
 | [Json](web/json/index.md) | `Bitrix\Main\Web` | Кодирует, разбирает и проверяет JSON |
 | [Uri](web/uri/index.md) | `Bitrix\Main\Web` | Разбирает адрес на части, меняет параметры запроса, хост и путь и собирает адрес обратно |
 

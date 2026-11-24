@@ -31,6 +31,11 @@ title: Что нового
 - Обновили статью [Консольные команды](./pages/framework/console-commands.md#kak-prosmotret-spisok-komand) — добавили команды `main:agent:get` и `main:event-handler:list`, описали флаг `readonly` в командах `main:settings:<секция>-set`.
 - Обновили статью [Выбор и настройка поискового движка](./pages/modules/search/search-engines.md#opensearch) — указали поддержку OpenSearch 3.x.
 - Обновили справочник API контроллеров — добавили ключи `filters`, `+filters` и `-filters` в методы [Controller::configureActions](./pages/api-reference/main/engine/controller/configure-actions.md) и [Controllerable::configureActions](./pages/api-reference/main/engine/contract/controllerable/configure-actions.md), описали пропуск действия в методе [Controller::run](./pages/api-reference/main/engine/controller/run.md).
+- Обновили статью [JS-ядро main.core и события](./pages/ui/main-core.md#http-client) — добавили HTTP-клиент `HttpClient` и метод `Runtime.extractAssets`, отметили, что `BX.Promise` устарел.
+- Обновили статью [Контроллеры](./pages/framework/controllers.md) — добавили вызов действия через `HttpClient.action()`.
+- Обновили статью [Работа с почтой](./pages/cms-basics/mail.md#click-redirect) — описали события `OnMailEventMailClickRedirect` и `OnMailSenderListBuild`, метод `Sender::prepareUserMailboxesWithSignatures()`.
+- Обновили статью [Типы и компоненты пользовательских полей в главном модуле](./pages/cms-basics/userfields-main-types.md) — добавили проверку многострочного значения `StringType::isMultilineValue()`.
+- Добавили в справочник API класс [Etag](./pages/api-reference/main/web/http/etag/index.md) — тег сущности для заголовков `ETag` и `If-None-Match`.
 
 #### 19 ноября
 

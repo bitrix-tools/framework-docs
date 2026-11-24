@@ -236,6 +236,33 @@ $value = $arResult['value'][0] ?? '';
 
 Для множественного поля `BaseUfComponent` добавляет к имени `[]`, если суффикса еще нет. Значение всегда приходит в шаблон массивом.
 
+Однострочное поле `<input>` не сохраняет переводы строк: при выводе в него многострочное значение склеится в одну строку. Если значение может содержать перевод строки, проверьте его методом `StringType::isMultilineValue($value)`. Метод возвращает `true`, если значение — строка с символом `\n` или `\r`. Метод доступен с версии `main` 26.900.0.
+
+Стандартные шаблоны строкового поля `main.field.string` используют ту же проверку. Они выводят `<textarea>`, если в настройке поля `ROWS` задано 2 или больше или если значение многострочное. Высота такого поля — не меньше двух строк.
+
+**Пример.** Шаблон режима `main.edit` выводит `<textarea>` для многострочного значения.
+
+```php
+<?php
+
+use Bitrix\Main\UserField\Types\StringType;
+
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+    die();
+}
+
+$value = (string)($arResult['value'][0] ?? '');
+$name = htmlspecialcharsbx($arResult['fieldName']);
+?>
+
+<?php if (StringType::isMultilineValue($value)): ?>
+    <textarea name="<?= $name ?>" rows="3"><?= htmlspecialcharsbx($value) ?></textarea>
+<?php else: ?>
+    <input type="text" name="<?= $name ?>" value="<?= htmlspecialcharsbx($value) ?>">
+<?php endif; ?>
+```
+
 ### Настроить форму параметров поля
 
 Режим `main.admin_settings` выводит дополнительные настройки типа поля в форме создания или изменения пользовательского поля. Имя для контрола настройки берите из `$arResult['additionalParameters']['NAME']`.

@@ -394,6 +394,13 @@ items:
         include:
           path: web/http-headers/toc.yaml
           mode: link
+      - name: Http
+        items:
+          - name: Etag
+            href: web/http/etag/index.md
+            include:
+              path: web/http/etag/toc.yaml
+              mode: link
       - name: Json
         href: web/json/index.md
         include:

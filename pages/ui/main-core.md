@@ -1,9 +1,9 @@
 ---
 title: JS-ядро main.core и события
-description: 'JS-ядро main.core: разметка Tag.render и экранирование, Dom, Type, Text, Loc, Runtime.loadExtension, BX.ready, BX.ajax.runAction, события EventEmitter и BaseEvent из main.core.events.'
+description: 'JS-ядро main.core: разметка Tag.render и экранирование, Dom, Type, Text, Loc, Runtime.loadExtension, Runtime.extractAssets, BX.ready, BX.ajax.runAction, HTTP-клиент HttpClient, события EventEmitter и BaseEvent из main.core.events.'
 ---
 
-Расширение `main.core` — JavaScript-ядро Bitrix Framework. Его классы используют все расширения раздела. Класс `Tag` собирает разметку, `Dom` меняет элементы, `Type` и `Text` проверяют и преобразуют значения, `Loc` возвращает языковые фразы, `Runtime` загружает расширения по требованию. Классы событий `EventEmitter` и `BaseEvent` импортируют из `main.core.events`.
+Расширение `main.core` — JavaScript-ядро Bitrix Framework. Его классы используют все расширения раздела. Класс `Tag` собирает разметку, `Dom` меняет элементы, `Type` и `Text` проверяют и преобразуют значения, `Loc` возвращает языковые фразы, `Runtime` загружает расширения по требованию, `HttpClient` отправляет запросы к серверу. Классы событий `EventEmitter` и `BaseEvent` импортируют из `main.core.events`.
 
 У каждого класса ядра больше методов. Ниже — только те, которые встречаются в примерах раздела.
 
@@ -222,9 +222,62 @@ document.getElementById('delete-unit').addEventListener('click', () => {
 
 -  `Runtime.merge(...targets)` — объединяет объекты с учетом вложенности.
 
+## Извлечь скрипты и стили из HTML {#extract-assets}
+
+Метод `Runtime.extractAssets(html, options)` разбирает HTML-код и отделяет от разметки скрипты и стили. Метод нужен, когда HTML приходит с сервера, например из ответа действия контроллера, и скрипты нужно подключить отдельно. Метод доступен с версии `main` 26.1000.0.
+
+Метод возвращает объект с полями:
+
+-  `html` — разметка без тегов `<script>` и `<link rel="stylesheet">`,
+
+-  `scripts` — массив скриптов. У внешнего скрипта поля `isInternal: false`, `src`, `runFirst` и `type`, у встроенного — `isInternal: true`, `text`, `runFirst` и `type`,
+
+-  `styles` — массив стилей с полями `href` и `media`,
+
+-  `registrations` — расширения, которые зарегистрированы в блоках `<script type="extension/registered">`. Ключ — имя расширения, значение — пространство имен.
+
+Объект `options` принимает два ключа:
+
+-  `runFirst` — если `true`, все скрипты получают признак `runFirst: true`,
+
+-  `templateTypes` — типы тегов `<script>`, которые остаются в разметке. По умолчанию это `text/html`, `text/template`, `extension/settings` и `importmap`.
+
+Если передать пустую строку или не строку, метод вернет пустой результат.
+
+{% note warning "" %}
+
+Метод не выполняет скрипты, не загружает стили и не очищает разметку от опасного кода. Подключать скрипты и стили должен вызывающий код. Метод разбирает HTML как текст. Тег `<script>` внутри значения атрибута он тоже извлечет как скрипт, поэтому передавайте в метод только HTML из доверенного источника.
+
+{% endnote %}
+
+**Пример.** Код вставляет в контейнер разметку из HTML-блока, подключает его стили и внешние скрипты.
+
+```js
+import { Runtime } from 'main.core';
+
+// responseHtml — HTML-блок, который вернул сервер
+const { html, scripts, styles } = Runtime.extractAssets(responseHtml);
+
+document.getElementById('unit-card').innerHTML = html;
+
+BX.loadCSS(styles.map((style) => style.href));
+
+scripts
+    .filter((script) => !script.isInternal)
+    .forEach((script) => BX.loadScript(script.src));
+```
+
+Функция `BX.processHTML` устарела, теперь она работает через `Runtime.extractAssets`. В новом коде используйте `Runtime.extractAssets`.
+
 ## Вызвать действие контроллера {#vyzvat-dejstvie-kontrollera}
 
 Функция `BX.ajax.runAction(action, config)` отправляет AJAX-запрос к действию контроллера модуля. Параметры действия передайте в ключе `data` объекта `config`. Функция возвращает объект `BX.Promise` с методами `then()` и `catch()`. Метода `finally()` у него нет. Как создать контроллер, передать параметры и обработать ответ, описано в статье [Контроллеры](../framework/controllers.md).
+
+{% note info "" %}
+
+С версии `main` 26.900.0 класс `BX.Promise` устарел. В своем коде используйте нативный `Promise`. Для нового кода есть клиент [HttpClient](#http-client), его методы возвращают нативный `Promise`.
+
+{% endnote %}
 
 Если действие вернуло ошибку или запрос не дошел до сервера, функция отклоняет результат. Обработчик `catch()` получает ответ с полем `errors` — массивом объектов с полями `message`, `code` и `customData`. При сетевой ошибке массив содержит одну ошибку с кодом `NETWORK_ERROR`.
 
@@ -244,6 +297,74 @@ BX.ajax.runAction('my:module.Unit.list', {
     const errors = response.errors || [];
     errorNode.textContent = errors.map((error) => error.message).join('\n');
 });
+```
+
+## Отправить запрос через HttpClient {#http-client}
+
+Класс `HttpClient` — HTTP-клиент ядра на основе `fetch`. Он заменяет `BX.ajax` в новом коде: вызывает действия контроллеров и отправляет произвольные HTTP-запросы. Методы класса возвращают нативный `Promise`. Класс доступен с версии `main` 26.900.0. Функции `BX.ajax` продолжают работать.
+
+Класс входит в ядро, отдельно подключать его не нужно. В модульном JavaScript импортируйте его из `main.core`, во встроенных скриптах используйте `BX.HttpClient`.
+
+```js
+import { HttpClient } from 'main.core';
+```
+
+### Вызвать действие контроллера через HttpClient
+
+Метод `HttpClient.action(action, options)` вызывает действие контроллера и возвращает содержимое поля `data` ответа. Параметры действия передайте в ключе `data` объекта `options`. Метод `HttpClient.actionRaw(action, options)` возвращает весь ответ контроллера с полями `status`, `data` и `errors`.
+
+Объект `options` принимает те же ключи, что и `BX.ajax.runAction`: `data`, `json`, `navigation`, `analytics`. Вместо `getParameters` передайте `query`. Еще можно задать `method`, по умолчанию `POST`, а также `headers`, `timeout` в миллисекундах и `signal` для отмены запроса.
+
+Если действие вернуло ошибку, метод отклоняет `Promise` с ошибкой `HttpClient.ControllerError`. Массив ошибок контроллера лежит в поле `errors` ошибки, у каждого элемента есть поля `code`, `message` и `customData`. При сбое сети метод отклоняет `Promise` с ошибкой `HttpClient.NetworkError`, при таймауте — с `HttpClient.TimeoutError`.
+
+**Пример.** Код вызывает действие `list` контроллера `Unit` модуля `my.module` и выводит тексты ошибок, если действие вернуло ошибку.
+
+```js
+import { HttpClient } from 'main.core';
+
+const errorNode = document.getElementById('unit-errors');
+
+try
+{
+    // renderUnits — функция страницы, которая выводит список единиц измерения
+    const units = await HttpClient.action('my:module.Unit.list', {
+        data: {
+            status: 'active',
+        },
+    });
+    renderUnits(units);
+}
+catch (error)
+{
+    if (error instanceof HttpClient.ControllerError)
+    {
+        errorNode.textContent = error.errors.map((item) => item.message).join('\n');
+    }
+    else
+    {
+        throw error;
+    }
+}
+```
+
+### Отправить произвольный запрос
+
+Методы `get(url, config)`, `delete(url, config)`, `head(url, config)`, `post(url, body, config)`, `put(url, body, config)` и `patch(url, body, config)` отправляют HTTP-запрос по адресу. Их можно вызвать у класса или у экземпляра. Конструктор `new HttpClient(options)` задает настройки экземпляра, например `baseUrl`, `headers`, `timeout` и `query`.
+
+Методы возвращают ответ с полями `status`, `ok`, `headers`, `data`, `raw` и `retryCount`. По умолчанию клиент разбирает тело ответа как JSON и кладет результат в `data`. Если сервер ответил кодом не из диапазона 2xx, метод отклоняет `Promise` с ошибкой `HttpClient.HttpError`.
+
+**Пример.** Код запрашивает вторую страницу списка и выводит число элементов.
+
+```js
+import { HttpClient } from 'main.core';
+
+const client = new HttpClient({ baseUrl: '/local/api/', timeout: 5000 });
+
+const { status, data } = await client.get('units', { query: { page: 2 } });
+if (status === 200 && data !== null)
+{
+    console.log(data.items.length);
+}
 ```
 
 ## Работать с событиями {#rabotat-s-sobytiyami}

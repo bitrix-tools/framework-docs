@@ -1,0 +1,9 @@
+title: Etag
+href: index.md
+items:
+  - name: Обзор класса
+    href: index.md
+  - name: Заключить тег в кавычки
+    href: quote.md
+  - name: Сравнить тег с заголовком If-None-Match
+    href: matches.md

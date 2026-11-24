@@ -14,6 +14,7 @@ Bitrix Framework обрабатывает входящие и исходящие
 > - [Отправка писем: настройка SMTP, sendmail, postfix.](./mail.md#how-to-send-mail)
 > - [Почтовые события: типы, шаблоны, макросы, темы оформления.](./mail.md#event-type)
 > - [Работа с API: CEventType::Add, CEventMessage::Add, Event::send, Event::sendImmediate, CEvent::Send.](./mail.md#api)
+> - [События OnMailEventMailClickRedirect и OnMailSenderListBuild, отправители с подписями.](./mail.md#click-redirect)
 
 ## Модуль Почта {#module}
 
@@ -994,6 +995,128 @@ Event::send([
 {% endnote %}
 
 Файл, переданный по абсолютному пути, метод копирует. Копию удаляет агент очистки после удаления события. События хранятся столько дней, сколько задано в настройке Главного модуля `mail_event_period`, по умолчанию 14.
+
+### Изменить ссылку перед переходом из письма {#click-redirect}
+
+Если письмо отправлено с отслеживанием переходов, ссылки в нем ведут на служебную страницу `/bitrix/tools/track_mail_click.php`. Страница записывает переход, проверяет подпись ссылки и перенаправляет пользователя по исходному адресу. Так работает, например, модуль Email-маркетинг.
+
+С версии `main` 26.900.0 перед перенаправлением срабатывает событие `OnMailEventMailClickRedirect` Главного модуля. Обработчик может изменить адрес, например убрать из него служебные параметры. Событие срабатывает, только если подпись ссылки прошла проверку.
+
+Событие передает один параметр — массив с ключами:
+
+-  `url` — адрес, по которому система перенаправит пользователя,
+
+-  `isSigned` — `true`, если ссылка пришла с верной подписью.
+
+Чтобы изменить адрес, обработчик возвращает `EventResult` с параметром `url`. Обработчик, который подключен через `addEventHandlerCompatible`, может вернуть массив `['url' => ...]`. Если обработчик ничего не меняет, он возвращает `null`.
+
+{% note warning "" %}
+
+Система применит новый адрес, только если у него те же схема, хост и порт, что у исходного. Адрес на другом сайте система молча отбросит и перенаправит пользователя по предыдущему адресу. Событие нужно, чтобы уточнить адрес, а не чтобы сменить сайт назначения.
+
+{% endnote %}
+
+**Пример.** Обработчик в `/local/php_interface/init.php` убирает из адреса параметр `promo_session`.
+
+```php
+<?php
+use Bitrix\Main\Event;
+use Bitrix\Main\EventManager;
+use Bitrix\Main\EventResult;
+use Bitrix\Main\Web\Uri;
+
+EventManager::getInstance()->addEventHandler(
+    'main',
+    'OnMailEventMailClickRedirect',
+    function (Event $event): ?EventResult
+    {
+        $params = $event->getParameters()[0];
+
+        $uri = new Uri($params['url']);
+        $uri->deleteParams(['promo_session']);
+        $url = $uri->getUri();
+
+        if ($url === $params['url'])
+        {
+            return null;
+        }
+
+        return new EventResult(EventResult::SUCCESS, ['url' => $url]);
+    }
+);
+```
+
+### Получить отправителей с подписями {#senders-with-signatures}
+
+Метод `Bitrix\Main\Mail\Sender::prepareUserMailboxesWithSignatures($userId)` возвращает адреса, от имени которых пользователь может отправлять письма, и подписи для этих адресов. Если `$userId` не передан, метод берет текущего пользователя. Метод доступен с версии `main` 26.1000.0. Его используют формы отправки писем, например в CRM.
+
+Метод возвращает массив с ключами:
+
+-  `senders` — список отправителей, тот же, что возвращает `Sender::prepareUserMailboxes()`. Ключ отправителя — значение его поля `formated`, например `Иван Петров <ivan@example.com>`,
+
+-  `signatures` — список подписей. Каждая подпись — массив с ключами `id` и `signature`, а также другими ключами, которые вернул обработчик события,
+
+-  `signaturesBySender` — подписи по отправителям. Ключ — ключ отправителя, значение — массив `availableSignatureIds` с идентификаторами доступных подписей и `selectedSignatureId` с подписью по умолчанию или `null`.
+
+Подписи собирает событие `OnMailSenderListBuild` Главного модуля, константа `Sender::ON_MAIL_SENDER_LIST_BUILD`. Событие срабатывает, только если у пользователя есть хотя бы один подтвержденный отправитель. Модуль Почта подписывается на событие и добавляет подписи из своих настроек.
+
+Событие передает параметры:
+
+-  `userId` — идентификатор пользователя,
+
+-  `senders` — список отправителей. Каждый отправитель — массив с ключами `key`, `email`, `name` и `mailboxId`.
+
+Обработчик возвращает `EventResult` с типом `SUCCESS` и параметрами:
+
+-  `signatures` — массив подписей с ключами `id` и `signature`,
+
+-  `senders` — подписи по отправителям. Ключ — значение `key` из параметров события, значение — массив с ключами `availableSignatureIds` и `selectedSignatureId`.
+
+Система объединяет ответы всех обработчиков по правилам:
+
+-  подписи с одинаковым `id` попадают в результат один раз, побеждает подпись первого обработчика,
+
+-  списки `availableSignatureIds` одного отправителя объединяются,
+
+-  `selectedSignatureId` берется у первого обработчика, который его задал,
+
+-  отправители, которых нет в параметрах события, отбрасываются.
+
+**Пример.** Обработчик добавляет всем отправителям общую подпись компании и делает ее подписью по умолчанию.
+
+```php
+<?php
+use Bitrix\Main\Event;
+use Bitrix\Main\EventManager;
+use Bitrix\Main\EventResult;
+use Bitrix\Main\Mail\Sender;
+
+EventManager::getInstance()->addEventHandler(
+    'main',
+    Sender::ON_MAIL_SENDER_LIST_BUILD,
+    function (Event $event): EventResult
+    {
+        $signatureId = 9001;
+        $senders = [];
+        foreach ($event->getParameter('senders') as $sender)
+        {
+            $senders[$sender['key']] = [
+                'availableSignatureIds' => [$signatureId],
+                'selectedSignatureId' => $signatureId,
+            ];
+        }
+
+        return new EventResult(EventResult::SUCCESS, [
+            'signatures' => [
+                ['id' => $signatureId, 'signature' => '<p>С уважением, компания «Пример»</p>'],
+            ],
+            'senders' => $senders,
+        ]);
+    }
+);
+
+$result = Sender::prepareUserMailboxesWithSignatures();
+```
 
 ### Настроить поведение почтовой системы
 
