@@ -309,6 +309,8 @@ items:
         href: /pages/ui/icons.md
       - name: Анимации Lottie
         href: /pages/ui/lottie.md
+      - name: Реакции ui.reaction.item и ui.reaction.picker
+        href: /pages/ui/ui-reaction.md
       - name: Панель инструментов ui.toolbar
         href: /pages/ui/ui-toolbar.md
       - name: Боковая панель main.sidepanel

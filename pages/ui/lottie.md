@@ -9,6 +9,8 @@ Lottie-анимации хранятся в формате JSON. Формат п
 
 ![Lottie](./_images/ui-lottie.png){width=740px height=360px}
 
+На расширении `ui.lottie` построены анимированные реакции, подробнее — в статье [Реакции ui.reaction.item и ui.reaction.picker](./ui-reaction.md).
+
 ## Подключить расширение
 
 Подключите расширение `ui.lottie` в шаблон компонента или страницы.
