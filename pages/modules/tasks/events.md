@@ -106,7 +106,7 @@ EventManager::getInstance()->unRegisterEventHandler(
 
 Кто выполнил операцию и в каком контексте, показывают такие параметры.
 
--  `OnTaskAdd` — в `$params` ключи `USER_ID` — ID пользователя, от имени которого создана задача, и `FROM_AGENT`, `FROM_WORKFLOW` — `true`, если задачу создал агент или бизнес-процесс.
+-  `OnTaskAdd` — в `$params` ключи `USER_ID` — ID пользователя, от имени которого создана задача, и `FROM_AGENT`, `FROM_WORKFLOW` — `true`, если задачу создал агент или бизнес-процесс. С версии `tasks` 26.1000.0 есть ключ `MANUAL_DEADLINE` — `true`, если крайний срок задан вручную. Значение берется из ключа `DEADLINE_MANUALLY_SET` в параметрах `CTasks::Add`. Если ключ не передан, срок считается заданным вручную, когда в полях задачи есть `DEADLINE`.
 
 -  `OnBeforeTaskUpdate` и `OnTaskUpdate` — в `$fields` ключ `CHANGED_BY` — ID пользователя, который изменил задачу.
 

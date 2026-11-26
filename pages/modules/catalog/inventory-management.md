@@ -123,6 +123,28 @@ $stores = \Bitrix\Catalog\StoreTable::getList([
 ])->fetchAll();
 ```
 
+### Удалить склад {#delete-store}
+
+Метод `CCatalogStore::Delete($id)` удаляет склад и возвращает `true` или `false`. Если склад удалить нельзя, текст и код ошибки можно получить через `$APPLICATION->GetException()`.
+
+С версии `sale` 26.700.0 склад, на котором есть товары в резерве по заказам, удалить нельзя. Модуль `sale` обрабатывает событие `OnBeforeCatalogStoreDelete` и отменяет удаление с ошибкой `SALE_STORE_HAS_ORDER_RESERVES`. Сначала снимите резервы, например отменой резервирования в заказах.
+
+**Пример.** Код удаляет склад и выводит причину, если удаление отменено.
+
+```php
+global $APPLICATION;
+
+if (!\CCatalogStore::Delete($storeId))
+{
+    $exception = $APPLICATION->GetException();
+    $message = $exception ? $exception->GetString() : 'Не удалось удалить склад';
+
+    throw new \RuntimeException($message);
+}
+```
+
+Если на складе есть резервы, код выбросит исключение с текстом «Склад нельзя удалить: на нём есть товары в резерве по заказам. Сначала снимите резервы».
+
 ### Создать поставщика {#create-contractor}
 
 Поставщик — это контрагент, от которого поступают товары на склад. В приходных документах поставщика указывают в поле `CONTRACTOR_ID`.
